@@ -1,5 +1,5 @@
 #
-# $Id: tg-user-map,v 1.1 2003-12-03 15:55:59-08 kst Exp $
+# $Id: tg-user-map,v 1.2 2003-12-05 15:08:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/tg-user-map,v $
 # 
 # This file defines the mapping of user names across the TeraGrid systems.
@@ -111,7 +111,7 @@
 {                   gleicher:10179@CACR    gleicher:29378@NCSA gleicher:19040@PSC gleicher:401@SDSC    "Michael Gleicher" }
 {                   goodale:14978@CACR                                            ux451455:451455@SDSC "Tom Goodale" }
 {                                          sgottlie:12937@NCSA gottlieb:7000@PSC                       "Steven Gottlieb" }
-{ mgower:793@UC                            mgower:27031@NCSA   mgower:19459@PSC   ux453809:453809@SDSC "Michelle Gower" }
+{ mgower:793@UC     mgower:15131@CACR      mgower:27031@NCSA   mgower:19459@PSC   ux453809:453809@SDSC "Michelle Gower" }
 { jgreen:756@UC     jgreen:14960@CACR      jgreen:27680@NCSA                      ux453932:453932@SDSC "Joseph Greenseid" }
 { zzcgurh:781@UC    zzcgurh:15112@CACR     zzcgurh:29975@NCSA  zzcgurh:19468@PSC  ux454755:454755@SDSC "Robert Haines" }
 {                   harkness:15050@CACR    harkness:25552@NCSA harkness:1187@PSC  harkness:14992@SDSC  "Robert P. Harkness" }
