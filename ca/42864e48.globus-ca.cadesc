@@ -1,4 +1,4 @@
-# $Id: 42864e48.globus-ca.cadesc,v 1.1 2004-10-02 14:40:28-07 kst Exp $
+# $Id: 42864e48.globus-ca.cadesc,v 1.2 2004-10-08 13:59:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/42864e48.globus-ca.cadesc,v $
 
 CA_NAME             Globus CA (expired)
@@ -13,7 +13,6 @@ CERTIFICATE_URL     ?
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
 CRL_WARNING         ?
-INDEX               ?
 DISABLE             yes
 
 #
