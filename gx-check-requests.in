@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.20 2003-07-27 22:03:35-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.21 2003-07-27 23:01:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -86,12 +86,14 @@ my @Opts = ( $User_Opt,
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
-Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
-$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 if ($User_Opt->{version}) {
     print "gx-check-requests, part of gx-map version $Gridmap_Utils::VERSION\n";
+    exit 0;
 }
+
+Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
+$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 # my $Data_Dir = defined $User_Opt->{directory}
 #                      ? $User_Opt->{directory}
