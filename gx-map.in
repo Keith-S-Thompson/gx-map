@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.10 2003-06-12 02:16:13-07 kst Exp $
+# $Id: gx-map.in,v 1.11 2003-07-08 14:02:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -491,6 +491,31 @@ EOF
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
 
+    if ($Globus_Admin) {
+        while (not defined $Options->{directory}) {
+            print "Data directory (default is $Default_Data_Dir): ";
+            chomp($response = scalar <STDIN>);
+            if ($response eq '') {
+                $Options->{directory} = $Default_Data_Dir;
+            }
+            elsif (not -e $response) {
+                print ">>> $response does not exist\n";
+            }
+            elsif (not -d _) {
+                print ">>> $response is not a directory\n";
+            }
+            elsif (not -r $response or not -x _ or not -w _) {
+                print ">>> Insufficient access to directory $response\n";
+            }
+            else {
+                $Options->{directory} = $response;
+            }
+        }
+    }
+    else {
+        $Options->{directory} = $Default_Data_Dir;
+    }
+
     if ($OP eq 'remove') {
         TRY:
         while (1) {
@@ -887,7 +912,7 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               administrators only.
     -directory dir          : Specify an alternate data directory.
                               This option is for use by Globus administrators
-                              only, and is not available in interactive mode.
+                              only.
                               The default data directory is
                               $Default_Data_Dir .
     -email addr             : Your contact e-mail address.
