@@ -1,4 +1,4 @@
-# $Id: f93666d2.kisti-ca2.cadesc,v 1.1 2004-10-17 22:39:30-07 kst Exp $
+# $Id: f93666d2.kisti-ca2.cadesc,v 1.2 2004-11-01 17:04:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f93666d2.kisti-ca2.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA2
@@ -12,8 +12,7 @@ CERTIFICATE_MD5     7E:1E:BC:FA:AB:9B:57:64:1C:32:99:C9:AC:86:09:0A
 CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/f93666d2.0
 SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/f93666d2.signing_policy
 CRL_URL             ?
-INDEX               ?
-DISABLE             no
+CERT_EXPIRES        Mar 14 00:39:41 2013 GMT
 
 # There appears to be no CRL.
 
