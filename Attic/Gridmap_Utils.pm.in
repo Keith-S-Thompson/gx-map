@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.21 2003-07-27 17:24:40-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.22 2003-12-01 17:48:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -91,6 +91,8 @@ sub Read_Records($);
 
 sub Init_Cache_Info();
 sub Cache_File($);
+
+sub Read_User_Map($);
 
 sub Debug(@);
 sub Debugf(@);
@@ -553,6 +555,158 @@ sub Cache_File($) {
     }
     return $Cache_File{$url};
 } # Cache_File
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of a user map file, reads it and returns a reference
+# to a data structure containing the information from the file.
+# This data structure can be used to query mappings from user names
+# in one namespace to user names in another namespace (i.e., from one
+# site to another).
+#
+# Quietly returns undef if the file doesn't exist.  Dies on syntax errors.
+#
+# The result is a reference to a nested set of hashes.
+# At the outer level, the keys are namespace identifiers (the source
+# namespace).
+# At the next level, the keys are also namespace identifiers (the target
+# namespace).
+# At the innermost level, the keys are Unix user names within the
+# outer namespace, and the values are Unix user names within the
+# inner namespace.
+#
+# Sample usage, assuming that John Smith is "ux123456" at SDSC and
+# "jsmith" at NCSA:
+#
+#     my $Map = Read_User_Map 'user-map';
+#     my $sdsc_name = $Map->{NCSA}->{SDSC}->{jsmith};
+#     if (defined $sdsc_name) {
+#         # Maps "jsmith" to "ux123456"
+#         print "jsmith at NCSA is $sdsc_name at SDSC\n";
+#     else {
+#         print "No mapping for NCSA user 'jsmith' to SDSC namespace\n";
+#     }
+#
+# Note that if a mapping does not exist (is not specified in the user
+# map file), some keys in the referenced hashes will "auto-vivify", with
+# values set to undef.  This could be avoided by checking the "exists"
+# predicate at each level, but it's probably not worth the effort; extra
+# "undef" values should be harmless.
+# 
+# TO DO:
+#     Check for same user@namespace in multiple entries.
+#     Check for multiple occurences of the same namespace in a single
+#     entry.  (Actually, we might want to allow this.)
+#
+sub Read_User_Map($) {
+    my($filename) = @_;
+    my $Map = {};
+
+    open MAP, $filename or return undef;
+    LINE:
+    while (<MAP>) {
+        chomp;
+        s/#.*$//;
+
+        my @tokens = ();
+
+        TOKEN:
+        while ($_ ne '') {
+            if (/^\s*$/) {
+                last TOKEN;
+            }
+            elsif (/^\s*{\s*(.*)$/) {
+                push @tokens, '{';
+                $_ = $1;
+            }
+            elsif (/^\s*(\S+\@\w+)\s*(.*)$/) {
+                push @tokens, $1;
+                $_ = $2;
+            }
+            elsif (/^\s*("[^"]*")\s*(.*)$/) {
+                push @tokens, $1;
+                $_ = $2;
+            }
+            elsif (/^\s*}\s*(.*)$/) {
+                push @tokens, '}';
+                $_ = $1;
+            }
+            else {
+                die "Unrecognized token, $filename line $.\n";
+            }
+        }
+
+        foreach my $token (@tokens) {
+            if ($token eq '{') {
+		if (defined $curr_entry) {
+		    die "Unexpected '{', $filename line $.\n";
+		}
+                $curr_entry = {};
+            }
+
+            elsif ($token =~ /^(.*)\@(.*)$/) {
+                my($userid, $namespace) = ($1, $2);
+                if (not defined $curr_entry) {
+                    die "Unexpected token \"$token\", $filename line $.\n"
+                }
+                if (defined $curr_entry->{USERID}->{$namespace}) {
+                    die "Userid already defined for $namespace, " .
+		        "$filename line $.\n";
+                }
+                $curr_entry->{USERID}->{$namespace} = $userid;
+            }
+
+            elsif ($token =~ /^".*"$/) {
+                if (not defined $curr_entry) {
+                    die "Unexpected token \"$token\", $filename line $.\n"
+                }
+                if (defined $curr_entry->{name}) {
+                    die "Name already defined, $filename line $.\n";
+                }
+                $curr_entry->{name} = $token;
+            }
+
+            elsif ($token eq '}') {
+                if (not defined $curr_entry) {
+                    die "Unexpected '}', line $.\n"
+                }
+                if (not defined $curr_entry->{name}) {
+                    die "No name defined, line $.\n"
+                }
+                if (not defined $curr_entry->{USERID}) {
+                    die "No user ids defined, line $.\n";
+                }
+                push @Entries, $curr_entry;
+                $curr_entry = undef;
+            }
+        }
+    }
+    close MAP;
+
+    # '{' (so brace-matching works when I edit this
+    die "Missing '}' at end of file\n" if defined $curr_entry;
+
+    #
+    # Build the Map data structure.
+    # For a user with userid "ux123456" at SDSC and "jmith" at NCSA, we'll have
+    #     $Map->{SDSC}->{ux123456}->{NCSA} eq "jsmith"
+    #     $Map->{NCSA}->{jsmith}->{SDSC} eq "ux123456"
+    #
+
+    foreach my $entry (@Entries) {
+        foreach my $namespace0 (sort keys %{$entry->{USERID}}) {
+            foreach my $namespace1 (sort keys %{$entry->{USERID}}) {
+                next if $namespace0 eq $namespace1;
+                my $userid0 = $entry->{USERID}->{$namespace0};
+                my $userid1 = $entry->{USERID}->{$namespace1};
+                $Map->{$namespace0}->{$namespace1}->{$userid0} = $userid1;
+            }
+        }
+    }
+
+    return $Map;
+} # Read_User_Map
 
 # ----------------------------------------------------------------------
 
