@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.14 2003-08-29 17:10:17-07 kst Exp $
+# $Id: install-gx-map.in,v 1.15 2003-11-18 12:08:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -61,7 +61,7 @@ LIBDIR=$INSTALL_DIR/lib
 DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
-SBIN_FILES="gx-check-requests gx-gen-mapfile"
+SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 DATA_FILES="ncsa-sdsc-user-map"
 
