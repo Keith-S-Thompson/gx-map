@@ -1,4 +1,4 @@
-# $Id: README,v 1.19 2004-11-24 16:51:39-08 kst Exp $
+# $Id: README,v 1.20 2004-11-26 12:12:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
@@ -17,6 +17,7 @@ particular, certificates issued by the NPACI and SDSC certificate
 authorities (cacl) are automatically mapped to the corresponding
 user account.  This is handled by a separate tool (not included here)
 that watches for updates in the cacl index file and invokes gx-map.
+(This applies only to systems within the SDSC namespace.)
 
 All commands accept a "-help" option to print a brief usage message
 and a "-version" option to display the current version.  The gx-map
@@ -24,22 +25,31 @@ command also accepts a "-long-help" option with information on
 non-interactive use.
 
 Support for propagation of information across sites is still
-incomplete.  The "ncsa-sdsc-user-map" is specific to NCSA and SDSC
-systems, and is out of date.  (The new SOURCE attribute is intended
-to enable tracking where each transaction was entered.)
+incomplete.  (The new SOURCE attribute is intended to enable tracking
+where each transaction was entered.)
 
-Documentation is still somewhat lacking.  General information is
-available in this README file.  Information about the gx-ca-update
-command is in README.CA and README.CA-SECURITY.  TeraGrid-specific
-information is in README.TeraGrid; this may also be of interest for
-non-TeraGrid sites.  If you're currently using an earlier version of
-gx-map, see README.UPGRADE.  For information on using gx-map across
-multiple sites, see README.Cross-Site.
+The gx-ca-update command (new in release 0.4.0) handles automated
+installation and maintenance of certificate, signing_policy, and CRL
+files for CAs (Certificate Authorities).
+
+Documentation is still somewhat lacking, but see the following files
+for information:
+
+    README              This file, general information
+    README.CA           Information about the gx-ca-update command.
+    README.CA-SECURITY  Security-specific information about gx-ca-update .
+    README.TeraGrid     TeraGrid-specific information (which may also
+                        be of interest for non-TeraGrid sites).
+    README.Upgrade      Upgrading from gx-map 0.3 to 0.4.0.
+    README.Cross-Site   Using gx-map across multiple sites.
 
 I gave a brief presentation on gx-map at GlobusWorld 2004.  An expanded
 version of the PowerPoint slides from that presentation can be found
 in gx-map.ppt in this distribution; gx-map.pdf is the same thing in
 PDF format.
+
+The README* and gx-map.{ppt,pdf} files are installed in the etc
+subdirectory when you install gx-map.
 
 Future releases will include man pages.
 
@@ -71,4 +81,4 @@ gx-gen-mapfile ignores requests without a valid OWNER_NAME field.
 This bug was discovered in release 0.3, and has not yet been fixed
 as of release 0.4.0.
 
-                -- Keith Thompson <kst@sdsc.edu> 2004-11-24
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-26
