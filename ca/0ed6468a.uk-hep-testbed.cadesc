@@ -1,4 +1,4 @@
-# $Id: 0ed6468a.uk-hep-testbed.cadesc,v 1.6 2004-11-01 17:04:14-08 kst Exp $
+# $Id: 0ed6468a.uk-hep-testbed.cadesc,v 1.7 2005-03-29 19:27:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0ed6468a.uk-hep-testbed.cadesc,v $
 
 CA_NAME             UK HEP Testbed CA
@@ -8,12 +8,13 @@ HASH                0ed6468a
 SUBJECT             /O=Grid/O=UKHEP/CN=UK HEP Testbed CA
 MAY_SIGN            /O=Grid/O=UKHEP/*
 CERTIFICATE_MD5     2F:44:EA:D2:F4:19:9C:26:E9:16:7D:81:66:29:C5:16
+# CERTIFICATE_SHA1    49:2C:16:87:23:6A:E6:07:61:65:D7:DC:CC:7B:70:8C:9B:FF:66:3D
 CERTIFICATE_URL     http://www.gridpp.ac.uk/ca/software/0ed6468a.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/0ed6468a.signing_policy
 CRL_URL             http://www.gridpp.ac.uk/ca/ca-crl.pem
 CERT_EXPIRES        Jan 25 09:59:08 2014 GMT
 
 # The CA has been replaced by the UK e-Science Certification Authority.
-# As of 2004-10-07, the CRL was out of date.
+# The CRL expired 2004-08-21 and has not been updated as of 2005-03-29.
 
-# MD5 fingerprint from 0ed6468a.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 0ed6468a.0 downloaded 2005-03-29
