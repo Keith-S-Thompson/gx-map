@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.6 2003-07-25 01:11:53-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.7 2003-08-29 19:46:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.uffda,v $
 
 ########################################################################
@@ -149,9 +149,6 @@ sub Valid_Mappings($) {
             {
                 Debug ">>> Invalid, bad OWNER_NAME\n";
                 return ();
-            }
-            if ($request->{map_to_name} eq 'kst') {
-                $request->{map_to_name} = 'phred';
             }
         }
     }
