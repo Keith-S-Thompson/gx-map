@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.27 2004-07-30 01:13:45-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.28 2004-07-30 17:55:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -55,6 +55,7 @@
 # INSTALL_DIR   %INSTALL_DIR%
 # DATA_DIR      %DATA_DIR%
 # GLOBUS_ADMINS %GLOBUS_ADMINS%
+# DN_FORMAT     %DN_FORMAT%
 # ADMIN_EMAIL   %ADMIN_EMAIL%
 ########################################################################
 
