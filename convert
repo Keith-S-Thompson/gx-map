@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: convert,v 1.4 2003-07-15 16:36:51-07 kst Exp $
+# $Id: convert,v 1.5 2003-07-17 15:00:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/convert,v $
 
 use strict;
@@ -65,7 +65,9 @@ foreach my $old_ref (@old_refs) {
 
 print "# Got ", scalar @new_refs, " records\n";
 print "# Sorting...\n";
-@new_refs = sort { $a->{timestamp} cmp $b->{timestamp} } @new_refs;
+@new_refs = sort { $a->{timestamp} cmp $b->{timestamp} ||
+                   $a->{dn} cmp $b->{dn} }
+                 @new_refs;
 print "# Writing records\n";
 print "\n";
 Gridmap_Utils::Write_Records '-', @new_refs;
