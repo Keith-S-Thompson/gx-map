@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.4 2003-05-27 20:56:31-07 kst Exp $
+# $Id: configure-gx-map,v 1.5 2003-05-27 21:10:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -17,7 +17,9 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 my $Config_File = undef;
 my %Config = ();
-my @Var_Names = qw( PERL INSTALL_DIR DATA_DIR GLOBUS_ADMINS ADMIN_EMAIL );
+my @Var_Names = qw( PERL SITE_NAME
+                    INSTALL_DIR DATA_DIR
+                    GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 
 if (scalar @ARGV == 1) {
