@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.6 2003-06-13 19:08:41-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.7 2003-07-08 14:01:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
