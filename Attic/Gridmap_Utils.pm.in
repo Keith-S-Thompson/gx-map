@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.6 2003-07-10 02:43:56-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.7 2003-07-14 17:51:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -466,23 +466,58 @@ sub Init_Cache_Info() {
 
 # ----------------------------------------------------------------------
 
+#
+# Given a URL, returns the name of a local file containing a copy of
+# the specified file.  Uses the wget command.
+#
+# If the specified file has already been cached, we attempt to update it;
+# if the update fails, we still return the name of the old cached file.
+#
+# The wget command sets the mtime of the local file to be the same as
+# the modification time of the remote file.  The "-N" option says not
+# to re-retrieve the file unless the remote file is newer than the
+# local copy.
+# 
+#
 sub Cache_File($) {
     my($url) = @_;
     Init_Cache_Info();
-    if (not defined $Cache_File{$url}) {
+    my $initial_download = not defined $Cache_File{$url};
+
+    if ($initial_download) {
         my $dir = "$Download_Dir/" . time . "-$$-$Download_Index";
         $Download_Index ++;
-        mkdir $dir, 0777 or die "$dir: $!\n";
-        open URL, ">$dir/.url" or die "$dir/.url: $!\n";
-        print URL "$url\n";
-        close URL;
-        $Cache_File{$url} = "$dir/" . File::Basename::basename $url;
+        mkdir $dir, 0777 or die "${dir}: $!\n";
+        my $cache_file = "$dir/" . File::Basename::basename $url;
+        my $result = system '%WGET%',
+                            '-o', '/dev/null',
+                            '-O', $cache_file,
+                            $url;
+        if ($result == 0) {
+            open URL, ">$dir/.url" or die "$dir/.url: $!\n";
+            print URL "$url\n";
+            close URL;
+            $Cache_File{$url} = $cache_file;
+        }
+        else {
+            unlink $cache_file;
+            rmdir $dir;
+            die "wget failed for $url, system() returned $result\n";
+        }
     }
-    my $result = system '%WGET%', '-N',
-                                  '-o', '/dev/null',
-                                  '-O', $Cache_File{$url},
-				  $url;
-    die "wget failed for $url\n" if $result != 0;
+    else {
+        #
+        # Try to refresh the file.
+        #
+        my $result = system '%WGET%',
+                            '-N',
+                            '-o', '/dev/null',
+                            '-O', $Cache_File{$url},
+                            $url;
+        #
+        # Ignore errors; we already have a copy of the file.
+        #
+    }
     return $Cache_File{$url};
 } # Cache_File
 
