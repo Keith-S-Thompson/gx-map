@@ -1,4 +1,4 @@
-# $Id: c4c1901a.shard02.cadesc,v 1.1 2004-10-17 22:39:29-07 kst Exp $
+# $Id: c4c1901a.shard02.cadesc,v 1.2 2004-11-01 17:04:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c4c1901a.shard02.cadesc,v $
 
 CA_NAME             shard02.sdsc.edu Simple CA
@@ -11,8 +11,7 @@ CERTIFICATE_MD5     D8:67:8E:59:D1:73:FC:98:CF:52:80:35:D3:21:6A:CB
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c4c1901a.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c4c1901a.signing_policy
 CRL_URL             ?
-INDEX               ?
-DISABLE             no
+CERT_EXPIRES        May 29 00:23:28 2008 GMT
 
 # There is no CRL.
 
