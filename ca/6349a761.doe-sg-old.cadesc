@@ -1,0 +1,15 @@
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.1 2004-09-21 01:20:19-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
+
+CA_DESC         DOE SG Root CA (old)
+HOMEPAGE        http://www.doegrids.org/OldDOEScienceGridRootCA/
+CONTACT		?
+HASH            6349a761
+SUBJECT         /O=DOE Science Grid/OU=Certificate Authorities/CN=Certificate Manager
+MAY_SIGN	/O=DOE Science Grid/OU=Certificate Authorities/CN=Certificate Manager
+MAY_SIGN	/DC=net/DC=es/OU=Certificate Authorities/OU=DOE Science Grid/CN=pki1
+CERTIFICATE     http://www.doegrids.org/OldDOEScienceGridRootCA/6349a761.0
+SIGNING_POLICY  ?
+CRL             http://www.doegrids.org/OldDOEScienceGridRootCA/CRL/6349a761.r0
+CRL_WARNING     14 days
+INDEX           ?
