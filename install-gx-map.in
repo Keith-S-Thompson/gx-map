@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.27 2004-11-20 15:55:44-08 kst Exp $
+# $Id: install-gx-map.in,v 1.28 2004-11-21 17:17:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -74,7 +74,6 @@ if [ $all -eq 1 ] ; then
     SBIN_FILES="$SBIN_FILES gx-admins"
 fi
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
-DATA_FILES="ncsa-sdsc-user-map"
 CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
@@ -99,7 +98,6 @@ verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 verbosely cp -f $BIN_FILES  $BIN_DIR/.
 verbosely cp -f $SBIN_FILES $SBIN_DIR/.
 verbosely cp -f $LIB_FILES  $LIB_DIR/.
-verbosely cp -f $DATA_FILES $DATA_DIR/.
 if [ -r .config-file ] ; then
     verbosely cp -f `cat .config-file` $ETC_DIR/.
 fi
