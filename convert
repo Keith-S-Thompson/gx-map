@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: convert,v 1.1 2003-05-29 02:41:53-07 kst Exp $
+# $Id: convert,v 1.2 2003-06-05 19:44:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/convert,v $
 
 use strict;
@@ -34,7 +34,7 @@ foreach my $old_ref (@old_refs) {
     $new_ref->{OWNER_UID}    = $old_ref->{requested_by_uid};
     $new_ref->{PROCESSED}    = Gridmap_Utils::Time_Image $Now;
     $new_ref->{REQUEST_FILE} = $old_ref->{file};
-    $new_ref->{SITE}         = 'SDSC';
+    $new_ref->{NAMESPACE}    = 'SDSC';
     if (defined $old_ref->{comment}) {
 	$new_ref->{comment} = "$old_ref->{comment} (copied from old gx-map system)";
     }
