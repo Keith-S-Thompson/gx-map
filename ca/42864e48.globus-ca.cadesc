@@ -1,4 +1,4 @@
-# $Id: 42864e48.globus-ca.cadesc,v 1.7 2004-11-01 17:04:18-08 kst Exp $
+# $Id: 42864e48.globus-ca.cadesc,v 1.8 2005-03-29 19:27:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/42864e48.globus-ca.cadesc,v $
 
 CA_NAME             Globus CA (expired)
@@ -10,6 +10,7 @@ MAY_SIGN            /C=us/O=Globus/*
 MAY_SIGN            /C=US/O=Globus/*
 MAY_SIGN            /O=Grid/O=Globus/*
 CERTIFICATE_MD5     F6:0F:F5:C0:96:DE:E7:A6:EB:4B:3A:7A:FB:2D:67:0B
+# CERTIFICATE_SHA1    CB:02:FE:71:78:A9:D4:A4:D7:AA:75:2D:C3:B6:F9:FA:9E:EF:33:41
 CERTIFICATE_URL     http://www-unix.globus.org/ftppub/gsi/globus_ca/42864e48.0
 SIGNING_POLICY_URL  http://www-unix.globus.org/ftppub/gsi/globus_ca/42864e48.signing_policy
 CRL_URL             ?
@@ -20,4 +21,4 @@ DISABLE             yes
 # The CA certificate expired 2004-01-23 and will not be renewed.
 #
 
-# MD5 fingerprint from 42864e48.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 42864e48.0 downloaded 2005-03-29
