@@ -1,4 +1,4 @@
-# $Id: 3deda549.sdsc.cadesc,v 1.9 2004-10-10 03:21:56-07 kst Exp $
+# $Id: 3deda549.sdsc.cadesc,v 1.10 2004-10-13 17:44:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
 
 CA_NAME             SDSC CA
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     07:83:1A:81:1F:2C:DD:AF:1E:BD:92:03:B5:F8:A9:C9
 CERTIFICATE_URL     http://www.sdsc.edu/CA/3deda549.0
 SIGNING_POLICY_URL  http://www.sdsc.edu/CA/3deda549.signing_policy
 CRL_URL             http://www.sdsc.edu/CA/3deda549.r0
-CRL_WARNING         12 hours
 INDEX               http://www.sdsc.edu/CA/ca.db.index
 
 # MD5 fingerprint from 3deda549.0 downloaded 2004-10-10
