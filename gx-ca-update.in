@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.15 2004-09-27 00:25:28-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.16 2004-09-27 02:10:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -77,8 +77,10 @@ sub Certificate_Expiration($);
 sub Update_Certificate($);
 sub Update_Signing_Policy($);
 sub Update_CRL($);
-sub Notify($@);
 sub Usage(@);
+sub Error($$);
+sub Vprint(@);
+sub Error_Notification();
 sub Debug(@);
 
 my $Program_Name = File::Basename::basename $0;
@@ -93,12 +95,11 @@ my @Opts = ( $User_Opt,
                  target-dir=s
                  expire-crl=s
                  force!
+                 verbose!
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
-
-my @Errors = ();
 
 if ($User_Opt->{version}) {
     print "gx-ca-update, part of gx-map version $Gridmap_Utils::VERSION\n";
@@ -216,7 +217,7 @@ if ($User_Opt->{debugging}) {
 Gridmap_Utils::Init_Cache_Info;
 
 foreach my $ref (@ca_info) {
-    print "Processing $ref->{HASH} $ref->{CA_NAME}\n";
+    Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
 
     my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
     $ref->{_CERT_FILE}           = "$prefix.0";
@@ -227,12 +228,10 @@ foreach my $ref (@ca_info) {
     Update_Signing_Policy $ref;
     Update_CRL            $ref;
 
-    print "\n";
+    Vprint "\n";
 }
 
-if (@Errors) {
-    Notify "Errors in $Program_Name", @Errors;
-}
+Error_Notification;
 
 ########################################################################
 
@@ -478,7 +477,7 @@ sub Update_Certificate($) {
     my($ref) = @_;
 
     if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
-        print "Skipping existing $ref->{_CERT_FILE}\n";
+        Vprint "Skipping existing $ref->{_CERT_FILE}\n";
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(http|ftp)://>) {
         my $cache_file;
@@ -487,37 +486,30 @@ sub Update_Certificate($) {
             #
             # Error in Cache_File function
             #
-            print ">>> $@";
-            push @Errors, $@;
+            Error $ref, $@;
         }
         elsif (defined $cache_file and -r $cache_file) {
             my $expire = Certificate_Expiration $cache_file;
             if (defined $expire) {
                 if ($expire < $now) {
-                    print ">>> $cache_file expired ",
-                          Seconds_To_String $now - $expire,
-                          " ago\n";
-                    push @Errors, "$cache_file expired ",
-                                  Seconds_To_String $now - $expire,
-                                  " ago\n";
+                    Error $ref, "Certificate expired " .
+                                Seconds_To_String($now - $expire) .
+                                " ago\n";
                 }
                 else {
-                    print "Installing $ref->{_CERT_FILE}\n";
+                    Vprint "Installing $ref->{_CERT_FILE}\n";
                     system 'cp', '-p', '-f', $cache_file,
                                              "$ref->{_CERT_FILE}.$$";
                     rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE};
                 }
             }
             else {
-                print ">>> Unable to determine expiration date " .
-                      "for $cache_file\n";
-                push @Errors, "Unable to determine expiration date " .
-                              "for $cache_file\n";
+                Error $ref, "Unable to determine certificate expiration date\n";
             }
         }
     }
     else {
-        print "No URL given for certificate\n";
+        Vprint "No URL given for certificate\n";
     }
 } # Update_Certificate
 
@@ -533,10 +525,10 @@ sub Update_Certificate($) {
 sub Update_Signing_Policy($) {
     my($ref) = @_;
     if (not $User_Opt->{force} and -e $ref->{_SIGNING_POLICY_FILE}) {
-        print "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
+        Vprint "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
     }
     else {
-        print "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+        Vprint "Creating $ref->{_SIGNING_POLICY_FILE}\n";
         open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
             or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
         print POLICY Signing_Policy $ref;
@@ -564,10 +556,8 @@ sub Update_CRL($) {
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
-            # To do: more robust error handling.
             #
-            print ">>> $@";
-            push @Errors, "$@";
+            Error $ref, $@;
         }
     }
     my $new_crl_info = CRL_Info $new_crl_file, $ref->{_CERT_FILE};
@@ -578,20 +568,15 @@ sub Update_CRL($) {
         #
         my $remaining = $new_crl_info->{next_update} - $now;
         if ($remaining <= 0) {
-            print ">>> New CRL has expired\n";
-            push @Errors, "New CRL $new_crl_file has expired\n";
+            Error $ref, "Newly downloaded CRL has expired\n";
         }
         elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
-            print ">>> New CRL expires in " .
-                  Seconds_To_String($remaining) .
-                  ", not installing\n";
-            push @Errors, "New CRL $new_crl_file expires in " .
+            Error $ref, "Newly downloaded CRL expires in " .
                           Seconds_To_String($remaining) .
                           ", not installing\n";
         }
         elsif (not $new_crl_info->{verified}) {
-            print ">>> Can't verify new CRL\n";
-            push @Errors, "Can't verify new CRL $new_crl_file\n";
+            Error $ref, "Can't verify new CRL\n";
         }
         elsif (defined $old_crl_info) {
             #
@@ -601,16 +586,13 @@ sub Update_CRL($) {
             if ($new_crl_info->{last_update} == $old_crl_info->{last_update} and
                 $new_crl_info->{next_update} == $old_crl_info->{next_update})
             {
-                print "CRL update not needed\n";
+                Vprint "CRL update not needed\n";
             }
             elsif ($new_crl_info->{next_update} <
                    $old_crl_info->{next_update})
             {
-                print ">>> New CRL expires sooner than old CRL, " .
-                      "not installing\n";
-                push @Errors,
-                     "New CRL $new_crl_file expires sooner than old CRL, " .
-                     "not installing\n";
+                Error $ref, "Newly downloaded CRL expires sooner " .
+                            "than old CRL, not installing\n";
             }
             else {
                 $install_new_crl = 1;
@@ -625,16 +607,15 @@ sub Update_CRL($) {
         # We don't have a new CRL
         #
         if (not $have_crl_url) {
-            print "No URL given for CRL\n";
+            Vprint "No URL given for CRL\n";
         }
         else {
-            print ">>> Unable to get information for CRL\n";
-            push @Errors, "Unable to get information for CRL $ref->{CRL_URL}\n";
+            Error $ref, "Unable to get information for CRL\n";
         }
     }
 
     if ($install_new_crl) {
-        print "Installing $ref->{_CRL_FILE}\n";
+        Vprint "Installing $ref->{_CRL_FILE}\n";
         system 'cp', '-p', $new_crl_file, "$ref->{_CRL_FILE}.$$";
         rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE};
     }
@@ -649,19 +630,15 @@ sub Update_CRL($) {
         my $remove_crl = 0;
         if (defined $crl_info) {
             if (not $crl_info->{verified}) {
-                print ">>> Removing unverified CRL\n";
-                push @Errors, "Removing unverified CRL $ref->{_CRL_FILE}\n";
+                Error $ref, "Removing unverified CRL\n";
                 $remove_crl = 1;
             }
             elsif (defined $CRL_Expiration and
                    $remaining < $CRL_Expiration)
             {
-                print ">>> CRL will expire in " .
-                      Seconds_To_String($remaining) .
-                      ", removing it\n";
-                push @Errors, "CRL will expire in " .
-                              Seconds_To_String($remaining) .
-                              ", removing it\n";
+                Error $ref, "CRL will expire in " .
+                            Seconds_To_String($remaining) .
+                            ", removing it\n";
                 $remove_crl = 1;
             }
             if ($remove_crl) {
@@ -673,58 +650,32 @@ sub Update_CRL($) {
                 if (defined $ref->{CRL_WARNING_SECONDS} and
                     $remaining <= $ref->{CRL_WARNING_SECONDS})
                 {
-                    print ">>> ";
                     $notify = 1;
                 }
                 if ($remaining < 0) {
-                    print "CRL expired $how_long ago\n";
-                    push @Errors, "CRL $ref->{_CRL_FILE} expired $how_long ago\n" if $notify;
+                    Error $ref, "CRL expired $how_long ago\n";
                 }
                 elsif ($remaining == 0) {
-                    print "CRL expires NOW\n";
-                    push @Errors,"CRL $ref->{_CRL_FILE} expires NOW\n" if $notify;
+                    Error $ref, "CRL expires NOW\n";
                 }
                 else {
-                    print "CRL expires in $how_long\n";
-                    push @Errors,"CRL $ref->{_CRL_FILE} expires in $how_long\n" if $notify;
+                    if ($notify) {
+                        Error $ref, "CRL expires in $how_long\n";
+                    }
+                    else {
+                        Vprint "CRL expires in $how_long\n";
+                    }
                 }
                 if (not $crl_info->{verified}) {
-                    print ">>> CRL is not verified\n";
-                    push @Errors, "CRL $ref->{_CRL_FILE} is not verified\n";
+                    Error $ref, "CRL is not verified\n";
                 }
             }
         }
     }
     else {
-        print ">>> No CRL\n";
-        push @Errors, "No CRL for $ref->{CA_NAME}\n";
+        Vprint"No CRL\n";
     }
 } # Update_CRL
-
-# ----------------------------------------------------------------------
-
-#
-# Send a notification by e-mail.
-# First argument is subject header of e-mail message; remaining arguments
-# are the message.
-#
-sub Notify($@) {
-    my($subject, @message) = @_;
-    my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
-    my $mail_program = undef;
-    if (-x '/bin/mailx') {
-        $mail_program = '/bin/mailx';
-    }
-    elsif (-x '/bin/mail') {
-        $mail_program = '/bin/mail';
-    }
-
-    if (defined $mail_program) {
-        open PIPE, "| $mail_program -s '$subject' $recipient";
-        print PIPE @message;
-        close PIPE;
-    }
-} # Notify
 
 # ----------------------------------------------------------------------
 
@@ -749,10 +700,72 @@ Usage: $Program_Name [options]
                        are left in place.
     -force             Force file updates (applies to certificate and
                        signing_policy files)
+    -verbose           Print verbose messages
     -debugging         Enable debugging output
 EOF
     exit 1;
 } # Usage
+
+# ----------------------------------------------------------------------
+
+#
+# Report an error.
+# Annotate the CA reference (first argument) with the error message.
+#
+sub Error($$) {
+    my($ref, $message) = @_;
+    push @{$ref->{_ERRORS}}, $message;
+} # Error
+
+# ----------------------------------------------------------------------
+
+#
+# Send an error notification by e-mail.
+#
+sub Error_Notification() {
+    my $ca_count = 0;
+    my $error_count = 0;
+    my $message = '';
+
+    foreach my $ref (@ca_info) {
+        if (defined $ref->{_ERRORS}) {
+            $ca_count ++;
+            my @error_list = @{$ref->{_ERRORS}};
+            $error_count += scalar @error_list;
+            $message .= "$ref->{HASH} $ref->{CA_NAME}\n";
+            $message .= join '', @error_list;
+            $message .= "\n";
+        }
+    }
+
+    if ($error_count > 0) {
+        my $subject = "$Program_Name error, $ca_count CAs, $error_count errors";
+
+        my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+        my $mail_program = undef;
+        if (-x '/bin/mailx') {
+            $mail_program = '/bin/mailx';
+        }
+        elsif (-x '/bin/mail') {
+            $mail_program = '/bin/mail';
+        }
+
+        if (defined $mail_program) {
+            open PIPE, "| $mail_program -s '$subject' $recipient";
+            print PIPE $message;
+            close PIPE;
+        }
+    }
+} # Error_Notification
+
+# ----------------------------------------------------------------------
+
+#
+# Print a message if "-verbose" option was given
+#
+sub Vprint(@) {
+    print @_ if $User_Opt->{verbose};
+} # Vprint
 
 # ----------------------------------------------------------------------
 
