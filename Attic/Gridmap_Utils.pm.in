@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.4 2003-07-08 14:12:09-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.5 2003-07-09 21:01:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -13,6 +13,7 @@ BEGIN {
 
     @ISA         = qw( Exporter );
     @EXPORT      = qw( $Debugging
+                       @Get_mtime
                        &Get_PW &Get_GR &Get_Hostname
                        &Is_Globus_Admin &Ensure_RCS &Time_Image 
                        &Write_Records &Read_Records
@@ -28,6 +29,25 @@ BEGIN {
 
 sub Debug(@);
 sub Debugf(@);
+
+# ----------------------------------------------------------------------
+
+#
+# If the named file exists, returns its mtime.
+# If not, returns undef.
+#
+sub Get_mtime($) {
+    my($filename) = @_;
+    my @stat = stat $filename;
+    if (@stat) {
+        return $stat[9];
+    }
+    else {
+        return undef;
+    }
+} # Get_mtime
+
+# ----------------------------------------------------------------------
 
 #
 # A friendlier getpw* function
