@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.11 2004-09-24 01:52:06-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.12 2004-09-24 18:38:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -191,8 +191,11 @@ foreach my $ref (@ca_info) {
         {
             print ">>> ";
         }
-        if ($remaining <= 0) {
+        if ($remaining < 0) {
             print "CRL expired $how_long ago\n";
+        }
+        elsif ($remaining == 0) {
+            print "CRL expires NOW\n";
         }
         else {
             print "CRL expires in $how_long\n";
@@ -213,21 +216,22 @@ foreach my $ref (@ca_info) {
 
 #
 # Given a string such as "1 hour" or "10 minutes", returns the number
-# of seconds.  The numeric portion must be an integer (if you want 1.5
-# hours, specify "90 minutes").
+# of seconds.  The numeric portion must be an integer, and exactly
+# one unit may be specified, either seconds, minutes, hours, or days
+# (trailing 's' optional).  If you want 1.5 hours, specify "90 minutes").
 #
 sub String_To_Seconds($) {
-    my($timestamp) = lc @_;
-    if ($timestamp =~ /^(\d+)\s+(seconds?)$/) {
+    my($timestamp) = lc $_[0];
+    if ($timestamp =~ /^(\d+)\s+seconds?$/) {
         return $1;
     }
-    elsif ($timestamp =~ /^(\d+)\s+(minutes?)$/) {
+    elsif ($timestamp =~ /^(\d+)\s+minutes?$/) {
         return $1 * 60;
     }
-    elsif ($timestamp =~ /^(\d+)\s+(hours?)$/) {
+    elsif ($timestamp =~ /^(\d+)\s+hours?$/) {
         return $1 * 3600;
     }
-    elsif ($timestamp =~ /^(\d+)\s+(day?)$/) {
+    elsif ($timestamp =~ /^(\d+)\s+days?$/) {
         return $1 * 86400;
     }
     else {
@@ -239,34 +243,34 @@ sub String_To_Seconds($) {
 
 #
 # Given a non-negative number of seconds, returns a string such as
-# "1.2 minutes" or "32.5 days" for display.  Some precision may be lost.
+# "1m12s" or "32d 12h00m00s" for display.
+#
+# This function is not an exact inverse of String_To_Seconds();
+# the formatting is different.
 #
 sub Seconds_To_String($) {
-    my($seconds) = @_;
-    my $format = '%.1f';
-    my $num;
-    my $unit;
-    if ($seconds >= 86400) {
-        $num = sprintf $format, $seconds / 86400;
-        $unit = 'day';
+    use integer;
+    my($total) = @_;
+    die "Internal error: Seconds_To_String($total)" if $total < 0;
+    my $seconds = $total % 60;
+    $total = $total / 60;
+    my $minutes = $total % 60;
+    $total = $total / 60;
+    my $hours = $total % 24;
+    my $days = $total / 24;
+
+    if ($days > 0) {
+        return sprintf "%dd %02dh %02dm %02ds",
+                       $days, $hours, $minutes, $seconds;
     }
-    elsif ($seconds >= 3600) {
-        $num = sprintf $format, $seconds / 3600;
-        $unit = 'hour';
-    }
-    elsif ($seconds >= 60) {
-        $num = sprintf $format, $seconds / 60;
-        $unit = 'minute';
-    }
-    elsif ($seconds >= 1) {
-        $num = $seconds;
-        $unit = 'second';
+    elsif ($hours > 0) {
+        return sprintf "%dh %02dm %02ds",
+                       $hours, $minutes, $seconds;
     }
     else {
-        return "NOW";
+        return sprintf "%dm %02ds",
+                       $minutes, $seconds;
     }
-    $unit .= 's' if $num != 1;
-    return "$num $unit";
 } # Seconds_To_String
 
 # ----------------------------------------------------------------------
