@@ -1,0 +1,18 @@
+# $Id: bug-0008,v 1.1 2005-03-24 19:06:17-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0008,v $
+
+gx-map bug 0008
+Date: Thu 2005-03-24
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+
+Summary:
+The gx-ca-update error message "Newly downloaded CRL has expired"
+is potentially misleading.  The CRL in question may actually be a
+previously cached one.
+
+Suggested fix:
+Update Gridmap_Utils::Cache_File so it returns, along with the name of
+the cache file, an indication of whether it's newly downloaded or not.
+Use this to make the error message clearer.
