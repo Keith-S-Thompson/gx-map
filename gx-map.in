@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.25 2003-12-09 18:14:31-08 kst Exp $
+# $Id: gx-map.in,v 1.26 2004-07-30 18:02:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -194,35 +194,6 @@ if ($Options->{'dn-method'} eq 'dn') {
 }
 elsif ($Options->{'dn-method'} eq 'file') {
     $Options->{dn} = Get_DN_From_File $Options->{'certificate-file'};
-}
-
-#
-# Some field names used by some versions of OpenSSL have to be
-# translated for use by Globus.
-#
-# Field names are stored internally in a binary format (I don't know
-# the details) and are mapped to human-readable strings by OpenSSL.
-#
-# A field name used by CACL is not recognized by versions
-# of OpenSSL prior to 0.9.7; this name is printed as stored
-# as "0.9.2342.19200300.100.1.1".  Globus maps this name to
-# "USERID".  Starting with release 0.9.7, OpenSSL recognizes this
-# field name as "UID" -- which will probably require a change to
-# Globus and an update to the grid-mapfiles.  (Globus does not
-# use OpenSSL 0.9.7, and there are no plans for it to do so.)
-# See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
-#
-# Another field name appears as "Email" in Globus, and in releases of
-# OpenSSL prior to 0.9.7; in OpenSSL 0.9.7, the same name appears as
-# "emailAddress".
-#
-# We map these to "USERID" and "Email" respectively, so Globus will
-# recognize them.
-#
-if (defined $Options->{dn}) {
-    $Options->{dn} =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=);
-    $Options->{dn} =~ s(/UID=)(/USERID=);
-    $Options->{dn} =~ s(/emailAddress=)(/Email=);
 }
 
 if (( $Options->{operation} eq 'add' or
