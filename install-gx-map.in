@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.29 2004-11-21 23:00:35-08 kst Exp $
+# $Id: install-gx-map.in,v 1.30 2004-11-21 23:23:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -100,13 +100,14 @@ verbosely cp -f $SBIN_FILES $SBIN_DIR/.
 verbosely cp -f $LIB_FILES  $LIB_DIR/.
 if [ -r .config-file ] ; then
     config_file=`cat .config-file`
+    config_file_basename=`basename $config_file`
     echo "Copying $config_file"
     (
         echo "# This copy of the config file is included here for reference."
         echo "# Modifying this copy will have no effect."
         echo ""
         cat $config_file
-    ) > $ETC_DIR/$config_file
+    ) > $ETC_DIR/$config_file_basename
 fi
 verbosely cp -f $CA_FILES   $ETC_DIR/ca-config/.
 
