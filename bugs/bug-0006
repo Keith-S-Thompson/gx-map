@@ -1,0 +1,26 @@
+# $Id: bug-0006,v 1.1 2005-03-24 19:06:17-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0006,v $
+
+gx-map bug 0006
+Date: Thu 2005-03-24
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+
+Summary:
+In gx-ca-update, migrate from MD5 to SHA1 fingerprints.
+
+Currently, each *.cadesc file has an MD5_FINGERPRINT attribute.
+The downloaded certificate is checked against this using
+    openssl x509 -fingerprint -x509
+
+The MD5 algorithm has been partially broken.  OpenSSL also supports the
+SHA1 algorithm, which has also been partially broken but still appears
+to be stronger than MD5.  (Stronger, and so far unbroken, algorithms
+like SHA256 are available, but OpenSSL doesn't (yet?) support them.)
+
+Add an *optional* SHA1_FINGERPRINT attribute to the *.cadesc
+files.  Add this for any CAs for which I'm able to obtain a copy
+of the certificate.  In gx-ca-update, if both MD5_FINGERPRINT and
+SHA1_FINGERPRINT are specified, check them both; otherwise just check
+MD5_FINGERPRINT (which will still be mandatory).
