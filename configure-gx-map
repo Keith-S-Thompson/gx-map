@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.11 2003-07-24 22:39:20-07 kst Exp $
+# $Id: configure-gx-map,v 1.12 2003-07-25 01:10:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -120,15 +120,6 @@ die @errors if @errors;
 opendir DIR, '.' or die ".: $!\n";
 my @in_files = sort grep /\.in$/, readdir DIR;
 closedir DIR;
-
-if (-d 'cacl') {
-    opendir DIR, 'cacl' or die "cacl: $!\n";
-    my @cacl_files = sort grep /\.in$/, readdir DIR;
-    closedir DIR;
-    foreach my $file (@cacl_files) {
-        push @in_files, "cacl/$file";
-    }
-}
 
 die "No *.in files found\n" if not @in_files;
 
