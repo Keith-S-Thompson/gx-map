@@ -1,4 +1,4 @@
-# $Id: README,v 1.3 2004-10-21 17:39:23-07 kst Exp $
+# $Id: README,v 1.4 2004-11-01 16:00:46-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/README,v $
 
 ************************************************************************
@@ -95,6 +95,12 @@ format, can be downloaded.
 INDEX is a URL from which a ca.db.index file can be downloaded.
 This is provided by CACL-based CAs.  This attribute is not currently
 used by gx-ca-update.
+
+CERT_EXPIRES is the expiration date for the certificate.
+This can be determined by 
+    openssl x509 -in FILENAME.0 -noout -enddate
+This is provided for documentation; it is not currently used by
+gx-ca-update.
 
 DISABLED, if set to "yes", indicates that the CA files are not to
 be installed.  Note that setting DISABLED to "no", or omitting it,
