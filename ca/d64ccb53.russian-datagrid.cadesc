@@ -1,4 +1,4 @@
-# $Id: d64ccb53.russian-datagrid.cadesc,v 1.4 2004-10-10 03:22:01-07 kst Exp $
+# $Id: d64ccb53.russian-datagrid.cadesc,v 1.5 2004-10-13 17:45:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d64ccb53.russian-datagrid.cadesc,v $
 
 CA_NAME             Russian DataGRID CA
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     A4:56:E2:01:E6:DB:86:F6:FC:5B:E5:6C:9D:A5:E1:06
 CERTIFICATE_URL     http://lhc.sinp.msu.ru/CA/ca-cert.pem
 SIGNING_POLICY_URL  http://lhc.sinp.msu.ru/CA/d64ccb53.signing_policy
 CRL_URL             http://lhc.sinp.msu.ru/CA/ca-crl.pem
-CRL_WARNING         24 hours
 DISABLE             no
 
 # MD5 fingerprint from d64ccb53.0 downloaded 2004-10-10
