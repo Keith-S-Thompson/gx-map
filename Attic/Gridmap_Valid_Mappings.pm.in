@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.1 2003-07-17 22:16:56-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.2 2003-07-17 22:26:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 package Gridmap_Valid_Mappings;
@@ -88,7 +88,6 @@ sub Valid_Mappings($) {
         return ();
     }
     if (exists $request->{map_to_name}) {
-	Gridmap_Utils::Untaint $request->{OWNER_NAME};
         if ($request->{OWNER_NAME} ne $request->{map_to_name} and
             not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
         {
