@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.2 2004-11-23 01:27:44-08 kst Exp $
+# $Id: make-release,v 1.3 2004-11-24 16:55:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -27,6 +27,9 @@ for file in \
     README \
     README.CA \
     README.CA-SECURITY \
+    README.Cross-Site \
+    README.TeraGrid \
+    README.UPGRADE \
     Relnotes \
     cleanup-gx-map \
     configure-gx-map \
@@ -45,3 +48,4 @@ done
 
 try cd ../..
 try tar zcf gx-map-$num.tar.gz gx-map-$num
+
