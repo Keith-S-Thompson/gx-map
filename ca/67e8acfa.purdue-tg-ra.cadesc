@@ -1,4 +1,4 @@
-# $Id: 67e8acfa.purdue-tg-ra.cadesc,v 1.2 2004-10-07 22:09:59-07 kst Exp $
+# $Id: 67e8acfa.purdue-tg-ra.cadesc,v 1.3 2004-10-08 13:59:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/67e8acfa.purdue-tg-ra.cadesc,v $
 
 CA_NAME             Purdue TeraGrid Registration Authority
@@ -12,5 +12,4 @@ CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/67e8acfa.0
 SIGNING_POLICY_URL  http://tg-ca.purdue.teragrid.org:8080/67e8acfa.signing_policy
 CRL_URL             http://tg-ca.purdue.teragrid.org:8080/67e8acfa.r0
 CRL_WARNING         1 hour
-INDEX               ?
 DISABLE             no
