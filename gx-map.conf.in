@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.1 2005-01-18 20:13:34-08 kst Exp $
+# $Id: gx-map.conf.in,v 1.2 2005-01-19 10:01:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -8,6 +8,7 @@
 
 #
 # The full path to the Perl interpreter.
+# This must be set during configuration and installation.
 #
 PERL            /usr/bin/perl
 
@@ -28,19 +29,21 @@ PATH            /bin:/usr/bin
 # relevant systems within that domain have consistent user names and
 # numeric UIDs.)
 #
-NAMESPACE       SAMPLE
+NAMESPACE       UNDEF
 
 #
 # The installation directory for the gx-map package.
+# This must be set during configuration and installation.
 #
-INSTALL_DIR     /INSTALL/DIR/gx-map-0.4.1
+INSTALL_DIR     UNDEF
 
 #
 # The default directory containing data for the gx-map system.
 # On installation, INSTALL_DIR/var will be created as a symlink
 # to this directory.
+# This must be set during configuration and installation.
 #
-DATA_DIR        /DATA/DIR/gx-map-0.4.1-data
+DATA_DIR        UNDEF
 
 #
 # Permissions for the requests.log file.
@@ -68,13 +71,15 @@ REQUESTS_LOG_PERMISSIONS 444
 GLOBUS_ADMINS   globus
 
 #
-# An e-mail address for notifications of grid-mapfile updates.
-# This is not currently used.
+# An e-mail address for notifications of significant actions.
+# This is currently used only by gx-ca-update.
 #
-ADMIN_EMAIL     foo@sample.edu
+ADMIN_EMAIL     UNDEF
 
 #
 # A Perl source file with an alternative implementation of the
 # Valid_Mappings function.  If UNDEF, use the default implementation.
+# This must be set (if it's set at all) during configuration and
+# installation.
 #
 VALID_MAPPINGS_FILE   UNDEF
