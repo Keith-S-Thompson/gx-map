@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.19 2003-07-25 17:52:02-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.20 2003-07-25 18:53:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -473,7 +473,7 @@ sub Init_Cache_Info() {
 
 #
 # Given a URL, returns the name of a local file containing a copy of
-# the specified file.  Uses the wget command.
+# the specified file.  Uses the wget or ncftpget command.
 #
 # If the specified file has already been cached, we attempt to update it;
 # if the update fails, we still return the name of the old cached file.
@@ -482,6 +482,10 @@ sub Init_Cache_Info() {
 # sets the mtime of the local file to be the same as the modification
 # time of the remote file.  The "-N" option also says not to re-retrieve
 # the file unless the remote file is newer than the local copy.
+#
+# Due to a bug in wget, we need to chdir to the target directory before
+# downloading the file (rather than using the "-O" option); otherwise
+# we risk clobbering the target file.
 #
 sub Cache_File($) {
     my($url) = @_;
@@ -505,7 +509,6 @@ sub Cache_File($) {
             $result = system '%WGET%',
                              '-N',
                              '-o', '/dev/null',
-                             '-O', $file,
                              $url;
         }
         if ($result == 0) {
@@ -526,6 +529,7 @@ sub Cache_File($) {
         # Try to refresh the file.
         #
         my $dir = File::Basename::dirname $Cache_File{$url};
+        chdir $dir or die "${dir}: $!\n";
         if ($is_ftp) {
             $result = system "%NCFTPGET% -V $url 2>/dev/null";
         }
@@ -533,7 +537,6 @@ sub Cache_File($) {
             $result = system '%WGET%',
                              '-N',
                              '-o', '/dev/null',
-                             '-O', $Cache_File{$url},
                              $url;
         }
         #
