@@ -1,4 +1,4 @@
-# $Id: 3a0abe12.malaysia.cadesc,v 1.2 2004-11-01 17:04:17-08 kst Exp $
+# $Id: 3a0abe12.malaysia.cadesc,v 1.3 2005-03-29 19:27:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3a0abe12.malaysia.cadesc,v $
 
 CA_NAME             Malaysia
@@ -8,6 +8,7 @@ HASH                3a0abe12
 SUBJECT             /C=MY/ST=PG/L=GELUGOR/O=USM/OU=GCORP/CN=GRID/emailAddress=gridadm@cs.usm.my
 MAY_SIGN            ?
 CERTIFICATE_MD5     18:72:16:6F:62:FB:BC:7C:9C:77:80:0C:1A:2B:0B:2B
+# CERTIFICATE_SHA1    F9:DB:FE:85:8D:B0:67:AB:19:68:1E:97:B1:DB:79:72:AE:76:FD:D0
 CERTIFICATE_URL     https://www.apgrid.org/CA/3a0abe12.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/3a0abe12.signing_policy
 CRL_URL             ?
@@ -21,4 +22,4 @@ DISABLE             yes
 # as the old Globus CA.  Overlapping namespaces are ill-advised.  This CA
 # is marked as disabled until this is resolved.
 
-# MD5 fingerprint from 3a0abe12.0 downloaded 2004-10-15
+# MD5 and SHA1 fingerprints from 3a0abe12.0 downloaded 2005-03-29
