@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.44 2004-11-03 16:58:03-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.45 2004-11-05 02:41:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -510,7 +510,8 @@ sub Date_To_Seconds($) {
         my($year) = $6;
         my($TZ) = uc $7;
         if (defined $month_num{$month_name} and
-            ($TZ eq 'GMT' or $TZ eq 'UTC'))
+            ($TZ eq 'GMT' or $TZ eq 'UTC') and
+            $year < 2038)
         {
             return Time::Local::timegm
                       $second, $minute, $hour,
