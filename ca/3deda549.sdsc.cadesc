@@ -1,16 +1,16 @@
-# $Id: 3deda549.sdsc.cadesc,v 1.4 2004-09-23 18:11:27-07 kst Exp $
+# $Id: 3deda549.sdsc.cadesc,v 1.5 2004-09-24 20:58:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
 
-CA_NAME         SDSC CA (CACL, new version)
-HOMEPAGE        http://users.sdsc.edu/~kst/NEW-CA/
-CONTACT		Bill Link <bill@sdsc.edu>
-HASH            3deda549
-SUBJECT         /C=US/O=SDSC/OU=SDSC-CA/CN=Certificate Authority/UID=certman
-MAY_SIGN        /C=US/O=SDSC/*
-CERTIFICATE     http://users.sdsc.edu/~kst/NEW-CA/3deda549.0
-SIGNING_POLICY  http://users.sdsc.edu/~kst/NEW-CA/3deda549.signing_policy
-CRL             ?
-CRL_WARNING     ?
-INDEX           http://users.sdsc.edu/~kst/NEW-CA/ca.db.index
+CA_NAME             SDSC CA (CACL, new version)
+HOMEPAGE            http://users.sdsc.edu/~kst/NEW-CA/
+CONTACT             Bill Link <bill@sdsc.edu>
+HASH                3deda549
+SUBJECT             /C=US/O=SDSC/OU=SDSC-CA/CN=Certificate Authority/UID=certman
+MAY_SIGN            /C=US/O=SDSC/*
+CERTIFICATE_URL     http://users.sdsc.edu/~kst/NEW-CA/3deda549.0
+SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/NEW-CA/3deda549.signing_policy
+CRL_URL             ?
+CRL_WARNING         ?
+INDEX               http://users.sdsc.edu/~kst/NEW-CA/ca.db.index
 
 # The CRL is not currently being updated
