@@ -1,4 +1,4 @@
-# $Id: outline,v 1.1 2003-04-23 17:25:34-07 kst Exp $
+# $Id: outline,v 1.2 2003-04-23 17:30:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/outline,v $
 
 The gx-map system works across a set of systems that share a writable
@@ -31,7 +31,14 @@ and perhaps a process id and a random number.
 
 A few notes on the fields:
 
-The "operation" field can be either "add" or "remove".
+The "operation" field can be either "add" or "remove".  For "add",
+both "dn" and "map_to_name" must be specified; the request is for a
+new grid-mapfile entry mapping the "dn" (certificate distinguished
+name) to the "map_to_name" (Unix account name).  For "remove", both
+"dn" and "map_to_name" can be specified (requesting that the specified
+mapping be removed), or just the "dn" (removing all mappings for that
+distinguished name), or just the "map_to_name" (removing all mappings
+for that unix account name).
 
 The timestamp is in two parts.  The first part is a raw Unix timestamp,
 the number of seconds since 1970-01-01 00:00:00 GMT.  The second part
@@ -70,6 +77,7 @@ entry might look something like this:
 	PROCESSED           1048813500 Fri 2003-03-28 01:05:00 UTC
 	OWNER_UID           15996 kst
 	OWNER_NAME          kst
+	SITE                SDSC
 }
 
 The globus request log is owned by, and can only be written by,
