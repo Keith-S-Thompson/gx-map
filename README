@@ -1,4 +1,4 @@
-# $Id: README,v 1.15 2004-11-04 02:40:08-08 kst Exp $
+# $Id: README,v 1.16 2004-11-04 14:28:47-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
@@ -44,6 +44,10 @@ Release 0.4.0 includes some new tools:
 
     gx-convert-log converts data from a previous gx-map installation
     for use with gx-map 0.4.
+
+(I've decided to call this release 0.4.0 rather than 0.4 so the name
+of the tarball will sort properly in a directory listing if there's
+a 0.4.1 release.)
 
 New features in 0.4.0:
 
