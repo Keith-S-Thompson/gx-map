@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.7 2004-12-16 17:23:00-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.8 2005-01-04 18:56:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -119,7 +119,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.7 $';
+my $Rev = '$Revision: 1.8 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -128,11 +128,6 @@ Usage "Can't read file $Input_Log\n" if not -r $Input_Log;
 my @refs = Gridmap_Utils::Read_Records '-multiple', $Input_Log;
 
 my $timestamp = Gridmap_Utils::Time_Image $now;
-#
-# The result of Time_Image starts with a raw timestamp.
-# We don't need that in the log.
-#
-$timestamp =~ s/^\d+ //;
 
 print '# $', 'Id:$', "\n";
 print '# $', 'Source:$', "\n";
