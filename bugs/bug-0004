@@ -1,4 +1,4 @@
-# $Id: bug-0004,v 1.1 2005-03-24 19:06:16-08 kst Exp $
+# $Id: bug-0004,v 1.2 2005-03-24 19:09:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0004,v $
 
 gx-map bug 0004
@@ -6,6 +6,7 @@ Date: Thu 2005-03-24
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Title: New feature: In gx-ca-update, apply options to individual CAs.
 
 Summary:
 New feature: In gx-ca-update, apply options to individual CAs.
