@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.11 2003-07-08 14:02:31-07 kst Exp $
+# $Id: gx-map.in,v 1.12 2003-07-08 15:04:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -858,8 +858,8 @@ sub Usage(@) {
 Usage: $Prog_Name [options]
 Option names may be abbreviated.
     -help         : Show this message and exit.
-    -long-help    : Show this long usage message (recommended
-                    only for Globus administrators and masochists)
+    -long-help    : Show long usage message (recommended only for
+                    Globus administrators and masochists)
     -interactive  : Run interactively (recommended)
                     In interactive mode, other options will be ignored.
 EOF
