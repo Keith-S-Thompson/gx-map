@@ -1,7 +1,7 @@
-# $Id: 47183fda.kisti-root.cadesc,v 1.5 2004-10-13 17:44:57-07 kst Exp $
+# $Id: 47183fda.kisti-root.cadesc,v 1.6 2004-10-17 22:38:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
 
-CA_NAME             KISTI Grid Certificate Authority
+CA_NAME             KISTI Grid Root CA
 HOMEPAGE            https://ca.gridcenter.or.kr/
 CONTACT             jhkwak@kisti.re.kr
 HASH                47183fda
