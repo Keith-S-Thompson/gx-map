@@ -1,0 +1,30 @@
+# $Id: bug-0003,v 1.1 2005-03-24 17:29:01-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0003,v $
+
+gx-map bug 0003
+Date: Thu 2005-03-24
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+
+Summary:
+"ci" command can change requests.log permissions.
+
+gx-check-requests does the following when it needs to update
+the requests.log file:
+
+    chmod 644 requests.log
+    append new text to requests.log
+    chmod 444 requests.log
+    rcs -l requests.log
+    ci -u -f requests.log
+
+(This assumes REQUESTS_LOG_PERMISSIONS = 444.)
+
+The intent is to leave the permissions on requests.log set to 444,
+but the "ci" command causes it to inherit the permissions of the
+RCS/requests.log,v file.
+
+Suggested fix:
+Set the permissions on both requests.log and RCS/requests.log,v
+(It might also be good to check whether the RCS directory exists.)
