@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.40 2005-01-07 17:14:03-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.41 2005-03-27 15:37:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -54,11 +54,6 @@ use File::Basename ();
 use File::Copy ();
 use Getopt::Long ();
 
-# 
-# Make warnings fatal.
-# 
-$SIG{__WARN__} = sub { die @_ };
-
 my $Install_Dir;
 BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
@@ -92,6 +87,9 @@ if ($User_Opt->{version}) {
 
 Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
 
 # my $Data_Dir = defined $User_Opt->{directory}
 #                      ? $User_Opt->{directory}
