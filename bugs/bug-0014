@@ -1,0 +1,22 @@
+# $Id: bug-0014,v 1.1 2005-03-29 19:44:53-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0014,v $
+
+gx-map bug 0014
+Date: Tue 2005-03-29
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: use Class::Struct
+
+Summary:
+The gx-map system makes extensive use of structures implemented as
+hash references, with the keys representing member names.  This is
+vulnerable to typos; for example:
+    if (defined $ref->{some_feild}) ...
+will quietly fail even if $ref->{some_field}) is defined.
+
+Suggested fix:
+Use Class::Struct.
+Update Read_Records and Write_Records to work with Class::Struct objects.
+Keep track of how many typos are found while converting the code,
+and analyze the possible consequences of each one.
