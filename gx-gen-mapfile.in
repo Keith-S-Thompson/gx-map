@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.21 2003-07-27 23:01:37-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.22 2003-08-29 16:46:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -172,7 +172,7 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 #
 # Process removals
 #
-my %Mappings = (); # key = DN, value = user name
+my %Mappings = (); # key = DN, value = hash ref
 
 foreach my $request (@requests) {
     #
@@ -180,7 +180,8 @@ foreach my $request (@requests) {
     # that don't exist on this system.  This should also eliminate any
     # unauthorized requests (which theoretically, could be created only
     # by something like a hacked copy of gx-map).  The Valid_Mappings
-    # function can also be modified for site-specific requirements.
+    # function can also be modified for site-specific requirements,
+    # such as rejecting mappings for certificates issued by the Globus CA.
     #
     # The Valid_Mappings function may return multiple mappings for a
     # single request.
@@ -198,35 +199,66 @@ foreach my $request (@requests) {
         my $map_to_name = exists $mapping->{map_to_name}
                           ? $mapping->{map_to_name}
                           : undef;
+        my $timestamp = $mapping->{timestamp};
+        $timestamp =~ s/ .*$//;
+        my $is_primary = ( not defined $mapping->{secondary} or
+                           $mapping->{secondary} ne 'yes' );
+
         Debug ">>> Processing mapping, operation = $operation, dn = ",
               (defined $dn ? $dn : "undef"),
               ", map_to_name = ",
               (defined $map_to_name ? "\"$map_to_name\"" : "undef"),
               "\n";
         if ($operation eq 'add') {
-            Debug ">>> Add $dn --> $map_to_name\n";
-            $Mappings{$dn} = $map_to_name;
+            #
+            # Add a mapping; we have a DN and a user name.
+            #
+            # If it's primary, set the primary mapping (overriding any
+            # previous primary mapping; There Can Be Only One).
+            #
+            # If it's secondary, set a secondary mapping (which may coexist
+            # with other secondary mappings).
+            #
+            if ($is_primary) {
+                Debug ">>> Add $dn --> $map_to_name (primary)\n";
+                $Mappings{$dn}->{primary} = $map_to_name;
+            }
+            else {
+                Debug ">>> Add $dn --> $map_to_name (secondary)\n";
+                $Mappings{$dn}->{secondary}->{$map_to_name} = $timestamp;
+            }
         }
         elsif ($operation eq 'remove') {
-            if (exists $Mappings{$dn} and
-                $Mappings{$dn} eq $map_to_name)
-            {
-                Debug ">>> Delete $dn --> $Mappings{$dn}\n";
-                delete $Mappings{$dn};
+            if (exists $Mappings{$dn}) {
+                if ($Mappings{$dn}->{primary} eq $map_to_name) {
+                    Debug ">>> Delete $dn --> $map_to_name (primary)\n";
+                    delete $Mappings{$dn}->{primary};
+                }
+                if (exists $Mappings{$dn}->{secondary}->{$map_to_name}) {
+                    Debug ">>> Delete $dn --> $Mappings{$dn} (secondary)\n";
+                    delete $Mappings{$dn}->{secondary}->{$map_to_name};
+                }
             }
         }
         elsif ($operation eq 'remove-dn') {
             if (exists $Mappings{$dn}) {
-                Debug ">>> Delete $dn --> $Mappings{$dn}\n";
+                Debug ">>> Delete $dn\n";
                 delete $Mappings{$dn};
             }
         }
         elsif ($operation eq 'remove-user') {
-            my @target_dns = grep { $Mappings{$_} eq $map_to_name }
-                                  keys %Mappings;
-            foreach my $dn (@target_dns) {
-                Debug ">>> Delete $dn --> $Mappings{$dn}\n";
-                delete $Mappings{$dn};
+            #
+            # Don't waste time sorting the keys.
+            #
+            foreach my $dn (keys %Mappings) {
+                if ($Mappings{$dn}->{primary} eq $map_to_name) {
+                    Debug ">>> Delete $dn --> $map_to_name (primary)\n";
+                    delete $Mappings{$dn}->{primary};
+                }
+                if (exists $Mappings{$dn}->{secondary}->{$map_to_name}) {
+                    Debug ">>> Delete $dn --> $map_to_name (secondary)\n";
+                    delete $Mappings{$dn}->{secondary}->{$map_to_name};
+                }
             }
         }
         else {
@@ -236,7 +268,21 @@ foreach my $request (@requests) {
         if ($User_Opt->{debugging}) {
             Debug ">>> Current grid-mapfile entries:\n";
             foreach my $dn (sort keys %Mappings) {
-                Debug "* $dn $Mappings{$dn}\n";
+                Debug "* $dn\n";
+                Debug "    Primary: ";
+                if (defined $Mappings{$dn}->{primary}) {
+                    Debug "$Mappings{$dn}->{primary}\n";
+                }
+                else {
+                    Debug "undef\n";
+                }
+                Debug "    Secondary: ";
+                my @secondaries = ();
+                foreach my $name (keys %{$Mappings{$dn}->{secondary}}) {
+                    my $ref = $Mappings{$dn}->{secondary}->{$name};
+                    push @secondaries, "$name:$ref->{$name}";
+                }
+                Debug "( @secondaries )\n";
             }
             Debug "<<< END\n";
 
@@ -275,16 +321,39 @@ EOF
 # Now traverse the %Mappings hash, sorted by DN, and generate a mapfile
 #
 foreach my $dn (sort keys %Mappings) {
-    my $username = $Mappings{$dn};
-    my $real_name = undef;
-    if ($User_Opt->{'real-name'}) {
-        $real_name = User_Real_Name $username;
+    my @names = ();
+
+    #
+    # First the primary name, if any.
+    #
+    if (defined $Mappings{$dn}->{primary}) {
+        push @names, $Mappings{$dn}->{primary};
     }
-    if (defined $real_name) {
-        print OUT "$dn $username # $real_name\n";
+
+    #
+    # Then the secondary names, if any, sorted by timestamp.
+    #
+    if (defined $Mappings{$dn}->{secondary}) {
+        my $ref = $Mappings{$dn}->{secondary};
+        push @names, sort { $ref->{$a} <=> $ref->{$b} } keys %$ref;
     }
-    else {
-        print OUT "$dn $username\n";
+
+    if (@names) {
+        if ($User_Opt->{'real-name'}) {
+            my @real_names = ();
+            foreach my $name (@names) {
+                my $real_name = User_Real_Name $name;
+                push @real_names, ( defined $real_name ? $real_name : '?' );
+            }
+            print OUT "$dn ",
+                      join(',', @names),
+                      " # ",
+                      join(',', @real_names),
+                      "\n";
+        }
+        else {
+            print OUT "$dn ", join(',', @names), "\n";
+        }
     }
 }
 close OUT;
