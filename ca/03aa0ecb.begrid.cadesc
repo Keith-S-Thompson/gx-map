@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.2 2004-10-08 13:59:27-07 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.3 2004-10-08 20:44:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -7,6 +7,7 @@ CONTACT             gridca@belnet.be
 HASH                03aa0ecb
 SUBJECT             /C=BE/O=BELNET/OU=BEGrid/CN=BEGrid CA/Email=gridca@belnet.be
 MAY_SIGN            ?
+CERTIFICATE_MD5     E3:90:39:1B:3C:E9:89:57:86:54:3E:AF:0F:B8:40:69
 CERTIFICATE_URL     https://gridra.belnet.be/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             https://gridra.belnet.be/pub/crl/cacrl.pem
