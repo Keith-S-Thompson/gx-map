@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.36 2004-10-13 16:41:29-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.37 2004-10-13 17:53:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -55,9 +55,6 @@
 #      If the SIGNED_BY field is set, verify that the corresponding
 #      CA certificate has been installed.
 #
-#      Drop the CRL_WARNING field (or make it optional?); instead,
-#      warn if the CRL is past 90% of its lifetime.
-#
 
 use strict;
 
@@ -91,12 +88,13 @@ sub Certificate_Info($);
 sub Update_Certificate($);
 sub Update_Signing_Policy($);
 sub Update_CRL($);
-sub Usage(@);
+sub Check_Dependencies();
 sub Log($$);
 sub Error($$);
 sub Vprint(@);
 sub Notify();
 sub Debug(@);
+sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
 my $now = time;
@@ -109,6 +107,7 @@ my @Opts = ( $User_Opt,
                  list-cas!
                  target-dir=s
                  expire-crl=s
+                 warn-crl=s
                  force!
                  ignore-disable!
                  email!
@@ -152,15 +151,17 @@ if (not defined $User_Opt->{'target-dir'}) {
 }
 
 my $CRL_Expiration = undef;
-if (defined $User_Opt->{'expire-crl'}) {
-    if ($User_Opt->{'expire-crl'} =~ /^(\d+)([smhd])$/) {
-        $CRL_Expiration = $1;
-        if    ($2 eq 'm') { $CRL_Expiration *= 60 }
-        elsif ($2 eq 'h') { $CRL_Expiration *= 3600 }
-        elsif ($2 eq 'd') { $CRL_Expiration *= 86400 }
-    }
-    else {
-        Usage "Invalid argument to -expire-url option\n";
+foreach my $opt (qw(expire-crl warn-crl)) {
+    if (defined $User_Opt->{$opt}) {
+        if ($User_Opt->{$opt} =~ /^(\d+)([smhd])$/) {
+            $CRL_Expiration = $1;
+            if    ($2 eq 'm') { $CRL_Expiration *= 60 }
+            elsif ($2 eq 'h') { $CRL_Expiration *= 3600 }
+            elsif ($2 eq 'd') { $CRL_Expiration *= 86400 }
+        }
+        else {
+            Usage "Invalid argument to -$opt option\n";
+        }
     }
 }
 
@@ -272,6 +273,8 @@ foreach my $ref (@ca_info) {
 
     Vprint "\n";
 }
+
+Check_Dependencies;
 
 Notify;
 
@@ -460,7 +463,7 @@ sub Get_CA_Ref($) {
     my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
                                     SIGNED_BY SUBJECT MAY_SIGN
                                     CERTIFICATE_MD5 CERTIFICATE_URL
-                                    SIGNING_POLICY_URL CRL_URL CRL_WARNING
+                                    SIGNING_POLICY_URL CRL_URL
                                     INDEX DISABLE
                                     _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
@@ -498,15 +501,6 @@ sub Get_CA_Ref($) {
     }
     if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
         push @errors, "Invalid HASH\n";
-    }
-    if (defined $ref->{CRL_WARNING} and $ref->{CRL_WARNING} ne '?') {
-        my $seconds = String_To_Seconds $ref->{CRL_WARNING};
-        if (defined $seconds) {
-            $ref->{CRL_WARNING_SECONDS} = $seconds;
-        }
-        else {
-            push @errors, "Bad value for CRL_WARNING\n";
-        }
     }
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
         push @errors, "Value for DISABLE must be \"yes\" or \"no\"\n";
@@ -708,6 +702,22 @@ sub Update_Certificate($) {
                             "\"$ref->{SUBJECT}\", got " .
                             "\"$cert_info->{subject}\"\n";
             }
+            if (defined $ref->{SIGNED_BY} and
+                $ref->{SIGNED_BY} ne '?')
+            {
+                if ($cert_info->{issuer} ne $ref->{SIGNED_BY}) {
+                    Error $ref, "Mismatched issuer, expected " .
+                                "\"$ref->{SIGNED_BY}\", got " .
+                                "\"$cert_info->{issuer}\"\n";
+                }
+            }
+            else {
+                if ($cert_info->{issuer} ne $cert_info->{subject}) {
+                    Error $ref, "Certificate is not self-signed, " .
+                                "but no SIGNED_BY attribute was " .
+                                "specified in $ref->{_FILENAME}\n";
+                }
+            }
             if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
                 Error $ref, "Mismatched md5 fingerprint, expected " .
                             "\"$ref->{CERTIFICATE_MD5}\", got " .
@@ -868,13 +878,13 @@ sub Update_CRL($) {
                 my $expiration_string = Time_Image $crl_info->{next_update};
                 my $how_long = Seconds_To_String abs $remaining;
                 my $notify = 0;
-#               if (defined $ref->{CRL_WARNING_SECONDS} and
-#                   $remaining <= $ref->{CRL_WARNING_SECONDS})
-#               {
-#                   $notify = 1;
-#               }
                 if ($crl_info->{used} > 0.9) {
                     $notify = 1;
+                }
+                elsif (defined $User_Opt->{'warn-crl'}) {
+                    if ($remaining < $User_Opt->{'warn-crl'}) {
+                        $notify = 1;
+                    }
                 }
                 if ($remaining < 0) {
                     Error $ref, "CRL expired at $expiration_string " .
@@ -906,35 +916,11 @@ sub Update_CRL($) {
 
 # ----------------------------------------------------------------------
 
-sub Usage(@) {
-    print @_ if @_;
-    print <<"EOF";
-Usage: $Program_Name [options]
-    -help              Display this message and exit
-    -version           Display version information and exit
-    -ca name           Name of a CA.  This argument may be given multiple
-                       times, or CA names may be delimited by commas or
-                       blanks.  The argument is a field of the *.cadesc
-                       file name; use the hash value to avoid ambiguity
-    -ca ALL            Use all available CAs
-    -list-cas          List available CAs and exit
-    -target-dir dir    Target directory
-    -expire-crl time   Remove a CRL that will expire within
-                       "time".  "time" is expressed as a number
-                       followed by 's' (seconds), 'm' (minutes),
-                       'h' (hours) or 'd' (days); for example
-                       "-expire-crl 75m".  By default, expiring CRLs
-                       are left in place.
-    -force             Force file updates (applies to certificate and
-                       signing_policy files)
-    -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
-    -email             Send e-mail to configured ADMIN_EMAIL address on errors.
-                       Default is "-email"; use "-noemail" to disable.
-    -verbose           Print verbose messages
-    -debugging         Enable debugging output
-EOF
-    exit 1;
-} # Usage
+#
+# 
+sub Check_Dependencies() {
+
+} # Check_Dependencies
 
 # ----------------------------------------------------------------------
 
@@ -1041,3 +1027,39 @@ sub Vprint(@) {
 sub Debug(@) {
     print @_ if $User_Opt->{debugging};
 } # Debug
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+    -help              Display this message and exit
+    -version           Display version information and exit
+    -ca name           Name of a CA.  This argument may be given multiple
+                       times, or CA names may be delimited by commas or
+                       blanks.  The argument is a field of the *.cadesc
+                       file name; use the hash value to avoid ambiguity
+    -ca ALL            Use all available CAs
+    -list-cas          List available CAs and exit
+    -target-dir dir    Target directory
+    -expire-crl time   Remove a CRL that will expire within
+                       "time".  "time" is expressed as a number
+                       followed by 's' (seconds), 'm' (minutes),
+                       'h' (hours) or 'd' (days); for example
+                       "-expire-crl 75m".  By default, expiring CRLs
+                       are left in place.
+    -warn-crl time     Issue a warning message if the CRL will expire
+                       within the specified time.  Regardless of this
+                       option, a warning will be issued if the CRL has
+                       used more than 90% of its lifetime.
+    -force             Force file updates (applies to certificate and
+                       signing_policy files)
+    -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
+    -email             Send e-mail to configured ADMIN_EMAIL address on errors.
+                       Default is "-email"; use "-noemail" to disable.
+    -verbose           Print verbose messages
+    -debugging         Enable debugging output
+EOF
+    exit 1;
+} # Usage
