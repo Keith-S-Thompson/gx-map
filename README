@@ -1,7 +1,8 @@
-# $Id: README,v 1.17 2004-11-22 18:02:42-08 kst Exp $
+# $Id: README,v 1.18 2004-11-23 20:32:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
-This is gx-map, a system for automated updates of Globus grid-mapfiles.
+This is gx-map, a system for automated updates of Globus grid-mapfiles
+and CA files.
 
 The "gx-map" command is used to request the addition or deletion
 of an entry in the grid-mapfile.  Users should normally run
@@ -27,7 +28,10 @@ incomplete.  The "ncsa-sdsc-user-map" is specific to NCSA and SDSC
 systems, and is out of date.  (The new SOURCE attribute is intended
 to enable tracking where each transaction was entered.)
 
-Documentation is still sadly lacking.
+Documentation is still sadly lacking.  General information is available
+in this README file; information about the gx-ca-update command is
+in README.CA and README.CA-SECURITY.  Future releases will include
+man pages.
 
 There is a known bug in the gx-map system (inadvertently discovered
 by Mei-Hui Su of ISI) that can affect sites with multiple systems
@@ -57,4 +61,4 @@ gx-gen-mapfile ignores requests without a valid OWNER_NAME field.
 This bug was discovered in release 0.3, and has not yet been fixed
 as of release 0.4.0.
 
-                -- Keith Thompson <kst@sdsc.edu> 2004-11-22
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-23
