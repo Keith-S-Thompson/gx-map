@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.8 2003-07-09 20:56:26-07 kst Exp $
+# $Id: configure-gx-map,v 1.9 2003-07-17 22:17:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -21,6 +21,7 @@ my @Var_Names = qw( PERL WGET NAMESPACE
                     INSTALL_DIR DATA_DIR
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
+$Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
 
 if (scalar @ARGV == 1) {
     $Config_File = $ARGV[0];
@@ -80,7 +81,7 @@ if (-d 'cacl') {
     my @cacl_files = sort grep /\.in$/, readdir DIR;
     closedir DIR;
     foreach my $file (@cacl_files) {
-	push @in_files, "cacl/$file";
+        push @in_files, "cacl/$file";
     }
 }
 
@@ -89,6 +90,18 @@ die "No *.in files found\n" if not @in_files;
 foreach my $in_file (@in_files) {
     my $out_file = $in_file;
     $out_file =~ s/\.in$//;
+
+    if ($in_file eq 'Gridmap_Valid_Mappings.pm.in' and
+        defined $Config{VALID_MAPPINGS_FILE})
+    {
+        #
+        # Special case: The VALID_MAPPINGS_FILE configuration variable
+        # overrides the name of the input file (but not the output file)
+        # for Gridmap_Valid_Mappings.pm.
+        #
+        $in_file = $Config{VALID_MAPPINGS_FILE};
+    }
+
     print "$in_file --> $out_file\n";
     open IN, $in_file or die "$in_file: $!\n";
     open OUT, ">$out_file" or die "$out_file: $!\n";
