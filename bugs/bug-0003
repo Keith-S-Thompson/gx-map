@@ -1,4 +1,4 @@
-# $Id: bug-0003,v 1.1 2005-03-24 17:29:01-08 kst Exp $
+# $Id: bug-0003,v 1.2 2005-03-24 19:09:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0003,v $
 
 gx-map bug 0003
@@ -6,6 +6,7 @@ Date: Thu 2005-03-24
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Title: "ci" command can change requests.log permissions.
 
 Summary:
 "ci" command can change requests.log permissions.
