@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.9 2003-07-17 22:17:45-07 kst Exp $
+# $Id: configure-gx-map,v 1.10 2003-07-24 02:18:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -17,7 +17,7 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 my $Config_File = undef;
 my %Config = ();
-my @Var_Names = qw( PERL WGET NAMESPACE
+my @Var_Names = qw( PERL WGET NCFTPGET NAMESPACE
                     INSTALL_DIR DATA_DIR
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
