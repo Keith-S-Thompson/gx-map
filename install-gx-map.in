@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.26 2004-11-17 20:17:00-08 kst Exp $
+# $Id: install-gx-map.in,v 1.27 2004-11-20 15:55:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -57,7 +57,7 @@ verbosely () {
 all=0
 if [ $# -eq 1 ] ; then
     if [ "$1" = "-all" ] ; then
-	all=1
+        all=1
     fi
 fi
 
@@ -69,10 +69,9 @@ ETC_DIR=$INSTALL_DIR/etc
 DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
+SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log"
 if [ $all -eq 1 ] ; then
-    SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
-else
-    SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log"
+    SBIN_FILES="$SBIN_FILES gx-admins"
 fi
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 DATA_FILES="ncsa-sdsc-user-map"
