@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.53 2004-11-30 19:08:50-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.54 2004-12-26 20:31:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -112,6 +112,7 @@ sub Use_Commands(@);
 sub Ensure_RCS();   # Provided only for compatibility with gx-map 0.3
 
 sub Time_Image($);
+sub Long_Time_Image($);
 
 sub Write_Records($$@);
 sub Read_Records($$);
@@ -401,19 +402,35 @@ sub Ensure_RCS() {
 
 #
 # For a given time, returns a string of the form
-#     "ssssssssss YYYY-MM-DD hh:mm:ss UTC"
-# where "ssssssssss" is the raw Unix timestamp.
+#     YYYY-MM-DD hh:mm:ss UTC"
 #
 sub Time_Image($) {
     my($time) = @_;
     my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
         = gmtime $time;
 
-    return sprintf "%010d %s %04d-%02d-%02d %02d:%02d:%02d UTC",
+    return sprintf "%s %04d-%02d-%02d %02d:%02d:%02d UTC",
+                   (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
+                   1900+$year, 1+$mon, $mday, $hour, $min, $sec;
+} # Time_Image
+
+# ----------------------------------------------------------------------
+
+#
+# For a given time, returns a string of the form
+#     "ssssssssss YYYY-MM-DD hh:mm:ss UTC"
+# where "ssssssssss" is the raw Unix timestamp.
+#
+sub Long_Time_Image($) {
+    my($time) = @_;
+    my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+        = gmtime $time;
+
+    return sprintf "%10d %s %04d-%02d-%02d %02d:%02d:%02d UTC",
                    $time,
                    (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
                    1900+$year, 1+$mon, $mday, $hour, $min, $sec;
-}
+} # Long_Time_Image
 
 # ----------------------------------------------------------------------
 
