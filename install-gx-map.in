@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.12 2003-07-25 01:08:25-07 kst Exp $
+# $Id: install-gx-map.in,v 1.13 2003-08-28 12:35:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -88,6 +88,11 @@ verbosely cp -f $DATA_FILES $DATA_DIR/.
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
     verbosely mkdir -m 1733 $DATA_DIR/new-requests
+fi
+
+if [ ! -e $DATA_DIR/new-requests/.update ] ; then
+    verbosely touch $DATA_DIR/new-requests/.update 
+    verbosely chmod 666 $DATA_DIR/new-requests/.update 
 fi
 
 if [ ! -h $INSTALL_DIR/var ] ; then
