@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.20 2004-11-17 20:11:47-08 kst Exp $
+# $Id: configure-gx-map,v 1.21 2004-11-22 16:39:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -71,7 +71,7 @@ my @Var_Names = qw( PERL PATH
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
 
-if (scalar @ARGV == 1) {
+if (scalar @ARGV == 1 and -e $ARGV[0]) {
     $Config_File = $ARGV[0];
 }
 else {
@@ -130,7 +130,9 @@ foreach my $name (@Var_Names) {
 # Do some quick sanity checks (especially for GLOBUS_ADMINS, whose syntax
 # has changed in release 0.4).
 #
-if (defined $Config{PERL} and $Config{PERL} !~ /^\// or not -x $Config{PERL}) {
+if (defined $Config{PERL} and
+    ($Config{PERL} !~ /^\// or not -x $Config{PERL}))
+{
     push @errors, "$Config_File: Bad value for \"PERL\"\n";
 }
 if (defined $Config{PATH}) {
@@ -166,7 +168,7 @@ if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
     my %ok = ( '400' => 1, '440' => 1, '444' => 1 );
     if (not $ok{$Config{REQUESTS_LOG_PERMISSIONS}}) {
         push @errors, "$Config_File: Bad REQUESTS_LOG_PERMISSIONS " .
-		      "(use 400, 440, or 444)\n";
+                      "(use 400, 440, or 444)\n";
     }
 }
 if (defined $Config{GLOBUS_ADMINS}) {
@@ -178,13 +180,14 @@ if (defined $Config{GLOBUS_ADMINS}) {
                  "in GLOBUS_ADMINS\n";
         }
         elsif ($admin =~ /^group:/) {
-            push @errors,
-                 "$Config_File: Groups are no longer supported in GLOBUS_ADMINS\n";
+            push @errors, "$Config_File: Groups are no longer supported " .
+                          "in GLOBUS_ADMINS\n";
         }
         else {
             my @pw = getpwnam $admin;
             if (not @pw) {
-                push @errors, "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
+                push @errors,
+                     "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
             }
         }
     }
