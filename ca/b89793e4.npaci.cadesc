@@ -1,0 +1,14 @@
+# $Id: b89793e4.npaci.cadesc,v 1.1 2004-09-14 20:21:11-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/b89793e4.npaci.cadesc,v $
+
+CA_DESC         SDSC CA (CACL)
+HOMEPAGE        http://www.npaci.edu/CA/
+CONTACT		Bill Link <bill@sdsc.edu>
+HASH            b89793e4
+SUBJECT         /C=US/O=NPACI/OU=SDSC/CN=Certificate Manager/UID=certman
+MAY_SIGN        /C=US/O=NPACI/*
+CERTIFICATE     http://www.npaci.edu/CA/b89793e4.0
+SIGNING_POLICY  http://www.npaci.edu/CA/b89793e4.signing_policy
+CRL             http://www.npaci.edu/CA/b89793e4.r0
+CRL_MAX_AGE     12 hours
+INDEX           http://www.npaci.edu/CA/ca.db.index
