@@ -1,0 +1,21 @@
+# $Id: 6fee79b0.iucc.cadesc,v 1.1 2004-10-07 21:37:39-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/6fee79b0.iucc.cadesc,v $
+
+CA_NAME             IUCC CA
+HOMEPAGE            http://certificate.iucc.ac.il/
+CONTACT             ca@mail.iucc.ac.il
+HASH                6fee79b0
+SUBJECT             /C=IL/O=IUCC/CN=IUCC/emailAddress=ca@mail.iucc.ac.il
+MAY_SIGN            /O=IUCC/C=IL/*
+CERTIFICATE_URL     http://certificate.iucc.ac.il/ca/cacert.pem
+SIGNING_POLICY_URL  http://certificate.iucc.ac.il/ca/6fee79b0.signing_policy
+CRL_URL             http://certificate.iucc.ac.il/ca/cacrl.pem
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
+
+#
+# Warning: The distributed 6fee79b0.signing_policy file specifies 
+# "UICC" rather than "globus" on the pos_rights and cond_subjects
+# lines.
+#
