@@ -1,4 +1,4 @@
-# $Id: aa99c057.psc-root.cadesc,v 1.6 2004-10-08 20:44:42-07 kst Exp $
+# $Id: aa99c057.psc-root.cadesc,v 1.7 2004-10-10 03:21:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/aa99c057.psc-root.cadesc,v $
 
 CA_NAME             PSC Root Certificate Authority
@@ -12,3 +12,5 @@ CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/aa99c057.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/aa99c057.signing_policy
 CRL_URL             http://ocsp.psc.edu:8000/ca/aa99c057.r0
 CRL_WARNING         2 hours
+
+# MD5 fingerprint from aa99c057.0 downloaded 2004-10-10
