@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.5 2004-09-14 19:59:47-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.6 2004-09-14 21:38:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -164,21 +164,24 @@ foreach my $ref (@ca_info) {
     if (not $User_Opt->{force} and -e $target_cert_file) {
         print "Skipping existing $target_cert_file\n";
     }
-    else {
+    elsif ($ref->{CERTIFICATE} =~ m<(http|ftp)://>) {
         print "Installing $target_cert_file\n";
         # Gridmap_Utils::Untaint $target_cert_file;
-        my $cert_url;
-        eval { $cert_url = Gridmap_Utils::Cache_File $ref->{CERTIFICATE} };
+        my $cache_file;
+        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE} };
         if (defined $@ and $@ ne '') {
+            #
+            # Error in Cache_File function
+            #
             print ">>> $@";
         }
-        elsif ($cert_url =~ m<^(ftp|http)://>) {
-            my $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE};
-            if (defined $cache_file and -r $cache_file) {
-                system 'cp', '-p', $cache_file, "$target_cert_file.$$";
-                rename "$target_cert_file.$$", $target_cert_file;
-            }
+        elsif (defined $cache_file and -r $cache_file) {
+            system 'cp', '-p', $cache_file, "$target_cert_file.$$";
+            rename "$target_cert_file.$$", $target_cert_file;
         }
+    }
+    else {
+        print "No URL given for certificate\n";
     }
 
     #
@@ -190,7 +193,7 @@ foreach my $ref (@ca_info) {
         print "Skipping existing $policy_file\n";
     }
     else {
-        # Gridmap_Untils::Untaint $policy_file;
+        # Gridmap_Utils::Untaint $policy_file;
         print "Creating $policy_file\n";
         open POLICY, ">$policy_file" or die "$policy_file: $!\n";
         print POLICY Signing_Policy $ref;
@@ -216,12 +219,31 @@ foreach my $ref (@ca_info) {
     if (not $needs_update) {
         print "Skipping existing $target_crl_file\n";
     }
-    else {
+    elsif ($ref->{CRL} =~ m<(http|ftp)://>) {
         print "Installing $target_crl_file\n";
-        my $cache_file = Gridmap_Utils::Cache_File $ref->{CRL};
-        system 'cp', $cache_file, "$target_crl_file.$$";
-        rename "$target_crl_file.$$", $target_crl_file;
+        # Gridmap_Utils::Untaint $target_crl_file;
+        my $cache_file;
+        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CRL} };
+        if (defined $@ and $@ ne '') {
+            #
+            # Error in Cache_File function
+            #
+            print ">>> $@";
+        }
+        elsif (defined $cache_file and -r $cache_file) {
+            system 'cp', '-p', $cache_file, "$target_crl_file.$$";
+            rename "$target_crl_file.$$", $target_crl_file;
+        }
     }
+    else {
+        print "No URL given for CRL\n";
+    }
+
+    #
+    # Check expiration date of CRL.
+    # To do: warn if time to expiration is less than a specified
+    # threshold.
+    #
     my $expires = CRL_Expiration $target_crl_file;
     if (defined $expires) {
         my $remaining = $expires - time;
@@ -245,6 +267,7 @@ foreach my $ref (@ca_info) {
             print "$target_crl_file expires in $delta\n";
         }
     }
+    print "\n";
 }
 
 ########################################################################
