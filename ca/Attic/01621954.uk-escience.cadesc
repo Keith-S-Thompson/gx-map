@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.12 2004-11-21 23:54:20-08 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.13 2005-03-17 12:59:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
@@ -7,13 +7,15 @@ CONTACT             support@grid-support.ac.uk
 HASH                01621954
 SUBJECT             /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
 MAY_SIGN            /C=UK/O=eScience/*
-CERTIFICATE_MD5     32:2C:26:C7:54:47:94:51:68:4A:92:C9:0F:9F:95:E6
+CERTIFICATE_MD5     F7:65:A8:5E:67:2B:7C:F4:90:20:38:14:BC:05:04:F6
 CERTIFICATE_URL     http://ca.grid-support.ac.uk/cacert.pem
 SIGNING_POLICY_URL  http://www.grid-support.ac.uk/ca/user-documentation/01621954.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/cgi-bin/importCRL.pem
 CERT_EXPIRES        Aug  4 10:36:41 2007 GMT
 
-# As of 2004-11-21, the signing_policy file is not available.
-# The MAY_SIGN attribute is based on a copy downloaded 2004-10-10.
-
-# MD5 fingerprint from 01621954.0 downloaded 2004-11-21
+# MD5 fingerprint from cacert.pem (01621954.0) downloaded 2005-03-17
+# An older version of this certificate has an MD5 fingerprint of
+# 32:2C:26:C7:54:47:94:51:68:4A:92:C9:0F:9F:95:E6
+# Either version should be acceptable, though the newer one may be
+# more secure because it uses an SHA1-with-RSA signature algorithm
+# rather than an MD5-with-RSA signature algorithm.
