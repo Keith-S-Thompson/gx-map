@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.48 2004-11-05 02:05:42-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.49 2004-11-15 16:18:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -79,6 +79,7 @@ BEGIN {
                 GLOBUS_ADMINS => '%GLOBUS_ADMINS%',
                 ADMIN_EMAIL   => '%ADMIN_EMAIL%' );
     use File::Basename ();
+    use Cwd ();
 }
 
 # ----------------------------------------------------------------------
@@ -114,6 +115,7 @@ sub GT2_Subject($);
 sub GT3_Subject($);
 
 sub DN_List($);
+sub Dup_Ref($);
 
 sub Debug(@);
 sub Debugf(@);
@@ -633,8 +635,7 @@ sub Cache_File($) {
     my($url) = @_;
     my $is_ftp = $url =~ /^ftp/;
     my $result;
-    my $cwd = `pwd`;
-    chomp $cwd;
+    my $cwd = Cwd::getcwd;
 
     Init_Cache_Info();
     my $initial_download = not defined $Cache_File{$url};
@@ -1053,6 +1054,27 @@ sub DN_List($) {
         return ($gt2_dn, $gt3_dn);
     }
 } # DN_List
+
+# ----------------------------------------------------------------------
+
+#
+# Given a hash reference, returns a list of one or two hash references
+# based on applying DN_List to the 'dn' attribute (if any).  Note that
+# if some fields are references, some of the referenced data may be
+# shared between the two resulting references.
+#
+sub Dup_Ref($) {
+    my ($ref) = @_;
+    return $ref if not defined $ref->{dn};
+    my @dn_list = DN_List $ref->{dn};
+    return $ref if scalar @dn_list == 1;
+
+    my %copy_of_hash = %$ref;
+    my $new_ref = \%copy_of_hash;
+    $ref->{dn}     = $dn_list[0];
+    $new_ref->{dn} = $dn_list[1];
+    return ( $ref, $new_ref );
+} # Dup_Ref
 
 # ----------------------------------------------------------------------
 
