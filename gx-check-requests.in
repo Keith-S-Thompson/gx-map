@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.16 2003-07-25 02:11:24-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.17 2003-07-25 02:20:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -172,6 +172,7 @@ if (defined $User_Opt->{copy}) {
 
     my $result = system '/bin/cp', '-p', '-f', $requests_log, $tmp_file;
     rename $tmp_file, $target_file;
+    chmod 0444, $target_file;
 }
 
 #
@@ -398,6 +399,7 @@ Usage: $Prog_Name [options]
                       Default is $Default_Data_Dir
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
+                      The file's mode is set to 444 (-r--r--r--).
     -debugging      : Enable debugging output
 EOF
     exit 1;
