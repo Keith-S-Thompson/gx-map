@@ -1,4 +1,4 @@
-# $Id: 3deda549.sdsc.cadesc,v 1.7 2004-10-06 19:58:22-07 kst Exp $
+# $Id: 3deda549.sdsc.cadesc,v 1.8 2004-10-08 20:44:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
 
 CA_NAME             SDSC CA
@@ -7,6 +7,7 @@ CONTACT             Bill Link <bill@sdsc.edu>
 HASH                3deda549
 SUBJECT             /C=US/O=SDSC/OU=SDSC-CA/CN=Certificate Authority/UID=certman
 MAY_SIGN            /C=US/O=SDSC/*
+CERTIFICATE_MD5     07:83:1A:81:1F:2C:DD:AF:1E:BD:92:03:B5:F8:A9:C9
 CERTIFICATE_URL     http://www.sdsc.edu/CA/3deda549.0
 SIGNING_POLICY_URL  http://www.sdsc.edu/CA/3deda549.signing_policy
 CRL_URL             http://www.sdsc.edu/CA/3deda549.r0
