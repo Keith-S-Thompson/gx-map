@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.22 2003-08-29 16:46:33-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.23 2003-08-29 17:09:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -186,6 +186,11 @@ foreach my $request (@requests) {
     # The Valid_Mappings function may return multiple mappings for a
     # single request.
     #
+    # Note that each mapping contains only the "dn" and/or "map_to_name"
+    # fields; other information, such as the operation and the timestamp,
+    # come from the original request, and thus may not be modified by
+    # the Valid_Mappings function.
+    #
     my @request_mappings = Gridmap_Valid_Mappings::Valid_Mappings $request;
     my $operation = $request->{operation};
     foreach my $mapping (@request_mappings) {
@@ -199,10 +204,10 @@ foreach my $request (@requests) {
         my $map_to_name = exists $mapping->{map_to_name}
                           ? $mapping->{map_to_name}
                           : undef;
-        my $timestamp = $mapping->{timestamp};
+        my $timestamp = $request->{timestamp};
         $timestamp =~ s/ .*$//;
-        my $is_primary = ( not defined $mapping->{secondary} or
-                           $mapping->{secondary} ne 'yes' );
+        my $is_primary = ( not defined $request->{secondary} or
+                           $request->{secondary} ne 'yes' );
 
         Debug ">>> Processing mapping, operation = $operation, dn = ",
               (defined $dn ? $dn : "undef"),
