@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.3 2004-09-13 17:01:12-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.4 2004-09-14 19:21:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -53,6 +53,7 @@ use strict;
 
 use File::Basename ();
 use Getopt::Long ();
+use Time::Local ();
 
 # 
 # Make warnings fatal.
@@ -68,6 +69,8 @@ use Gridmap_Utils ();
 
 sub Seconds($);
 sub Signing_Policy($);
+sub Timestamp_To_Seconds($);
+sub CRL_Expiration($);
 sub Usage(@);
 sub Debug(@);
 
@@ -115,8 +118,20 @@ if ($User_Opt->{debugging}) {
 }
 
 my @ca_info = ();
-
 my $ca_conf_dir = "$Gridmap_Utils::Config{DATA_DIR}/ca.conf";
+
+if (scalar $User_Opt->{ca} == 1 and
+    $User_Opt->{ca}->[0] eq 'ALL')
+{
+    opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
+    my @files = sort grep /\.cadesc$/, readdir CONF_DIR;
+    closedir CONF_DIR;
+    if (not @files) {
+        die "No *.cadesc files in $ca_conf_dir\n";
+    }
+    @{$User_Opt->{ca}} = map s/\.cadesc$//, @files;
+}
+
 foreach my $ca (@{$User_Opt->{ca}}) {
     my $ca_desc_file = "$ca_conf_dir/$ca.cadesc";
     my $ref = Gridmap_Utils::Read_Records '-single', $ca_desc_file;
@@ -137,6 +152,7 @@ if ($User_Opt->{debugging}) {
 Gridmap_Utils::Init_Cache_Info;
 
 foreach my $ref (@ca_info) {
+    print "Processing $ref->{HASH} $ref->{CA_DESC}\n";
     my $target_dir = $User_Opt->{'target-dir'};
     # Gridmap_Utils::Untaint $target_dir;
 
@@ -150,9 +166,18 @@ foreach my $ref (@ca_info) {
     else {
         print "Installing $target_cert_file\n";
         # Gridmap_Utils::Untaint $target_cert_file;
-        my $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE};
-        system 'cp', '-p', $cache_file, "$target_cert_file.$$";
-        rename "$target_cert_file.$$", $target_cert_file;
+        my $cert_url;
+        eval { $cert_url = Gridmap_Utils::Cache_File $ref->{CERTIFICATE} };
+        if (defined $@ and $@ ne '') {
+            print ">>> $@";
+        }
+        elsif ($cert_url =~ m<^(ftp|http)://>) {
+            my $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE};
+            if (defined $cache_file and -r $cache_file) {
+                system 'cp', '-p', $cache_file, "$target_cert_file.$$";
+                rename "$target_cert_file.$$", $target_cert_file;
+            }
+        }
     }
 
     #
@@ -160,7 +185,7 @@ foreach my $ref (@ca_info) {
     #
     my $policy_file
         = "$User_Opt->{'target-dir'}/$ref->{HASH}.signing_policy";
-    if (-e $policy_file) {
+    if (not $User_Opt->{force} and -e $policy_file) {
         print "Skipping existing $policy_file\n";
     }
     else {
@@ -176,7 +201,7 @@ foreach my $ref (@ca_info) {
     #
     my $target_crl_file = "$target_dir/$ref->{HASH}.r0";
     my $needs_update = 0;
-    if (not -e $target_crl_file) {
+    if ($User_Opt->{force} or not -e $target_crl_file) {
         $needs_update = 1;
     }
     else {
@@ -195,6 +220,29 @@ foreach my $ref (@ca_info) {
         my $cache_file = Gridmap_Utils::Cache_File $ref->{CRL};
         system 'cp', $cache_file, "$target_crl_file.$$";
         rename "$target_crl_file.$$", $target_crl_file;
+    }
+    my $expires = CRL_Expiration $target_crl_file;
+    if (defined $expires) {
+        my $remaining = $expires - time;
+        my $delta = abs $remaining;
+        if ($delta >= 86400) {
+            $delta = sprintf "%.2f day(s)", $delta / 86400;
+        }
+        elsif ($delta >= 3600) {
+            $delta = sprintf "%.2f hour(s)", $delta / 3600;
+        }
+        elsif ($delta >= 60) {
+            $delta = sprintf "%.2f hour(s)", $delta / 60;
+        }
+        else {
+            $delta .= " second(s)";
+        }
+        if ($remaining <= 0) {
+            print "$target_crl_file expired $delta ago\n";
+        }
+        else {
+            print "$target_crl_file expires in $delta\n";
+        }
     }
 }
 
@@ -259,6 +307,52 @@ sub Signing_Policy($) {
 
 # ----------------------------------------------------------------------
 
+sub Timestamp_To_Seconds($) {
+    my($timestamp) = @_;
+    my %month_num =
+        ( Jan => 0, Feb => 1, Mar =>  2, Apr =>  3,
+          May => 4, Jun => 5, Jul =>  6, Aug =>  7,
+          Sep => 8, Oct => 9, Nov => 10, Dec => 11 );
+    if ($timestamp =~
+            /^([a-z][a-z][a-z]) \s+
+              (\d+)\s+
+              (\d+\d+):(\d+\d+):(\d+\d+) \s+
+              (\d+) \s+
+              (\w+) $/ix )
+    {
+        my $month_name = $1;
+        my $mday = $2;
+        my($hour, $minute, $second) = ($3, $4, $5);
+        my($year) = $6;
+        my($TZ) = uc $7;
+        if (defined $month_num{$month_name} and
+            ($TZ eq 'GMT' or $TZ eq 'UTC'))
+        {
+            return Time::Local::timegm
+                      $second, $minute, $hour,
+                      $mday, $month_num{$month_name}, $year;
+        }
+    }
+    return undef;
+} # Timestamp_To_Seconds
+
+# ----------------------------------------------------------------------
+
+sub CRL_Expiration($) {
+    my($filename) = @_;
+    open PIPE, "openssl crl -in $filename -noout -text |" or return undef;
+    while (<PIPE>) {
+        if (/^\s*Next Update: (.*)$/) {
+            close PIPE;
+            return Timestamp_To_Seconds $1;
+        }
+    }
+    close PIPE;
+    return undef;
+} # CRL_Expiration
+
+# ----------------------------------------------------------------------
+
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
@@ -266,6 +360,7 @@ Usage: $Prog_Name [options]
     -help            : Display this message and exit
     -version         : Display version information and exit
     -ca name         : Name of a CA (may be given multiple times)
+    -ca ALL          : Use all available CAs
     -target-dir dir  : Target directory
     -force           : Force file updates
     -debugging       : Enable debugging output
