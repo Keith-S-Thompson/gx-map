@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.11 2003-07-08 14:01:47-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.12 2003-07-08 15:01:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -13,6 +13,8 @@ use Getopt::Long ();
 # 
 $SIG{__WARN__} = sub { die @_ };
 
+$ENV{PATH} = '/bin:/usr/bin';
+
 my $Install_Dir;
 BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
@@ -24,6 +26,8 @@ sub Usage(@);
 sub Get_Request_Info($);
 sub Flatten_Errors($);
 sub Append_To_Log($@);
+# sub Is_Tainted($);
+# sub Check_Tainting($$);
 sub Debug(@);
 sub Debugf(@);
 
@@ -43,6 +47,15 @@ Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
 my $Data_Dir = defined $User_Opt->{directory}
                      ? $User_Opt->{directory}
                      : $Default_Data_Dir;
+#
+# Untaint $Data_Dir and make sure it's an absolute pathname.
+#
+if ($Data_Dir =~ /^(\/.*)$/) {
+    $Data_Dir = $1;
+}
+else {
+    die "Invalid data directory: \"$Data_Dir\"\n";
+}
 my $requests_log     = "$Data_Dir/requests.log";
 my $errors_log       = "$Data_Dir/errors.log";
 my $new_request_dir  = "$Data_Dir/new-requests";
@@ -70,6 +83,13 @@ my %is_valid_operation = map { $_ => 1 } @valid_operations;
 opendir DIR, $new_request_dir or die "$new_request_dir: $!\n";
 my @files = grep /\.request$/, sort readdir DIR;
 closedir DIR;
+
+#
+# Untaint the file names
+#
+foreach (@files) {
+    ($_) = (/^(.*)$/);
+}
 
 my @good_requests = ();
 my @good_request_files = ();
@@ -319,6 +339,25 @@ sub Append_To_Log($@) {
     system "rcs -l $log_file >/dev/null 2>/dev/null";
     system "ci -u -f $log_file </dev/null >/dev/null 2>/dev/null";
 } # Append_To_Log
+
+# ----------------------------------------------------------------------
+
+# sub Is_Tainted($) {
+#     my($arg) = @_;
+#     my $nada = substr($arg, 0, 0);  # zero-length
+#     local $@;  # preserve caller's version
+#     eval { eval "# $nada" };
+#     return length($@) != 0;
+# } # Is_Tainted
+
+# ----------------------------------------------------------------------
+
+# sub Check_Tainting($$) {
+#     my($name, $value) = @_;
+#     if (Is_Tainted $value) {
+#         die ">>> $name = \"$value\" is tainted\n";
+#     }
+# } # Check_Tainting
 
 # ----------------------------------------------------------------------
 
