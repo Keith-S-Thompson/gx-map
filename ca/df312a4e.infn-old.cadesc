@@ -1,4 +1,4 @@
-# $Id: df312a4e.infn-old.cadesc,v 1.6 2004-11-01 17:04:31-08 kst Exp $
+# $Id: df312a4e.infn-old.cadesc,v 1.7 2005-03-29 19:27:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/df312a4e.infn-old.cadesc,v $
 
 CA_NAME             INFN CA (2) (old)
@@ -9,16 +9,15 @@ SUBJECT             /C=IT/O=INFN/OU=Authority/CN=INFN CA (2)
 MAY_SIGN            /C=it/O=INFN/*
 MAY_SIGN            /C=IT/O=INFN/*
 CERTIFICATE_MD5     DD:E2:32:03:EF:05:F1:26:FE:1C:45:CE:AB:E1:04:D0
+# CERTIFICATE_SHA1    20:B1:90:FE:5E:C6:7B:36:48:89:BD:5F:BB:C3:98:34:95:BE:54:D8
 CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/df312a4e.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/df312a4e.signing_policy
 CRL_URL             http://security.fi.infn.it/CA/crl-2003.pem
 CERT_EXPIRES        Sep 22 08:58:50 2003 GMT
 DISABLE             yes
 
-#
 # The CA certificate expired 2003-09-22.
 # It seems to have been replaced by the INFN Certification Authority,
 # 49f18420.infn.cadesc.
-#
 
-# MD5 fingerprint from df312a4e.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from df312a4e.0 downloaded 2005-03-29
