@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v 1.1 2003-07-19 13:03:05-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v 1.2 2003-07-19 17:09:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v $
 
 package Gridmap_Valid_Mappings;
@@ -106,11 +106,11 @@ sub Valid_Mappings($) {
     # Don't map certificates issued by the Globus CA.
     #
     if (exists $request->{dn} and
-	( $request->{dn} =~ m<^/C=us/O=Globus/> or
-	  $request->{dn} =~ m<^/C=US/O=Globus/> or
-	  $request->{dn} =~ m<^/O=Grid/O=Globus> ))
+        ( $request->{dn} =~ m<^"/C=us/O=Globus/> or
+          $request->{dn} =~ m<^"/C=US/O=Globus/> or
+          $request->{dn} =~ m<^"/O=Grid/O=Globus> ))
     {
-	return ();
+        return ();
     }
 
     my $mapping = {};
