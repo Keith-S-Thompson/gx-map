@@ -1,0 +1,44 @@
+# $Id: DESIGN.New-Config,v 1.1 2005-02-07 21:06:25-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/DESIGN.New-Config,v $
+
+Currently (as of release 0.4.1), someone who wants to install gx-map
+has to write a plain-text configuration file defining a number
+of parameters.  (sample.conf is provided as a template.)  That's ok
+for a single manual installation, but it's impractical for automated
+installation, expecially when gx-map becomes part of NMI.  It's also
+inconsistent with the way most software packages are configured
+(configure;make;make install).
+
+Instead, a new version of configure-gx-map (maybe I'll just call it
+"configure") will read gx-map.conf.in and write gx-map.conf, which
+will be installed in the etc subdirectory.  The INSTALL_DIR and PERL
+variables cannot be changed after installation; all others can be.
+The configure script will accept command-line arguments to set values
+for configuration variabels, but most of these will be optional.
+Anything not specified will be set either to some reasonable default
+or to "UNDEF".
+
+Each program, including the gx-map client, will read the gx-map.conf
+file on startup.  Any post-installation changes in gx-map.conf will
+be reflected immediately when a command is run -- but care must
+be taken for some of them.  For example, changing GLOBUS_ADMINS
+(change the name?) will change the behavior of gx-check-requests,
+but it won't affect the existing requests.log file.  And so forth.
+
+Generally an installation won't be usable immediately after it's been
+installed, because some of the variables will be UNDEF.  All commands
+that read the config file will bail out with an error message if
+anything is set to UNDEF, or if there are errors in the config file.
+The error message will tell the user to update the config file,
+or whatever needs to be done.
+
+I'm not sure what to do about DATA_DIR.  It doesn't need to be
+specified in the config file; all tools use the "var" symlink.
+Provide a command in sbin that creates the data directory and sets
+up the "var" symlink.  Until this is done, all tools die with an
+error message.
+
+Since gx-map is going to be part of NMI, some sites are likely to
+install it but not want to use it.  Provide an explicit variable in
+the config file that enables or disables gx-map, so users don't run
+the gx-map command and expect something to happen.
