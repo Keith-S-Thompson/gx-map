@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.7 2003-12-03 22:23:38-08 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.8 2003-12-04 19:30:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -73,8 +73,8 @@ sub Valid_Mappings($);
 
 # ----------------------------------------------------------------------
 
-my $User_Map = undef;
-my $Admin_Map = undef;
+my $User_Map   = undef;
+my $Admin_List = undef;
 
 #
 # Given a reference to a request record, the Valid_Mappings function
@@ -117,8 +117,8 @@ my $Admin_Map = undef;
 #
 sub Valid_Mappings($) {
     my($request) = @_;
-    my $have_user_map = 0;
-    my $have_admin_map = 0;
+    my $have_user_map   = (ref $User_Map   eq 'HASH');
+    my $have_admin_list = (ref $Admin_List eq 'HASH');
     my $This_Namespace = '%NAMESPACE%';
 
     Debug ">>> Entering Valid_Mappings\n";
@@ -129,17 +129,28 @@ sub Valid_Mappings($) {
           "\n";
 
     if (not defined $User_Map) {
+	#
+	# This could take a while
+	#
 	$User_Map = Gridmap_Utils::Read_User_Map
 		        "$Install_Dir/var/user-map", $This_Namespace;
-	$have_user_map = 1 if ref $User_Map eq 'HASH';
+	$have_user_map = (ref $User_Map eq 'HASH');
     }
-    if (not defined $Admin_Map) {
-	$Admin_Map = Gridmap_Utils::Read_Admin_List
+    if (not defined $Amin_List) {
+	$Admin_List = Gridmap_Utils::Read_Admin_List
 		        "$Install_Dir/var/admin-list";
-	$have_admin_map = 1 if ref $Admin_Map eq 'HASH';
+	$have_admin_map (if ref $Admin_Map eq 'HASH');
     }
 
-    if ($request->{NAMESPACE} eq $This_Namespace) {
+    if (not defined $request->{NAMESPACE}) {
+        Debug ">>> Invalid, no NAMESPACE\n";
+        return ();
+    }
+    elsif ($request->{NAMESPACE} eq $This_Namespace) {
+	#
+	# For this namespace, we can infer a missing OWNER_NAME from
+	# the OWNER_UID (if the account exists on this machine).
+	#
 	if (defined $request->{OWNER_UID} and
 	    not defined $request->{OWNER_NAME})
 	{
@@ -153,7 +164,48 @@ sub Valid_Mappings($) {
 	    Debug ">>> Invalid, no OWNER_NAME\n";
 	    return ();
 	}
+	if (exists $request->{map_to_name}) {
+	    if ($request->{OWNER_NAME} ne $request->{map_to_name} and
+		not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
+	    {
+		Debug ">>> Invalid, bad OWNER_NAME\n";
+		return ();
+	    }
+	}
+	else {
+	    if (not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME}) {
+		Debug ">>> Invalid, OWNER_NAME is not an admin\n";
+		return ();
+	    }
+	}
     }
+    else {
+	#
+	# For other namespaces, look at the user map if we have one.
+	# If there's no user map, reject the mapping.
+	# Don't consider the numeric UID for admins at other sites;
+	# all admin accounts should exist on any system running
+	# gx-check-requests.
+	#
+========================================================================
+	if (not $have_user_map) {
+	    Debug ">>> No user map\n";
+	    return ();
+	}
+	my $owner_is_admin = ( $have_admin_map and
+			       defined $request->{OWNER_NAME} and
+			       $Admin_List->{$request->{OWNER_NAME}} );
+	my $owner = ( defined $request->{OWNER_NAME} ?
+		              $request->{OWNER_NAME} :
+			      $request->{OWNER_UID} );
+	if (not $owner_is_admin and
+========================================================================
+	    
+	if (defined $request->{OWNER_NAME}) {
+	    if ($request->{OWNER_NAME} ne $request->{map_to_name}) {
+	}
+    }
+
 ========================================================================
 
     if (not defined $request->{OWNER_NAME}) {
