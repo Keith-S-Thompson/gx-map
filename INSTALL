@@ -1,0 +1,39 @@
+# $Id: INSTALL,v 1.1 2003-07-21 04:14:10-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/INSTALL,v $
+
+Installation instructions for gx-map.
+
+1.  Create a configuration file.  See sample.conf in this directory
+    for an outline. Several other *.conf files are also included.
+
+2.  Optionally create a customized version of the Gridmap_Valid_Mappings
+    Perl module.  The default implementation only accepts mappings
+    from the current namespace (see sample.conf for the definition of
+    "namespace" in this context).  A customized version might recognize
+    other mappings (perhaps to be downloaded from a web page), translate
+    user names from one namespace to another, and so forth.
+
+3.  In this directory, run
+        ./configure-gx-map <...>.conf
+
+4.  In this directory, run
+        make install
+    This must be done from the administrative account that will own
+    the installed files (typically "globus" or "root").
+
+5.  Set up cron jobs to be executed by the installation account
+    (words in all-caps will need to be substituted).
+
+5a. Check for new requests:
+	DIR/sbin/gx-check-requests -namespace NAMESPACE
+
+5b. Regenerate the grid-mapfile when necessary:
+        DIR/sbin/gx-gen-mapfile MAPFILE
+    If mapping are to be processed from multiple sources (including
+    web pages), use the "-req" option; for example:
+        DIR/sbin/gx-gen-mapfile -req default -req URL MAPFILE
+
+5c. The gx-gen-mapfile command checks for updates to the /etc/passwd
+    file.  On systems where new user accounts do not cause the
+    /etc/passwd file to be updated (e.g., systems using YP/NIS),
+    it may be necessary to run "gx-map -update" periodically.
