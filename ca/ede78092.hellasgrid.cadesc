@@ -1,0 +1,15 @@
+# $Id: ede78092.hellasgrid.cadesc,v 1.1 2004-10-07 21:37:42-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/ede78092.hellasgrid.cadesc,v $
+
+CA_NAME             HellasGrid CA
+HOMEPAGE            http://pki.physics.auth.gr/hellasgrid-ca/
+CONTACT             hellasgrid-ca@physics.auth.gr
+HASH                ede78092
+SUBJECT             /C=GR/O=HellasGrid/CN=HellasGrid CA
+MAY_SIGN            /C=GR/O=HellasGrid/*
+CERTIFICATE_URL     http://pki.physics.auth.gr/hellasgrid-ca/CA/ede78092.0
+SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ede78092.signing_policy
+CRL_URL             http://pki.physics.auth.gr/hellasgrid-ca/CRL/ede78092.r0
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
