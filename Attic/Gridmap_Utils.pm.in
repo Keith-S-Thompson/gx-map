@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.15 2003-07-24 02:19:49-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.16 2003-07-24 02:34:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -452,7 +452,7 @@ sub Cache_File($) {
         my $cache_file = "$dir/$file";
         chdir $dir or die "${dir}: $!\n";
         if ($is_ftp) {
-            $result = system "ncftpget -V $file 2>/dev/null";
+            $result = system "ncftpget -V $url 2>/dev/null";
         }
         else {
             $result = system '%WGET%',
@@ -470,7 +470,8 @@ sub Cache_File($) {
         else {
             unlink $cache_file;
             rmdir $dir;
-            die "wget failed for $url, system() returned $result\n";
+            my $cmd = $is_ftp ? 'ncftpget' : 'wget';
+            die "$cmd failed for $url, system() returned $result\n";
         }
     }
     else {
@@ -479,7 +480,7 @@ sub Cache_File($) {
         #
         my $dir = File::Basename::dirname $Cache_File{$url};
         if ($is_ftp) {
-            $result = system "ncftpget -V $file 2>/dev/null";
+            $result = system "ncftpget -V $url 2>/dev/null";
         }
         else {
             $result = system '%WGET%',
