@@ -1,4 +1,4 @@
-# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.1 2004-09-14 20:21:09-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.2 2004-09-14 21:48:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85ca9edc.psc-kerberos.cadesc,v $
 
 CA_DESC         PSC Kerberos Certification Authority
@@ -10,5 +10,5 @@ MAY_SIGN        /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certifi
 CERTIFICATE     http://ocsp.psc.edu:8000/ca/85ca9edc.0
 SIGNING_POLICY  http://ocsp.psc.edu:8000/ca/85ca9edc.signing_policy
 CRL             ?
-CRL_MAX_AGE     ?
+CRL_MAX_AGE     12 hours
 INDEX           ?
