@@ -1,4 +1,4 @@
-# $Id: a7792cdb.npaci-old.cadesc,v 1.8 2004-09-29 20:54:11-07 kst Exp $
+# $Id: a7792cdb.npaci-old.cadesc,v 1.9 2004-10-08 13:59:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a7792cdb.npaci-old.cadesc,v $
 
 CA_NAME             NPACI (old)
@@ -12,5 +12,4 @@ CERTIFICATE_URL     ?
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
 CRL_WARNING         ?
-INDEX               ?
 DISABLE             yes
