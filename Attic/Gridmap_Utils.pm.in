@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.2 2003-05-27 21:10:03-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.3 2003-06-05 19:44:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -351,13 +351,13 @@ sub Read_Records($) {
 # is set.)  If there are no valid mappings, an empty list is returned.
 #
 # This function is intended to be customized for each installation.
-# In particular, the check for the SITE field will almost certainly need
-# to be modified.
+# In particular, the check for the NAMESPACE field will almost certainly
+# need to be modified.
 #
 # The most basic implementation returns a single mapping if the
 # map_to_name field (if set) is a valid account on this system, the
 # OWNER_NAME field either matches map_to_name (if set) or is a Globus
-# administrator, and the SITE field is correct.  If the map_to_name
+# administrator, and the NAMESPACE field is correct.  If the map_to_name
 # field is not set (for a remove-dn operation), the OWNER_NAME field
 # must be a Globus administrator.
 #
@@ -386,12 +386,12 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no such user\n";
         return ();
     }
-    if (not defined $request->{SITE}) {
-        Debug ">>> Invalid, no SITE\n";
+    if (not defined $request->{NAMESPACE}) {
+        Debug ">>> Invalid, no NAMESPACE\n";
         return ();
     }
-    if ($request->{SITE} ne '%SITE%') {
-        Debug ">>> Invalid, SITE ne '%SITE%'\n";
+    if ($request->{NAMESPACE} ne '%NAMESPACE%') {
+        Debug ">>> Invalid, NAMESPACE ne '%NAMESPACE%'\n";
         return ();
     }
     if (exists $request->{map_to_name}) {
