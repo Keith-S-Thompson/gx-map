@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.5 2003-07-09 21:01:20-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.6 2003-07-10 02:43:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -18,11 +18,13 @@ BEGIN {
                        &Is_Globus_Admin &Ensure_RCS &Time_Image 
                        &Write_Records &Read_Records
                        &Valid_Mappings
+                       &Cache_File
                        &Debug &Debugf );
     %EXPORT_TAGS = qw();
     @EXPORT_OK   = qw();
     # use AutoLoader qw(AUTOLOAD);
     $Debugging = undef;
+    use File::Basename ();
 }
 
 # ----------------------------------------------------------------------
@@ -438,6 +440,51 @@ sub Valid_Mappings($) {
     }
     return ( $mapping );
 } # Valid_Mappings
+
+# ----------------------------------------------------------------------
+
+my %Cache_File = ();
+my $Download_Dir = "%INSTALL_DIR%/var/cache";
+my $Download_Index = 0;
+
+# ----------------------------------------------------------------------
+
+sub Init_Cache_Info() {
+    opendir DIR, $Download_Dir or die "$Download_Dir: $!\n";
+    SUBDIR:
+    foreach my $subdir (sort readdir DIR) {
+        next SUBDIR if $subdir !~ /^\d+-\d+-\d+$/;
+        open URL, "$Download_Dir/$subdir/.url" or next SUBDIR;
+        my $url = <URL>;
+        chomp $url;
+        close URL;
+        $Cache_File{$url} = "$Download_Dir/$subdir/" .
+                            File::Basename::basename $url;
+    }
+    closedir DIR;
+} # Init_Cache_Info
+
+# ----------------------------------------------------------------------
+
+sub Cache_File($) {
+    my($url) = @_;
+    Init_Cache_Info();
+    if (not defined $Cache_File{$url}) {
+        my $dir = "$Download_Dir/" . time . "-$$-$Download_Index";
+        $Download_Index ++;
+        mkdir $dir, 0777 or die "$dir: $!\n";
+        open URL, ">$dir/.url" or die "$dir/.url: $!\n";
+        print URL "$url\n";
+        close URL;
+        $Cache_File{$url} = "$dir/" . File::Basename::basename $url;
+    }
+    my $result = system '%WGET%', '-N',
+                                  '-o', '/dev/null',
+                                  '-O', $Cache_File{$url},
+				  $url;
+    die "wget failed for $url\n" if $result != 0;
+    return $Cache_File{$url};
+} # Cache_File
 
 # ----------------------------------------------------------------------
 
