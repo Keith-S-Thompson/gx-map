@@ -1,4 +1,4 @@
-# $Id: 9a1da9f9.tacc.cadesc,v 1.4 2004-10-08 20:44:40-07 kst Exp $
+# $Id: 9a1da9f9.tacc.cadesc,v 1.5 2004-10-10 03:21:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9a1da9f9.tacc.cadesc,v $
 
 CA_NAME             TACC Certification Authority
@@ -12,3 +12,5 @@ CERTIFICATE_URL     http://www.tacc.utexas.edu/CA/9a1da9f9.0
 SIGNING_POLICY_URL  http://www.tacc.utexas.edu/CA/9a1da9f9.signing_policy
 CRL_URL             http://www.tacc.utexas.edu/CA/CRL
 CRL_WARNING         12 hours
+
+# MD5 fingerprint from 9a1da9f9.0 downloaded 2004-10-10
