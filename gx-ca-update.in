@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.10 2004-09-23 19:38:59-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.11 2004-09-24 01:52:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -71,7 +71,10 @@ sub String_To_Seconds($);
 sub Seconds_To_String($);
 sub Signing_Policy($);
 sub Date_To_Seconds($);
-sub CRL_Info($);
+sub CRL_Info($$);
+sub Update_Certificate($);
+sub Update_Signing_Policy($);
+sub Update_CRL($);
 sub Usage(@);
 sub Debug(@);
 
@@ -153,6 +156,10 @@ if (scalar @ca_list == 0) {
 my @ca_info = ();
 
 foreach my $ca_desc_file (@ca_list) {
+    #
+    # To do: Verify that the cadesc file has all the required
+    # fields; if not, issue a warning and ignore the file.
+    #
     my $ref = Gridmap_Utils::Read_Records
                   '-single', "$ca_conf_dir/$ca_desc_file";
     if (defined $ref->{CRL_WARNING}) {
@@ -171,113 +178,34 @@ Gridmap_Utils::Init_Cache_Info;
 
 foreach my $ref (@ca_info) {
     print "Processing $ref->{HASH} $ref->{CA_NAME}\n";
-    my $target_dir = $User_Opt->{'target-dir'};
-    # Gridmap_Utils::Untaint $target_dir;
 
-    #
-    # Update CA certificate if necessary
-    #
-    my $target_cert_file = "$target_dir/$ref->{HASH}.0";
-    if (not $User_Opt->{force} and -e $target_cert_file) {
-        print "Skipping existing $target_cert_file\n";
-    }
-    elsif ($ref->{CERTIFICATE} =~ m<(http|ftp)://>) {
-        print "Installing $target_cert_file\n";
-        # Gridmap_Utils::Untaint $target_cert_file;
-        my $cache_file;
-        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE} };
-        if (defined $@ and $@ ne '') {
-            #
-            # Error in Cache_File function
-            #
-            print ">>> $@";
-        }
-        elsif (defined $cache_file and -r $cache_file) {
-            system 'cp', '-p', $cache_file, "$target_cert_file.$$";
-            rename "$target_cert_file.$$", $target_cert_file;
-        }
-    }
-    else {
-        print "No URL given for certificate\n";
-    }
+    Update_Certificate $ref;
+    Update_Signing_Policy $ref;
+    my $crl_info = Update_CRL $ref;
 
-    #
-    # Update signing_policy file if necessary
-    #
-    my $policy_file
-        = "$User_Opt->{'target-dir'}/$ref->{HASH}.signing_policy";
-    if (not $User_Opt->{force} and -e $policy_file) {
-        print "Skipping existing $policy_file\n";
-    }
-    else {
-        # Gridmap_Utils::Untaint $policy_file;
-        print "Creating $policy_file\n";
-        open POLICY, ">$policy_file" or die "$policy_file: $!\n";
-        print POLICY Signing_Policy $ref;
-        close POLICY;
-    }
-
-    #
-    # Update CRL if necessary
-    #
-    my $target_crl_file = "$target_dir/$ref->{HASH}.r0";
-    my $needs_update = 0;
-    if ($User_Opt->{force} or not -e $target_crl_file) {
-        $needs_update = 1;
-    }
-    else {
-        my $mtime = (stat $target_crl_file)[9];
-        my $age = $now - $mtime;
-#       if ($age > $ref->{CRL_MAX_AGE}) {
-#           print "Stale file $target_crl_file\n";
-#           $needs_update = 1;
-#       }
-    }
-    if (not $needs_update) {
-        print "Skipping existing $target_crl_file\n";
-    }
-    elsif ($ref->{CRL} =~ m<(http|ftp)://>) {
-        print "Installing $target_crl_file\n";
-        # Gridmap_Utils::Untaint $target_crl_file;
-        my $cache_file;
-        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CRL} };
-        if (defined $@ and $@ ne '') {
-            #
-            # Error in Cache_File function
-            #
-            print ">>> $@";
-        }
-        elsif (defined $cache_file and -r $cache_file) {
-            system 'cp', '-p', $cache_file, "$target_crl_file.$$";
-            rename "$target_crl_file.$$", $target_crl_file;
-        }
-    }
-    else {
-        print "No URL given for CRL\n";
-    }
-
-    #
-    # Check expiration date of CRL.
-    #
-    my $info = CRL_Info $target_crl_file;
-    if (defined $info and defined $info->{next_update}) {
-        my $remaining = $info->{next_update} - time;
+    if (defined $crl_info) {
+        my $remaining = $crl_info->{next_update} - time;
         my $how_long = Seconds_To_String abs $remaining;
         if (defined $ref->{CRL_WARNING_SECONDS} and
-            $remaining > $ref->{CRL_WARNING_SECONDS})
+            $remaining <= $ref->{CRL_WARNING_SECONDS})
         {
             print ">>> ";
         }
         if ($remaining <= 0) {
-            print "$target_crl_file expired $how_long ago\n";
+            print "CRL expired $how_long ago\n";
         }
         else {
-            print "$target_crl_file expires in $how_long\n";
+            print "CRL expires in $how_long\n";
         }
-        if (not $info->{verified}) {
+        if (not $crl_info->{verified}) {
             print ">>> CRL is not verified\n";
         }
+
     }
+    else {
+        print ">>> No CRL information available\n";
+    }
+
     print "\n";
 }
 
@@ -430,16 +358,16 @@ sub Date_To_Seconds($) {
 #     next_update
 #     verified
 #
-sub CRL_Info($) {
-    my($filename) = @_;
+sub CRL_Info($$) {
+    my($CRL_file, $cert_file) = @_;
     my $result = {};
 
-    return undef if not -r $filename;
+    return undef if not defined $CRL_file or not -r $CRL_file;
 
     #
     # Get attributes of CRL
     #
-    open PIPE, "openssl crl -in $filename -noout " .
+    open PIPE, "openssl crl -in $CRL_file -noout " .
                "-hash -issuer -lastupdate -nextupdate |" or return undef;
     while (<PIPE>) {
         chomp;
@@ -462,18 +390,134 @@ sub CRL_Info($) {
     # Verify CRL against certificate.
     # (If it's ok, openssl prints "verify OK" to stderr.)
     #
-    my $cert = $filename;
-    $cert =~ s/\.r0$/.0/;
-    open PIPE, "openssl crl -in $filename -noout -CAfile $cert 2>&1 |";
-    while (<PIPE>) {
-        if (/verify ok/i) {
-            $result->{verified} = 1;
+    if (defined $cert_file and -r $cert_file) {
+        open PIPE, "openssl crl -in $CRL_file -noout " .
+                   "-CAfile $cert_file 2>&1 |";
+        while (<PIPE>) {
+            if (/verify ok/i) {
+                $result->{verified} = 1;
+            }
         }
+        close PIPE;
     }
-    close PIPE;
 
     return $result;
 } # CRL_Info
+
+# ----------------------------------------------------------------------
+
+#
+# Update CA certificate if necessary
+#
+sub Update_Certificate($) {
+    my($ref) = @_;
+    my $target_dir = $User_Opt->{'target-dir'};
+    # Gridmap_Utils::Untaint $target_dir;
+
+    my $target_cert_file = "$target_dir/$ref->{HASH}.0";
+    if (not $User_Opt->{force} and -e $target_cert_file) {
+        print "Skipping existing $target_cert_file\n";
+    }
+    elsif ($ref->{CERTIFICATE} =~ m<(http|ftp)://>) {
+        print "Installing $target_cert_file\n";
+        # Gridmap_Utils::Untaint $target_cert_file;
+        my $cache_file;
+        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE} };
+        if (defined $@ and $@ ne '') {
+            #
+            # Error in Cache_File function
+            #
+            print ">>> $@";
+        }
+        elsif (defined $cache_file and -r $cache_file) {
+            system 'cp', '-p', '-f', $cache_file, "$target_cert_file.$$";
+            rename "$target_cert_file.$$", $target_cert_file;
+        }
+    }
+    else {
+        print "No URL given for certificate\n";
+    }
+} # Update_Certificate
+
+# ----------------------------------------------------------------------
+
+#
+# Update signing_policy file if necessary
+#
+sub Update_Signing_Policy($) {
+    my($ref) = @_;
+    my $policy_file
+        = "$User_Opt->{'target-dir'}/$ref->{HASH}.signing_policy";
+    if (not $User_Opt->{force} and -e $policy_file) {
+        print "Skipping existing $policy_file\n";
+    }
+    else {
+        # Gridmap_Utils::Untaint $policy_file;
+        print "Creating $policy_file\n";
+        open POLICY, ">$policy_file" or die "$policy_file: $!\n";
+        print POLICY Signing_Policy $ref;
+        close POLICY;
+    }
+} # Update_Signing_Policy
+
+# ----------------------------------------------------------------------
+
+#
+# Update CRL if necessary
+# Return information on CRL (the new one if updated, the old one
+# otherwise, undef if none)
+#
+sub Update_CRL($) {
+    my($ref) = @_;
+    my $target_crl_file  = "$User_Opt->{'target-dir'}/$ref->{HASH}.r0";
+    my $target_cert_file = "$User_Opt->{'target-dir'}/$ref->{HASH}.0";
+    my $old_crl_info = CRL_Info $target_crl_file, $target_cert_file;
+    # Gridmap_Utils::Untaint $target_crl_file;
+
+    my $have_crl_url = $ref->{CRL} =~ m<(http|ftp)://>;
+    my $new_crl_file = undef;
+    if ($have_crl_url) {
+        eval { $new_crl_file = Gridmap_Utils::Cache_File $ref->{CRL} };
+        if (defined $@ and $@ ne '') {
+            #
+            # Error in Cache_File function
+            # To do: more robust error handling.
+            #
+            print ">>> $@";
+        }
+    }
+    my $new_crl_info = CRL_Info $new_crl_file, $target_cert_file;
+
+    if (not defined $new_crl_info) {
+        if (not $have_crl_url) {
+            print "No URL given for CRL\n";
+        }
+        else {
+            print "Unable to get information for CRL\n";
+        }
+        return $old_crl_info;
+    }
+
+    if (defined $old_crl_info and defined $new_crl_info) {
+        if ($new_crl_info->{next_update} == $old_crl_info->{next_update}) {
+            print "CRL update not needed\n";
+            return $old_crl_info;
+        }
+        elsif ($new_crl_info->{next_update} < $old_crl_info->{next_update}) {
+            print "New CRL expires sooner than old CRL\n";
+            return $old_crl_info;
+        }
+        elsif (not $new_crl_info->{verified}) {
+            print "Can't verify new CRL\n";
+            return $old_crl_info
+        }
+    }
+
+    print "Installing $target_crl_file\n";
+    system 'cp', '-p', $new_crl_file, "$target_crl_file.$$";
+    rename "$target_crl_file.$$", $target_crl_file;
+    return $new_crl_info;
+} # Update_CRL
 
 # ----------------------------------------------------------------------
 
