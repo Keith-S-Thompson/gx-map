@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.34 2004-10-02 14:45:32-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.35 2004-11-04 03:41:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -260,6 +260,12 @@ foreach my $request (@requests) {
                 if (exists $Mappings{$dn}->{secondary}->{$map_to_name}) {
                     Debug ">>> Delete $dn --> $Mappings{$dn} (secondary)\n";
                     delete $Mappings{$dn}->{secondary}->{$map_to_name};
+                    if (scalar keys %{$Mappings{$dn}->{secondary}} == 0) {
+                        delete $Mappings{$dn}->{secondary}; # cleanup
+                    }
+                }
+                if (scalar keys %{$Mappings{$dn}} == 0) {
+                    delete $Mappings{$dn}; # cleanup
                 }
             }
         }
@@ -283,6 +289,12 @@ foreach my $request (@requests) {
                 if (exists $Mappings{$dn}->{secondary}->{$map_to_name}) {
                     Debug ">>> Delete $dn --> $map_to_name (secondary)\n";
                     delete $Mappings{$dn}->{secondary}->{$map_to_name};
+                    if (scalar keys %{$Mappings{$dn}->{secondary}} == 0) {
+                        delete $Mappings{$dn}->{secondary}; # cleanup
+                    }
+                }
+                if (scalar keys %{$Mappings{$dn}} == 0) {
+                    delete $Mappings{$dn}; # cleanup
                 }
             }
         }
