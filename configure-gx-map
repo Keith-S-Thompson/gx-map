@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.16 2004-08-17 20:37:57-07 kst Exp $
+# $Id: configure-gx-map,v 1.17 2004-08-17 21:43:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -66,7 +66,6 @@ my %Config = ();
 my @Var_Names = qw( PERL PATH
                     NAMESPACE
                     INSTALL_DIR DATA_DIR
-                    DN_FORMAT
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
@@ -173,14 +172,6 @@ if (defined $Config{GLOBUS_ADMINS}) {
                 push @errors, "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
             }
         }
-    }
-}
-
-if (defined $Config{DN_FORMAT}) {
-    my %ok = map { $_ => 1 } qw( RAW GT2 GT3 BOTH );
-    if (not $ok{$Config{DN_FORMAT}}) {
-        push @errors,
-             "$Config_File: Invalid DN_FORMAT\n";
     }
 }
 
