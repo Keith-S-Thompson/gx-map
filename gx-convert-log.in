@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.6 2004-11-30 16:55:40-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.7 2004-12-16 17:23:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -76,30 +76,50 @@ my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( old-admins=s
                  new-admin=s
+                 force!
                  help! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if scalar @ARGV != 1;
 my $Input_Log = $ARGV[0];
 
+my @missing_accounts = ();
+
 my $Is_Old_Admin = undef;
 if (defined $User_Opt->{'old-admins'}) {
     foreach my $name (split /,/, $User_Opt->{'old-admins'}) {
+        if (not $User_Opt->{force}) {
+            my $pw = Gridmap_Utils::Get_PW $name;
+            push @missing_accounts, $name if not defined $pw;
+        }
         $Is_Old_Admin->{$name} = 1;
     }
 }
 
 my $new_admin_uid = undef;
 if (defined $User_Opt->{'new-admin'}) {
-    my $pw = Gridmap_Utils::Get_PW $User_Opt->{'new-admin'};
-    if (defined $pw) {
-        $new_admin_uid = $pw->{uid};
+    if ($User_Opt->{'new-admin'} =~ /,/) {
+        Usage "The \"-new-admin\" option takes only a single account\n";
     }
+    else {
+        my $pw = Gridmap_Utils::Get_PW $User_Opt->{'new-admin'};
+        if (defined $pw) {
+            $new_admin_uid = $pw->{uid};
+        }
+        elsif (not $User_Opt->{force}) {
+            push @missing_accounts, $User_Opt->{'new-admin'};
+        }
+    }
+}
+
+if (@missing_accounts) {
+    my $s = ( scalar @missing_accounts == 1 ? '' : 's' );
+    Usage "Missing account$s: @missing_accounts\n";
 }
 
 my $now = time;
 
-my $Rev = '$Revision: 1.6 $';
+my $Rev = '$Revision: 1.7 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -216,9 +236,11 @@ If the "-old-admins" or "-new-admin" option is specified, the
 OWNER_NAME and OWNER_UID attributes are updated.  This is useful if
 you want to change the set of administrative accounts.
 
-    -old-admins name,name       Account(s) treated as administrators in
-                                input log
-    -new-admin name             Administrative account for output log
+    -old-admins name,name  Account(s) treated as administrators in input log
+    -new-admin name        Administrative account for output log
+    -force                 The arguments to "-old-admins" and "-new-admin"
+                           must be existing accounts; "-force" overrides
+                           that check.
 EOF
     exit 1;
 } # Usage
