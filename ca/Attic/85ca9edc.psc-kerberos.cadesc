@@ -1,4 +1,4 @@
-# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.10 2004-10-10 03:21:58-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.11 2004-10-13 17:44:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85ca9edc.psc-kerberos.cadesc,v $
 
 CA_NAME             PSC Kerberos Certification Authority
@@ -12,7 +12,6 @@ CERTIFICATE_MD5     39:7B:15:4D:4D:DB:53:15:D8:63:06:FB:FC:EE:A5:F5
 CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/85ca9edc.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/85ca9edc.signing_policy
 CRL_URL             ?
-CRL_WARNING         ?
 
 #
 # There appears to be no CRL for this CA.
