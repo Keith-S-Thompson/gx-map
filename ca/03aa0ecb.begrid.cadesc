@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.8 2004-11-01 17:04:13-08 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.9 2005-03-29 19:27:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -9,6 +9,7 @@ SUBJECT             /C=BE/O=BELNET/OU=BEGrid/CN=BEGrid CA/emailAddress=gridca@be
 MAY_SIGN            /C=BE/O=BELNET/OU=BEGrid/CN=BEGrid CA/emailAddress=gridca@belnet.be
 MAY_SIGN            /C=BE/O=BEGRID/*
 CERTIFICATE_MD5     E3:90:39:1B:3C:E9:89:57:86:54:3E:AF:0F:B8:40:69
+# CERTIFICATE_SHA1    76:D6:39:F7:6C:12:45:9B:DE:8D:0C:6F:32:51:39:D2:18:C2:4C:0D
 CERTIFICATE_URL     https://gridra.belnet.be/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             https://gridra.belnet.be/pub/crl/cacrl.pem
@@ -18,4 +19,4 @@ CERT_EXPIRES        Jul 29 10:26:34 2009 GMT
 # received one by e-mail from Pascal Panneels <gridca@belnet.be>.
 # The MAY_SIGN attributes here are based on that.
 
-# MD5 fingerprint from 03aa0ecb.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from cacert.pem (03aa0ecb.0) downloaded 2005-03-29
