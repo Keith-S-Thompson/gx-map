@@ -1,0 +1,17 @@
+# $Id: d062fcc9.gtrc.cadesc,v 1.1 2004-10-17 22:39:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/d062fcc9.gtrc.cadesc,v $
+
+CA_NAME             Grid Technology Research Center CA
+HOMEPAGE            http://www.gtrc.aist.go.jp/en/
+CONTACT             ?
+HASH                d062fcc9
+SUBJECT             /O=ApGrid/O=AIST/OU=GTRC/CN=CA
+MAY_SIGN            /C=JP/O=AIST GTRC/*
+CERTIFICATE_MD5     15:9C:F0:43:8A:CA:02:35:C1:E4:CE:58:C4:CA:57:09
+CERTIFICATE_URL     https://sf280.hpcc.jp/CA/d062fcc9.0
+SIGNING_POLICY_URL  https://sf280.hpcc.jp/CA/d062fcc9.signing_policy
+CRL_URL             https://sf280.hpcc.jp/CA/d062fcc9.r0
+INDEX               ?
+DISABLE             no
+
+# MD5 fingerprint from d062fcc9.0 downloaded 2004-10-17
