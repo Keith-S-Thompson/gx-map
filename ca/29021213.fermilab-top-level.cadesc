@@ -1,4 +1,4 @@
-# $Id: 29021213.fermilab-top-level.cadesc,v 1.8 2004-11-01 17:04:16-08 kst Exp $
+# $Id: 29021213.fermilab-top-level.cadesc,v 1.9 2005-03-29 19:27:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/29021213.fermilab-top-level.cadesc,v $
 
 CA_NAME             Fermilab Top-Level CA
@@ -8,13 +8,14 @@ HASH                29021213
 SUBJECT             /DC=gov/DC=fnal/O=Fermilab/OU=Certificate Authorities/CN=Top-Level CA
 MAY_SIGN            /DC=gov/DC=fnal/O=Fermilab/*
 CERTIFICATE_MD5     4E:2B:6B:E1:D2:09:AE:07:B0:14:C5:5A:54:AC:10:DC
+# CERTIFICATE_SHA1    58:16:91:F6:70:95:F8:83:C2:2C:77:BD:13:CE:47:9A:2A:F8:B6:FF
 CERTIFICATE_URL     http://computing.fnal.gov/security/pki/29021213.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/29021213.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/29021213.base64
 CERT_EXPIRES        Sep 10 15:31:28 2008 GMT
 DISABLE             yes
 
-# MD5 fingerprint from 29021213.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 29021213.0 downloaded 2005-03-29
 
 # A site running Globus typically does not need to recognize this CA.
 # The certificate for the Fermilab Kerberized CA (hash e1fce4e9) is
