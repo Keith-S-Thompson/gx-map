@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.19 2003-07-24 22:39:20-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.20 2003-07-27 17:24:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -86,12 +86,17 @@ my $User_Opt = { 'requests-log' => [],
                  'permissions'  => '444' };
 my @Opts = ( $User_Opt,
              qw( help
+                 version
                  debugging!
                  requests-log=s@
                  permissions=s
                  real-name! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
+
+if ($User_Opt->{version}) {
+    print "gx-map version $Gridmap_Utils::VERSION\n";
+}
 
 #
 # If the requests-log array is empty (i.e., the user didn't give the
@@ -494,6 +499,7 @@ sub Usage(@) {
 Usage: $Prog_Name [options] [files]
 Option names may be abbreviated.
     -help              : Display this message and exit.
+    -version           : Display version information and exit.
     -requests-log file : Use specified requests log file.
                          May be given multiple times, e.g.,
                              -req file1 -req file2
