@@ -1,13 +1,20 @@
 #!/usr/bin/perl -w
 
-# $Id: convert,v 1.5 2003-07-17 15:00:07-07 kst Exp $
+# $Id: convert,v 1.6 2003-07-17 15:10:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/convert,v $
 
 use strict;
 
 use Gridmap_Utils ();
+use File::Basename ();
 
 $| = 1;
+
+my $Program_Name = File::Basename::basename $0;
+
+my $Rev = '$Revision: 1.6 $';
+$Rev =~ s/^\\s*//;
+$Rev =~ s/\s*\$$//;
 
 my $Now = time;
 my $dir = "$ENV{HOME}/cvs-kst/tools/gx-map/old-requests";
@@ -15,6 +22,11 @@ opendir DIR, $dir or die "${dir}: $!\n";
 my @all_files = sort readdir DIR;
 my @logs     = grep /\.log$/, @all_files;
 closedir DIR;
+
+print '# $', 'Id:$', "\n";
+print '# $', 'Source:$', "\n";
+print "# Converted by $Program_Name revision $Rev\n";
+print "\n";
 
 my @old_refs = ();
 foreach my $log (@logs) {
