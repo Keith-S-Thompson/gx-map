@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: die_handler_demo,v 1.2 2005-03-26 12:40:34-08 kst Exp $
+# $Id: die_handler_demo,v 1.3 2005-03-27 14:08:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/die_handler_demo,v $
 
 #
@@ -101,6 +101,8 @@ sub Die_Handler($) {
         &$Registered_Handler_Function;
     }
 
+    print STDERR $_[0];
+
     my @traceback = ();
 
     my $i = 0;
@@ -119,14 +121,15 @@ sub Die_Handler($) {
         if ($i < $#traceback) {
             my $next = $traceback[$i+1];
             next if $next->{subname} =~ /::Die_Handler$/;
-            print STDERR "    $curr->{file}:$curr->{line} in $next->{subname}\n";
+            print STDERR "    $curr->{file}:$curr->{line} in ",
+                         "$next->{subname}\n";
         }
         else {
             print STDERR "    $curr->{file}:$curr->{line}\n";;
         }
     }
 
-    # print STDERR Format_Traceback Get_Traceback;
+    exit 1;
 } # Die_Handler
 
 # ----------------------------------------------------------------------
