@@ -1,0 +1,15 @@
+# $Id: 3deda549.sdsc.cadesc,v 1.1 2004-09-14 20:21:10-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
+
+CA_DESC         SDSC CA (CACL, new version)
+HOMEPAGE        http://users.sdsc.edu/~kst/NEW-CA/
+CONTACT		Bill Link <bill@sdsc.edu>
+HASH            3deda549
+SUBJECT         /C=US/O=SDSC/OU=SDSC-CA/CN=Certificate Authority/UID=certman
+MAY_SIGN        /C=US/O=SDSC/*
+CERTIFICATE     http://users.sdsc.edu/~kst/NEW-CA/3deda549.0
+SIGNING_POLICY  http://users.sdsc.edu/~kst/NEW-CA/3deda549.signing_policy
+CRL             http://users.sdsc.edu/~kst/NEW-CA/3deda549.r0
+CRL_MAX_AGE     12 hours
+INDEX           http://users.sdsc.edu/~kst/NEW-CA/ca.db.index
+}
