@@ -1,4 +1,4 @@
-# $Id: 90e2484f.datagrid-es-old.cadesc,v 1.8 2004-11-19 18:52:59-08 kst Exp $
+# $Id: 90e2484f.datagrid-es-old.cadesc,v 1.9 2004-11-20 15:47:46-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/90e2484f.datagrid-es-old.cadesc,v $
 
 CA_NAME             Datagrid-ES CA
@@ -12,5 +12,9 @@ CERTIFICATE_URL     http://www.ifca.unican.es/datagrid/ca/90e2484f.0
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/90e2484f.signing_policy
 CRL_URL             http://www.ifca.unican.es/datagrid/ca/datagrid-es-crl.pem
 CERT_EXPIRES        Nov 12 17:57:33 2004 GMT
+DISABLE             yes
+
+# This certificate has expired.
+# See 13eab55e.datagrid-es.cadesc for the replacement.
 
 # MD5 fingerprint from 90e2484f.0 downloaded 2004-10-10
