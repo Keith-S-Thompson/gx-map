@@ -1,4 +1,4 @@
-# $Id: bug-0005,v 1.2 2005-03-24 19:09:04-08 kst Exp $
+# $Id: bug-0005,v 1.3 2005-03-31 15:33:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0005,v $
 
 gx-map bug 0005
@@ -6,7 +6,7 @@ Date: Thu 2005-03-24
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
-Title: New feature: SHORT_TERM_ONLY attribute in cadesc files.
+Title: New feature: MISSING_CRL_OK attribute in cadesc files.
 
 Summary:
 New feature: In *.cadesc files, add a new attribute indicating that a
@@ -18,3 +18,9 @@ Currently, KCAs such as 85ca9edc (PSC) and 26bf3386 (USC) require
 special handling, because gx-ca-update requires CRLs by default.
 The consensus seems to be that CRLs are unnecessary for KCAs, since
 they issue only short-term certificates (up to 10 days or so).
+
+Better idea: Call the new attribute MISSING_CRL_OK, which is more
+descriptive than SHORT_TERM_ONLY.  Currently, I think the only CAs
+it will apply to are PSC's and USC's KCAs (85ca9edc and fa9c3452).
+Note that Fermilab's Kerberized CA has a CRL (with a 3-year lifetime
+and no revocations).
