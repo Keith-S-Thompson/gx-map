@@ -1,0 +1,15 @@
+# $Id: 29021213.fermilab-top-level.cadesc,v 1.1 2004-10-02 14:40:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/29021213.fermilab-top-level.cadesc,v $
+
+CA_NAME             Fermilab Top-Level CA
+HOMEPAGE            http://computing.fnal.gov/security/pki/
+CONTACT             nightwatch@fnal.gov
+HASH                29021213
+SUBJECT             /DC=gov/DC=fnal/O=Fermilab/OU=Certificate Authorities/CN=Top-Level CA
+MAY_SIGN            /DC=gov/DC=fnal/O=Fermilab/*
+CERTIFICATE_URL     https://computing.fnal.gov/security/pki/29021213.0
+SIGNING_POLICY_URL  https://computing.fnal.gov/security/pki/29021213.signing_policy
+CRL_URL             https://computing.fnal.gov/security/pki/29021213.base64
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
