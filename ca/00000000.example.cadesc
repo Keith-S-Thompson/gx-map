@@ -1,4 +1,4 @@
-# $Id: 00000000.example.cadesc,v 1.5 2004-10-13 17:44:55-07 kst Exp $
+# $Id: 00000000.example.cadesc,v 1.6 2004-10-20 14:54:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/00000000.example.cadesc,v $
 
 CA_NAME             example.org CA
@@ -17,102 +17,6 @@ DISABLE             yes
 
 #
 # This is 00000000.example.cadesc, a template for *.cadesc (certificate
-# authority description) files.  I've collected information on several
-# dozen certificate authorities and included the corresponding *.cadesc
-# files in the gx-map distribution.  You're free to add *.cadesc files of
-# your own, or to modify the ones I've provided.  If you have information
-# on a CA that should be added to the distribution, please let me know.
-# If you find an error, please let me know as soon as possible.
-#
-#                 -- Keith Thompson <kst@sdsc.edu>
-#
-#
-# Mandatory attributes are
-#     CA_NAME
-#     HASH
-#     SUBJECT
-#     MAY_SIGN
-#     CERTIFICATE_MD5
-#     CERTIFICATE_URL
-# Optional attributes may be omitted or set to a single '?' character,
-# except that DISABLE, if present, must be set to "yes" or "no".
-#
-#
-# CA_NAME is a brief informal name for the CA; it's included in the
-# signing_policy file as a comment.
-#
-# HOMEPAGE is the URL of web page for the CA.
-# It's included for reference; gx-ca-update doesn't use it.
-#
-# CONTACT is an e-mail address for the CA.
-# It's included for reference; gx-ca-update doesn't use it.
-#
-# HASH is the 8-digit hexadecimal hash for the certificate's subject name.
-# It can be computed by
-#     openssl x509 -hash -in FILENAME.0 -noout
-# The hash is incorporated into the names of the certificate, CRL,
-# and signing_policy files.  The specified hash is checked against the
-# downloaded certificate.
-#
-# SIGNED_BY specifies the subject name of the signer of the CA
-# certificate.  This is mandatory if the certificate is not self-signed;
-# if it is self-signed, SIGNED_BY should be omitted.  This is checked
-# against the actual issuer of the certificate.  gx-ca-update may also
-# check whether the issuing certificate is installed (this check has
-# not yet been implemented).
-#
-# SUBJECT is the subject name of the signing certificate.  This is
-# checked against the actual subject name of the downloaded certificate.
-#
-# MAY_SIGN is a pattern (either a wildcard or a single subject name)
-# used to construct the signing_policy file.  More than one MAY_SIGN
-# attributes may be specified.
-#
-# CERTIFICATE_MD5 is the MD5 fingerprint of the signing certificate.
-# This can be determined by 
-#     openssl x509 -md5 -fingerprint -in FILENAME.0 -noout
-# This is checked against the actual fingerprint of the downloaded
-# certificate.
-########################################################################
-# IMPORTANT NOTE:
-# The CERTIFICATE_MD5 is the primary method for avoiding forged signing
-# certificates.  Each *.cadesc file distributed with the gx-map system
-# includes an MD5 fingerprint for the corresponding signing certificate,
-# and a comment indicating how I determined it.  You should double-check
-# this yourself.  I've made an effort to provide accurate fingerprints,
-# but I assume no responsibility for errors.
-########################################################################
-# 
-# 
-# CERTIFICATE_URL is a URL from which the signing certificate (in PEM
-# format) can be downloaded.
-#
-# SIGNING_POLICY_URL is a URL from which a signing_policy file can
-# be downloaded.  This is included for reference; gx-ca-update doesn't
-# use it.  Intstead, the signing_policy file is constructed from the
-# SUBJECT and MAY_SIGN attributes.  This allows a site to impose a
-# stricter policy than the one suggested by the CA's owner.
-#
-# CRL_URL is a URL from which the certificate revocation list, in PEM
-# format, can be downloaded.
-# 
-# INDEX is a URL from which a ca.db.index file can be downloaded.
-# This is provided by CACL-based CAs.  This attribute is not currently
-# used by gx-ca-update.
-#
-# DISABLED, if set to "yes", indicates that the CA files are not
-# to be installed.
-#
-#
-# For consistency, the SIGNED_BY, SUBJECT, and MAY_SIGN attributes should
-# use forms compatible with GT3 and OpenSSL 0.9.7:
-#     Use "/UID=...", not "/USERID=...".
-#     Use "/emailAddress=...", not "/Email=...".
-# though gx-ca-update will translate to this form if necessary.
-#
-# All URLs may be specified as either http://..., https://..., or
-# ftp://....
-# http and https URLs are downloaded using wget an ssl-enabled version
-# of wget is required for https URLs).
-# ftp URLs are downloaded using ncftpget.
+# authority description) files.  See the README and SECURITY files for
+# more information.
 #
