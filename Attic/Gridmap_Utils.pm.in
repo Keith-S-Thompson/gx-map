@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.18 2003-07-25 01:11:52-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.19 2003-07-25 17:52:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -499,7 +499,7 @@ sub Cache_File($) {
         my $cache_file = "$dir/$file";
         chdir $dir or die "${dir}: $!\n";
         if ($is_ftp) {
-            $result = system "ncftpget -V $url 2>/dev/null";
+            $result = system "%NCFTPGET% -V $url 2>/dev/null";
         }
         else {
             $result = system '%WGET%',
@@ -527,7 +527,7 @@ sub Cache_File($) {
         #
         my $dir = File::Basename::dirname $Cache_File{$url};
         if ($is_ftp) {
-            $result = system "ncftpget -V $url 2>/dev/null";
+            $result = system "%NCFTPGET% -V $url 2>/dev/null";
         }
         else {
             $result = system '%WGET%',
