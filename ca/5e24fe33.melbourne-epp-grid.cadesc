@@ -1,0 +1,18 @@
+# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.1 2004-10-17 22:39:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/5e24fe33.melbourne-epp-grid.cadesc,v $
+
+CA_NAME             Melbourne EPP Grid CA
+HOMEPAGE            https://epp-ca.ph.unimelb.edu.au/
+CONTACT             ra@epp-ca.ph.unimelb.edu.au
+HASH                5e24fe33
+SUBJECT             /C=AU/O=University of Melbourne/OU=Experimental Particle Physics/CN=epp-ca.ph.unimelb.edu.au/emailAddress=ra@epp-ca.ph.unimelb.edu.au
+MAY_SIGN            /O=Grid/O=Belle/*
+MAY_SIGN            /O=Grid/O=BelleTestbed/*
+CERTIFICATE_MD5     2B:AC:D9:D0:95:43:11:A2:1F:F2:FC:37:53:27:19:5D
+CERTIFICATE_URL     https://epp-ca.ph.unimelb.edu.au/Belle/5e24fe33.0
+SIGNING_POLICY_URL  https://epp-ca.ph.unimelb.edu.au/Belle/5e24fe33.signing_policy
+CRL_URL             https://epp-ca.ph.unimelb.edu.au/pub/crl/cacrl.pem
+INDEX               ?
+DISABLE             no
+
+# MD5 fingerprint from 5e24fe33.0 downloaded 2004-10-15
