@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.18 2004-09-13 16:51:00-07 kst Exp $
+# $Id: install-gx-map.in,v 1.19 2004-09-14 19:20:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -64,6 +64,7 @@ BIN_FILES="gx-map"
 SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 DATA_FILES="ncsa-sdsc-user-map"
+CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
            $BINDIR \
@@ -71,7 +72,8 @@ for dir in $INSTALL_DIR \
            $LIBDIR \
            $DATA_DIR \
            $DATA_DIR/RCS \
-           $DATA_DIR/cache
+           $DATA_DIR/cache \
+           $DATA_DIR/ca.conf
 do
     if [ ! -d $dir ] ; then
         verbosely mkdir -m 755 $dir
@@ -85,6 +87,7 @@ verbosely cp -f $BIN_FILES  $BINDIR/.
 verbosely cp -f $SBIN_FILES $SBINDIR/.
 verbosely cp -f $LIB_FILES  $LIBDIR/.
 verbosely cp -f $DATA_FILES $DATA_DIR/.
+verbosely cp -f $CA_FILES   $DATA_DIR/ca.conf/.
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
     verbosely mkdir -m 1733 $DATA_DIR/new-requests
