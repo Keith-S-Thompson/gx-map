@@ -1,14 +1,14 @@
-# $Id: bc82f877.nasa.cadesc,v 1.5 2004-09-23 19:56:15-07 kst Exp $
+# $Id: bc82f877.nasa.cadesc,v 1.6 2004-09-24 20:58:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
 
-CA_NAME         NASA CA
-HOMEPAGE        ?
-CONTACT		?
-HASH            bc82f877
-SUBJECT         /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
-MAY_SIGN        /O=Grid/O=National Aeronautics and Space Administration/*
-CERTIFICATE     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.0
-SIGNING_POLICY  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.signing_policy
-CRL             ?
-CRL_WARNING     ?
-INDEX           ?
+CA_NAME             NASA CA
+HOMEPAGE            ?
+CONTACT             ?
+HASH                bc82f877
+SUBJECT             /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
+MAY_SIGN            /O=Grid/O=National Aeronautics and Space Administration/*
+CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.0
+SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.signing_policy
+CRL_URL             ?
+CRL_WARNING         ?
+INDEX               ?
