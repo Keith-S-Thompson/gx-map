@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v 1.4 2003-07-25 01:11:53-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v 1.5 2003-09-04 17:10:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v $
 
 ########################################################################
@@ -98,8 +98,10 @@ sub Valid_Mappings($);
 # map_to_name field (if set) is a valid account on this system, the
 # OWNER_NAME field either matches map_to_name (if set) or is a Globus
 # administrator, and the NAMESPACE field is correct.  If the map_to_name
-# field is not set (for a remove-dn operation), the OWNER_NAME field
-# must be a Globus administrator.
+# field is not set (for a remove-dn operation), the OWNER_NAME field must
+# be a Globus administrator.  (If OWNER_NAME is not set but OWNER_UID
+# is, the OWNER_NAME is set by a passwd lookup on the OWNER_UID; this
+# applies only to the local namespace.)
 #
 # A more sophisticated implementation might refer to a user database,
 # map to a local user derived from a (possibly remote) user name in the
@@ -115,6 +117,13 @@ sub Valid_Mappings($) {
     Debug "    map_to_name = ",
           (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
           "\n";
+
+    if (defined $request->{OWNER_UID} and not defined $request->{OWNER_NAME}) {
+        my $pw = Gridmap_Utils::Get_PW($request->{OWNER_UID});
+        if (defined $pw->{name}) {
+            $request->{OWNER_NAME}) = $pw->{name};
+        }
+    }
 
     if (not defined $request->{OWNER_NAME}) {
         Debug ">>> Invalid, no OWNER_NAME\n";
