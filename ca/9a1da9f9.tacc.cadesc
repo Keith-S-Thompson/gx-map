@@ -1,0 +1,18 @@
+# $Id: 9a1da9f9.tacc.cadesc,v 1.1 2004-09-29 01:39:14-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/9a1da9f9.tacc.cadesc,v $
+
+#
+# NOTE: The CERTIFICATE_URL and SIGNING_POLICY_URL fields are temporary.
+# Need to get URLs at TACC.
+#
+CA_NAME             TACC Certification Authority
+HOMEPAGE            ?
+CONTACT             ?
+HASH                9a1da9f9
+SUBJECT             /C=US/O=UTAustin/OU=TACC/CN=TACC Certification Authority/UID=caman
+MAY_SIGN            /C=US/O=UTAustin/OU=TACC/*
+CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/9a1da9f9.0
+SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/9a1da9f9.signing_policy
+CRL_URL             ?
+CRL_WARNING         ?
+INDEX               ?
