@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.36 2004-11-03 17:42:59-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.37 2004-11-16 00:35:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -319,7 +319,7 @@ sub Get_Request_Info($) {
     # both; it can be specified by an administrator running gx-map,
     # and it can be set as an annotation.
     #
-    # If "source" is not set, set "SOURCE" to "user" or "administrator",
+    # If "source" is not set, set "SOURCE" to "user" or "admin",
     # depending on who ran gx-map.
     # If "source" is set (only by an administrator), set "SOURCE" to
     # the same value.
@@ -342,7 +342,7 @@ sub Get_Request_Info($) {
         }
     }
     else {
-        $result->{SOURCE} = ( $owner_is_admin ? "administrator" : "user" );
+        $result->{SOURCE} = ( $owner_is_admin ? "admin" : "user" );
     }
 
     $result->{NAMESPACE} = $User_Opt->{namespace};
