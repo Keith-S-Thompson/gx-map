@@ -1,0 +1,21 @@
+# $Id: 795d3882.sdg-testbed-old.cadesc,v 1.1 2004-10-17 22:39:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/795d3882.sdg-testbed-old.cadesc,v $
+
+CA_NAME             SDC Testbed CA (expired)
+HOMEPAGE            http://www.sdg.ac.cn/
+CONTACT             ?
+HASH                795d3882
+SUBJECT             /O=Grid/O=SDG/CN=Testbed CA
+MAY_SIGN            /O=Grid/O=SDG/*
+CERTIFICATE_MD5     B6:6C:1F:45:BF:50:78:9E:A7:59:CA:C1:FA:C9:3E:91
+CERTIFICATE_URL     http://www.sdg.ac.cn/download/795d3882.0
+SIGNING_POLICY_URL  http://www.sdg.ac.cn/download/795d3882.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             yes
+
+# The certificate expired 2003-06-26.
+# Superseded by "/O=Grid/O=SDG/CN=Testbed-CA" (hash 140817fc)
+# There does not appear to be a CRL.
+
+# MD5 fingerprint from 795d3882.0 downloaded 2004-10-17
