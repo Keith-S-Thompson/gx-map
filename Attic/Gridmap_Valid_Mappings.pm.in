@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.20 2004-11-12 14:59:01-08 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.21 2004-11-15 16:01:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -68,10 +68,16 @@ use Gridmap_Utils ();
 
 sub Debug(@);
 sub Debugf(@);
-sub Valid_Mappings($);
+sub Valid_Mappings(@);
 
 # ----------------------------------------------------------------------
 
+#
+#
+# The Valid_Mappings function is called with a reference to a request
+# record.  Optionally, the reference may be preceded by a string argument
+# equal to '-all', indicating that mappings for nonexistent users (users
+# who don't have an account on the current system) are allowed.
 #
 # Given a reference to a request record, the Valid_Mappings function
 # returns a list of references to hashes specifying valid mappings, where
@@ -92,23 +98,38 @@ sub Valid_Mappings($);
 # implementation will be used.
 #
 # The most basic implementation returns a single mapping if the
-# map_to_name field (if set) is a valid account on this system, the
-# OWNER_NAME field either matches map_to_name (if set) or is a Globus
-# administrator, and the NAMESPACE field is correct.  If the map_to_name
-# field is not set (for a remove-dn operation), the OWNER_NAME field must
-# be a Globus administrator.  (If OWNER_NAME is not set but OWNER_UID
-# is, the OWNER_NAME is set by a passwd lookup on the OWNER_UID; this
-# should apply only to the local namespace.)
+# map_to_name field (if set) is a valid account on this system (unless
+# "-all" is specified), the OWNER_NAME field either matches map_to_name
+# (if set) or is a Globus administrator, and the NAMESPACE field
+# is correct.  If the map_to_name field is not set (for a remove-dn
+# operation), the OWNER_NAME field must be a Globus administrator.
+# (If OWNER_NAME is not set but OWNER_UID is, the OWNER_NAME is set
+# by a passwd lookup on the OWNER_UID; this should apply only to the
+# local namespace.)
 #
 # A more sophisticated implementation might refer to a user database,
 # map to a local user derived from a (possibly remote) user name in
 # the record, confirm that the dn corresponds to a recognized CA, and
 # so forth.
 #
-sub Valid_Mappings($) {
-    my($request) = @_;
+sub Valid_Mappings(@) {
+    my @args = @_;
+    my $all;
+    my $request;
+    if (scalar @args == 2 and $args[0] eq '-all') {
+        $all = 1;
+        $request = $args[1];
+    }
+    elsif (scalar @args == 1) {
+        $all = 0;
+        $request = $args[0];
+    }
+    else {
+        die "Internal error: Invalid arguments to Valid_Mappings";
+    }
 
     Debug ">>> Entering Valid_Mappings\n";
+    Debug "    \$all = $all\n";
     Debug "    operation = $request->{operation}\n";
     Debug "    dn = ", (exists $request->{dn} ? $request->{dn} : 'undef'), "\n";
     Debug "    map_to_name = ",
@@ -128,7 +149,7 @@ sub Valid_Mappings($) {
     }
     if (defined $request->{map_to_name}) {
         my @pw = getpwnam $request->{map_to_name};
-        if (not @pw) {
+        if (not @pw and not $all) {
             Debug ">>> Invalid, no such user\n";
             return ();
         }
