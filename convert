@@ -1,0 +1,63 @@
+#!/usr/bin/perl -w
+
+# $Id: convert,v 1.1 2003-05-29 02:41:53-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/convert,v $
+
+use strict;
+
+use Gridmap_Utils ();
+
+$| = 1;
+
+my $Now = time;
+my $dir = "$ENV{HOME}/cvs-kst/tools/gx-map/old-requests";
+opendir DIR, $dir or die "${dir}: $!\n";
+my @all_files = sort readdir DIR;
+my @logs     = grep /\.log$/, @all_files;
+closedir DIR;
+
+my @old_refs = ();
+foreach my $log (@logs) {
+    print "# Processing log file $log, ";
+    my @refs = Gridmap_Utils::Read_Records "$dir/$log";
+    print "got ", scalar @refs, " record(s)\n";
+    foreach my $ref (@refs) {
+	$ref->{file} = $log;
+    }
+    push @old_refs, @refs;
+}
+
+my @new_refs = ();
+foreach my $old_ref (@old_refs) {
+    my $new_ref = {};
+    $new_ref->{OWNER_NAME}   = $old_ref->{requested_by};
+    $new_ref->{OWNER_UID}    = $old_ref->{requested_by_uid};
+    $new_ref->{PROCESSED}    = Gridmap_Utils::Time_Image $Now;
+    $new_ref->{REQUEST_FILE} = $old_ref->{file};
+    $new_ref->{SITE}         = 'SDSC';
+    if (defined $old_ref->{comment}) {
+	$new_ref->{comment} = "$old_ref->{comment} (copied from old gx-map system)";
+    }
+    else {
+	$new_ref->{comment} = "(copied from old gx-map system)";
+    }
+    $new_ref->{dn}          = $old_ref->{dn};
+    $new_ref->{hostname}    = $old_ref->{hostname};
+    $new_ref->{map_to_name} = $old_ref->{username};
+    if (defined $old_ref->{uid} and $old_ref->{uid} ne 'UNKNOWN') {
+	$new_ref->{map_to_uid} = $old_ref->{uid};
+    }
+    $new_ref->{operation}         = $old_ref->{operation};
+    $new_ref->{requested_by_name} = $old_ref->{requested_by};
+    $new_ref->{requested_by_uid}  = $old_ref->{requested_by_uid};
+    $new_ref->{timestamp} = Gridmap_Utils::Time_Image $old_ref->{timestamp};
+
+    push @new_refs, $new_ref;
+}
+
+print "# Got ", scalar @new_refs, " records\n";
+print "# Sorting...\n";
+@new_refs = sort { $a->{timestamp} cmp $b->{timestamp} } @new_refs;
+print "# Writing records\n";
+Gridmap_Utils::Write_Records '-', @new_refs;
+print "# Done.\n";
