@@ -1,0 +1,24 @@
+# $Id: 49f18420.infn.cadesc,v 1.1 2004-10-07 21:37:39-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
+
+CA_NAME             INFN Certification Authority
+HOMEPAGE            http://security.fi.infn.it/CA/
+CONTACT             infn-ca@fi.infn.it
+HASH                49f18420
+SUBJECT             /C=IT/O=INFN/CN=INFN Certification Authority
+MAY_SIGN            /C=it/O=INFN/*
+MAY_SIGN            /C=IT/O=INFN/*
+CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.0
+SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.signing_policy
+CRL_URL             ?
+CRL_WARNING         12 hours
+INDEX               ?
+DISABLE             no
+
+#
+# The home page provides links to download the certificate and URL files,
+# but the interface doesn't allow the use of wget; the URLs given here
+# are from the DataGrid Certificate Authorities page.
+# The CRL referenced from the DataGrid Certificate Authorities page.
+# <http://security.fi.infn.it/CA/crl.crl>, # is in DER format.
+#
