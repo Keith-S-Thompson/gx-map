@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-gen-mapfile.in,v 1.3 2003-05-27 22:06:33-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.4 2003-06-12 03:25:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -34,16 +34,22 @@ my $Dot_Update           = "$Data_Dir/new-requests/.update";
 
 my $Prog_Name = File::Basename::basename $0;
 
-my $User_Opt = { 'requests-log' => $Default_Requests_Log,
-		 'permissions'  => '444' };
+my $User_Opt = { 'requests-log' => [ $Default_Requests_Log ],
+                 'permissions'  => '444' };
 my @Opts = ( $User_Opt,
-	     qw( help
-		 debugging!
-		 requests-log=s
-		 permissions=s
-		 real-name! ) );
+             qw( help
+                 debugging!
+                 requests-log=s@
+                 permissions=s
+                 real-name! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
+
+Debug "requests-log = $User_Opt->{'requests-log'}";
+if (ref $User_Opt->{'requests-log'} eq 'ARRAY') {
+    Debug " --> ( @{$User_Opt->{'requests-log'}} )";
+}
+Debug "\n";
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
@@ -65,7 +71,10 @@ if (not $Write_To_Stdout) {
     }
 }
 
-my @requests = Gridmap_Utils::Read_Records($User_Opt->{'requests-log'});
+my @requests;
+foreach my $log (@{$User_Opt->{'requests-log'}}) {
+    push @requests, Gridmap_Utils::Read_Records($log);
+}
 
 #
 # TODO: Validate records
@@ -95,59 +104,59 @@ foreach my $request (@requests) {
     my @request_mappings = Gridmap_Utils::Valid_Mappings $request;
     my $operation = $request->{operation};
     foreach my $mapping (@request_mappings) {
-	#
-	# $mapping is a reference to a hash with keys "dn" and
-	# "map_to_name", both optional.
-	#
-	my $dn          = exists $mapping->{dn}
-			  ? $mapping->{dn}
-			  : undef;
-	my $map_to_name = exists $mapping->{map_to_name}
-			  ? $mapping->{map_to_name}
-			  : undef;
-	Debug ">>> Processing mapping, operation = $operation, dn = ",
-	      (defined $dn ? $dn : "undef"),
-	      ", map_to_name = ",
-	      (defined $map_to_name ? "\"$map_to_name\"" : "undef"),
-	      "\n";
+        #
+        # $mapping is a reference to a hash with keys "dn" and
+        # "map_to_name", both optional.
+        #
+        my $dn          = exists $mapping->{dn}
+                          ? $mapping->{dn}
+                          : undef;
+        my $map_to_name = exists $mapping->{map_to_name}
+                          ? $mapping->{map_to_name}
+                          : undef;
+        Debug ">>> Processing mapping, operation = $operation, dn = ",
+              (defined $dn ? $dn : "undef"),
+              ", map_to_name = ",
+              (defined $map_to_name ? "\"$map_to_name\"" : "undef"),
+              "\n";
         if ($operation eq 'add') {
-	    Debug ">>> Add $dn --> $map_to_name\n";
+            Debug ">>> Add $dn --> $map_to_name\n";
             $Mappings{$dn} = $map_to_name;
         }
         elsif ($operation eq 'remove') {
             if (exists $Mappings{$dn} and
                 $Mappings{$dn} eq $map_to_name)
             {
-		Debug ">>> Delete $dn --> $Mappings{$dn}\n";
+                Debug ">>> Delete $dn --> $Mappings{$dn}\n";
                 delete $Mappings{$dn};
             }
         }
-	elsif ($operation eq 'remove-dn') {
-	    if (exists $Mappings{$dn}) {
-		Debug ">>> Delete $dn --> $Mappings{$dn}\n";
-		delete $Mappings{$dn};
-	    }
-	}
-	elsif ($operation eq 'remove-user') {
-	    my @target_dns = grep { $Mappings{$_} eq $map_to_name }
-				  keys %Mappings;
-	    foreach my $dn (@target_dns) {
-		Debug ">>> Delete $dn --> $Mappings{$dn}\n";
-		delete $Mappings{$dn};
-	    }
-	}
+        elsif ($operation eq 'remove-dn') {
+            if (exists $Mappings{$dn}) {
+                Debug ">>> Delete $dn --> $Mappings{$dn}\n";
+                delete $Mappings{$dn};
+            }
+        }
+        elsif ($operation eq 'remove-user') {
+            my @target_dns = grep { $Mappings{$_} eq $map_to_name }
+                                  keys %Mappings;
+            foreach my $dn (@target_dns) {
+                Debug ">>> Delete $dn --> $Mappings{$dn}\n";
+                delete $Mappings{$dn};
+            }
+        }
         else {
             die "Internal error, operation = \"$operation\"\n";
         }
 
-	if ($User_Opt->{debugging}) {
-	    Debug ">>> Current grid-mapfile entries:\n";
-	    foreach my $dn (sort keys %Mappings) {
-		Debug "* $dn $Mappings{$dn}\n";
-	    }
-	    Debug "<<< END\n";
+        if ($User_Opt->{debugging}) {
+            Debug ">>> Current grid-mapfile entries:\n";
+            foreach my $dn (sort keys %Mappings) {
+                Debug "* $dn $Mappings{$dn}\n";
+            }
+            Debug "<<< END\n";
 
-	}
+        }
     }
 }
 
@@ -183,13 +192,13 @@ foreach my $dn (sort keys %Mappings) {
     my $username = $Mappings{$dn};
     my $real_name = undef;
     if ($User_Opt->{'real-name'}) {
-	$real_name = User_Real_Name $username;
+        $real_name = User_Real_Name $username;
     }
     if (defined $real_name) {
-	print OUT "$dn $username # $real_name\n";
+        print OUT "$dn $username # $real_name\n";
     }
     else {
-	print OUT "$dn $username\n";
+        print OUT "$dn $username\n";
     }
 }
 close OUT;
@@ -282,12 +291,14 @@ sub Update_List(@) {
 
     my $dot_update_mtime = Get_mtime $Dot_Update;
 
-     my $mtime = Get_mtime $User_Opt->{'requests-log'};
-     Debug "input  mtime ", scalar localtime $mtime, "\n";
-     if (not defined $newest_input_mtime or
-         $mtime > $newest_input_mtime)
-    {
-        $newest_input_mtime = $mtime;
+    foreach my $log (@{$User_Opt->{'requests-log'}}) {
+        my $mtime = Get_mtime $log;
+        Debug "input  mtime ", scalar localtime $mtime, "\n";
+        if (not defined $newest_input_mtime or
+            $mtime > $newest_input_mtime)
+        {
+            $newest_input_mtime = $mtime;
+        }
     }
 
     foreach my $output_file (@Output_Files) {
@@ -398,6 +409,7 @@ Usage: $Prog_Name [options] [files]
 Option names may be abbreviated.
     -help              : Display this message and exit
     -requests-log file : Use specified requests log file
+                         May be given multiple times
     Default is $Default_Requests_Log
     -debugging         : Enable debugging output
     -permissions perm  : Specify permissions (in octal); default is 444
