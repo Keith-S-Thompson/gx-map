@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.37 2004-11-16 00:35:32-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.38 2004-11-30 02:58:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -365,17 +365,20 @@ sub Append_To_Log($@) {
     }
 
     #
-    # The log file is normally read-only (mode 400).
-    # Temporarily make it writable (mode 600), append the new
+    # The log file is normally read-only.
+    # Temporarily make it writable, append the new
     # records to it, then change it back to read-only.
     #
+    my $readonly = oct $Gridmap_Utils::Config{REQUESTS_LOG_PERMISSIONS};
+    my $writable = $readonly | 0200;
+
     if (-e $log_file) {
-        chmod 0600, $log_file or die "chmod $log_file: $!\n";
+        chmod $writable, $log_file or die "chmod $log_file: $!\n";
     }
 
     Gridmap_Utils::Write_Records '-multiple', $log_file, @requests;
 
-    chmod 0400, $log_file or die "chmod $log_file: $!\n";
+    chmod $readonly, $log_file or die "chmod $log_file: $!\n";
 
     #
     # Now check it into RCS.
