@@ -1,4 +1,4 @@
-# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.3 2004-10-08 13:59:27-07 kst Exp $
+# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.4 2004-10-08 20:44:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1e43b9cc.grid-ireland.cadesc,v $
 
 CA_NAME             Grid-Ireland Certification Authority
@@ -7,6 +7,7 @@ CONTACT             grid-ireland-ca@cs.tcd.ie
 HASH                1e43b9cc
 SUBJECT             /C=IE/O=Grid-Ireland/CN=Grid-Ireland Certification Authority
 MAY_SIGN            /C=IE/O=Grid-Ireland/*
+CERTIFICATE_MD5     92:88:F8:93:5F:45:D8:5F:82:86:58:42:91:4F:74:A7
 CERTIFICATE_URL     http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/1e43b9cc.signing_policy
 CRL_URL             http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.r0
