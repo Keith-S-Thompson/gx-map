@@ -1,4 +1,4 @@
-# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.9 2004-10-08 20:44:39-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.10 2004-10-10 03:21:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85ca9edc.psc-kerberos.cadesc,v $
 
 CA_NAME             PSC Kerberos Certification Authority
@@ -17,3 +17,5 @@ CRL_WARNING         ?
 #
 # There appears to be no CRL for this CA.
 #
+
+# MD5 fingerprint from 85ca9edc.0 downloaded 2004-10-10
