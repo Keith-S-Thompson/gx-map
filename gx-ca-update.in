@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.6 2004-09-14 21:38:27-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.7 2004-09-15 18:40:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -118,7 +118,7 @@ if ($User_Opt->{debugging}) {
 }
 
 my @ca_info = ();
-my $ca_conf_dir = "$Gridmap_Utils::Config{DATA_DIR}/ca.conf";
+my $ca_conf_dir = "$Install_Dir/var/ca.conf";
 
 my @ca_list = @{$User_Opt->{ca}};
 if (scalar @ca_list == 1 and $ca_list[0] eq 'ALL') {
