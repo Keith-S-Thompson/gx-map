@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.6 2003-12-02 17:41:18-08 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.7 2003-12-03 22:23:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -73,6 +73,9 @@ sub Valid_Mappings($);
 
 # ----------------------------------------------------------------------
 
+my $User_Map = undef;
+my $Admin_Map = undef;
+
 #
 # Given a reference to a request record, the Valid_Mappings function
 # returns a list of references to hashes specifying valid mappings, where
@@ -103,6 +106,10 @@ sub Valid_Mappings($);
 # is, the OWNER_NAME is set by a passwd lookup on the OWNER_UID; this
 # applies only to the local namespace.)
 #
+# If a "user-map" file exists under "$Install_Dir/var", the mapping
+# defined in that file will be used to map user names (and optionally
+# numeric UIDs) from other namespaces into the current namespace.
+#
 # A more sophisticated implementation might refer to a user database,
 # map to a local user derived from a (possibly remote) user name in the
 # record, confirm that the dn corresponds to a recognized CA, return
@@ -110,6 +117,9 @@ sub Valid_Mappings($);
 #
 sub Valid_Mappings($) {
     my($request) = @_;
+    my $have_user_map = 0;
+    my $have_admin_map = 0;
+    my $This_Namespace = '%NAMESPACE%';
 
     Debug ">>> Entering Valid_Mappings\n";
     Debug "    operation = $request->{operation}\n";
@@ -118,12 +128,33 @@ sub Valid_Mappings($) {
           (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
           "\n";
 
-    if (defined $request->{OWNER_UID} and not defined $request->{OWNER_NAME}) {
-        my $pw = Gridmap_Utils::Get_PW($request->{OWNER_UID});
-        if (defined $pw->{name}) {
-            $request->{OWNER_NAME} = $pw->{name};
-        }
+    if (not defined $User_Map) {
+	$User_Map = Gridmap_Utils::Read_User_Map
+		        "$Install_Dir/var/user-map", $This_Namespace;
+	$have_user_map = 1 if ref $User_Map eq 'HASH';
     }
+    if (not defined $Admin_Map) {
+	$Admin_Map = Gridmap_Utils::Read_Admin_List
+		        "$Install_Dir/var/admin-list";
+	$have_admin_map = 1 if ref $Admin_Map eq 'HASH';
+    }
+
+    if ($request->{NAMESPACE} eq $This_Namespace) {
+	if (defined $request->{OWNER_UID} and
+	    not defined $request->{OWNER_NAME})
+	{
+	    my $pw = Gridmap_Utils::Get_PW($request->{OWNER_UID});
+	    if (defined $pw->{name}) {
+		$request->{OWNER_NAME} = $pw->{name};
+	    }
+	    Debug ">>> Inferring OWNER_NAME from OWNER_UID\n";
+	}
+	if (not defined $request->{OWNER_NAME}) {
+	    Debug ">>> Invalid, no OWNER_NAME\n";
+	    return ();
+	}
+    }
+========================================================================
 
     if (not defined $request->{OWNER_NAME}) {
         Debug ">>> Invalid, no OWNER_NAME\n";
@@ -139,9 +170,14 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no NAMESPACE\n";
         return ();
     }
-    if ($request->{NAMESPACE} ne '%NAMESPACE%') {
-        Debug ">>> Invalid, NAMESPACE ne '%NAMESPACE%'\n";
-        return ();
+    if ($request->{NAMESPACE} ne $This_Namespace) {
+	if ($have_user_map) {
+
+	}
+	else {
+	    Debug ">>> Invalid, NAMESPACE ne \"$This_Namespace\"\n";
+	    return ();
+	}
     }
     if (exists $request->{map_to_name}) {
         if ($request->{OWNER_NAME} ne $request->{map_to_name} and
