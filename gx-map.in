@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.27 2004-07-30 18:08:08-07 kst Exp $
+# $Id: gx-map.in,v 1.28 2004-08-17 22:14:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -630,7 +630,7 @@ EOF
         # Get user name if needed
         #
         my $need_user_name = undef;
-        if ($Globus_Admin) {
+        if ($Globus_Admin and $OP ne 'remove-dn') {
             $need_user_name = 1;
         }
         else {
