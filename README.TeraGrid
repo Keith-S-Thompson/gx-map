@@ -1,0 +1,73 @@
+# $Id: README.TeraGrid,v 1.1 2004-11-24 16:52:35-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
+
+Here's a suggested set of cron jobs for SDSC's TeraGrid system,
+tg-login1.sdsc.teragrid.org, running under the "globus" account.
+Other TeraGrid sites should modify the paths and the namespace
+argument.  Non-TeraGrid sites will require customization as well,
+but can use this as a template.
+
+Sorry about the long lines, but crontab doesn't seem to allow commands
+to be split.
+
+As I write this, not everything required for these cron jobs has been
+installed yet.
+
+# minute hour mday month wday command
+4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/apps/gx-map-0.4.0/sbin/gx-check-requests -namespace SDSC
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.0/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.0/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/apps/gx-map-0.4.0/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
+
+The gx-check-requests command checks for new requests every 5 minutes;
+the requests are validated and appended to the requests.log file.
+
+The gx-gen-mapfile command runs every 5 minutes, and generates
+(when necessary) a new grid-mapfile.  I assume here that it's
+written to the /usr/local/apps/grid-security directory; the file
+/etc/grid-security/grid-mapfile then needs to be a symlink to
+/usr/local/apps/grid-security/grid-mapfile.  The "-req" arguments are
+specific to SDSC; non-SDSC sites should omit them and use only the
+local requests.log file.  (The "ncsa-sdsc-user-map" file from gx-map
+0.3 is no longer included in the release.  NCSA will need to add a
+number of entries to their local gx-map database; I'll help with that.)
+
+Finally, the gx-ca-update command runs every 30 minutes and checks
+for CRL (Certificate Revocation List) updates.  I recommend running
+gx-ca-update once manually, with the "-verbose" option, to populate
+the certificates directory and see what messages are produced, before
+enabling the cron job.  The argument to the "-ca" option is the list
+of CA certificates to be installed.  They can also be specified by
+the name incorporated into the name of the cadesc file:
+
+    -ca uk-escience,doegrids,sdsc,ncsa,purdue-tg-ra,psc-kerberos,purdue,tacc,psc-root,npaci,esnet
+
+For NCSA, the cron jobs might look like this:
+
+# minute hour mday month wday command
+4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/gx-map-0.4.0/sbin/gx-check-requests -namespace NCSA
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.0/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/gx-map-0.4.0/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
+
+By default, gx-ca-update will not install a certificate if there is
+no current corresponding CRL.  If a CRL expires and a new one is not
+available, the old one will be left in place, effectively disabling all
+certificates issued by the CA.  This behavior is designed to prevent
+a revoked user or host certificate from being recognized (which is
+the whole point of being able to revoke a certificate), but at the
+cost of being unable to use potentially valid certificates in some
+circumstances.  If you wish to sacrifice security for convenience,
+you can invoke gx-ca-update with the "-allow-missing-crl" option,
+which allows a certificate to be installed with no CRL and/or with the
+"-expire-crl" potion, which removes a CRL that is about to expire
+within a specified time if no newer CRL is available.  Both of
+the options are allowed only if you also specify the "-UNSAFE"
+option; the option name is case-senstive and cannot be abbreviated.
+The additional arguments to the gx-ca-update command might then be:
+
+    -UNSAFE -allow-missing-crl -expire-crl 45m
+
+The gx-ca-update command writes log messages to the file
+var/gx-ca-update.log under the gx-map installation directory.  In a
+future release, it will optionally use the syslog facility as well.
+
+		-- Keith Thompson <kst@sdsc.edu> 2004-11-24
