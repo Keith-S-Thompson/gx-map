@@ -1,4 +1,4 @@
-# $Id: d2a353a5.pkgrid.cadesc,v 1.7 2004-11-01 16:57:40-08 kst Exp $
+# $Id: d2a353a5.pkgrid.cadesc,v 1.8 2005-03-29 19:27:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d2a353a5.pkgrid.cadesc,v $
 
 CA_NAME             PK-Grid-CA
@@ -8,30 +8,35 @@ HASH                d2a353a5
 SUBJECT             /C=PK/O=NCP/CN=ncp.edu.pk
 MAY_SIGN            /C=PK/*
 CERTIFICATE_MD5     24:A0:A7:DD:46:1B:EB:AE:7F:33:CA:5F:FA:D7:37:F8
+# CERTIFICATE_SHA1    68:0D:FA:77:62:83:D0:C6:70:3F:2A:C2:E7:20:44:ED:23:30:6F:F5
 CERTIFICATE_URL     http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/ncpcertpem.txt
 SIGNING_POLICY_URL  http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/d2a353a5.signing_policy.txt
 CRL_URL             http://www.ncp.edu.pk/pk-grid-ca/CRL/ncp.crl
 CERT_EXPIRES        Dec  9 10:18:25 2008 GMT
 
+# 2004-10-07:
+#     The CRL had expired (fixed later).
+#     The URL for the signing_policy file is broken.
 #
-# As of 2004-10-07, the CRL has expired.
-# The URL for the signing_policy file is broken.
+# 2004-10-08:
+#     Web server not responding.
 #
-# As of 2004-10-08, the web server does not respond.
-# Disabling until they fix things.
+# 2004-10-25:
+#     Web server is responding again.
+#     There is a new certificate, and the CRL is up to date.
+#     The MD5 fingerprint has changed from
+#         1A:DE:78:FD:E5:3D:3C:67:24:87:F4:0C:AE:0A:41:68
+#     to
+#         24:A0:A7:DD:46:1B:EB:AE:7F:33:CA:5F:FA:D7:37:F8
+#     and the subject name, as reported by OpenSSL, has changed from
+#         /CN=ncp.edu.pk/C=PK/O=NCP
+#     to
+#         /C=PK/O=NCP/CN=ncp.edu.pk
+#     (apparently re-ordering the fields doesn't change the hash).
+#     The d2a353a5.signing_policy.txt has a typo, a missing leading '/'
+#     in the certificate subject name.
 #
-# As of 2004-10-25, the web server is responding, there is a new
-# certificate, and the CRL is up to date.
-# The MD5 fingerprint has changed from
-#     1A:DE:78:FD:E5:3D:3C:67:24:87:F4:0C:AE:0A:41:68
-# to
-#     24:A0:A7:DD:46:1B:EB:AE:7F:33:CA:5F:FA:D7:37:F8
-# and the subject name, as reported by OpenSSL, has changed from
-#     /CN=ncp.edu.pk/C=PK/O=NCP
-# to
-#     /C=PK/O=NCP/CN=ncp.edu.pk
-# (apparently re-ordering the fields doesn't change the hash).
-# The d2a353a5.signing_policy.txt has a typo, a missing leading '/'
-# in the certificate subject name.
+# 2005-03-29:
+#     The certificate and CRL are ok, but I can't find the signing_policy.
 
-# MD5 fingerprint from d2a353a5.0 downloaded 2004-10-25
+# MD5 and SHA1 fingerprints from d2a353a5.0 downloaded 2005-03-29
