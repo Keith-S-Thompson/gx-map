@@ -1,4 +1,4 @@
-# $Id: aa99c057.psc-root.cadesc,v 1.5 2004-10-08 13:59:31-07 kst Exp $
+# $Id: aa99c057.psc-root.cadesc,v 1.6 2004-10-08 20:44:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/aa99c057.psc-root.cadesc,v $
 
 CA_NAME             PSC Root Certificate Authority
@@ -7,6 +7,7 @@ CONTACT             ?
 HASH                aa99c057
 SUBJECT             /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Root Certificate Authority
 MAY_SIGN            /C=US/O=Pittsburgh Supercomputing Center/*
+CERTIFICATE_MD5     84:C4:4E:3B:17:8E:9D:02:CE:2B:68:40:13:D2:7E:5B
 CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/aa99c057.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/aa99c057.signing_policy
 CRL_URL             http://ocsp.psc.edu:8000/ca/aa99c057.r0
