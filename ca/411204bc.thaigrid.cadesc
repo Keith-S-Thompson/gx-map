@@ -1,4 +1,4 @@
-# $Id: 411204bc.thaigrid.cadesc,v 1.3 2004-10-08 13:59:28-07 kst Exp $
+# $Id: 411204bc.thaigrid.cadesc,v 1.4 2004-10-08 20:44:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/411204bc.thaigrid.cadesc,v $
 
 CA_NAME             ThaiGrid CA
@@ -7,6 +7,7 @@ CONTACT             ?
 HASH                411204bc
 SUBJECT             /O=Grid/OU=ThaiGrid/CN=ThaiGrid CA
 MAY_SIGN            /O=Grid/OU=ThaiGrid/*
+CERTIFICATE_MD5     9F:77:C4:44:39:93:2D:AE:09:28:F0:C9:65:48:55:3B
 CERTIFICATE_URL     http://osl.cpe.ku.ac.th/pub/thaigrid/CA/411204bc.0
 SIGNING_POLICY_URL  http://osl.cpe.ku.ac.th/pub/thaigrid/CA/411204bc.signing_policy
 CRL_URL             ?
