@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.57 2005-01-28 18:12:29-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.58 2005-01-28 18:13:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -530,22 +530,29 @@ sub Write_Records($$@) {
     my $output = '';
 
     foreach my $ref (@refs) {
+        my $deleted = exists $ref->{__DELETED__};
+
+        $output .= "# " if $deleted;
         $output .= "{\n" if $multiple;
 
         my $max_key_len = 0;
         foreach my $key (keys %$ref) {
+            next if $key eq '__DELETED__';
             $max_key_len = length $key if length $key > $max_key_len;
         }
 
         foreach my $key (sort keys %$ref) {
+            next if $key eq '__DELETED__';
             my $value = $ref->{$key};
             my @values = (ref $value eq 'ARRAY' ? @$value : ($value));
             foreach my $item (@values) {
+                $output .= "# " if $deleted;
                 $output .= "\t" if $multiple;
                 $output .= sprintf "%-${max_key_len}s  %s\n", $key, $item;
             }
         }
 
+        $output .= "# " if $deleted;
         $output .= "}\n\n" if $multiple;
     }
 
