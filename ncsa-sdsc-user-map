@@ -1,5 +1,5 @@
 #
-# $Id: ncsa-sdsc-user-map,v 1.1 2003-07-19 18:05:31-07 kst Exp $
+# $Id: ncsa-sdsc-user-map,v 1.2 2003-07-20 22:26:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ncsa-sdsc-user-map,v $
 # 
 # This file is a first cut at a mapping of user names between SDSC's
@@ -136,6 +136,8 @@ smyan@ncsa       ux453931@sdsc     # Shengquan Yan
 kenneth@ncsa     kenneth@sdsc      # Kenneth Yoshimoto / Ken Yoshimoto
 youssef@ncsa     ux454516@sdsc     # Saul Youssef
 yanan@ncsa       yanan@sdsc        # Yanan Yu
+
+erike@ncsa       erike@sdsc        # Erik Enquist / Erik Engquist
 
 # xcao@ncsa        ux454324@sdsc     # Xiangchi Cao / Peter Cao
 # chrisman@sdsc    cameron@sdsc      # Rachel Chrisman / Cameron Chrisman
