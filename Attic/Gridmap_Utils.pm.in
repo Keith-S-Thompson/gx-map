@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.26 2004-07-29 20:08:07-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.27 2004-07-30 01:13:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -265,7 +265,13 @@ sub Get_Hostname() {
     my $hostname   = undef;
     my $domainname = undef;
 
-    chomp($hostname = `/bin/hostname 2>/dev/null`);
+    {
+        #
+        # Localize $ENV{PATH} to avoid taint check
+        #
+        local($ENV{PATH}) = '%PATH%';
+        chomp($hostname = `/bin/hostname 2>/dev/null`);
+    }
 
     if ($hostname =~ /\./) {
         #
@@ -844,7 +850,7 @@ sub Read_Admin_List($) {
             $Map->{$_} = 1;
         }
         else {
-	    my $line = $.;
+            my $line = $.;
             close MAP;
             return "Syntax error on line $line";
         }
