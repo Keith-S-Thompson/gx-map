@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.1 2004-11-22 18:07:55-08 kst Exp $
+# $Id: make-release,v 1.2 2004-11-23 01:27:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -14,11 +14,14 @@ if [ $# -ne 1 ] ; then
 fi
 
 num=$1
+in_files=`echo *.in`
+cadesc_files=`cd ca ; echo *.cadesc`
+
 try mkdir release/gx-map-$num
 try cd release/gx-map-$num
 
 for file in \
-    '*.in' \
+    $in_files \
     INSTALL \
     Makefile \
     README \
@@ -36,7 +39,7 @@ done
 
 try mkdir ca
 try cd ca
-for file in *.cadesc ; do
+for file in $cadesc_files ; do
     try cp -p ../../../ca/$file .
 done
 
