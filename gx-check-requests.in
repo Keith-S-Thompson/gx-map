@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.18 2003-07-26 18:01:30-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.19 2003-07-27 17:24:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -81,12 +81,16 @@ my $Default_Data_Dir = "$Install_Dir/var";
 
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
-             qw( help namespace=s directory=s copy=s debugging ) );
+             qw( help version namespace=s directory=s copy=s debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
 Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+
+if ($User_Opt->{version}) {
+    print "gx-check-requests, part of gx-map version $Gridmap_Utils::VERSION\n";
+}
 
 my $Data_Dir = defined $User_Opt->{directory}
                      ? $User_Opt->{directory}
@@ -405,6 +409,7 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Prog_Name [options]
     -help           : Display this message and exit
+    -version        : Display version information and exit
     -namespace name : Specify namespace (e.g., "%NAMESPACE%"); mandatory
     -directory dir  : Data directory
                       Default is $Default_Data_Dir
