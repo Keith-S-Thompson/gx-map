@@ -1,4 +1,4 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.4 2004-10-08 20:44:43-07 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.5 2004-10-10 03:21:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
@@ -28,3 +28,5 @@ DISABLE             no
 # globus_gcs_b38b4d8c_setup-0.1.tar.gz GPT package.  I've copied
 # them to my own web page.
 #
+
+# MD5 fingerprint from b38b4d8c.0 downloaded 2004-10-10
