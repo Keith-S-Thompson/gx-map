@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.5 2004-09-13 17:00:17-07 kst Exp $
+# $Id: Makefile,v 1.6 2004-11-17 20:08:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Makefile,v $
 
 ########################################################################
@@ -55,5 +55,8 @@ clean:		FORCE
 
 install:	FORCE
 		./install-gx-map
+
+install-all:	FORCE
+		./install-gx-map -all
 
 FORCE:
