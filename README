@@ -1,4 +1,4 @@
-# $Id: README,v 1.18 2004-11-23 20:32:50-08 kst Exp $
+# $Id: README,v 1.19 2004-11-24 16:51:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
@@ -28,10 +28,20 @@ incomplete.  The "ncsa-sdsc-user-map" is specific to NCSA and SDSC
 systems, and is out of date.  (The new SOURCE attribute is intended
 to enable tracking where each transaction was entered.)
 
-Documentation is still sadly lacking.  General information is available
-in this README file; information about the gx-ca-update command is
-in README.CA and README.CA-SECURITY.  Future releases will include
-man pages.
+Documentation is still somewhat lacking.  General information is
+available in this README file.  Information about the gx-ca-update
+command is in README.CA and README.CA-SECURITY.  TeraGrid-specific
+information is in README.TeraGrid; this may also be of interest for
+non-TeraGrid sites.  If you're currently using an earlier version of
+gx-map, see README.UPGRADE.  For information on using gx-map across
+multiple sites, see README.Cross-Site.
+
+I gave a brief presentation on gx-map at GlobusWorld 2004.  An expanded
+version of the PowerPoint slides from that presentation can be found
+in gx-map.ppt in this distribution; gx-map.pdf is the same thing in
+PDF format.
+
+Future releases will include man pages.
 
 There is a known bug in the gx-map system (inadvertently discovered
 by Mei-Hui Su of ISI) that can affect sites with multiple systems
@@ -61,4 +71,4 @@ gx-gen-mapfile ignores requests without a valid OWNER_NAME field.
 This bug was discovered in release 0.3, and has not yet been fixed
 as of release 0.4.0.
 
-                -- Keith Thompson <kst@sdsc.edu> 2004-11-23
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-24
