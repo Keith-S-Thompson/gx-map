@@ -1,4 +1,4 @@
-# $Id: 5aba75cb.ncsa-old.cadesc,v 1.10 2004-11-01 17:04:19-08 kst Exp $
+# $Id: 5aba75cb.ncsa-old.cadesc,v 1.11 2005-03-29 19:27:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5aba75cb.ncsa-old.cadesc,v $
 
 CA_NAME             NCSA CA (old)
@@ -8,16 +8,15 @@ HASH                5aba75cb
 SUBJECT             /C=US/O=National Computational Science Alliance/OU=Certification Authority
 MAY_SIGN            /C=US/O=National Computational Science Alliance/*
 CERTIFICATE_MD5     A2:D1:FF:83:88:C1:0F:23:FA:38:D7:77:4B:05:0B:8E
+# CERTIFICATE_SHA1    55:D6:D2:EC:12:AD:E9:94:CE:CC:4B:A0:A7:93:51:4C:69:1F:06:B3
 CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/5aba75cb.0
 SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/5aba75cb.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Mar 22 06:00:00 2006 GMT
 
-#
 # There appears to be no CRL for this CA.
 # It is superseded by the new NCSA CA (4a6cd8b1.ncsa.cadesc), but
 # the signing certificate doesn't expire until 2006-03-22, and
 # there are still valid certificates issued by this CA.
-#
 
-# MD5 fingerprint from 5aba75cb.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 5aba75cb.0 downloaded 2005-03-29
