@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.49 2005-01-07 17:14:03-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.50 2005-02-16 16:40:48-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1142,7 +1142,8 @@ sub Notify() {
 
     my $log_file = "$Install_Dir/var/$Program_Name.log";
     open LOG, ">>$log_file";
-    print LOG Gridmap_Utils::Time_Image $now, " $Program_Name\n";
+    print LOG Gridmap_Utils::Time_Image $now,
+              " $Program_Name (gx-map $Gridmap_Utils::VERSION)\n";
 
     foreach my $ref (@ca_info) {
         if (defined $ref->{_ERRORS}) {
