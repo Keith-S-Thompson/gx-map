@@ -1,0 +1,32 @@
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.1 2005-02-02 12:13:14-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
+
+CA_NAME             USC PKI Lite CA
+HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/
+CONTACT             Shelley Henderson <shelley@usc.edu>
+HASH                2ca73e82
+SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
+MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
+CERTIFICATE_MD5     32:2A:0F:13:54:D0:6E:4D:DC:8D:0A:CB:AD:7C:80:48
+CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/CAcert.pem
+SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/signing_policy
+CRL_URL             ?
+CERT_EXPIRES        Jan  1 22:06:57 2011 GMT
+
+# As of 2005-02-02, there is no CRL.
+
+# MD5 fingerprint from certificate downloaded 2005-02-02
+
+# The certificate replaces two older deprecated certificates, still
+# available at <http://www.usc.edu/isd/services/authx/CA/deprecated.html>,
+# with the following characteristics (see 2c7969d0.usc-pki-lite.cadesc):
+
+# HASH              2c7969d0
+# SUBJECT           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
+# CERTIFICATE_MD5   03:46:00:F5:77:3E:9E:89:B1:0A:53:04:E9:44:27:F6
+# CERT_EXPIRES      Jan  9 01:45:20 2005 GMT
+
+# HASH              2c7969d0
+# SUBJECT           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
+# CERTIFICATE_MD5   B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E
+# CERT_EXPIRES      Jan  1 21:47:56 2011 GMT
