@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.39 2004-09-20 16:32:49-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.40 2004-09-20 17:19:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -545,6 +545,9 @@ sub Read_Records($$) {
                 else {
                     $ref->{$key} = $value;
                 }
+            }
+            else {
+                die "Syntax error at line $. of $filename\n";
             }
         }
         else {
