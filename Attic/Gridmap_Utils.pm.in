@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.49 2004-11-15 16:18:57-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.50 2004-11-20 02:48:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -636,6 +636,7 @@ sub Cache_File($) {
     my $is_ftp = $url =~ /^ftp/;
     my $result;
     my $cwd = Cwd::getcwd;
+    Untaint $cwd;
 
     Init_Cache_Info();
     my $initial_download = not defined $Cache_File{$url};
