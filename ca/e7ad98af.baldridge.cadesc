@@ -1,0 +1,19 @@
+# $Id: e7ad98af.baldridge.cadesc,v 1.1 2004-10-17 22:39:30-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/e7ad98af.baldridge.cadesc,v $
+
+CA_NAME             Baldridge group CA
+HOMEPAGE            ?
+CONTACT             ?
+HASH                e7ad98af
+SUBJECT             /O=University of Zurich/OU=OCI/OU=Baldridge group/CN=Baldridge group CA
+MAY_SIGN            /O=University of Zurich/OU=OCI/OU=Baldridge group/*
+CERTIFICATE_MD5     9A:51:80:2B:DE:35:43:04:D8:0B:0C:7E:C5:30:7D:3F
+CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/e7ad98af.0
+SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/e7ad98af.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             no
+
+# There is no CRL.
+
+# MD5 fingerprint from e7ad98af.0 downloaded 2004-10-17
