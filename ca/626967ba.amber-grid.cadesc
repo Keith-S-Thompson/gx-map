@@ -1,0 +1,20 @@
+# $Id: 626967ba.amber-grid.cadesc,v 1.1 2004-10-17 22:39:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/626967ba.amber-grid.cadesc,v $
+
+CA_NAME             amber.grid CA
+HOMEPAGE            ?
+CONTACT             ?
+HASH                626967ba
+SIGNED_BY           /O=Grid/OU=example.org/CN=example.org Root CA
+SUBJECT             /O=in/OU=amber.grid/CN=aditya
+MAY_SIGN            /O=in/OU=amber.grid/*
+CERTIFICATE_MD5     98:2A:6A:37:A5:E0:71:02:F9:30:09:75:8B:52:3F:BA
+CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/626967ba.0
+SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/626967ba.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             no
+
+# There is no CRL
+
+# MD5 fingerprint from 626967ba.0 downloaded 2004-1017?
