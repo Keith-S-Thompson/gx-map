@@ -1,4 +1,4 @@
-# $Id: bc82f877.nasa.cadesc,v 1.9 2004-10-08 20:44:43-07 kst Exp $
+# $Id: bc82f877.nasa.cadesc,v 1.10 2004-10-10 03:21:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
 
 CA_NAME             NASA CA
@@ -20,3 +20,5 @@ CRL_WARNING         ?
 #
 # There does not appear to be a CRL.
 #
+
+# MD5 fingerprint from bc82f877.0 downloaded 2004-10-10
