@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.31 2004-08-17 20:37:55-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.32 2004-08-17 21:43:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -77,7 +77,6 @@ BEGIN {
                 INSTALL_DIR   => '%INSTALL_DIR%',
                 DATA_DIR      => '%DATA_DIR%',
                 GLOBUS_ADMINS => '%GLOBUS_ADMINS%',
-                DN_FORMAT     => '%DN_FORMAT%',
                 ADMIN_EMAIL   => '%ADMIN_EMAIL%' );
     use File::Basename ();
 }
@@ -866,52 +865,28 @@ sub Read_Admin_List($) {
 # ----------------------------------------------------------------------
 
 #
-# Given a single DN, returns a list of one or two DNs depending on the
-# setting of the DN_FORMAT configuration option.
+# Given a single DN, returns a list of one or two DNs for compatibility
+# with both GT2 and GT3.
 # 
 sub DN_List($) {
     my $dn = $_[0];
-    my $dn_format = $Gridmap_Utils::Config{DN_FORMAT};
 
-    my $gt2_dn;
-    if ($dn_format eq 'GT2' or $dn_format eq 'BOTH')
-    {
-        $gt2_dn = $dn;
-        $gt2_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=);
-        $gt2_dn =~ s(/UID=)(/USERID=);
-        $gt2_dn =~ s(/emailAddress=)(/Email=);
-    }
+    my $gt2_dn = $dn;
+    $gt2_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=);
+    $gt2_dn =~ s(/UID=)(/USERID=);
+    $gt2_dn =~ s(/emailAddress=)(/Email=);
 
-    my $gt3_dn;
-    if ($dn_format eq 'GT3' or $dn_format eq 'BOTH') {
-        $gt3_dn = $dn;
-        $gt3_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=);
-        $gt3_dn =~ s(/USERID=)(/UID=);
-        $gt3_dn =~ s(/Email=)(/emailAddress=);
-    }
+    my $gt3_dn = $dn;
+    $gt3_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=);
+    $gt3_dn =~ s(/USERID=)(/UID=);
+    $gt3_dn =~ s(/Email=)(/emailAddress=);
 
-    my @result;
-    if ($dn_format eq 'RAW') {
-        @result = ($dn);
-    }
-    elsif ($dn_format eq 'GT2') {
-        @result = ($gt2_dn);
-    }
-    elsif ($dn_format eq 'GT3') {
-        @result = ($gt3_dn);
-    }
-    elsif ($dn_format eq 'BOTH') {
-        if ($gt2_dn eq $gt3_dn) {
-            @result = ($gt2_dn);
-        }
-        else {
-            @result = ($gt2_dn, $gt3_dn);
-        }
+    if ($gt2_dn eq $gt3_dn) {
+	return ($gt2_dn);
     }
     else {
-        die "Internal error, DN_FORMAT = $dn_format";
+	return ($gt2_dn, $gt3_dn);
     }
-    return @result;
 } # DN_List
 
 # ----------------------------------------------------------------------
