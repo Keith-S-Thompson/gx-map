@@ -1,0 +1,26 @@
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.1 2004-10-02 14:40:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
+
+CA_NAME             Globus Certificate Service
+HOMEPAGE            http://gcs.globus.org:8080/gcs/index.html
+CONTACT             ?
+HASH                b38b4d8c
+SUBJECT             /C=US/O=Globus Alliance/CN=Globus Certificate Service
+MAY_SIGN            /C=US/O=Globus Alliance/OU=Service/*
+MAY_SIGN            /C=US/O=Globus Alliance/OU=User/*
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
+CRL_WARNING         ?
+INDEX               ?
+DISABLE             yes
+
+#
+# The Globus Certificate Service issues low-quality certificates, to be
+# used only for testing purposes.
+#
+# There is no CRL.
+#
+# As far as I can tell, the CA and signing_policy files are available
+# only within the globus_gcs_b38b4d8c_setup-0.1.tar.gz package.
+#
