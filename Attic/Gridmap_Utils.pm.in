@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.13 2003-07-23 20:20:51-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.14 2003-07-23 20:27:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -447,7 +447,7 @@ sub Cache_File($) {
         mkdir $dir, 0777 or die "${dir}: $!\n";
         my $cache_file = "$dir/" . File::Basename::basename $url;
         my $result = system '%WGET%',
-                            '-N', '-nr',
+                            '-N',
                             '-o', '/dev/null',
                             '-O', $cache_file,
                             $url;
@@ -468,7 +468,7 @@ sub Cache_File($) {
         # Try to refresh the file.
         #
         my $result = system '%WGET%',
-                            '-N', '-nr',
+                            '-N',
                             '-o', '/dev/null',
                             '-O', $Cache_File{$url},
                             $url;
