@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-requests.in,v 1.7 2003-05-28 20:55:26-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.8 2003-06-05 19:44:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -32,15 +32,15 @@ my $Prog_Name = File::Basename::basename $0;
 my $Hostname = Gridmap_Utils::Get_Hostname;
 
 my $Help      = undef;
-my $Site      = undef;
+my $Namespace = undef;
 my $Debugging = undef;
-my @Opts = ( 'help|usage' => \$Help,
-             'site=s'     => \$Site,
-             'debugging'  => \$Debugging );
+my @Opts = ( 'help'        => \$Help,
+             'namespace=s' => \$Namespace,
+             'debugging'   => \$Debugging );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $Help;
 Usage if @ARGV;
-Usage "No -site option given\n" if not defined $Site;
+Usage "No -namespace option given\n" if not defined $Namespace;
 
 my $Data_Dir         = "$Install_Dir/var";
 my $requests_log     = "$Data_Dir/requests.log";
@@ -61,7 +61,7 @@ if (not -d $bad_request_dir) {
 my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
-                   qw( dn map_to_name email comment map_to_uid SITE ) );
+                   qw( dn map_to_name email comment map_to_uid NAMESPACE ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
@@ -236,11 +236,11 @@ sub Get_Request_Info($) {
         $result->{OWNER_NAME} = $file_pw->{name};
     }
 
-    if (defined $result->{SITE}) {
+    if (defined $result->{NAMESPACE}) {
         if (defined $result->{OWNER_NAME} and
             Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME})
         {
-            # ok, leave SITE as it is
+            # ok, leave NAMESPACE as it is
         }
         else {
             my $user;
@@ -251,11 +251,12 @@ sub Get_Request_Info($) {
                 $user = $result->{OWNER_UID};
             }
             push @{$result->{ERRORS}},
-                 "User $user tried to define SITE \"$result->{SITE}\"\n";
+                 "User $user tried to define NAMESPACE " .
+		 "\"$result->{NAMESPACE}\"\n";
         }
     }
     else {
-        $result->{SITE} = $Site;
+        $result->{NAMESPACE} = $Namespace;
     }
 
     return $result;
@@ -290,7 +291,7 @@ sub Append_To_Log($@) {
 
     if (not -e $log_file) {
         open LOG, ">$log_file" or die "$log_file: $!\n";
-        print LOG "# \$Id: gx-check-requests.in,v 1.7 2003-05-28 20:55:26-07 kst Exp $\n",
+        print LOG "# \$Id: gx-check-requests.in,v 1.8 2003-06-05 19:44:08-07 kst Exp $\n",
                   "# \$Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $\n",
                   "\n";
         close LOG;
@@ -325,9 +326,9 @@ sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
 Usage: $Prog_Name [options]
-    -help, -usage : Display this message and exit
-    -site name    : Specify site name (e.g., "%SITE%"); mandatory
-    -debugging    : Enable debugging output
+    -help           : Display this message and exit
+    -namespace name : Specify namespace (e.g., "%NAMESPACE%"); mandatory
+    -debugging      : Enable debugging output
 EOF
     exit 1;
 } # Usage
