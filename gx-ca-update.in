@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.13 2004-09-25 09:35:54-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.14 2004-09-26 20:44:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -67,6 +67,7 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
+sub Match_CA_Name($$);
 sub String_To_Seconds($);
 sub Seconds_To_String($);
 sub Signing_Policy($);
@@ -152,15 +153,20 @@ if (scalar @ca_list_all == 0) {
     die "No *.cadesc files in $ca_conf_dir\n";
 }
 
-my %selected = map { $_ => 0 } @ca_list_all;
+my %selected = ();
 
-foreach my $requested_ca (@{$User_Opt->{ca}}) {
+my @requested_ca_list = ();
+foreach my $arg (@{$User_Opt->{ca}}) {
+    push @requested_ca_list, split /[ ,]/, $arg;
+}
+
+foreach my $requested_ca (@requested_ca_list) {
     if ($requested_ca eq 'ALL') {
         %selected = map { $_ => 1 } @ca_list_all;
     }
     else {
         foreach my $ca (@ca_list_all) {
-            if (index($ca, lc $requested_ca) != -1) {
+            if (Match_CA_Name $requested_ca, $ca) {
                 $selected{$ca} = 1;
             }
         }
@@ -168,6 +174,11 @@ foreach my $requested_ca (@{$User_Opt->{ca}}) {
 }
 
 my @ca_list = grep $selected{$_}, @ca_list_all;
+
+print "\@ca_list = (\n    ",
+      join(",\n    ", @ca_list),
+      "\n)\n";
+exit 42;
 
 if (scalar @ca_list == 0) {
     die "No CAs selected\n";
@@ -212,6 +223,23 @@ foreach my $ref (@ca_info) {
 }
 
 ########################################################################
+
+#
+# Given an argument to the "-ca" option and the name of a *.cadesc
+# file, return true iff the requested CA name matches a subfield of the
+# file name.
+#
+sub Match_CA_Name($$) {
+    my($requested_ca, $cadesc_filename) = @_;
+    my @fields = split /\./, $cadesc_filename;
+    pop @fields; # drop ".cadesc" suffix
+    foreach my $field (@fields) {
+        return 1 if lc $requested_ca eq lc $field;
+    }
+    return 0;
+} # Match_CA_Name
+
+# ----------------------------------------------------------------------
 
 #
 # Given a string such as "1 hour" or "10 minutes", returns the number
@@ -441,7 +469,6 @@ sub Update_Certificate($) {
         print "Skipping existing $ref->{_CERT_FILE}\n";
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(http|ftp)://>) {
-        print "Installing $ref->{_CERT_FILE}\n";
         my $cache_file;
         eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE_URL} };
         if (defined $@ and $@ ne '') {
@@ -459,6 +486,7 @@ sub Update_Certificate($) {
                           " ago\n";
                 }
                 else {
+                    print "Installing $ref->{_CERT_FILE}\n";
                     system 'cp', '-p', '-f', $cache_file,
                                              "$ref->{_CERT_FILE}.$$";
                     rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE};
@@ -642,9 +670,10 @@ sub Usage(@) {
 Usage: $Prog_Name [options]
     -help              Display this message and exit
     -version           Display version information and exit
-    -ca name           Name of a CA (may be given multiple times)
-                       The argument is a substring of the *.cadesc file
-                       name; use the hash value to avoid ambiguity
+    -ca name           Name of a CA.  This argument may be given multiple
+                       times, or CA names may be delimited by commas or
+                       blanks.  The argument is a field of the *.cadesc
+                       file name; use the hash value to avoid ambiguity
     -ca ALL            Use all available CAs
     -target-dir dir    Target directory
     -expire-crl time   Remove a CRL that will expire within
