@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.20 2004-09-27 16:01:59-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.21 2004-09-28 20:21:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -89,7 +89,7 @@ sub Debug(@);
 my $Program_Name = File::Basename::basename $0;
 my $now = time;
 
-my $User_Opt = {};
+my $User_Opt = { email => 1 };
 my @Opts = ( $User_Opt,
              qw( help!
                  version!
@@ -733,6 +733,8 @@ Usage: $Program_Name [options]
                        are left in place.
     -force             Force file updates (applies to certificate and
                        signing_policy files)
+    -email             Send e-mail to configured ADMIN_EMAIL address on errors.
+                       Default is "-email"; use "-noemail" to disable.
     -verbose           Print verbose messages
     -debugging         Enable debugging output
 EOF
@@ -809,7 +811,7 @@ sub Notify() {
     print LOG "\n";
     close LOG;
 
-    if ($error_count > 0) {
+    if ($User_Opt->{email} and $error_count > 0) {
         my $subject = "$Program_Name: $error_count error(s), " .
                       "$error_ca_count/$total_ca_count CA(s)";
 
