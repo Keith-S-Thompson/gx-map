@@ -1,0 +1,14 @@
+# $Id: bc82f877.nasa.cadesc,v 1.1 2004-09-21 01:20:19-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
+
+CA_DESC         NASA CA
+HOMEPAGE        ?
+CONTACT		?
+HASH            bc82f877
+SUBJECT         /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
+MAY_SIGN        /O=Grid/O=National Aeronautics and Space Administration/*
+CERTIFICATE     http://users.sdsc.edu/~kst/CA/CA/bc82f877.0
+SIGNING_POLICY  http://users.sdsc.edu/~kst/CA/CA/bc82f877.signing_policy
+CRL             ?
+CRL_WARNING     ?
+INDEX           ?
