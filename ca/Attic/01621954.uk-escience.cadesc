@@ -1,11 +1,11 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.5 2004-09-24 20:58:52-07 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.6 2004-10-06 19:58:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
 HOMEPAGE            http://www.grid-support.ac.uk/ca/
 CONTACT             ?
 HASH                01621954
-SUBJECT             /C=UK/O=eScience/OU=Authority/CN=CA/Email=ca-operator@grid-support.ac.uk
+SUBJECT             /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
 MAY_SIGN            /C=UK/O=eScience/*
 CERTIFICATE_URL     http://www.grid-support.ac.uk/ca/user-documentation/01621954.0
 SIGNING_POLICY_URL  http://www.grid-support.ac.uk/ca/user-documentation/01621954.signing_policy
