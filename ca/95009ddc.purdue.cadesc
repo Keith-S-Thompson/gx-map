@@ -1,4 +1,4 @@
-# $Id: 95009ddc.purdue.cadesc,v 1.1 2004-10-04 15:03:18-07 kst Exp $
+# $Id: 95009ddc.purdue.cadesc,v 1.2 2004-10-08 13:59:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/95009ddc.purdue.cadesc,v $
 
 CA_NAME             Purdue CA
@@ -11,5 +11,4 @@ CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/95009ddc.0
 SIGNING_POLICY_URL  http://tg-ca.purdue.teragrid.org:8080/95009ddc.signing_policy
 CRL_URL             http://tg-ca.purdue.teragrid.org:8080/95009ddc.r0
 CRL_WARNING         6 hours
-INDEX               ?
 DISABLE             no
