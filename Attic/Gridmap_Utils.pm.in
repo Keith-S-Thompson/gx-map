@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.58 2005-01-28 18:13:16-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.59 2005-03-27 15:36:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -76,7 +76,7 @@ my $Have_Net_Domain_Module;
 
 BEGIN {
     require 5.006;
-    use vars qw($VERSION $Debugging %Config);
+    use vars qw($VERSION $Debugging %Config $Registered_Handler_Function);
     $VERSION = '0.4.1';
     $Debugging = undef;
     %Config = ( PERL                     => '%PERL%',
@@ -130,6 +130,10 @@ sub GT3_Subject($);
 
 sub DN_List($);
 sub Dup_Ref($);
+
+sub Install_Die_Handler();
+sub Install_Warn_Handler();
+sub Register_Handler_Function($);
 
 sub Debug(@);
 sub Debugf(@);
@@ -1133,6 +1137,61 @@ sub Dup_Ref($) {
     $new_ref->{dn} = $dn_list[1];
     return ( $ref, $new_ref );
 } # Dup_Ref
+
+# ----------------------------------------------------------------------
+
+sub Die_Handler($) {
+    if (defined $Gridmap_Utils::Registered_Handler_Function) {
+        &$Gridmap_Utils::Registered_Handler_Function;
+    }
+
+    print STDERR $_[0];
+
+    my @traceback = ();
+
+    my $i = 0;
+    while (1) {
+        my @caller = caller $i;
+        last if not @caller;
+        push @traceback, { file    => $caller[1],
+                           line    => $caller[2],
+                           subname => $caller[3] };
+        $i++;
+    }
+
+    print STDERR "Traceback:\n";
+    for (my $i = 0; $i <= $#traceback; $i++) {
+        my $curr = $traceback[$i];
+        if ($i < $#traceback) {
+            my $next = $traceback[$i+1];
+            print STDERR "    $curr->{file}:$curr->{line} in ",
+                         "$next->{subname}\n";
+        }
+        else {
+            print STDERR "    $curr->{file}:$curr->{line}\n";;
+        }
+    }
+
+    exit 1;
+} # Die_Handler
+
+# ----------------------------------------------------------------------
+
+sub Install_Die_Handler() {
+    $SIG{__DIE__} = \&Gridmap_Utils::Die_Handler;
+} # Install_Die_Handler
+
+# ----------------------------------------------------------------------
+
+sub Install_Warn_Handler() {
+    $SIG{__WARN__} = \&Gridmap_Utils::Die_Handler;
+} # Install_Warn_Handler
+
+# ----------------------------------------------------------------------
+
+sub Register_Handler_Function($) {
+    $Gridmap_Utils::Registered_Handler_Function = $_[0];
+} # Register_Handler_Function
 
 # ----------------------------------------------------------------------
 
