@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.27 2004-09-30 02:04:52-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.28 2004-09-30 16:33:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -74,6 +74,7 @@ sub Seconds_To_String($);
 sub Time_Image($);
 sub Signing_Policy($);
 sub Date_To_Seconds($);
+sub Get_CA_Ref($);
 sub Disabled($);
 sub CRL_Info($$);
 sub Certificate_Expiration($);
@@ -206,13 +207,8 @@ foreach my $ca_desc_file (@ca_list) {
     # To do: Verify that the cadesc file has all the required
     # fields; if not, issue a warning and ignore the file.
     #
-    my $ref = Gridmap_Utils::Read_Records
-                  '-single', "$ca_conf_dir/$ca_desc_file";
-    if (defined $ref->{CRL_WARNING}) {
-        my $seconds = String_To_Seconds $ref->{CRL_WARNING};
-        $ref->{CRL_WARNING_SECONDS} = $seconds if defined $seconds;
-    }
-    push @ca_info, $ref;
+    my $ref = Get_CA_Ref "$ca_conf_dir/$ca_desc_file";
+    push @ca_info, $ref if defined $ref;
 }
 
 Debug "Got ", scalar @ca_info, " ca record(s):\n";
@@ -429,6 +425,75 @@ sub Date_To_Seconds($) {
     }
     return undef;
 } # Date_To_Seconds
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of a cadesc file, returns a reference to a hash containing
+# information about the CA.
+#
+sub Get_CA_Ref($) {
+    my($filename) = @_;
+    #
+    # To do: Verify that the cadesc file has all the required
+    # fields; if not, issue a warning and ignore the file.
+    #
+    my $ref = Gridmap_Utils::Read_Records '-single', $filename;
+    my @errors = ();
+
+    my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
+                                    SUBJECT MAY_SIGN CERTIFICATE_URL
+                                    SIGNING_POLICY_URL CRL_URL
+                                    CRL_WARNING INDEX DISABLE );
+    my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN CERTIFICATE_URL );
+                       
+    foreach my $key (@required) {
+        if (not defined $ref->{$key}) {
+            push @errors, "Missing key $key\n";
+        }
+    }
+
+    foreach my $key (sort keys %$ref) {
+        if (not $valid{$key}) {
+            push @errors, "Unrecognized key $key\n";
+        }
+        if ($key =~ /_URL$/) {
+            if ($ref->{$key} ne '?' and $ref->{$key} !~ m<^(ftp|http):>) {
+                push @errors, "Bad value for $key\n";
+            }
+        }
+    }
+    if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
+        push @errors, "Invalid HASH\n";
+    }
+    if (defined $ref->{CRL_WARNING} and $ref->{CRL_WARNING} ne '?') {
+        my $seconds = String_To_Seconds $ref->{CRL_WARNING};
+        if (defined $seconds) {
+            $ref->{CRL_WARNING_SECONDS} = $seconds;
+        }
+        else {
+            push @errors, "Bad value for CRL_WARNING\n";
+        }
+    }
+    if (defined $ref->{DISABLE}) {
+        if (lc $ref->{DISABLE} eq 'yes') {
+            return undef;
+        }
+        elsif (lc $ref->{DISABLE} ne 'no') {
+            push @errors, "Value for DISABLE must be \"yes\" or \"no\"\n";
+        }
+    }
+
+    if (@errors) {
+        my $s = (scalar @errors != 1);
+        Vprint ">>> Error$s in ${filename}:\n";
+        Vprint @errors;
+        return undef;
+    }
+    else {
+        return $ref;
+    }
+} # Get_CA_Ref
 
 # ----------------------------------------------------------------------
 
@@ -758,7 +823,7 @@ Usage: $Program_Name [options]
                        are left in place.
     -force             Force file updates (applies to certificate and
                        signing_policy files)
-    -ignore-disable    Ignore "disable" attribute in cadesc files.
+    -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
     -email             Send e-mail to configured ADMIN_EMAIL address on errors.
                        Default is "-email"; use "-noemail" to disable.
     -verbose           Print verbose messages
@@ -828,7 +893,7 @@ sub Notify() {
                 $message_body .= join '', @error_list;
                 $message_body .= "\n";
                 foreach my $error (@error_list) {
-                    print LOG "    ERROR: $error";
+                    print LOG "    >>> ERROR: $error";
                 }
             }
         }
