@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-requests.in,v 1.2 2003-05-27 21:11:27-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.3 2003-05-27 21:49:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -237,7 +237,27 @@ sub Get_Request_Info($) {
         $result->{OWNER_NAME} = $file_pw->{name};
     }
 
-    $result->{SITE} = $Site;
+    if (defined $result->{SITE}) {
+	if (defined $result->{OWNER_NAME} and
+	    Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME})
+	{
+	    # ok, leave SITE as it is
+	}
+	else {
+	    my $user;
+	    if (defined $result->{OWNER_NAME}) {
+		$user = $result->{OWNER_NAME});
+	    }
+	    else {
+		$user = $result->{OWNER_UID};
+	    }
+	    push @{$result->{ERRORS}},
+		 "User $user tried to define SITE \"$SITE\"\n";
+	}
+    }
+    else {
+	$result->{SITE} = $Site;
+    }
 
     return $result;
 } # Get_Request_Info
