@@ -1,0 +1,12 @@
+#!/bin/sh
+
+# $Id: cleanup-gx-map,v 1.1 2003-05-27 20:35:43-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/cleanup-gx-map,v $
+
+for file in *.in ; do
+    target=`basename $file .in`
+    if [ -f $target ] ; then
+	echo "rm -f $target"
+	rm -f $target
+    fi
+done
