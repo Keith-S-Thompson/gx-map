@@ -1,4 +1,4 @@
-# $Id: 6fee79b0.iucc.cadesc,v 1.6 2004-11-01 17:04:20-08 kst Exp $
+# $Id: 6fee79b0.iucc.cadesc,v 1.7 2005-03-29 19:27:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6fee79b0.iucc.cadesc,v $
 
 CA_NAME             IUCC CA
@@ -8,6 +8,7 @@ HASH                6fee79b0
 SUBJECT             /C=IL/O=IUCC/CN=IUCC/emailAddress=ca@mail.iucc.ac.il
 MAY_SIGN            /O=IUCC/C=IL/*
 CERTIFICATE_MD5     F7:37:49:67:18:C5:BD:C4:00:1F:FF:9E:7E:10:AA:3B
+# CERTIFICATE_SHA1    0E:91:CA:65:47:26:1F:40:88:E2:8C:AA:83:44:0A:D3:57:43:D6:38
 CERTIFICATE_URL     http://certificate.iucc.ac.il/ca/cacert.pem
 SIGNING_POLICY_URL  http://certificate.iucc.ac.il/ca/6fee79b0.signing_policy
 CRL_URL             http://certificate.iucc.ac.il/ca/cacrl.pem
@@ -19,4 +20,4 @@ CERT_EXPIRES        Jun 22 07:05:41 2009 GMT
 # lines.
 #
 
-# MD5 fingerprint from 6fee79b0.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from cacert.pem (6fee79b0.0) downloaded 2005-03-29
