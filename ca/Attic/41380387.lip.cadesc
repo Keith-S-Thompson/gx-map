@@ -1,0 +1,15 @@
+# $Id: 41380387.lip.cadesc,v 1.1 2004-10-07 21:37:38-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/41380387.lip.cadesc,v $
+
+CA_NAME             LIP Certification Authority
+HOMEPAGE            http://www.lip.pt/ca/
+CONTACT             ca@lip.pt
+HASH                41380387
+SUBJECT             /C=PT/O=LIP/OU=LISCC/CN=LIP Certification Authority
+MAY_SIGN            /C=PT/O=LIP/*
+CERTIFICATE_URL     http://www.lip.pt/ca/41380387.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.lip.pt/ca/lip-crl.pem
+CRL_WARNING         12 hours
+INDEX               ?
+DISABLE             no
