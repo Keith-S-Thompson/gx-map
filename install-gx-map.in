@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.5 2003-07-10 02:42:58-07 kst Exp $
+# $Id: install-gx-map.in,v 1.6 2003-07-16 20:32:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 verbosely () {
