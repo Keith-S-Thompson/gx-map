@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.50 2005-02-16 16:40:48-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.51 2005-03-29 18:13:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -533,9 +533,9 @@ sub Get_CA_Ref($) {
 
     my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
                                     SIGNED_BY SUBJECT MAY_SIGN
-                                    CERTIFICATE_MD5 CERTIFICATE_URL
-                                    SIGNING_POLICY_URL CRL_URL
-                                    INDEX CERT_EXPIRES DISABLE
+                                    CERTIFICATE_MD5 CERTIFICATE_SHA1
+                                    CERTIFICATE_URL SIGNING_POLICY_URL
+                                    CRL_URL INDEX CERT_EXPIRES DISABLE
                                     _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_URL );
