@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.23 2004-09-29 20:49:40-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.24 2004-09-29 20:57:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -426,12 +426,12 @@ sub Date_To_Seconds($) {
 # ----------------------------------------------------------------------
 
 #
-# Returns true if the DISABLED field in the *.cadesc file exists and is
+# Returns true if the DISABLE field in the *.cadesc file exists and is
 # set to "yes", false otherwise.
 #
 sub Disabled($) {
     my($ref) = @_;
-    return (defined $ref->{DISABLED} and lc $ref->{DISABLED} eq 'yes');
+    return (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes');
 } # Disabled
 
 # ----------------------------------------------------------------------
