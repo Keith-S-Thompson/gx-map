@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-requests.in,v 1.6 2003-05-28 16:32:44-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.7 2003-05-28 20:55:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -290,8 +290,8 @@ sub Append_To_Log($@) {
 
     if (not -e $log_file) {
         open LOG, ">$log_file" or die "$log_file: $!\n";
-        print LOG "# \$Id: gx-check-requests.in,v 1.6 2003-05-28 16:32:44-07 kst Exp $\n",
-                  "# \$Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $\n";
+        print LOG "# \$Id: gx-check-requests.in,v 1.7 2003-05-28 20:55:26-07 kst Exp $\n",
+                  "# \$Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $\n",
                   "\n";
         close LOG;
     }
