@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.54 2004-12-26 20:31:51-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.55 2004-12-26 20:33:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -402,7 +402,7 @@ sub Ensure_RCS() {
 
 #
 # For a given time, returns a string of the form
-#     YYYY-MM-DD hh:mm:ss UTC"
+#     Ddd YYYY-MM-DD hh:mm:ss UTC"
 #
 sub Time_Image($) {
     my($time) = @_;
