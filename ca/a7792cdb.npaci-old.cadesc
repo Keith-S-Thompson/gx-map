@@ -1,4 +1,4 @@
-# $Id: a7792cdb.npaci-old.cadesc,v 1.14 2004-11-01 17:04:24-08 kst Exp $
+# $Id: a7792cdb.npaci-old.cadesc,v 1.15 2005-03-29 19:27:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a7792cdb.npaci-old.cadesc,v $
 
 CA_NAME             NPACI (old)
@@ -9,19 +9,20 @@ SUBJECT             /C=US/O=NPACI/OU=SDSC/CN=Certificate Manager
 MAY_SIGN            /C=US/O=NPACI/*
 MAY_SIGN            /C=US/O=SDSC/*
 CERTIFICATE_MD5     E8:3B:A5:8D:C1:A9:D3:20:F2:59:DC:06:1F:25:E3:1A
+# CERTIFICATE_SHA1    A4:38:1D:E8:64:7C:F4:E5:82:13:88:17:0E:C6:FB:6D:29:D8:E9:FB
 CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/a7792cdb.0
 SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/a7792cdb.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Sep 14 07:00:00 2038 GMT
 DISABLE             yes
 
-#
 # The certificate doesn't expire until 2038-09-14, but the CA is retired.
+# (Note that the expiration date is several months after the maximum
+# 32-bit signed Unix time_t value.)
 #
 # The certificate and signing_policy files are not distributed on the
 # SDSC or NPACI web site; I've copied them to my own web pages.
 #
 # There is no CRL.
-#
 
-# MD5 fingerprint from a copy of a7792cdb.0 at SDSC
+# MD5 and SHA1 fingerprints from a copy of a7792cdb.0 at SDSC
