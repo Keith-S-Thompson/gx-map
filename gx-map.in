@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.17 2003-07-27 17:24:14-07 kst Exp $
+# $Id: gx-map.in,v 1.18 2003-07-27 23:01:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -134,6 +134,7 @@ Long_Usage if $User_Opt->{'long-help'};
 
 if ($User_Opt->{version}) {
     print "gx-map version $Gridmap_Utils::VERSION\n";
+    exit 0;
 }
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
