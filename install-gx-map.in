@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.22 2004-09-27 16:04:45-07 kst Exp $
+# $Id: install-gx-map.in,v 1.23 2004-10-14 03:17:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -78,7 +78,8 @@ for dir in $INSTALL_DIR \
            $DATA_DIR/cache
 do
     if [ ! -d $dir ] ; then
-        verbosely mkdir -m 755 $dir
+        verbosely mkdir     $dir
+        verbosely chmod 755 $dir
     fi
 done
 
@@ -92,7 +93,8 @@ verbosely cp -f $DATA_FILES $DATA_DIR/.
 verbosely cp -f $CA_FILES   $ETC_DIR/ca.conf/.
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
-    verbosely mkdir -m 1733 $DATA_DIR/new-requests
+    verbosely mkdir      $DATA_DIR/new-requests
+    verbosely chmod 1733 $DATA_DIR/new-requests
 fi
 
 if [ ! -f $DATA_DIR/new-requests/.update ] ; then
