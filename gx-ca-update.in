@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.35 2004-10-13 10:41:03-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.36 2004-10-13 16:41:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -57,9 +57,6 @@
 #
 #      Drop the CRL_WARNING field (or make it optional?); instead,
 #      warn if the CRL is past 90% of its lifetime.
-#
-#      Do a bit more error checking.  Confirm that the HASH and SUBJECT
-#      fields are correct (or just derive them from the certificate).
 #
 
 use strict;
@@ -130,9 +127,12 @@ $| = 1 if $User_Opt->{verbose};
 
 my $ca_conf_dir = "$Install_Dir/etc/ca.conf";
 my @ca_list_all;
+my $requested_all = undef; # true if user specified "-ca ALL"
 
 opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
-@ca_list_all = sort grep /\.cadesc$/, readdir CONF_DIR;
+@ca_list_all = sort
+                   grep { /\.cadesc$/ and not /^00000000\./ }
+                       readdir CONF_DIR;
 closedir CONF_DIR;
 
 if ($User_Opt->{'list-cas'}) {
@@ -199,6 +199,7 @@ foreach my $arg (@{$User_Opt->{ca}}) {
 foreach my $requested_ca (@requested_ca_list) {
     if ($requested_ca eq 'ALL') {
         %selected = map { $_ => 1 } @ca_list_all;
+        $requested_all = 1;
     }
     else {
         foreach my $ca (@ca_list_all) {
@@ -235,7 +236,16 @@ CA:
 foreach my $ref (@ca_info) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     if (Disabled $ref) {
-        Vprint "CA is disabled\n";
+        if ($requested_all or $User_Opt->{'ignore-disable'}) {
+            Vprint "CA is disabled\n";
+        }
+        else {
+            #
+            # The user explicitly requested a disabled CA without
+            # specifying the "-ignore-disable" option.
+            #
+            Error $ref, "CA is disabled\n";
+        }
         if ($User_Opt->{'ignore-disable'}) {
             Vprint "Ignoring \"disable\" attribute\n";
         }
@@ -452,7 +462,7 @@ sub Get_CA_Ref($) {
                                     CERTIFICATE_MD5 CERTIFICATE_URL
                                     SIGNING_POLICY_URL CRL_URL CRL_WARNING
                                     INDEX DISABLE
-				    _FILENAME );
+                                    _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_URL );
     my %remap = ( SIGNED_BY => 1,
