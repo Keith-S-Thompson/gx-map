@@ -1,4 +1,4 @@
-# $Id: 84c1f123.cygrid-old.cadesc,v 1.1 2005-03-29 19:57:16-08 kst Exp $
+# $Id: 84c1f123.cygrid-old.cadesc,v 1.2 2005-03-29 19:58:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/84c1f123.cygrid-old.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -13,6 +13,8 @@ CERTIFICATE_URL     http://grid.ucy.ac.cy/CyGridCA/84c1f123.0
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/84c1f123.signing_policy
 CRL_URL             http://grid.ucy.ac.cy/CyGridCA/crl.pem
 CERT_EXPIRES        Dec 22 12:43:47 2005 GMT
+
+# Superseded by afe55e66.cygrid.cadesc
 
 # As of 2005-03-29, the signing_policy is missing.
 
