@@ -1,4 +1,4 @@
-# $Id: fa3af1d7.cern.cadesc,v 1.1 2004-10-02 14:40:30-07 kst Exp $
+# $Id: fa3af1d7.cern.cadesc,v 1.2 2004-10-08 13:59:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa3af1d7.cern.cadesc,v $
 
 CA_NAME             CERN CA
@@ -11,7 +11,6 @@ CERTIFICATE_URL     http://service-grid-ca.web.cern.ch/service-grid-ca/crt/fa3af
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/fa3af1d7.signing_policy
 CRL_URL             http://service-grid-ca.web.cern.ch/service-grid-ca/cgi-bin/getCRL?format=PEM
 CRL_WARNING         48 hours
-INDEX               ?
 DISABLE             no
 
 # http://service-grid-ca.web.cern.ch/service-grid-ca/globus/globus.tgz
