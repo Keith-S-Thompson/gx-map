@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.28 2004-08-17 22:14:29-07 kst Exp $
+# $Id: gx-map.in,v 1.29 2004-09-11 21:59:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -348,7 +348,7 @@ if (defined $Options->{secondary} and $Options->{secondary} eq 'yes') {
 # and has the proper permissions, rename it to the correct name.
 #
 my $tmp_file = $Request_File . ".tmp";
-Gridmap_Utils::Write_Records $tmp_file, $request;
+Gridmap_Utils::Write_Records '-single', $tmp_file, $request;
 chmod 0444, $tmp_file;
 rename $tmp_file, $Request_File;
 
