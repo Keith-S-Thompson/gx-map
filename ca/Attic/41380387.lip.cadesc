@@ -1,4 +1,4 @@
-# $Id: 41380387.lip.cadesc,v 1.4 2004-10-10 03:21:56-07 kst Exp $
+# $Id: 41380387.lip.cadesc,v 1.5 2004-10-13 17:44:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/41380387.lip.cadesc,v $
 
 CA_NAME             LIP Certification Authority
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     A2:C3:F0:09:2D:61:43:BF:2F:F0:89:F7:3C:45:DE:BB
 CERTIFICATE_URL     http://www.lip.pt/ca/41380387.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.lip.pt/ca/lip-crl.pem
-CRL_WARNING         12 hours
 DISABLE             no
 
 # MD5 fingerprint from 41380387.0 downloaded 2004-10-10
