@@ -1,4 +1,4 @@
-# $Id: 47183fda.kisti-root.cadesc,v 1.4 2004-10-10 03:21:57-07 kst Exp $
+# $Id: 47183fda.kisti-root.cadesc,v 1.5 2004-10-13 17:44:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
 
 CA_NAME             KISTI Grid Certificate Authority
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     9C:E7:72:DF:AE:D8:73:4E:2B:60:D1:CF:27:5A:2A:A5
 CERTIFICATE_URL     https://ca.gridcenter.or.kr/certificates/47183fda.0
 SIGNING_POLICY_URL  https://ca.gridcenter.or.kr/certificates/47183fda.signing_policy
 CRL_URL             https://ca.gridcenter.or.kr/CRL/47183fda.crl
-CRL_WARNING         48 hours
 DISABLE             no
 
 # MD5 fingerprint from 47183fda.0 downloaded 2004-10-10
