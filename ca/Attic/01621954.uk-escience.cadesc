@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.13 2005-03-17 12:59:01-08 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.14 2005-03-29 19:27:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
@@ -8,12 +8,14 @@ HASH                01621954
 SUBJECT             /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
 MAY_SIGN            /C=UK/O=eScience/*
 CERTIFICATE_MD5     F7:65:A8:5E:67:2B:7C:F4:90:20:38:14:BC:05:04:F6
+# CERTIFICATE_SHA1    0C:B4:61:99:63:6C:A3:CB:E1:58:CE:F3:66:D2:C4:D3:34:BF:A7:40
 CERTIFICATE_URL     http://ca.grid-support.ac.uk/cacert.pem
 SIGNING_POLICY_URL  http://www.grid-support.ac.uk/ca/user-documentation/01621954.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/cgi-bin/importCRL.pem
 CERT_EXPIRES        Aug  4 10:36:41 2007 GMT
 
-# MD5 fingerprint from cacert.pem (01621954.0) downloaded 2005-03-17
+# MD5 and SHA1 fingerprints from cacert.pem (01621954.0) downloaded 2005-03-29
+
 # An older version of this certificate has an MD5 fingerprint of
 # 32:2C:26:C7:54:47:94:51:68:4A:92:C9:0F:9F:95:E6
 # Either version should be acceptable, though the newer one may be
