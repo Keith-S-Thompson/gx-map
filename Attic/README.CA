@@ -1,4 +1,4 @@
-# $Id: README.CA,v 1.7 2004-11-24 12:26:38-08 kst Exp $
+# $Id: README.CA,v 1.8 2004-11-24 16:52:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
 
 ************************************************************************
@@ -31,11 +31,12 @@ Blank lines are ignored.
 
 I've collected information on several dozen certificate authorities and
 included the corresponding *.cadesc files in the gx-map distribution.
-The ones I've included are just the ones I've happened to find so far.
-You're free to add *.cadesc files of your own, or to modify the
-ones I've provided.  If you have information on a CA that should be
-added to the distribution, please let me know.  If you find an error,
-please let me know as soon as possible.
+The ones I've included are just the ones I've happened to find so
+far; the presence or absence of a particular CA is not necessarily
+significant.  You're free to add *.cadesc files of your own, or to
+modify the ones I've provided.  If you have information on a CA that
+should be added to the distribution, please let me know.  If you find
+an error, please let me know as soon as possible.
 
 
 Mandatory attributes (marked with '*' in the list below) are:
