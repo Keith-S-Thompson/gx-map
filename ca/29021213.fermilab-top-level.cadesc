@@ -1,4 +1,4 @@
-# $Id: 29021213.fermilab-top-level.cadesc,v 1.6 2004-10-13 17:41:56-07 kst Exp $
+# $Id: 29021213.fermilab-top-level.cadesc,v 1.7 2004-10-13 17:44:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/29021213.fermilab-top-level.cadesc,v $
 
 CA_NAME             Fermilab Top-Level CA
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     4E:2B:6B:E1:D2:09:AE:07:B0:14:C5:5A:54:AC:10:DC
 CERTIFICATE_URL     http://computing.fnal.gov/security/pki/29021213.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/29021213.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/29021213.base64
-CRL_WARNING         48 hours
 DISABLE             yes
 
 # MD5 fingerprint from 29021213.0 downloaded 2004-10-10
