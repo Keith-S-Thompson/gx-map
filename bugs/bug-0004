@@ -1,0 +1,46 @@
+# $Id: bug-0004,v 1.1 2005-03-24 19:06:16-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0004,v $
+
+gx-map bug 0004
+Date: Thu 2005-03-24
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+
+Summary:
+New feature: In gx-ca-update, apply options to individual CAs.
+
+Currently the following command-line options:
+    -UNSAFE
+    -allow-missing-crl
+    -expire-crl time
+    -warn-crl time
+    -force
+    -ignore-disable
+apply globally to all "-ca ......." arguments.
+
+Keep that as it is, and additionally allow options to apply to
+individual CAs.
+
+For example, TeraGrid might use:
+
+    gx-ca-update -target-dir /usr/local/apps/grid-security/certificates \
+		 -ca 01621954 \
+		 -ca 1c3f2ca8 \
+		 -ca 26bf3386:UNSAFE:allow-missing-crl \
+		 -ca 2ca73e82 \
+		 -ca 34a5e0db \
+		 -ca 3deda549 \
+		 -ca 4a6cd8b1 \
+		 -ca 67e8acfa \
+		 -ca 85ca9edc:UNSAFE:allow-missing-crl \
+		 -ca 95009ddc \
+		 -ca 9a1da9f9 \
+		 -ca aa99c057 \
+		 -ca b89793e4 \
+		 -ca d1b603c3
+
+26bf3386 and 85ca9edc are the USC and PSC Kerberos CAs, respectively;
+they have no CRLs.
+
+(See also bug 0005.)
