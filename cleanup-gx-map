@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cleanup-gx-map,v 1.2 2003-07-09 20:54:57-07 kst Exp $
+# $Id: cleanup-gx-map,v 1.3 2003-07-16 20:33:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/cleanup-gx-map,v $
 
 for file in *.in cacl/*.in ; do
