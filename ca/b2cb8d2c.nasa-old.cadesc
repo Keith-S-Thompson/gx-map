@@ -1,0 +1,19 @@
+# $Id: b2cb8d2c.nasa-old.cadesc,v 1.1 2004-10-17 23:23:39-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/b2cb8d2c.nasa-old.cadesc,v $
+
+CA_NAME             NASA CA (old)
+HOMEPAGE            ?
+CONTACT             ?
+HASH                b2cb8d2c
+SUBJECT             /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
+MAY_SIGN            /O=Grid/O=National Aeronautics and Space Administration/*
+CERTIFICATE_MD5     CC:2D:82:DB:1B:28:0B:1E:EF:9C:39:93:69:EE:69:03
+CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/b2cb8d2c.0
+SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/b2cb8d2c.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             yes
+
+# The certificate expired 2002-08-22.
+
+# MD5 fingerprint from b2cb8d2c.0 downloaded 2004-10-17
