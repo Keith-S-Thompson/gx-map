@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.21 2003-08-27 19:09:20-07 kst Exp $
+# $Id: gx-map.in,v 1.22 2003-08-27 19:11:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -747,13 +747,13 @@ EOF
         #
         if ($OP eq 'add') {
             while (not defined $Options->{secondary}) {
-                print "Is this a secondary mapping ('h' for help)? [ynxh] ";
+                print "Is this a secondary mapping ('h' for help)? [nyxh] ";
                 chomp($response = lc scalar <STDIN>);
 
                 if ($response =~ /^y/) {
                     $Options->{secondary} = 'yes';
                 }
-                elsif ($response =~ /^n/) {
+                elsif ($response =~ /^n/ or $response eq '') {
                     $Options->{secondary} = 'no';
                 }
                 elsif ($response =~ /^h/) {
