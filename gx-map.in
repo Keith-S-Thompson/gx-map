@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.29 2004-09-11 21:59:32-07 kst Exp $
+# $Id: gx-map.in,v 1.30 2004-09-27 15:40:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -366,12 +366,12 @@ unless ($Options->{force} and $Options->{quiet}) {
 # The output must be a single line starting with '/'; otherwise,
 # returns undef.
 #
-# Note that we do *not* call Use_Commands 'openssl' here; we depend
-# on the "openssl" command being in the user's $PATH.
-# 
 sub Get_DN_From_File($) {
     my($file) = @_;
     return undef if not -r $file;
+
+    Gridmap_Utils::Use_Commands 'openssl';
+
     open PIPE, "openssl x509 -in '$file' -noout -subject |";
     my @output = <PIPE>;
     close PIPE;
