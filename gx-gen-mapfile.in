@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.10 2003-07-10 02:46:32-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.11 2003-07-10 14:23:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -257,17 +257,17 @@ foreach my $output_file (@Output_Files) {
     # so?), preventing any processes from seeing a partially updated
     # grid-mapfile.
     #
-    Check_Tainting '$output_file', $output_file;
+    # Check_Tainting '$output_file', $output_file;
     my $intermediate_file = "${output_file}-tmp-$$";
-    Check_Tainting '$intermediate_file', $intermediate_file;
-    Check_Tainting '$tmp_file', $tmp_file;
+    # Check_Tainting '$intermediate_file', $intermediate_file;
+    # Check_Tainting '$tmp_file', $tmp_file;
     system 'cp', '-f', $tmp_file, $intermediate_file;
     if (not -e $intermediate_file or
         -s $tmp_file != -s $intermediate_file)
     {
         die "$Prog_Name: copy to $intermediate_file failed\n";
     }
-    Check_Tainting '$output_file', $output_file;
+    # Check_Tainting '$output_file', $output_file;
     rename $intermediate_file, $output_file
         or die "rename $intermediate_file, $output_file: $!\n";
     if (not chmod $User_Opt->{permissions}, $output_file) {
