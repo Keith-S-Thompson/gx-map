@@ -1,4 +1,4 @@
-# $Id: 00000000.example.cadesc,v 1.6 2004-10-20 14:54:42-07 kst Exp $
+# $Id: 00000000.example.cadesc,v 1.7 2004-11-01 17:04:13-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/00000000.example.cadesc,v $
 
 CA_NAME             example.org CA
@@ -13,6 +13,7 @@ CERTIFICATE_URL     http://www.example.org/CA/00000000.0
 SIGNING_POLICY_URL  http://www.example.org/CA/00000000.signing_policy
 CRL_URL             http://www.example.org/CA/00000000.r0
 INDEX               ?
+CERT_EXPIRES        Jan  1 00:00:00 1970 GMT
 DISABLE             yes
 
 #
