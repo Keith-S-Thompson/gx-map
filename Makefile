@@ -1,4 +1,4 @@
-# $Id: Makefile,v 1.4 2004-07-30 18:08:08-07 kst Exp $
+# $Id: Makefile,v 1.5 2004-09-13 17:00:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Makefile,v $
 
 ########################################################################
@@ -46,12 +46,14 @@
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
 
-all:
-	@echo "Valid targets are 'clean' and 'install'"
-	@echo "Run ./configure-gx-map <config-file> before installation"
+all:		FORCE
+		@echo "Valid targets are 'clean' and 'install'"
+		@echo "Run ./configure-gx-map <config-file> before installation"
 
-clean:
-	./cleanup-gx-map
+clean:		FORCE
+		./cleanup-gx-map
 
-install:
-	./install-gx-map
+install:	FORCE
+		./install-gx-map
+
+FORCE:
