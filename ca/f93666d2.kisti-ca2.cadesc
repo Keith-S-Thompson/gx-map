@@ -1,4 +1,4 @@
-# $Id: f93666d2.kisti-ca2.cadesc,v 1.2 2004-11-01 17:04:32-08 kst Exp $
+# $Id: f93666d2.kisti-ca2.cadesc,v 1.3 2005-03-29 19:27:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f93666d2.kisti-ca2.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA2
@@ -9,6 +9,7 @@ SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA2
 MAY_SIGN            /C=KR/O=Globus/*
 # MAY_SIGN            /O=Grid/O=Globus/*
 CERTIFICATE_MD5     7E:1E:BC:FA:AB:9B:57:64:1C:32:99:C9:AC:86:09:0A
+# CERTIFICATE_SHA1    E1:48:8B:10:83:2C:61:DA:B6:D8:89:9D:88:BF:85:57:09:15:ED:2B
 CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/f93666d2.0
 SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/f93666d2.signing_policy
 CRL_URL             ?
@@ -16,8 +17,8 @@ CERT_EXPIRES        Mar 14 00:39:41 2013 GMT
 
 # There appears to be no CRL.
 
-# The 82da68f0.signing_policy says the CA may sign certificates matching
-# "/O=Grid/O=Globus/*", which overlaps the namespace for the old Globus CA;
-# I have not included that here.
+# The 82da68f0.signing_policy says the CA may also sign certificates
+# matching "/O=Grid/O=Globus/*", which overlaps the namespace for the
+# old Globus CA.  I have not included that here.
 
-# MD5 fingerprint from f93666d2.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from f93666d2.0 downloaded 2005-03-29
