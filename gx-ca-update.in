@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.28 2004-09-30 16:33:12-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.29 2004-10-02 14:45:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -458,7 +458,7 @@ sub Get_CA_Ref($) {
             push @errors, "Unrecognized key $key\n";
         }
         if ($key =~ /_URL$/) {
-            if ($ref->{$key} ne '?' and $ref->{$key} !~ m<^(ftp|http):>) {
+            if ($ref->{$key} ne '?' and $ref->{$key} !~ m<^(https?|ftp):>) {
                 push @errors, "Bad value for $key\n";
             }
         }
@@ -596,7 +596,7 @@ sub Update_Certificate($) {
     if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
         Vprint "Skipping existing $ref->{_CERT_FILE}\n";
     }
-    elsif ($ref->{CERTIFICATE_URL} =~ m<(http|ftp)://>) {
+    elsif ($ref->{CERTIFICATE_URL} =~ m<(https?|ftp)://>) {
         my $cache_file;
         eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE_URL} };
         if (defined $@ and $@ ne '') {
@@ -666,7 +666,7 @@ sub Update_CRL($) {
     my $old_crl_info = CRL_Info $ref->{_CRL_FILE}, $ref->{_CERT_FILE};
     my $install_new_crl = 0;
 
-    my $have_crl_url = $ref->{CRL_URL} =~ m<(http|ftp)://>;
+    my $have_crl_url = $ref->{CRL_URL} =~ m<(https?|ftp)://>;
     my $new_crl_file = undef;
     if ($have_crl_url) {
         #
