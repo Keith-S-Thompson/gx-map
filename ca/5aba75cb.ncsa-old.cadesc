@@ -1,0 +1,14 @@
+# $Id: 5aba75cb.ncsa-old.cadesc,v 1.1 2004-09-21 00:50:48-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/5aba75cb.ncsa-old.cadesc,v $
+
+CA_DESC         NCSA
+HOMEPAGE        ?
+CONTACT         ?
+HASH            5aba75cb
+SUBJECT         /C=US/O=National Computational Science Alliance/OU=Certification Authority
+MAY_SIGN        /C=US/O=National Computational Science Alliance/*
+CERTIFICATE     http://users.sdsc.edu/~kst/CA/5aba75cb.0
+SIGNING_POLICY  http://users.sdsc.edu/~kst/CA/5aba75cb.signing_policy
+CRL             ?
+CRL_WARNING     ?
+INDEX           ?
