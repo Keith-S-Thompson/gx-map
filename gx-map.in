@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.24 2003-12-03 22:20:43-08 kst Exp $
+# $Id: gx-map.in,v 1.25 2003-12-09 18:14:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -796,11 +796,6 @@ EOF
         > It will be recorded in the request log, and may be used
         > to contact you if there is a problem with your certificate.
         > It will not be added to a mailing list without your consent.
-        > 
-        > (You can also subscribe to the "globus-users\@sdsc.edu"
-        > mailing list; see
-        >     <https://lists.sdsc.edu/mailman/listinfo.cgi/globus-users/>
-        > for details.)
 EOF
         print "E-mail address (<return> for none): ";
         chomp($response = scalar <STDIN>);
