@@ -1,4 +1,4 @@
-# $Id: 34a509c3.cnrs-projets.cadesc,v 1.4 2004-10-08 13:59:28-07 kst Exp $
+# $Id: 34a509c3.cnrs-projets.cadesc,v 1.5 2004-10-08 20:44:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a509c3.cnrs-projets.cadesc,v $
 
 CA_NAME             CNRS-Projets
@@ -9,6 +9,7 @@ SIGNED_BY           /C=FR/O=CNRS/CN=CNRS
 SUBJECT             /C=FR/O=CNRS/CN=CNRS-Projets
 MAY_SIGN            /C=FR/O=CNRS/CN=Datagrid-fr
 MAY_SIGN            /C=FR/O=CNRS/CN=CNRS-Projets
+CERTIFICATE_MD5     E2:A7:B1:A2:66:3B:AC:2C:CB:2F:70:B5:52:DA:9F:93
 CERTIFICATE_URL     http://crls.services.cnrs.fr/CNRS-Projets/getpem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/34a509c3.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/CNRS-Projets/getpem.crl
