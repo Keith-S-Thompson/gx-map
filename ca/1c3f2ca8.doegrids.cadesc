@@ -1,4 +1,4 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.10 2004-10-13 17:44:56-07 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.11 2004-11-01 17:04:15-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
@@ -17,5 +17,6 @@ CERTIFICATE_MD5     B3:76:40:75:F6:C4:BF:AF:82:CA:9A:D5:1D:FC:00:97
 CERTIFICATE_URL     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
 SIGNING_POLICY_URL  http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.signing_policy
 CRL_URL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
+CERT_EXPIRES        Jan 10 08:00:00 2008 GMT
 
 # MD5 fingerprint from 1c3f2ca8.0 downloaded 2004-10-10
