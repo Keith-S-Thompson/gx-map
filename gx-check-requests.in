@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.34 2004-10-14 03:18:40-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.35 2004-11-03 16:58:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -106,7 +106,7 @@ my $errors_log       = "$Data_Dir/errors.log";
 my $new_request_dir  = "$Data_Dir/new-requests";
 my $good_request_dir = "$Data_Dir/good-requests";
 my $bad_request_dir  = "$Data_Dir/bad-requests";
-my $lock_file        = "$Data_Dir/.lock";
+my $lock_file        = "$Data_Dir/.gx-check-requests.lock";
 
 my $dir_error = Gridmap_Utils::Dir_Error $new_request_dir;
 die "$dir_error\n" if defined $dir_error;
