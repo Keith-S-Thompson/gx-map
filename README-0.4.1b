@@ -1,0 +1,39 @@
+# $Id: README-0.4.1b,v 1.1 2005-01-19 21:54:49-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/README-0.4.1b,v $
+
+This is an update for some cadesc files, to be applied to gx-map-0.4.1.
+This is gx-map-cadesc-update-0.4.1b.
+It supersedes gx-map-cadesc-update-0.4.1b.  
+
+The updated files are:
+
+    13eab55e.datagrid-es.cadesc
+        This file was not released in gx-map-0.4.1.
+        revision --> 1.2
+
+    2fcac3ee.birn.cadesc
+        Corrected the SUBJECT variable.
+        revision 1.1 --> 1.2
+
+    34a5e0db.telescience.cadesc
+        Added CRL_URL.
+        Documented source of MD5 fingerprint.
+	Donwload files via "http", not "https".
+        revision 1.2 --> 1.5
+
+If you haven't installed gx-map 0.4.1, you can copy these files
+to the "ca" subdirectory before running "make install".
+
+If you've already installed gx-map 0.4.1, you can copy these files
+to the etc/ca-config subdirectory of the installation directory.
+
+Note that this does not update the gx-map version number (as reported
+by the "-version" command-line option).  You can tell whether this
+update has been applied by checking the CVS revision headers in the
+three affected files (see above).
+
+These updated files will be included in future releases of gx-map.
+If you have a release of gx-map later than 0.4.1, you don't need
+this update.
+
+                -- Keith Thompson <kst@sdsc.edu> 2005-01-19
