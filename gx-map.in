@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.15 2003-07-25 03:33:27-07 kst Exp $
+# $Id: gx-map.in,v 1.16 2003-07-27 17:20:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -116,7 +116,7 @@ my $Now = time;
 my $User_Opt = {};
 my $Options = {};
 my @Opts = ( $User_Opt,
-             qw( help long-help
+             qw( help long-help version
                  interactive
                  add
                  remove remove-dn remove-user
@@ -131,6 +131,10 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
 Long_Usage if $User_Opt->{'long-help'};
+
+if ($User_Opt->{'version'}) {
+    print "gx-map version $Gridmap_Utils::VERSION\n";
+}
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
@@ -919,9 +923,10 @@ sub Long_Usage() {
 Usage: $Prog_Name [options]
 Option names may be abbreviated.
     -help                   : Show a brief usage message and exit.
-    -interactive            : Run interactively (recommended)
+    -version                : Show version information and exit.
+    -interactive            : Run interactively (recommended).
     -long-help              : Show this long usage message (recommended
-                              only for Globus administrators and masochists)
+                              only for Globus administrators and masochists).
     -add                    : Add the specified mapping.
     -remove                 : Remove the specified mapping.
     -remove-dn              : Remove all mappings for the specified
