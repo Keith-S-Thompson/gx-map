@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.30 2004-09-27 15:40:12-07 kst Exp $
+# $Id: gx-map.in,v 1.31 2004-10-08 10:10:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -128,6 +128,7 @@ my @Opts = ( $User_Opt,
                  directory=s
                  email=s
                  force-dn no-email comment=s
+                 source=s
                  debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -317,9 +318,9 @@ if (defined $requested_pw) {
     $requested_uid = $requested_pw->{uid};
 }
 
-if (defined $Options->{username} and $Options->{username} eq 'root'
+if ((defined $Options->{username} and $Options->{username} eq 'root')
     or
-    defined $requested_uid and $requested_uid == 0)
+    (defined $requested_uid and $requested_uid == 0))
 {
     die "Mapping to root or uid 0 is not allowed\n";
 }
@@ -336,6 +337,7 @@ $request->{map_to_name} = $Options->{username} if defined $Options->{username};
 $request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
 $request->{email}       = $Options->{email}    if defined $Options->{email};
 $request->{comment}     = $Options->{comment}  if defined $Options->{comment};
+$request->{source}      = $Options->{source}   if defined $Options->{source};
 if (defined $Options->{secondary} and $Options->{secondary} eq 'yes') {
     $request->{secondary} = 'yes';
 }
@@ -544,6 +546,20 @@ EOF
     else {
         $Options->{directory} = $Default_Data_Dir;
     }
+
+    if ($Globus_Admin) {
+        print "Source (default is none): ";
+        chomp($response = scalar <STDIN>);
+        $response =~ s/^\s*//;
+        $response =~ s/\s*$//;
+        if ($response ne '') {
+            $Options->{directory} = $response;
+        }
+    }
+    #
+    # Leave "source" undefined if it's not specified (no default).
+    # It will be set to "USER" by gx-check-requests.
+    #
 
     if ($OP eq 'remove') {
         TRY:
@@ -800,7 +816,7 @@ EOF
 
 # ----------------------------------------------------------------------
 
-sub Get_Options_From_Command_Line() {
+eub Get_Options_From_Command_Line() {
     my $Options = {};
 
     my @operations = ();
@@ -849,6 +865,19 @@ sub Get_Options_From_Command_Line() {
     else {
         $Options->{directory} = $Default_Data_Dir;
     }
+
+    if (defined $User_Opt->{source}) {
+        if ($Globus_Admin) {
+            $Options->{source} = $User_Opt->{source};
+        }
+        else {
+            Usage "Only a Globus administrator may specify a source\n"
+        }
+    }
+    #
+    # Leave "source" undefined if it's not specified (no default).
+    # It will be set to "USER" by gx-check-requests.
+    #
 
     if ($OP eq 'update') {
         return $Options;
@@ -1002,6 +1031,9 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               you can use "-no-email".
     -no-email               : Don't submit an e-mail address.
     -comment "string"       : Comment to be added to request log (optional)
+    -source string          : Specify the source of the mapping.
+                              This option is for use by Globus administrators
+                              only.
     -debugging              : Enable debugging output.
 Note: If this help message has scrolled off the top of your screen, try
     $Prog_Name -long-help | $pager
