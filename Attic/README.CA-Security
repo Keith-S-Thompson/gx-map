@@ -1,4 +1,4 @@
-# $Id: README.CA-Security,v 1.5 2004-11-22 17:53:14-08 kst Exp $
+# $Id: README.CA-Security,v 1.6 2004-11-22 17:54:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA-Security,v $
 
 The gx-ca-update program automatically installs signing certificates,
@@ -75,4 +75,4 @@ CRLs that are about to expire, but only if you explicitly provide the
 "-UNSAFE" command line option (the option name is case-sensitive and
 must be spelled out in full).
 
-                -- Keith Thompson <kst@sdsc.edu> 2004-10-20
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-22
