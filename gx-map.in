@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.5 2003-05-27 21:48:51-07 kst Exp $
+# $Id: gx-map.in,v 1.6 2003-05-27 22:06:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -16,7 +16,7 @@ $SIG{__WARN__} = sub { die @_ };
 my $Install_Dir;
 BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
-    push @INC, "$Install_Dir/lib";
+    unshift @INC, "$Install_Dir/lib";
 }
 use Gridmap_Utils ();
 
