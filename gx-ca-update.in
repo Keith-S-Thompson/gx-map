@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.47 2004-11-17 20:12:10-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.48 2005-01-04 18:55:40-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -78,7 +78,6 @@ use Gridmap_Utils ();
 sub Match_CA_Name($$);
 sub String_To_Seconds($);
 sub Seconds_To_String($);
-sub Time_Image($);
 sub Signing_Policy($);
 sub Date_To_Seconds($);
 sub Get_CA_Ref($);
@@ -442,22 +441,6 @@ sub Seconds_To_String($) {
                        $minutes, $seconds;
     }
 } # Seconds_To_String
-
-# ----------------------------------------------------------------------
-
-#
-# Given a timestamp, return a string of the form
-# "Ddd YYYY-MM-DD HH:MM::SS UTC"
-#
-sub Time_Image($) {
-    my($time) = @_;
-    my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-        = gmtime $time;
-    
-    return sprintf "%s %04d-%02d-%02d %02d:%02d:%02d UTC",
-                   (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
-                   1900+$year, 1+$mon, $mday, $hour, $min, $sec; 
-} # Time_Image 
 
 # ----------------------------------------------------------------------
 
@@ -1016,7 +999,8 @@ sub Update_CRL($) {
                 unlink $ref->{_CRL_FILE};
             }
             else {
-                my $expiration_string = Time_Image $crl_info->{next_update};
+                my $expiration_string
+                    = Gridmap_Utils::Time_Image $crl_info->{next_update};
                 my $how_long = Seconds_To_String abs $remaining;
                 my $notify = 0;
                 if ($crl_info->{used} > 0.9) {
@@ -1158,7 +1142,7 @@ sub Notify() {
 
     my $log_file = "$Install_Dir/var/$Program_Name.log";
     open LOG, ">>$log_file";
-    print LOG Time_Image $now, " $Program_Name\n";
+    print LOG Gridmap_Utils::Time_Image $now, " $Program_Name\n";
 
     foreach my $ref (@ca_info) {
         if (defined $ref->{_ERRORS}) {
