@@ -1,4 +1,4 @@
-# $Id: f4cacd1f.anu.cadesc,v 1.2 2004-10-18 10:00:54-07 kst Exp $
+# $Id: f4cacd1f.anu.cadesc,v 1.3 2004-11-01 17:04:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f4cacd1f.anu.cadesc,v $
 
 CA_NAME             Australian National University Simple CA (expired)
@@ -11,11 +11,9 @@ CERTIFICATE_MD5     D7:27:42:35:FE:AB:3C:CD:14:97:7C:24:40:72:15:11
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/f4cacd1f.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/f4cacd1f.signing_policy
 CRL_URL             ?
-INDEX               ?
+CERT_EXPIRES        Aug 14 05:41:51 2003 GMT
 DISABLE             yes
 
 # There is no CRL.
-
-# The certificate expired 2003-08-14.
 
 # MD5 fingerprint from f4cacd1f.0 downloaded 2004-10-17
