@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.37 2004-09-13 12:28:04-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.38 2004-09-13 16:48:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -92,6 +92,7 @@ sub Get_PW(;$);
 sub Get_GR(;$);
 sub Get_Groups($);
 sub Get_Hostname();
+sub Dir_Error($);
 
 sub Is_Globus_Admin($);
 
@@ -308,6 +309,47 @@ sub Get_Hostname() {
         return $hostname;
     }
 } # Get_Hostname
+
+# ----------------------------------------------------------------------
+
+#
+# Argument is the name of a directory to be used as the
+# "new-requests" directory.
+# If the directory is ok, returns undef (denoting no error).
+# Otherwise, returns a message describing the problem.
+# Directory must have permissions 1733, non-root users must be able to
+# create files, and non-root users must *not* be able to use chown to
+# change the ownership of a file.
+#
+sub Dir_Error($) {
+    my($dir) = @_;
+    my $running_as_root = ($< == 0);
+    return "$dir does not exist"     if not -e $dir;
+    return "$dir is not a directory" if not -d $dir;
+    my @stat = stat $dir;
+    return "Cannot stat $dir" if not @stat;
+    my $mode = $stat[2] & 07777;
+    if ($mode != 01733) {
+        return "Bad permissions on $dir, should be 1733";
+    }
+
+    my $temp_file_name = "$dir/tmp-" . time . "-$$";
+    my $result = undef;
+    if ($running_as_root) {
+        $< = 1;
+    }
+    Untaint $temp_file_name;
+    open TEMP, ">$temp_file_name" or return "Cannot create file in $dir";
+    close TEMP;
+    if (chown(0, 0, $temp_file_name) == 1) {
+        $result = "$dir allows non-root chown";
+    }
+    unlink $temp_file_name;
+    if ($running_as_root) {
+        $< = 0;
+    }
+    return $result;
+} # Dir_Error
 
 # ----------------------------------------------------------------------
 
