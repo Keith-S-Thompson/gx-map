@@ -1,6 +1,6 @@
-#!/usr/local/bin/perl5.6.0 -w
+#!%PERL% -w
 
-# $Id: gx-map.in,v 1.3 2003-05-27 16:51:33-07 kst Exp $
+# $Id: gx-map.in,v 1.4 2003-05-27 18:38:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -13,15 +13,14 @@ use Getopt::Long ();
 # 
 $SIG{__WARN__} = sub { die @_ };
 
-my $Base_Dir;
+my $Install_Dir;
 BEGIN {
-    # $Base_Dir = '/usr/local/apps/globus-extras';
-    $Base_Dir = '/projects/globus/kst/gx-map-test';
-    push @INC, "$Base_Dir/lib";
+    $Install_Dir = '%INSTALL_DIR%';
+    push @INC, "$Install_Dir/lib";
 }
 use Gridmap_Utils ();
 
-my $Gridmap_Dir = "$Base_Dir/grid-mapfile-updates";
+my $Data_Dir = "$Install_Dir/var";
 
 sub Usage(@);
 sub Long_Usage();
@@ -35,9 +34,9 @@ sub Gen_Request_File_Name();
 sub Debug(@);
 sub Debugf(@);
 
-my $Requests_Dir = "$Gridmap_Dir/new-requests";
+my $Requests_Dir = "$Data_Dir/new-requests";
 
-die "No directory $Gridmap_Dir\n"  if not -d $Gridmap_Dir;
+die "No directory $Data_Dir\n"  if not -d $Data_Dir;
 die "No directory $Requests_Dir\n" if not -d $Requests_Dir;
 die "Directory $Requests_Dir is not writable\n" if not -w $Requests_Dir;
 
