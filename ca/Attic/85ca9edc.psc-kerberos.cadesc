@@ -1,10 +1,11 @@
-# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.5 2004-09-24 20:58:53-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.6 2004-10-07 22:09:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85ca9edc.psc-kerberos.cadesc,v $
 
 CA_NAME             PSC Kerberos Certification Authority
 HOMEPAGE            http://ocsp.psc.edu:8000/ca/
 CONTACT             ?
 HASH                85ca9edc
+SIGNED_BY           /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Root Certificate Authority
 SUBJECT             /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Kerberos Certification Authority
 MAY_SIGN            /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/*
 CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/85ca9edc.0
