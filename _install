@@ -1,12 +1,17 @@
 #!/bin/sh
 
-# $Id: _install,v 1.1 2004-09-28 20:08:45-07 kst Exp $
+# $Id: _install,v 1.2 2004-09-28 20:27:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/_install,v $
 
-rm -rf /tmp/kst/apps/gx-map-0.4-alpha \
-       /tmp/kst/var/gx-map-0.4-alpha-data \
-       /tmp/kst/certificates
-mkdir /tmp/kst/certificates
-make clean
-./configure-gx-map kst-test.conf
-make install clean
+verbosely() {
+    echo "% $@"
+    "$@"
+}
+
+verbosely rm -rf /tmp/kst/apps/gx-map-0.4-alpha
+verbosely rm -rf /tmp/kst/var/gx-map-0.4-alpha
+verbosely rm -rf /tmp/kst/etc/grid-security
+verbosely mkdir -p /tmp/kst/etc/grid-security/certificates
+verbosely make clean
+verbosely ./configure-gx-map kst-test.conf
+verbosely make install clean
