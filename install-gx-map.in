@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.17 2004-09-11 22:00:41-07 kst Exp $
+# $Id: install-gx-map.in,v 1.18 2004-09-13 16:51:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -79,7 +79,7 @@ do
 done
 
 verbosely touch $DATA_DIR/requests.log
-verbosely chmod 400 $DATA_DIR/requests.log
+verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 
 verbosely cp -f $BIN_FILES  $BINDIR/.
 verbosely cp -f $SBIN_FILES $SBINDIR/.
