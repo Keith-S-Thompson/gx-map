@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.ncsa-test,v 1.3 2003-07-20 20:55:48-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.ncsa-test,v 1.4 2003-07-20 22:10:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.ncsa-test,v $
 
 package Gridmap_Valid_Mappings;
@@ -97,12 +97,6 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no OWNER_NAME\n";
         return ();
     }
-    if (defined $request->{map_to_name} and
-                not getpwnam $request->{map_to_name})
-    {
-        Debug ">>> Invalid, no such user\n";
-        return ();
-    }
 
     #
     # No namespace, reject.
@@ -160,8 +154,16 @@ sub Valid_Mappings($) {
         return ();
     }
 
+    if (defined $request->{map_to_name} and
+                not getpwnam $request->{map_to_name})
+    {
+        Debug ">>> Invalid, no such user\n";
+        return ();
+    }
+
     #
     # Don't map certificates issued by the Globus CA.
+    # (Comment this out if desired.)
     #
     if (exists $request->{dn} and
         ( $request->{dn} =~ m<^"/C=us/O=Globus/> or
