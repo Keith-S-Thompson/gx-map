@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.3 2003-06-05 19:44:08-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.4 2003-07-08 14:12:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -139,7 +139,7 @@ sub Get_Hostname() {
     my $hostname   = undef;
     my $domainname = undef;
 
-    chomp($hostname = `hostname 2>/dev/null`);
+    chomp($hostname = `/bin/hostname 2>/dev/null`);
 
     if ($hostname =~ /\./) { 
         #
