@@ -1,0 +1,23 @@
+# $Id: 18b2e19c.arun-cmsd-vinod.cadesc,v 1.1 2004-10-17 22:39:26-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/18b2e19c.arun-cmsd-vinod.cadesc,v $
+
+CA_NAME             arun-cmsd-vinod
+HOMEPAGE            ?
+CONTACT             ?
+HASH                18b2e19c
+SUBJECT             /O=in/OU=cmsd. ou/CN=arun-cmsd-vinod
+MAY_SIGN            /O=in/OU=cmsd. ou/*
+CERTIFICATE_MD5     4D:2B:8A:BC:0F:AD:A8:DD:15:14:6D:14:C1:59:8F:84
+CERTIFICATE_URL     https://www.apgrid.org/CA/18b2e19c.0
+SIGNING_POLICY_URL  https://www.apgrid.org/CA/18b2e19c.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             yes
+
+# References:
+#     ApGrid <http://www.apgrid.org/>
+#     PRAGMA <http://www.pragma-grid.net/>
+
+# No known CRL
+
+# MD5 fingerprint from 18b2e19c.0 downloaded 2004-10-15
