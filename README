@@ -1,4 +1,4 @@
-# $Id: README,v 1.8 2003-08-28 18:58:47-07 kst Exp $
+# $Id: README,v 1.9 2003-09-02 13:09:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
@@ -78,6 +78,24 @@ NOTES: (not included in gx-map-0.3 release):
     anyway.  Similarly, the *.conf files (other than a sample or two)
     and the site-specific Gridmap_Valid_Mappings.pm.in.* files will
     probably be excluded.  I haven't decided yet how to manage these.
+
+5.  The documentation and sample config file are unclear about the
+    syntax of the GLOBUS_ADMINS variable.
+
+    The argument is a series of one or more space-delimited arguments;
+    each arguments must start with the string "user:" or "group:".
+    Each arguments specifies a single Unix user or group name.
+    For example, if you want users "root" and "phred" to have
+    administrative access, this is specified as
+
+	GLOBUS_ADMINS user:root user:phred
+
+    In the current release, incorrect arguments are silently ignored.
+
+    You can mix "user:" and "group:" arguments.  Be careful with
+    groups; guaranteeing that each member of a group is someone who
+    should have administrative access can be more difficult that you
+    might anticipate.
 ========================================================================
 
 This is release 0.3; more documentation will follow later.
