@@ -1,0 +1,19 @@
+# $Id: bug-0012,v 1.1 2005-03-29 00:10:06-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0012,v $
+
+gx-map bug 0012
+Date: Mon 2005-03-28
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: gx-ca-update command-line errors not logged
+
+Summary:
+The gx-ca-update command does not log command-line errors, leading
+to possible confusion if a cron command is incorrect.
+
+For example: No CA matching 2ca73e82
+
+This may not be much of an issue; the message is printed to stderr,
+which should be e-mailed to the user owning the cron job.  I saw this
+on rocks-121; probably the e-mail wasn't forwarded properly.
