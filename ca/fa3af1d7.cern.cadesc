@@ -1,4 +1,4 @@
-# $Id: fa3af1d7.cern.cadesc,v 1.3 2004-10-08 20:44:45-07 kst Exp $
+# $Id: fa3af1d7.cern.cadesc,v 1.4 2004-10-10 03:22:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa3af1d7.cern.cadesc,v $
 
 CA_NAME             CERN CA
@@ -20,3 +20,5 @@ DISABLE             no
 #     fa3af1d7.crl_url (points to a CRL in DER format)
 #     fa3af1d7.0
 
+
+# MD5 fingerprint from fa3af1d7.0 downloaded 2004-10-10
