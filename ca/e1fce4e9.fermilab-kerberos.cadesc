@@ -1,0 +1,18 @@
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.1 2004-10-02 14:40:30-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
+
+CA_NAME             Fermilab Kerberized CA
+HOMEPAGE            example.org CAttp://example.org/CA/
+CONTACT             nightwatch@fnal.gov
+HASH                e1fce4e9
+SUBJECT             /DC=gov/DC=fnal/O=Fermilab/OU=Certificate Authorities/CN=Kerberized CA
+MAY_SIGN            /DC=gov/DC=fnal/O=Fermilab/OU=People/*
+MAY_SIGN            /DC=gov/DC=fnal/O=Fermilab/OU=Robots/*
+CERTIFICATE_URL     https://computing.fnal.gov/security/pki/e1fce4e9.0
+SIGNING_POLICY_URL  https://computing.fnal.gov/security/pki/e1fce4e9.signing_policy
+CRL_URL             ?
+CRL_WARNING         30 days
+INDEX               ?
+DISABLE             no
+
+# DER format CRL at  http://computing.fnal.gov/security/pki/e1fce4e9.crl
