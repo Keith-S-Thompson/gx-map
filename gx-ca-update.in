@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.12 2004-09-24 18:38:57-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.13 2004-09-25 09:35:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -72,6 +72,7 @@ sub Seconds_To_String($);
 sub Signing_Policy($);
 sub Date_To_Seconds($);
 sub CRL_Info($$);
+sub Certificate_Expiration($);
 sub Update_Certificate($);
 sub Update_Signing_Policy($);
 sub Update_CRL($);
@@ -83,7 +84,13 @@ my $now = time;
 
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
-             qw( help! version! ca=s@ target-dir=s force! debugging! ) );
+             qw( help!
+                 version!
+                 ca=s@
+                 target-dir=s
+                 expire-crl=s
+                 force!
+                 debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -98,6 +105,19 @@ if (not defined $User_Opt->{ca}) {
 }
 if (not defined $User_Opt->{'target-dir'}) {
     Usage "No target directory specified\n"
+}
+
+my $CRL_Expiration = undef;
+if (defined $User_Opt->{'expire-crl'}) {
+    if ($User_Opt->{'expire-crl'} =~ /^(\d+)([smhd])$/) {
+        $CRL_Expiration = $1;
+        if    ($2 eq 'm') { $CRL_Expiration *= 60 }
+        elsif ($2 eq 'h') { $CRL_Expiration *= 3600 }
+        elsif ($2 eq 'd') { $CRL_Expiration *= 86400 }
+    }
+    else {
+        Usage "Invalid argument to -expire-url option\n";
+    }
 }
 
 if ($User_Opt->{debugging}) {
@@ -179,35 +199,14 @@ Gridmap_Utils::Init_Cache_Info;
 foreach my $ref (@ca_info) {
     print "Processing $ref->{HASH} $ref->{CA_NAME}\n";
 
-    Update_Certificate $ref;
+    my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
+    $ref->{_CERT_FILE}           = "$prefix.0";
+    $ref->{_SIGNING_POLICY_FILE} = "$prefix.signing_policy";
+    $ref->{_CRL_FILE}            = "$prefix.r0";
+
+    Update_Certificate    $ref;
     Update_Signing_Policy $ref;
-    my $crl_info = Update_CRL $ref;
-
-    if (defined $crl_info) {
-        my $remaining = $crl_info->{next_update} - time;
-        my $how_long = Seconds_To_String abs $remaining;
-        if (defined $ref->{CRL_WARNING_SECONDS} and
-            $remaining <= $ref->{CRL_WARNING_SECONDS})
-        {
-            print ">>> ";
-        }
-        if ($remaining < 0) {
-            print "CRL expired $how_long ago\n";
-        }
-        elsif ($remaining == 0) {
-            print "CRL expires NOW\n";
-        }
-        else {
-            print "CRL expires in $how_long\n";
-        }
-        if (not $crl_info->{verified}) {
-            print ">>> CRL is not verified\n";
-        }
-
-    }
-    else {
-        print ">>> No CRL information available\n";
-    }
+    Update_CRL            $ref;
 
     print "\n";
 }
@@ -411,22 +410,40 @@ sub CRL_Info($$) {
 # ----------------------------------------------------------------------
 
 #
-# Update CA certificate if necessary
+# Given the name of a certificate file, return its expiration date.
+#
+sub Certificate_Expiration($) {
+    my($cert_file) = @_;
+    my $result = undef;
+    return undef if not -r $cert_file;
+    open PIPE, "openssl x509 -in $cert_file -noout -enddate |" or return undef;
+    while (<PIPE>) {
+        if (/^notAfter=\s*(.*)$/) {
+            $result = Date_To_Seconds $1;
+        }
+    }
+    return $result;
+} # Certificate_Expiration
+
+# ----------------------------------------------------------------------
+
+#
+# Update CA certificate if necessary.
+# If the file exists, we assume it doesn't need to be updated unless the
+# "-force" option was specified.
+# Refuse to install an expired certificate, but leave it alone if
+# it's already installed.
 #
 sub Update_Certificate($) {
     my($ref) = @_;
-    my $target_dir = $User_Opt->{'target-dir'};
-    # Gridmap_Utils::Untaint $target_dir;
 
-    my $target_cert_file = "$target_dir/$ref->{HASH}.0";
-    if (not $User_Opt->{force} and -e $target_cert_file) {
-        print "Skipping existing $target_cert_file\n";
+    if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
+        print "Skipping existing $ref->{_CERT_FILE}\n";
     }
-    elsif ($ref->{CERTIFICATE} =~ m<(http|ftp)://>) {
-        print "Installing $target_cert_file\n";
-        # Gridmap_Utils::Untaint $target_cert_file;
+    elsif ($ref->{CERTIFICATE_URL} =~ m<(http|ftp)://>) {
+        print "Installing $ref->{_CERT_FILE}\n";
         my $cache_file;
-        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE} };
+        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE_URL} };
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
@@ -434,8 +451,23 @@ sub Update_Certificate($) {
             print ">>> $@";
         }
         elsif (defined $cache_file and -r $cache_file) {
-            system 'cp', '-p', '-f', $cache_file, "$target_cert_file.$$";
-            rename "$target_cert_file.$$", $target_cert_file;
+            my $expire = Certificate_Expiration $cache_file;
+            if (defined $expire) {
+                if ($expire < $now) {
+                    print ">>> $cache_file expired ",
+                          Seconds_To_String $now - $expire,
+                          " ago\n";
+                }
+                else {
+                    system 'cp', '-p', '-f', $cache_file,
+                                             "$ref->{_CERT_FILE}.$$";
+                    rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE};
+                }
+            }
+            else {
+                print ">>> Unable to determine expiration date " .
+                      "for $cache_file\n";
+            }
         }
     }
     else {
@@ -446,19 +478,21 @@ sub Update_Certificate($) {
 # ----------------------------------------------------------------------
 
 #
-# Update signing_policy file if necessary
+# Update signing_policy file if necessary.
+# If the file exists, we assume it doesn't need to be updated unless the
+# "-force" option was specified.
+# For now, we ignore the SIGNING_POLICY_URL; the signing_policy is
+# generated from the MAY_SIGN attributes.
 #
 sub Update_Signing_Policy($) {
     my($ref) = @_;
-    my $policy_file
-        = "$User_Opt->{'target-dir'}/$ref->{HASH}.signing_policy";
-    if (not $User_Opt->{force} and -e $policy_file) {
-        print "Skipping existing $policy_file\n";
+    if (not $User_Opt->{force} and -e $ref->{_SIGNING_POLICY_FILE}) {
+        print "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
     }
     else {
-        # Gridmap_Utils::Untaint $policy_file;
-        print "Creating $policy_file\n";
-        open POLICY, ">$policy_file" or die "$policy_file: $!\n";
+        print "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+        open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
+            or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
         print POLICY Signing_Policy $ref;
         close POLICY;
     }
@@ -468,20 +502,19 @@ sub Update_Signing_Policy($) {
 
 #
 # Update CRL if necessary
-# Return information on CRL (the new one if updated, the old one
-# otherwise, undef if none)
 #
 sub Update_CRL($) {
     my($ref) = @_;
-    my $target_crl_file  = "$User_Opt->{'target-dir'}/$ref->{HASH}.r0";
-    my $target_cert_file = "$User_Opt->{'target-dir'}/$ref->{HASH}.0";
-    my $old_crl_info = CRL_Info $target_crl_file, $target_cert_file;
-    # Gridmap_Utils::Untaint $target_crl_file;
+    my $old_crl_info = CRL_Info $ref->{_CRL_FILE}, $ref->{_CERT_FILE};
+    my $install_new_crl = 0;
 
-    my $have_crl_url = $ref->{CRL} =~ m<(http|ftp)://>;
+    my $have_crl_url = $ref->{CRL_URL} =~ m<(http|ftp)://>;
     my $new_crl_file = undef;
     if ($have_crl_url) {
-        eval { $new_crl_file = Gridmap_Utils::Cache_File $ref->{CRL} };
+        #
+        # Attempt to download a new CRL (or use a cached copy)
+        #
+        eval { $new_crl_file = Gridmap_Utils::Cache_File $ref->{CRL_URL} };
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
@@ -490,37 +523,115 @@ sub Update_CRL($) {
             print ">>> $@";
         }
     }
-    my $new_crl_info = CRL_Info $new_crl_file, $target_cert_file;
+    my $new_crl_info = CRL_Info $new_crl_file, $ref->{_CERT_FILE};
 
-    if (not defined $new_crl_info) {
+    if (defined $new_crl_info) {
+        #
+        # We have a new CRL; decide whether to install it.
+        #
+        my $remaining = $new_crl_info->{next_update} - $now;
+        if ($remaining <= 0) {
+            print ">>> New CRL has expired\n";
+        }
+        elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
+            print ">>> New CRL expires in " .
+                  Seconds_To_String($remaining) .
+                  ", not installing\n";
+        }
+        elsif (not $new_crl_info->{verified}) {
+            print ">>> Can't verify new CRL\n";
+        }
+        elsif (defined $old_crl_info) {
+            #
+            # We have an old CRL and a new CRL; decide whether to
+            # replace the old one with the new one.
+            #
+            if ($new_crl_info->{last_update} == $old_crl_info->{last_update} and
+                $new_crl_info->{next_update} == $old_crl_info->{next_update})
+            {
+                print "CRL update not needed\n";
+            }
+            elsif ($new_crl_info->{next_update} <
+                   $old_crl_info->{next_update})
+            {
+                print ">>> New CRL expires sooner than old CRL, " .
+                      "not installing\n";
+            }
+            else {
+                $install_new_crl = 1;
+            }
+        }
+        else {
+            $install_new_crl = 1;
+        }
+    }
+    else {
+        #
+        # We don't have a new CRL
+        #
         if (not $have_crl_url) {
             print "No URL given for CRL\n";
         }
         else {
-            print "Unable to get information for CRL\n";
-        }
-        return $old_crl_info;
-    }
-
-    if (defined $old_crl_info and defined $new_crl_info) {
-        if ($new_crl_info->{next_update} == $old_crl_info->{next_update}) {
-            print "CRL update not needed\n";
-            return $old_crl_info;
-        }
-        elsif ($new_crl_info->{next_update} < $old_crl_info->{next_update}) {
-            print "New CRL expires sooner than old CRL\n";
-            return $old_crl_info;
-        }
-        elsif (not $new_crl_info->{verified}) {
-            print "Can't verify new CRL\n";
-            return $old_crl_info
+            print ">>> Unable to get information for CRL\n";
         }
     }
 
-    print "Installing $target_crl_file\n";
-    system 'cp', '-p', $new_crl_file, "$target_crl_file.$$";
-    rename "$target_crl_file.$$", $target_crl_file;
-    return $new_crl_info;
+    if ($install_new_crl) {
+        print "Installing $ref->{_CRL_FILE}\n";
+        system 'cp', '-p', $new_crl_file, "$ref->{_CRL_FILE}.$$";
+        rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE};
+    }
+
+    #
+    # Just to be sure, re-fetch CRL info from the target CRL file
+    # (which may or may not have just been updated).
+    #
+    if (-r $ref->{_CRL_FILE}) {
+        my $crl_info = CRL_Info $ref->{_CRL_FILE}, $ref->{_CERT_FILE};
+        my $remaining = $crl_info->{next_update} - $now;
+        my $remove_crl = 0;
+        if (defined $crl_info) {
+            if (not $crl_info->{verified}) {
+                print ">>> Removing unverified CRL\n";
+                $remove_crl = 1;
+            }
+            elsif (defined $CRL_Expiration and
+                   $remaining < $CRL_Expiration)
+            {
+                print ">>> CRL will expire in " .
+                      Seconds_To_String($remaining) .
+                      ", removing it\n";
+                $remove_crl = 1;
+            }
+            if ($remove_crl) {
+                unlink $ref->{_CRL_FILE};
+            }
+            else {
+                my $how_long = Seconds_To_String abs $remaining;
+                if (defined $ref->{CRL_WARNING_SECONDS} and
+                    $remaining <= $ref->{CRL_WARNING_SECONDS})
+                {
+                    print ">>> ";
+                }
+                if ($remaining < 0) {
+                    print "CRL expired $how_long ago\n";
+                }
+                elsif ($remaining == 0) {
+                    print "CRL expires NOW\n";
+                }
+                else {
+                    print "CRL expires in $how_long\n";
+                }
+                if (not $crl_info->{verified}) {
+                    print ">>> CRL is not verified\n";
+                }
+            }
+        }
+    }
+    else {
+        print ">>> No CRL\n";
+    }
 } # Update_CRL
 
 # ----------------------------------------------------------------------
@@ -529,15 +640,22 @@ sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
 Usage: $Prog_Name [options]
-    -help            : Display this message and exit
-    -version         : Display version information and exit
-    -ca name         : Name of a CA (may be given multiple times)
+    -help              Display this message and exit
+    -version           Display version information and exit
+    -ca name           Name of a CA (may be given multiple times)
                        The argument is a substring of the *.cadesc file
                        name; use the hash value to avoid ambiguity
-    -ca ALL          : Use all available CAs
-    -target-dir dir  : Target directory
-    -force           : Force file updates
-    -debugging       : Enable debugging output
+    -ca ALL            Use all available CAs
+    -target-dir dir    Target directory
+    -expire-crl time   Remove a CRL that will expire within
+                       "time".  "time" is expressed as a number
+                       followed by 's' (seconds), 'm' (minutes),
+                       'h' (hours) or 'd' (days); for example
+                       "-expire-crl 75m".  By default, expiring CRLs
+                       are left in place.
+    -force             Force file updates (applies to certificate and
+                       signing_policy files)
+    -debugging         Enable debugging output
 EOF
     exit 1;
 } # Usage
