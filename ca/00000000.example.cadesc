@@ -1,4 +1,4 @@
-# $Id: 00000000.example.cadesc,v 1.7 2004-11-01 17:04:13-08 kst Exp $
+# $Id: 00000000.example.cadesc,v 1.8 2005-04-01 17:57:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/00000000.example.cadesc,v $
 
 CA_NAME             example.org CA
@@ -9,6 +9,7 @@ SIGNED_BY           /O=Grid/OU=example.org/CN=example.org Root CA
 SUBJECT             /O=Grid/OU=example.org/CN=example.org CA
 MAY_SIGN            /O=Grid/OU=example.org/*
 CERTIFICATE_MD5     00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
+# CERTIFICATE_SHA1    00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 CERTIFICATE_URL     http://www.example.org/CA/00000000.0
 SIGNING_POLICY_URL  http://www.example.org/CA/00000000.signing_policy
 CRL_URL             http://www.example.org/CA/00000000.r0
@@ -16,8 +17,6 @@ INDEX               ?
 CERT_EXPIRES        Jan  1 00:00:00 1970 GMT
 DISABLE             yes
 
-#
 # This is 00000000.example.cadesc, a template for *.cadesc (certificate
-# authority description) files.  See the README and SECURITY files for
-# more information.
-#
+# authority description) files.  See the README.CA and README.CA-Security
+# files for more information.
