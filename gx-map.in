@@ -1,6 +1,6 @@
 #!/usr/local/bin/perl5.6.0 -w
 
-# $Id: gx-map.in,v 1.2 2003-04-28 23:25:52-07 kst Exp $
+# $Id: gx-map.in,v 1.3 2003-05-27 16:51:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -36,6 +36,10 @@ sub Debug(@);
 sub Debugf(@);
 
 my $Requests_Dir = "$Gridmap_Dir/new-requests";
+
+die "No directory $Gridmap_Dir\n"  if not -d $Gridmap_Dir;
+die "No directory $Requests_Dir\n" if not -d $Requests_Dir;
+die "Directory $Requests_Dir is not writable\n" if not -w $Requests_Dir;
 
 my $Prog_Name = File::Basename::basename $0;
 my $hostname;
@@ -87,6 +91,8 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
 Long_Usage if $User_Opt->{'long-help'};
+
+$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 #
 # First, gather and verify some basic information about the user.
@@ -214,45 +220,49 @@ foreach my $key (sort keys %$Options) {
 #
 
 my $requested_pw;
-if ($Options->{username} eq $PW->{name}) {
-    $requested_pw = $PW;
-}
-else {
-    #
-    # Note: For an ordinary user, I need to validate the passwd information.
-    # If a Globus administrator runs this command, it may be for an
-    # account that doesn't exist on this machine; it may not be possible
-    # to determine the uid.  Fill in a dummy value ('UNKNOWN').
-    #
-    $requested_pw = Gridmap_Utils::Get_PW $Options->{username};
-    if (defined $requested_pw and
-        $requested_pw->{name} ne $Options->{username})
-    {
-        die "Internal error, name from passwd ($requested_pw->{name}) != ",
-            "specified name ($Options->{username})\n";
+if ($Options->{operation} ne 'remove-dn') {
+    if ($Options->{username} eq $PW->{name}) {
+        $requested_pw = $PW;
+    }
+    else {
+        #
+        # Note: For an ordinary user, I need to validate the passwd information.
+        # If a Globus administrator runs this command, it may be for an
+        # account that doesn't exist on this machine; it may not be possible
+        # to determine the uid.
+        #
+        $requested_pw = Gridmap_Utils::Get_PW $Options->{username};
+        if (defined $requested_pw and
+            $requested_pw->{name} ne $Options->{username})
+        {
+            die "Internal error, name from passwd ($requested_pw->{name}) != ",
+                "specified name ($Options->{username})\n";
+        }
     }
 }
 
 if (not $Options->{quiet}) {
     $| = 1;
+    my $Mapping  = ( $Options->{force} ? 'Mapping'  : 'About to map' );
+    my $Removing = ( $Options->{force} ? 'Removing' : 'About to remove' );
     if ($Options->{operation} eq 'add') {
-        print "About to map distinguished name\n",
+        print "$Mapping distinguished name\n",
               "    \"$Options->{dn}\"\n",
               "to user\n",
               "    $Options->{username}\n";
     }
     elsif ($Options->{operation} eq 'remove') {
-        print "About to remove mapping for distinguished name\n",
+        print "$Removing mapping for distinguished name\n",
               "    \"$Options->{dn}\"\n",
               "to user\n",
               "    $Options->{username}\n";
     }
     elsif ($Options->{operation} eq 'remove-dn') {
-        print "About to remove all mappings for distinguished name\n",
+        print "$Removing all mappings for distinguished name\n",
               "    \"$Options->{dn}\"\n";
     }
     elsif ($Options->{operation} eq 'remove-user') {
-        print "About to remove all mappings for ",
+        print "$Removing all mappings for ",
               "user \"$Options->{username}\"\n";
     }
 }
@@ -283,8 +293,9 @@ if (defined $requested_pw) {
     $requested_uid = $requested_pw->{uid};
 }
 
-if ($Options->{username} eq 'root' or
-    (defined $requested_uid and $requested_uid == 0))
+if (defined $Options->{username} and $Options->{username} eq 'root'
+    or
+    defined $requested_uid and $requested_uid == 0)
 {
     die "Mapping to root or uid 0 is not allowed\n";
 }
@@ -292,15 +303,15 @@ if ($Options->{username} eq 'root' or
 my $request = {
     operation         => $Options->{operation},
     timestamp         => $Timestamp,
-    dn                => '"' . $Options->{dn} . '"',
-    map_to_name       => $Options->{username},
     requested_by_uid  => $PW->{uid},
     requested_by_name => $PW->{name},
     hostname          => $hostname
 };
-$request->{map_to_uid} = $requested_uid      if defined $requested_uid;
-$request->{email}      = $Options->{email}   if defined $Options->{email};
-$request->{comment}    = $Options->{comment} if defined $Options->{comment};
+$request->{dn}          = "\"$Options->{dn}\"" if defined $Options->{dn};
+$request->{map_to_name} = $Options->{username} if defined $Options->{username};
+$request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
+$request->{email}       = $Options->{email}    if defined $Options->{email};
+$request->{comment}     = $Options->{comment}  if defined $Options->{comment};
 
 #
 # Be paranoid.  Create the file, close it, chmod it to 200,
@@ -349,7 +360,9 @@ sub Gen_Request_File_Name() {
     my $result = "$Requests_Dir/";
     $result .= sprintf "%010s", $Now;
     $result .= "-$hostname-$PW->{name}";
-    if ($Options->{username} ne $PW->{name}) {
+    if (defined $Options->{username} and
+        $Options->{username} ne $PW->{name})
+    {
         $result .= "_$Options->{username}";
     }
     $result .= "-$$.request";
