@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.17 2004-09-27 03:18:54-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.18 2004-09-27 15:42:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -215,6 +215,8 @@ Debug "Got ", scalar @ca_info, " ca record(s):\n";
 if ($User_Opt->{debugging}) {
     Gridmap_Utils::Write_Records '-multiple', '-', @ca_info;
 }
+
+Gridmap_Utils::Use_Commands 'cp', 'openssl';
 
 Gridmap_Utils::Init_Cache_Info;
 
@@ -779,24 +781,28 @@ sub Notify() {
     }
 
     foreach my $ref (@ca_info) {
-        if (defined $ref->{_MESSAGES}) {
+        if (defined $ref->{_MESSAGES} or defined $ref->{_ERRORS}) {
             print LOG "$ref->{HASH} $ref->{CA_NAME}:\n";
-            foreach my $message (@{$ref->{_MESSAGES}}) {
-                print LOG "    $message";
-            }
-        }
 
-        if (defined $ref->{_ERRORS}) {
-            my @error_list = @{$ref->{_ERRORS}};
-            $message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
-            $message_body .= join '', @error_list;
-            $message_body .= "\n";
-            foreach my $error (@error_list) {
-                print LOG "    >>> $error";
+            if (defined $ref->{_MESSAGES}) {
+                foreach my $message (@{$ref->{_MESSAGES}}) {
+                    print LOG "    $message";
+                }
+            }
+
+            if (defined $ref->{_ERRORS}) {
+                my @error_list = @{$ref->{_ERRORS}};
+                $message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
+                $message_body .= join '', @error_list;
+                $message_body .= "\n";
+                foreach my $error (@error_list) {
+                    print LOG "    ERROR: $error";
+                }
             }
         }
     }
 
+    print LOG "\n";
     close LOG;
 
     if ($error_count > 0) {
