@@ -1,4 +1,4 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.7 2004-10-15 15:40:42-07 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.8 2004-11-01 17:04:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
@@ -12,6 +12,7 @@ CERTIFICATE_MD5     3E:58:EB:9E:C2:9E:21:4F:81:6F:96:24:93:B4:04:45
 CERTIFICATE_URL     http://gcs.globus.org:8080/gcs/cacert/b38b4d8c.0
 SIGNING_POLICY_URL  http://gcs.globus.org:8080/gcs/cacert/b38b4d8c.signing_policy
 CRL_URL             ?
+CERT_EXPIRES        Sep 26 17:25:48 2013 GMT
 DISABLE             yes
 
 #
