@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.25 2004-09-30 00:09:34-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.26 2004-09-30 02:03:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -99,6 +99,7 @@ my @Opts = ( $User_Opt,
                  target-dir=s
                  expire-crl=s
                  force!
+                 ignore-disable!
                  email!
                  verbose!
                  debugging! ) );
@@ -228,7 +229,12 @@ foreach my $ref (@ca_info) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     if (Disabled $ref) {
         Vprint "CA is disabled\n\n";
-        next CA;
+        if ($User_Opt->{'ignore-disable'}) {
+            Vprint "Ignoring \"disable\" attribute\n";
+        }
+        else {
+            next CA;
+        }
     }
 
     my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
@@ -751,6 +757,7 @@ Usage: $Program_Name [options]
                        are left in place.
     -force             Force file updates (applies to certificate and
                        signing_policy files)
+    -ignore-disable    Ignore "disable" attribute in cadesc files.
     -email             Send e-mail to configured ADMIN_EMAIL address on errors.
                        Default is "-email"; use "-noemail" to disable.
     -verbose           Print verbose messages
