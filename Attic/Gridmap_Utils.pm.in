@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.52 2004-11-30 16:55:27-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.53 2004-11-30 19:08:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -79,13 +79,14 @@ BEGIN {
     use vars qw($VERSION $Debugging %Config);
     $VERSION = '0.4.1';
     $Debugging = undef;
-    %Config = ( PERL          => '%PERL%',
-                PATH          => '%PATH%',
-                NAMESPACE     => '%NAMESPACE%',
-                INSTALL_DIR   => '%INSTALL_DIR%',
-                DATA_DIR      => '%DATA_DIR%',
-                GLOBUS_ADMINS => '%GLOBUS_ADMINS%',
-                ADMIN_EMAIL   => '%ADMIN_EMAIL%' );
+    %Config = ( PERL                     => '%PERL%',
+                PATH                     => '%PATH%',
+                NAMESPACE                => '%NAMESPACE%',
+                INSTALL_DIR              => '%INSTALL_DIR%',
+                DATA_DIR                 => '%DATA_DIR%',
+                REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
+                GLOBUS_ADMINS            => '%GLOBUS_ADMINS%',
+                ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
     use Cwd ();
     eval { require Net::Domain };
