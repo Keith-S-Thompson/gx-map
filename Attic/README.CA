@@ -1,4 +1,4 @@
-# $Id: README.CA,v 1.2 2004-10-20 17:20:42-07 kst Exp $
+# $Id: README.CA,v 1.3 2004-10-21 17:39:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
 
 ************************************************************************
@@ -30,7 +30,7 @@ added to the distribution, please let me know.  If you find an error,
 please let me know as soon as possible.
 
 
-Mandatory attributes are
+Mandatory attributes (marked with '*' in the list below) are:
     CA_NAME
     HASH
     SUBJECT
@@ -41,7 +41,7 @@ Optional attributes may be omitted or set to a single '?' character,
 except that DISABLE, if present, must be set to "yes" or "no".
 
 
-CA_NAME is a brief informal name for the CA; it's included in the
+* CA_NAME is a brief informal name for the CA; it's included in the
 signing_policy file as a comment.  This needn't match the name included
 in the name of the cadesc file.
 
@@ -51,7 +51,7 @@ It's included for reference; gx-ca-update doesn't use it.
 CONTACT is an e-mail address for the CA.
 It's included for reference; gx-ca-update doesn't use it.
 
-HASH is the 8-digit hexadecimal hash for the certificate's subject name.
+* HASH is the 8-digit hexadecimal hash for the certificate's subject name.
 It can be computed by
     openssl x509 -hash -in FILENAME.0 -noout
 The hash is incorporated into the names of the certificate,
@@ -66,20 +66,20 @@ against the actual issuer of the certificate.  gx-ca-update may also
 check whether the issuing certificate is installed (this check has
 not yet been implemented).
 
-SUBJECT is the subject name of the signing certificate.  This is
+* SUBJECT is the subject name of the signing certificate.  This is
 checked against the actual subject name of the downloaded certificate.
 
-MAY_SIGN is a pattern (either a wildcard or a single subject name)
+* MAY_SIGN is a pattern (either a wildcard or a single subject name)
 used to construct the signing_policy file.  More than one MAY_SIGN
 attributes may be specified.
 
-CERTIFICATE_MD5 is the MD5 fingerprint of the signing certificate.
+* CERTIFICATE_MD5 is the MD5 fingerprint of the signing certificate.
 This can be determined by 
     openssl x509 -md5 -fingerprint -in FILENAME.0 -noout
 This is checked against the actual fingerprint of the downloaded
 certificate.
 
-CERTIFICATE_URL is a URL from which the signing certificate (in PEM
+* CERTIFICATE_URL is a URL from which the signing certificate (in PEM
 format) can be downloaded.
 
 SIGNING_POLICY_URL is a URL from which a signing_policy file can
