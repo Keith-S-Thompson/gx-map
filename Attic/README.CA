@@ -1,4 +1,4 @@
-# $Id: README.CA,v 1.6 2004-11-22 17:54:03-08 kst Exp $
+# $Id: README.CA,v 1.7 2004-11-24 12:26:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
 
 ************************************************************************
@@ -6,6 +6,13 @@
 * Please read the file README.CA-SECURITY in this directory before     *
 * deploying this software.                                             *
 ************************************************************************
+
+gx-ca-update is a new command in release 0.4.0.  It
+automates installation and maintenance of CA certificates,
+signing_policy files, and CRLs.  It can be used independently of
+gx-map/gx-check-requests/gx-gen-mapfile; if you prefer to use a
+different mechanism to maintain your grid-mapfile, you can still use
+gx-ca-update to maintain your certificates directory.
 
 Each *.cadesc file in the ca subdirectory contains information about
 a Certificate Authority whose certificates can be used with Globus.
@@ -24,6 +31,7 @@ Blank lines are ignored.
 
 I've collected information on several dozen certificate authorities and
 included the corresponding *.cadesc files in the gx-map distribution.
+The ones I've included are just the ones I've happened to find so far.
 You're free to add *.cadesc files of your own, or to modify the
 ones I've provided.  If you have information on a CA that should be
 added to the distribution, please let me know.  If you find an error,
@@ -122,4 +130,4 @@ All URLs may be specified with a prefix of either "http://",
 wget (an ssl-enabled version of wget is required for https URLs).
 ftp URLs are downloaded using ncftpget.
 
-                --- Keith Thompson <kst@sdsc.edu> 2004-11-22
+                --- Keith Thompson <kst@sdsc.edu> 2004-11-24
