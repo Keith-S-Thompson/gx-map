@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.31 2004-10-10 01:04:49-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.32 2004-10-10 01:36:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -446,7 +446,7 @@ sub Get_CA_Ref($) {
                                     INDEX DISABLE );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
 		       CERTIFICATE_URL );
-                       # CERTIFICATE_MD5
+                       CERTIFICATE_MD5
     my %remap = ( SIGNED_BY => 1,
                   SUBJECT   => 1,
                   MAY_SIGN  => 1 );
@@ -668,11 +668,11 @@ sub Update_Certificate($) {
                             "\"$ref->{SUBJECT}\", got " .
                             "\"$cert_info->{subject}\"\n";
             }
-#           if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
-#               Error $ref, "Mismatched md5 fingerprint, expected " .
-#                           "\"$ref->{CERTIFICATE_MD5}\", got " .
-#                           "\"$cert_info->{md5sum}\"\n";
-#           }
+            if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
+                Error $ref, "Mismatched md5 fingerprint, expected " .
+                            "\"$ref->{CERTIFICATE_MD5}\", got " .
+                            "\"$cert_info->{md5sum}\"\n";
+            }
 
             if (not defined $ref->{_ERRORS}) {
                 Vprint    "Installing $ref->{_CERT_FILE}\n";
