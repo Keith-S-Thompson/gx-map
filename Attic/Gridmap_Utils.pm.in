@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.32 2004-08-17 21:43:45-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.33 2004-09-11 21:57:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -61,9 +61,9 @@ package Gridmap_Utils;
 #
 # The %Config hash contains values generated before installation by
 # configure-gx-map.  Note that the PERL and INSTALL_DIR options are
-# necessarily expanded directly in each file, and the VALID_MAPPINGS is
-# used directly by configure-gx-map; other options should be referenced
-# from the %Gridmap_Utils::Config hash.
+# necessarily expanded directly in each file, and the VALID_MAPPINGS
+# option is used directly by configure-gx-map; other options should be
+# referenced via the %Gridmap_Utils::Config hash.
 # 
 
 BEGIN {
@@ -99,8 +99,8 @@ sub Use_Commands(@);
 
 sub Time_Image($);
 
-sub Write_Records($@);
-sub Read_Records($);
+sub Write_Records($$@);
+sub Read_Records($$);
 
 sub Init_Cache_Info();
 sub Cache_File($);
@@ -382,20 +382,46 @@ sub Time_Image($) {
 # ----------------------------------------------------------------------
 
 #
-# Given a file name and a list of records, write a text representation
-# of the records to the file.  The file is created if it doesn't already
-# exist; the records are then appended to the file.
+# The first argument must be either '-single' or '-multiple', specifying
+# the output format.
 #
-# Each record is a reference to a hash, where the keys are field names.
+# The second argument is the name of a file to which the records are
+# to be written.  The file is created if it doesn't already exist;
+# the records are then appended to the file.
 #
-sub Write_Records($@) {
-    my($filename, @refs) = @_;
-    return if not @refs;
+# The remaining arguments are the records to be written.  Each record
+# is a reference to a hash, where the keys are field names.
+#
+# If the first argument is '-single', there must be exactly one record.
+# Each field is written as a single line consisting of the field name,
+# followed by spaces, followed by the value.
+#
+# If the first argument is '-multiple', there can be zero or more
+# records.  The fields are written in the same manner as for '-single',
+# but each record is preceded and followed by lines containing 
+# a left and right curly brace ('{', '}'), respectively.
+#
+# Extra spaces and blank lines may be added for legibility.
+#
+sub Write_Records($$@) {
+    my($format, $filename, @refs) = @_;
+    my $multiple;
+    if ($format eq '-single') {
+        die "Write_Records: expected a single record\n" if scalar @refs != 1;
+        $multiple = 0;
+    }
+    elsif ($format eq '-multiple') {
+        return if not @refs;
+        $multiple = 1;
+    }
+    else {
+        die "Write_Records: bad first argument\n";
+    }
 
-    my $output = "";
+    my $output = '';
 
     foreach my $ref (@refs) {
-        $output .= "{\n";
+        $output .= "{\n" if $multiple;
 
         my $max_key_len = 0;
         foreach my $key (keys %$ref) {
@@ -403,11 +429,12 @@ sub Write_Records($@) {
         }
 
         foreach my $key (sort keys %$ref) {
-            $output .= sprintf "\t%-${max_key_len}s  %s\n",
+            $output .= "\t" if $multiple;
+            $output .= sprintf "%-${max_key_len}s  %s\n",
                                $key, $ref->{$key};
         }
 
-        $output .= "}\n\n";
+        $output .= "}\n\n" if $multiple;
     }
 
     open FILE, ">>$filename" or die "${filename}: $!\n";
@@ -418,22 +445,47 @@ sub Write_Records($@) {
 # ----------------------------------------------------------------------
 
 #
-# Given a file name, reads (zero or more) records from the file and
-# returns them in a list.
+# The first argument must be either '-single' or '-multiple', specifying
+# the input format (see Write_Records).
 #
-sub Read_Records($) {
-    my ($filename) = @_;
+# The second argument is the name of the file from which to read the record
+# or records.
+#
+# Comments, which extend from a '#' character to the end of a line,
+# are ignored.  A comment must be a line by itself; end-of-line comments
+# are not supported on lines containing other data (so '#' characters can
+# be used in field values).  Leading and trailing whitespace are ignored.
+# Empty lines are ignored.
+# 
+# For '-single', the record read from the file is returned as a hash
+# reference.
+# For '-multiple', the records read from the file are returned as a list
+# of hash references.
+#
+sub Read_Records($$) {
+    my ($format, $filename) = @_;
+    my $multiple;
+    if ($format eq '-single') {
+        $multiple = 0;
+    }
+    elsif ($format eq '-multiple') {
+        $multiple = 1;
+    }
+    else {
+        die "Read_Records: bad first argument\n";
+    }
+
     open FILE, $filename or die "${filename}: $!\n";
     my @result = ();
-    my $ref = undef;
+    my $ref = ( $multiple ? undef : {} );
     LINE:
     while (<FILE>) {
         chomp;
         s/^\s+//;
         s/\s+$//;
-        next LINE if $_ eq '';
+        next LINE if /^#/ or $_ eq '';
         if (defined $ref) {
-            if ($_ eq '}') {
+            if ($multiple and $_ eq '}') {
                 push @result, $ref;
                 undef $ref;
             }
@@ -446,20 +498,23 @@ sub Read_Records($) {
             }
         }
         else {
-            #
-            # Allow comments between records, not within them.
-            #
-            next LINE if /^#/;
-            if ($_ eq '{') {
-                $ref = {};
-            }
-            else {
-                die "Syntax error (expected '{' or EOF) " .
-                    "at line $. of $filename\n";
+            if ($multiple) {
+                if ($_ eq '{') {
+                    $ref = {};
+                }
+                else {
+                    die "Syntax error (expected '{' or EOF) " .
+                        "at line $. of $filename\n";
+                }
             }
         }
     }
-    return @result;
+    if ($multiple) {
+        return @result;
+    }
+    else {
+        return $ref;
+    }
 } # Read_Records
 
 # ----------------------------------------------------------------------
@@ -882,10 +937,10 @@ sub DN_List($) {
     $gt3_dn =~ s(/Email=)(/emailAddress=);
 
     if ($gt2_dn eq $gt3_dn) {
-	return ($gt2_dn);
+        return ($gt2_dn);
     }
     else {
-	return ($gt2_dn, $gt3_dn);
+        return ($gt2_dn, $gt3_dn);
     }
 } # DN_List
 
