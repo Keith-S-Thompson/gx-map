@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.38 2005-01-04 18:57:19-08 kst Exp $
+# $Id: gx-map.in,v 1.39 2005-01-04 18:58:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -1030,11 +1030,9 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               only.
                               The default data directory is
                               $Default_Data_Dir .
-    -email addr             : Your contact e-mail address.
+    -email addr             : Your contact e-mail address (optional).
                               This may be used to contact you if there's
-                              a problem with your certificate.  If you
-                              prefer not to submit your e-mail address,
-                              you can use "-no-email".
+                              a problem with your certificate.
     -no-email               : Ignored (provided for compatibility with 0.3).
     -comment "string"       : Comment to be added to request log (optional)
     -source string          : Specify the source of the mapping.
