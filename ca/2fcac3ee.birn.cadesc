@@ -1,11 +1,11 @@
-# $Id: 2fcac3ee.birn.cadesc,v 1.1 2004-10-27 09:29:05-07 kst Exp $
+# $Id: 2fcac3ee.birn.cadesc,v 1.2 2005-01-06 17:48:22-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2fcac3ee.birn.cadesc,v $
 
 CA_NAME             BIRN CA
 HOMEPAGE            https://portal.nbirn.net/BIRN/CA/
 CONTACT             portal@nbirn.net
 HASH                2fcac3ee
-SUBJECT             /O=Grid/OU=example.org/CN=example.org CA
+SUBJECT             /C=US/O=BIRN/OU=BIRN-CC/CN=certman/UID=1
 MAY_SIGN            ?
 CERTIFICATE_MD5     9A:3C:00:B0:06:29:4E:9E:00:24:71:06:96:54:4B:3A
 CERTIFICATE_URL     https://portal.nbirn.net/BIRN/CA/2fcac3ee.0
@@ -19,4 +19,4 @@ DISABLE             yes
 # disabled by default.
 #
 
-# MD5 fingerprint from 2fcac3ee.0 downloaded 2004-10-27
+# MD5 fingerprint from 2fcac3ee.0 downloaded 2005-01-06
