@@ -1,0 +1,24 @@
+# $Id;$
+# $Source;$
+
+I've manually renamed some files in CVS (i.e., changed the names of
+the corresponding *,v files in the CVS repository).  This was probably
+not a good idea, since it can make it difficult to reproduce an older
+release, or a snapshot as of a certain date.
+
+The only renames that affect any releases are two *.cadesc files.
+I've changed them back to their original names, created the new
+versions as new files, and "cvs remove"d the old versions (so they're
+still in the repository under their old names).
+
+The affected files are:
+
+Old name	New name		Revision		Date
+========	========		========		====
+ca/13eab55e-datagrid-es.cadesc
+		ca/13eab55e.datagrid-es.cadesc
+					1.2 (post-0.4.1)	2004/12/29
+
+ca/2c7969d0.usc-pki-lite.cadesc
+		ca/2c7969d0.usc-pki-lite-old.cadesc
+					1.13 (post-0.4.1)	2005/02/08
