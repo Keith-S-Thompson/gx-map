@@ -1,4 +1,4 @@
-# $Id: bc82f877.nasa.cadesc,v 1.13 2004-11-03 15:55:13-08 kst Exp $
+# $Id: bc82f877.nasa.cadesc,v 1.14 2005-03-29 19:27:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
 
 CA_NAME             NASA CA
@@ -8,16 +8,16 @@ HASH                bc82f877
 SUBJECT             /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
 MAY_SIGN            /O=Grid/O=National Aeronautics and Space Administration/*
 CERTIFICATE_MD5     E4:FF:A8:C3:B1:0F:53:72:20:5D:07:41:CA:7F:BD:06
+# CERTIFICATE_SHA1    C8:FA:5B:26:C9:07:D0:BD:0C:32:12:34:8E:8F:64:33:DD:86:EE:52
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Dec 10 08:00:00 2007 GMT
 
-#
+
 # I've found copies of the certificate and signing_policy at the Fermilab
 # web site, but not on any NASA site.
 #
 # There does not appear to be a CRL.
-#
 
-# MD5 fingerprint from bc82f877.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from bc82f877.0 downloaded 2005-03-29
