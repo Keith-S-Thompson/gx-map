@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.7 2004-09-15 18:40:20-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.8 2004-09-23 17:04:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -70,7 +70,7 @@ use Gridmap_Utils ();
 sub Seconds($);
 sub Signing_Policy($);
 sub Timestamp_To_Seconds($);
-sub CRL_Expiration($);
+sub CRL_Info($);
 sub Usage(@);
 sub Debug(@);
 
@@ -136,11 +136,9 @@ if (scalar @ca_list == 1 and $ca_list[0] eq 'ALL') {
 foreach my $ca (@ca_list) {
     my $ca_desc_file = "$ca_conf_dir/$ca.cadesc";
     my $ref = Gridmap_Utils::Read_Records '-single', $ca_desc_file;
-    if (defined $ref->{CRL_MAX_AGE}) {
-        my $seconds = Seconds $ref->{CRL_MAX_AGE};
-        if (defined $seconds) {
-            $ref->{CRL_MAX_AGE} = $seconds;
-        }
+    if (defined $ref->{CRL_WARNING}) {
+        my $seconds = Seconds $ref->{CRL_WARNING};
+        $ref->{CRL_WARNING_SECONDS} = $seconds if defined $seconds;
     }
     push @ca_info, $ref;
 }
@@ -211,10 +209,10 @@ foreach my $ref (@ca_info) {
     else {
         my $mtime = (stat $target_crl_file)[9];
         my $age = $now - $mtime;
-        if ($age > $ref->{CRL_MAX_AGE}) {
-            print "Stale file $target_crl_file\n";
-            $needs_update = 1;
-        }
+#       if ($age > $ref->{CRL_MAX_AGE}) {
+#           print "Stale file $target_crl_file\n";
+#           $needs_update = 1;
+#       }
     }
     if (not $needs_update) {
         print "Skipping existing $target_crl_file\n";
@@ -241,30 +239,43 @@ foreach my $ref (@ca_info) {
 
     #
     # Check expiration date of CRL.
-    # To do: warn if time to expiration is less than a specified
-    # threshold.
     #
-    my $expires = CRL_Expiration $target_crl_file;
-    if (defined $expires) {
-        my $remaining = $expires - time;
+    my $info = CRL_Info $target_crl_file;
+    if (defined $info and defined $info->{next_update}) {
+        my $remaining = $info->{next_update} - time;
         my $delta = abs $remaining;
+        my $num;
+        my $unit;
         if ($delta >= 86400) {
-            $delta = sprintf "%.2f day(s)", $delta / 86400;
+            $num = sprintf "%.1f", $delta / 86400;
+            $unit = 'day';
         }
         elsif ($delta >= 3600) {
-            $delta = sprintf "%.2f hour(s)", $delta / 3600;
+            $num = sprintf "%.1f", $delta / 3600;
+            $unit = 'hour';
         }
         elsif ($delta >= 60) {
-            $delta = sprintf "%.2f hour(s)", $delta / 60;
+            $num = sprintf "%.1f", $delta / 60;
+            $unit = 'minute';
         }
         else {
-            $delta .= " second(s)";
+            $num = $delta;
+            $unit = 'second';
+        }
+        $unit .= 's' if $num ne '1';
+        if (defined $ref->{CRL_WARNING_SECONDS} and
+            $remaining > $ref->{CRL_WARNING_SECONDS})
+        {
+            print ">>> ";
         }
         if ($remaining <= 0) {
-            print "$target_crl_file expired $delta ago\n";
+            print "$target_crl_file expired $num $unit ago\n";
         }
         else {
-            print "$target_crl_file expires in $delta\n";
+            print "$target_crl_file expires in $num $unit\n";
+        }
+        if (not $info->{verified}) {
+            print ">>> CRL is not verified\n";
         }
     }
     print "\n";
@@ -272,8 +283,12 @@ foreach my $ref (@ca_info) {
 
 ########################################################################
 
+#
+# Given a string such as "1 hour", "10 minutes", returns the number
+# of seconds.
+#
 sub Seconds($) {
-    my($timestamp) = @_;
+    my($timestamp) = lc @_;
     if ($timestamp =~ /^(\d+)\s+(seconds?)$/) {
         return $1;
     }
@@ -293,6 +308,11 @@ sub Seconds($) {
 
 # ----------------------------------------------------------------------
 
+#
+# Given a reference to a CA description record, returns a multi-line
+# string suitable for use as a signing_policy, compatible with both GT2
+# and GT3.
+#
 sub Signing_Policy($) {
     my($ref) = @_;
 
@@ -362,18 +382,50 @@ sub Timestamp_To_Seconds($) {
 
 # ----------------------------------------------------------------------
 
-sub CRL_Expiration($) {
+sub CRL_Info($) {
     my($filename) = @_;
-    open PIPE, "openssl crl -in $filename -noout -text |" or return undef;
+    my $result = {};
+
+    return undef if not -r $filename;
+
+    #
+    # Get attributes of CRL
+    #
+    open PIPE, "openssl crl -in $filename -noout " .
+               "-hash -issuer -lastupdate -nextupdate |" or return undef;
     while (<PIPE>) {
-        if (/^\s*Next Update: (.*)$/) {
-            close PIPE;
-            return Timestamp_To_Seconds $1;
+        chomp;
+        if (/^[\0-9a-f]{8}$/) {
+            $result->{hash} = $_;
+        }
+        elsif (/^issuer=\s*(.*)$/) {
+            $result->{issuer} = $1;
+        }
+        elsif (/^lastUpdate=\s*(.*)$/) {
+            $result->{last_update} = Timestamp_To_Seconds $1;
+        }
+        elsif (/^nextUpdate=\s*(.*)$/) {
+            $result->{next_update} = Timestamp_To_Seconds $1;
         }
     }
     close PIPE;
-    return undef;
-} # CRL_Expiration
+    
+    #
+    # Verify CRL against certificate.
+    # (If it's ok, openssl prints "verify OK" to stderr.)
+    #
+    my $cert = $filename;
+    $cert =~ s/\.r0$/.0/;
+    open PIPE, "openssl crl -in $filename -noout -CAfile $cert 2>&1 |";
+    while (<PIPE>) {
+        if (/verify ok/i) {
+            $result->{verified} = 1;
+        }
+    }
+    close PIPE;
+
+    return $result;
+} # CRL_Info
 
 # ----------------------------------------------------------------------
 
