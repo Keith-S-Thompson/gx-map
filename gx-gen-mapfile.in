@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.28 2004-07-30 18:08:08-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.29 2004-08-17 20:02:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -347,38 +347,7 @@ EOF
 foreach my $dn (sort keys %Mappings) {
     my @names = ();
 
-    my $gt2_dn = $dn;
-    $gt2_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=);
-    $gt2_dn =~ s(/UID=)(/USERID=);
-    $gt2_dn =~ s(/emailAddress=)(/Email=);
-
-    my $gt3_dn = $dn;
-    $gt3_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=);
-    $gt3_dn =~ s(/USERID=)(/UID=);
-    $gt3_dn =~ s(/Email=)(/emailAddress=);
-
-    my @dns;
-    if ('%DN_FORMAT%' eq 'RAW') {
-        @dns = ($dn);
-    }
-    elsif ('%DN_FORMAT%' eq 'GT2') {
-        @dns = ($gt2_dn);
-    }
-    elsif ('%DN_FORMAT%' eq 'GT3') {
-        @dns = ($gt3_dn);
-    }
-    elsif ('%DN_FORMAT%' eq 'BOTH') {
-        if ($gt2_dn eq $gt3_dn) {
-            @dns = ($gt2_dn);
-        }
-        else {
-            @dns = ($gt2_dn, $gt3_dn);
-        }
-    }
-    else {
-        die "Internal error, DN_FORMAT = %DN_FORMAT%\n";
-    }
-
+    my @dns = Gridmap_Utils::DN_List $dn;
 
     #
     # First the primary name, if any.
