@@ -1,0 +1,318 @@
+#!%PERL% -w
+
+# $Id: gx-check-requests.in,v 1.1 2003-05-27 18:45:51-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+
+# 
+# Make warnings fatal.
+# 
+$SIG{__WARN__} = sub { die @_ };
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    push @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+sub Get_Request_Info($);
+sub Flatten_Errors($);
+sub Append_To_Log($@);
+sub Debug(@);
+sub Debugf(@);
+
+my $Prog_Name = File::Basename::basename $0;
+
+my $Hostname = Gridmap_Utils::Get_Hostname;
+
+my $Help      = undef;
+my $Site      = undef;
+my $Debugging = undef;
+my @Opts = ( 'help|usage' => \$Help,
+             'site=s'     => \$Site,
+             'debugging'  => \$Debugging );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $Help;
+Usage if @ARGV;
+Usage "No -site option given\n" if not defined $Site;
+
+my $Data_Dir         = "$Install_Dir/var";
+my $requests_log     = "$Data_Dir/requests.log";
+my $errors_log       = "$Data_Dir/errors.log";
+my $new_request_dir  = "$Data_Dir/new-requests";
+my $good_request_dir = "$Data_Dir/good-requests";
+my $bad_request_dir  = "$Data_Dir/bad-requests";
+
+die "No directory $Data_Dir\n"        if not -d $Data_Dir;
+die "No directory $new_request_dir\n" if not -d $new_request_dir;
+if (not -d $good_request_dir) {
+    mkdir $good_request_dir, 0700 or die "mkdir $good_request_dir: $!\n";
+}
+if (not -d $bad_request_dir) {
+    mkdir $bad_request_dir, 0700 or die "mkdir $bad_request_dir: $!\n";
+}
+
+my @required_keys = qw( operation timestamp requested_by_name
+                        requested_by_uid hostname );
+my @valid_keys = ( @required_keys,
+                   qw( dn map_to_name email comment map_to_uid ) );
+my @valid_operations = qw( add remove remove-dn remove-user );
+my %is_required_key    = map { $_ => 1 } @required_keys;
+my %is_valid_key       = map { $_ => 1 } @valid_keys;
+my %is_valid_operation = map { $_ => 1 } @valid_operations;
+
+opendir DIR, $new_request_dir or die "$new_request_dir: $!\n";
+my @files = grep /\.request$/, sort readdir DIR;
+closedir DIR;
+
+my @good_requests = ();
+my @good_request_files = ();
+my @bad_requests = ();
+my @bad_request_files = ();
+
+foreach my $file (@files) {
+    my $request = Get_Request_Info "$new_request_dir/$file";
+    if (defined $request->{ERRORS}) {
+        Flatten_Errors $request;
+        push @bad_requests, $request;
+        push @bad_request_files, $file;
+    }
+    else {
+        push @good_requests, $request;
+        push @good_request_files, $file;
+    }
+}
+
+if (not @good_requests and not @bad_requests) {
+    #
+    # No requests seen.  Bail out.
+    #
+    exit;
+}
+
+#
+# We have one or more new requests to process.  Append them to the
+# requests log and/or the errors log.
+#
+
+if (not -d "$Data_Dir/RCS") {
+    mkdir "$Data_Dir/RCS", 0700 or die "mkdir $Data_Dir/RCS: $!\n";
+}
+
+Append_To_Log $errors_log,   @bad_requests;
+Append_To_Log $requests_log, @good_requests;
+
+#
+# Now that the records have been safely appended to the log and
+# checked into RCS, move the individual requst files into appropriate
+# subdirectories.
+#
+my @rename_errors = ();
+foreach my $file (@good_request_files) {
+    rename "$new_request_dir/$file", "$good_request_dir/$file"
+        or push @rename_errors, "${file}: $!\n";
+}
+foreach my $file (@bad_request_files) {
+    rename "$new_request_dir/$file", "$bad_request_dir/$file"
+        or push @rename_errors, "${file}: $!\n";
+}
+
+if (@rename_errors) {
+    print STDERR "Error(s) moving request files:\n",
+                 @rename_errors;
+}
+
+########################################################################
+
+#
+# Given the name of a request file, returns a reference to the information
+# from the file.  If any error occurs, the information will include an
+# "ERRORS" field, a reference to an array of error messages.
+#
+# We use an eval block to catch any errors via die().
+#
+sub Get_Request_Info($) {
+    my($filename) = @_;
+    my @records;
+    my $request_file = File::Basename::basename $filename,
+    my $processed    = Gridmap_Utils::Time_Image time;
+    my $result = undef;
+
+    Debug "Get_Request_Info $filename\n";
+    eval {
+        @records = Gridmap_Utils::Read_Records $filename;
+    };
+    if ($@) {
+        my $message = $@;
+        chomp $message;
+        return { REQUEST_FILE => $request_file,
+                 PROCESSED    => $processed,
+                 ERRORS       => [ $message ] };
+    }
+    elsif (scalar @records == 0) {
+        return { REQUEST_FILE => $request_file,
+                 PROCESSED    => $processed,
+                 ERRORS       => [ "No records in $filename" ] };
+    }
+    elsif (scalar @records > 1) {
+        return { REQUEST_FILE => $request_file,
+                 PROCESSED    => $processed,
+                 ERRORS       => [ "Multiple records in $filename" ] };
+    }
+
+    $result = $records[0];
+
+    foreach my $key (sort keys %$result) {
+        Debug "    $key => $result->{$key}\n";
+    }
+
+    my @invalid = ();
+    foreach my $key (keys %$result) {
+        if (not $is_valid_key{$key}) {
+            push @{$result->{ERRORS}}, "Invalid key $key";
+            push @invalid, $key;
+        }
+    }
+    if (@invalid) {
+        push @{$result->{ERRORS}}, "Invalid key(s): @invalid";
+    }
+
+    my @missing = ();
+    foreach my $key (@required_keys) {
+        if (not defined $result->{$key}) {
+            push @missing, $key;
+        }
+    }
+    if (@missing) {
+        push @{$result->{ERRORS}}, "Missing key(s): @missing";
+    }
+
+    $result->{REQUEST_FILE} = $request_file;
+    $result->{PROCESSED}    = $processed;
+
+    if (defined $result->{ERRORS}) {
+        return $result;
+    }
+
+    if (not $is_valid_operation{$result->{operation}}) {
+        push @{$result->{ERRORS}}, "Invalid operation";
+    }
+
+    if ($result->{operation} ne 'remove-dn' and
+        not defined $result->{map_to_name})
+    {
+        push @{$result->{ERRORS}}, "Missing map_to_name field";
+    }
+
+    if ($result->{operation} ne 'remove-user' and
+        not defined $result->{dn})
+    {
+        push @{$result->{ERRORS}}, "Missing dn field";
+    }
+
+    if ($result->{timestamp} =~ /^(\d+)/) {
+        $result->{timestamp} = Gridmap_Utils::Time_Image $1;
+    }
+    else {
+        push @{$result->{ERRORS}}, "Invalid timestamp: $result->{timestamp}\n";
+    }
+
+    #
+    # Determine the actual owner of the file.
+    #
+    my @stat = stat $filename;
+    if (not @stat) {
+        die "stat failed: $!\n";
+    }
+    my $file_uid = $stat[4];
+    my $file_pw = Gridmap_Utils::Get_PW $file_uid;
+    $result->{OWNER_UID} = $file_uid;
+    if (defined $file_pw and defined $file_pw->{name}) {
+        $result->{OWNER_NAME} = $file_pw->{name};
+    }
+
+    $result->{SITE} = $Site;
+
+    return $result;
+} # Get_Request_Info
+
+# ----------------------------------------------------------------------
+
+#
+# The ERRORS field is a reference to an array, but the Read_Records and
+# Write_Records routines can only deal with simple scalar field values.
+# Flatten the ERRORS array into a series of fields named ERROR_00,
+# ERROR_01, etc.
+#
+sub Flatten_Errors($) {
+    my($ref) = @_;
+
+    if (defined $ref->{ERRORS}) {
+        my @errors = @{$ref->{ERRORS}};
+        for (my $i = 0; $i <= $#errors; $i ++) {
+            my $key = sprintf "ERROR_%02d", $i;
+            $ref->{$key} = $errors[$i];
+        }
+        delete $ref->{ERRORS};
+    }
+} # Flatten_Errors
+
+# ----------------------------------------------------------------------
+
+sub Append_To_Log($@) {
+    my($log_file, @requests) = @_;
+    return if not @requests;
+
+    #
+    # The log file is normally read-only (mode 400).
+    # Temporarily make it writable (mode 600), append the new
+    # records to it, then change it back to read-only.
+    #
+    if (-e $log_file) {
+        chmod 0600, $log_file or die "chmod $log_file: $!\n";
+    }
+
+    Gridmap_Utils::Write_Records($log_file, @requests);
+
+    chmod 0400, $log_file or die "chmod $log_file: $!\n";
+
+    #
+    # Now check it into RCS.
+    # The RCS file is normally kept locked.
+    # Unlock it temporarily to check in the file.
+    #
+    Gridmap_Utils::Ensure_RCS;
+    system "rcs -l $log_file >/dev/null 2>/dev/null";
+    system "ci -u -f $log_file </dev/null >/dev/null 2>/dev/null";
+} # Append_To_Log
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Prog_Name [options]
+    -help, -usage : Display this message and exit
+    -site name    : Specify site name (e.g., "SDSC"); mandatory
+    -debugging    : Enable debugging output
+EOF
+    exit 1;
+} # Usage
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $Debugging;
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $Debugging;
+} # Debugf
