@@ -1,4 +1,4 @@
-# $Id: 5f54f417.grid-canada.cadesc,v 1.2 2004-10-08 13:59:29-07 kst Exp $
+# $Id: 5f54f417.grid-canada.cadesc,v 1.3 2004-10-08 20:44:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/5f54f417.grid-canada.cadesc,v $
 
 CA_NAME             Grid Canada CA
@@ -7,6 +7,7 @@ CONTACT             ca@gridcanada.ca
 HASH                5f54f417
 SUBJECT             /C=CA/O=Grid/CN=Grid Canada CA
 MAY_SIGN            /C=CA/O=Grid/*
+CERTIFICATE_MD5     3C:8F:D4:4D:BA:E2:8E:28:24:38:0F:2D:71:4C:9C:84
 CERTIFICATE_URL     http://www.gridcanada.ca/ca/5f54f417.0
 SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/5f54f417.signing_policy
 CRL_URL             http://www.gridcanada.ca/ca/5f54f417.r0
