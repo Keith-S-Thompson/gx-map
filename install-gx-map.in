@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# $Id: install-gx-map.in,v 1.1 2003-05-27 20:36:21-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
+
+verbosely () {
+    echo "% $@"
+    "$@"
+    if [ $? -ne 0 ] ; then exit 1 ; fi
+}
+
+INSTALL_DIR=%INSTALL_DIR%
+BINDIR=$INSTALL_DIR/bin
+SBINDIR=$INSTALL_DIR/sbin
+LIBDIR=$INSTALL_DIR/lib
+DATA_DIR=%DATA_DIR%
+
+BIN_FILES="gx-map"
+SBIN_FILES="gx-check-requests gx-gen-mapfile"
+LIB_FILES="Gridmap_Utils.pm"
+
+for dir in $INSTALL_DIR $BINDIR $SBINDIR $LIBDIR ; do
+    if [ ! -d $dir ] ; then
+	verbosely mkdir -m 755 $dir
+    fi
+done
+
+verbosely cp -f $BIN_FILES  $BINDIR/.
+verbosely cp -f $SBIN_FILES $SBINDIR/.
+verbosely cp -f $LIB_FILES  $LIBDIR/.
+
+if [ ! -d $DATA_DIR ] ; then
+    verbosely mkdir -m 755 $DATA_DIR
+fi
+if [ ! -d $DATA_DIR/new-requests ] ; then
+    verbosely mkdir -m 1777 $DATA_DIR/new-requests
+fi
+if [ ! -L $INSTALL_DIR/var ] ; then
+    verbosely ln -s $DATA_DIR $INSTALL_DIR/var
+fi
