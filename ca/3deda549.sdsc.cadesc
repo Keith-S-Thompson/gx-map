@@ -1,4 +1,4 @@
-# $Id: 3deda549.sdsc.cadesc,v 1.2 2004-09-20 17:05:03-07 kst Exp $
+# $Id: 3deda549.sdsc.cadesc,v 1.3 2004-09-20 17:27:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
 
 CA_DESC         SDSC CA (CACL, new version)
@@ -9,7 +9,8 @@ SUBJECT         /C=US/O=SDSC/OU=SDSC-CA/CN=Certificate Authority/UID=certman
 MAY_SIGN        /C=US/O=SDSC/*
 CERTIFICATE     http://users.sdsc.edu/~kst/NEW-CA/3deda549.0
 SIGNING_POLICY  http://users.sdsc.edu/~kst/NEW-CA/3deda549.signing_policy
-CRL             http://users.sdsc.edu/~kst/NEW-CA/3deda549.r0
-CRL_WARNING     12 hours
+CRL             ?
+CRL_WARNING     ?
 INDEX           http://users.sdsc.edu/~kst/NEW-CA/ca.db.index
-}
+
+# The CRL is not currently being updated
