@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.7 2003-06-05 19:44:08-07 kst Exp $
+# $Id: configure-gx-map,v 1.8 2003-07-09 20:56:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -17,7 +17,7 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 my $Config_File = undef;
 my %Config = ();
-my @Var_Names = qw( PERL NAMESPACE
+my @Var_Names = qw( PERL WGET NAMESPACE
                     INSTALL_DIR DATA_DIR
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
@@ -74,6 +74,15 @@ die @errors if @errors;
 opendir DIR, '.' or die ".: $!\n";
 my @in_files = sort grep /\.in$/, readdir DIR;
 closedir DIR;
+
+if (-d 'cacl') {
+    opendir DIR, 'cacl' or die "cacl: $!\n";
+    my @cacl_files = sort grep /\.in$/, readdir DIR;
+    closedir DIR;
+    foreach my $file (@cacl_files) {
+	push @in_files, "cacl/$file";
+    }
+}
 
 die "No *.in files found\n" if not @in_files;
 
