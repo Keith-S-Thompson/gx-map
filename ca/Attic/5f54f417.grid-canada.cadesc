@@ -1,4 +1,4 @@
-# $Id: 5f54f417.grid-canada.cadesc,v 1.1 2004-10-02 14:40:29-07 kst Exp $
+# $Id: 5f54f417.grid-canada.cadesc,v 1.2 2004-10-08 13:59:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/5f54f417.grid-canada.cadesc,v $
 
 CA_NAME             Grid Canada CA
@@ -11,5 +11,4 @@ CERTIFICATE_URL     http://www.gridcanada.ca/ca/5f54f417.0
 SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/5f54f417.signing_policy
 CRL_URL             http://www.gridcanada.ca/ca/5f54f417.r0
 CRL_WARNING         48 hours
-INDEX               ?
 DISABLE             no
