@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.7 2004-10-19 18:25:43-07 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.8 2004-11-01 17:04:13-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -12,6 +12,7 @@ CERTIFICATE_MD5     E3:90:39:1B:3C:E9:89:57:86:54:3E:AF:0F:B8:40:69
 CERTIFICATE_URL     https://gridra.belnet.be/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             https://gridra.belnet.be/pub/crl/cacrl.pem
+CERT_EXPIRES        Jul 29 10:26:34 2009 GMT
 
 # The signing_policy file doesn't appear to be available online, but I
 # received one by e-mail from Pascal Panneels <gridca@belnet.be>.
