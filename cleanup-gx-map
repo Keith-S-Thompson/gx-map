@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cleanup-gx-map,v 1.4 2003-07-25 01:08:25-07 kst Exp $
+# $Id: cleanup-gx-map,v 1.5 2004-11-17 20:11:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/cleanup-gx-map,v $
 
 for file in *.in ; do
@@ -10,3 +10,7 @@ for file in *.in ; do
 	rm -f $target
     fi
 done
+if [ -f .config-file ] ; then
+    echo "rm -f .config-file"
+    rm -f .config-file
+fi
