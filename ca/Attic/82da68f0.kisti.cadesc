@@ -1,0 +1,25 @@
+# $Id: 82da68f0.kisti.cadesc,v 1.1 2004-10-17 22:39:28-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/82da68f0.kisti.cadesc,v $
+
+CA_NAME             KISTI Supercomputing Center CA (expired)
+HOMEPAGE            ?
+CONTACT             ?
+HASH                82da68f0
+SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA
+MAY_SIGN            /C=KR/O=Globus/*
+# MAY_SIGN            /O=Grid/O=Globus/*
+CERTIFICATE_MD5     A8:08:3D:C8:7F:E2:8C:F0:6E:80:B2:89:48:62:DA:E1
+CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/82da68f0.0
+SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/82da68f0.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             yes
+
+# The certificate expired 2003-03-27
+# It appears to have been superseded by the KISTI Grid Root CA (hash 47183fda)
+# There appears to be no CRL.
+# The 82da68f0.signing_policy says the CA may sign certificates matching
+# "/O=Grid/O=Globus/*", which overlaps the namespace for the old Globus CA;
+# I have not included that here.
+
+# MD5 fingerprint from 82da68f0.0 downloaded 2004-10-17
