@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.16 2004-09-27 02:10:34-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.17 2004-09-27 03:18:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -70,6 +70,7 @@ use Gridmap_Utils ();
 sub Match_CA_Name($$);
 sub String_To_Seconds($);
 sub Seconds_To_String($);
+sub Time_Image($);
 sub Signing_Policy($);
 sub Date_To_Seconds($);
 sub CRL_Info($$);
@@ -78,9 +79,10 @@ sub Update_Certificate($);
 sub Update_Signing_Policy($);
 sub Update_CRL($);
 sub Usage(@);
+sub Log($$);
 sub Error($$);
 sub Vprint(@);
-sub Error_Notification();
+sub Notify();
 sub Debug(@);
 
 my $Program_Name = File::Basename::basename $0;
@@ -228,10 +230,16 @@ foreach my $ref (@ca_info) {
     Update_Signing_Policy $ref;
     Update_CRL            $ref;
 
+    if (defined $ref->{_ERRORS}) {
+        foreach my $error (@{$ref->{_ERRORS}}) {
+            Vprint ">>> $error\n";
+        }
+    }
+
     Vprint "\n";
 }
 
-Error_Notification;
+Notify;
 
 ########################################################################
 
@@ -310,6 +318,22 @@ sub Seconds_To_String($) {
                        $minutes, $seconds;
     }
 } # Seconds_To_String
+
+# ----------------------------------------------------------------------
+
+#
+# Given a timestamp, return a string of the form
+# "Ddd YYYY-MM-DD HH:MM::SS UTC"
+#
+sub Time_Image($) {
+    my($time) = @_;
+    my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+        = gmtime $time;
+    
+    return sprintf "%s %04d-%02d-%02d %02d:%02d:%02d UTC",
+                   (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
+                   1900+$year, 1+$mon, $mday, $hour, $min, $sec; 
+} # Time_Image 
 
 # ----------------------------------------------------------------------
 
@@ -497,7 +521,8 @@ sub Update_Certificate($) {
                                 " ago\n";
                 }
                 else {
-                    Vprint "Installing $ref->{_CERT_FILE}\n";
+                    Vprint    "Installing $ref->{_CERT_FILE}\n";
+                    Log $ref, "Installing $ref->{_CERT_FILE}\n";
                     system 'cp', '-p', '-f', $cache_file,
                                              "$ref->{_CERT_FILE}.$$";
                     rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE};
@@ -528,7 +553,8 @@ sub Update_Signing_Policy($) {
         Vprint "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
     }
     else {
-        Vprint "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+        Vprint    "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+        Log $ref, "Creating $ref->{_SIGNING_POLICY_FILE}\n";
         open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
             or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
         print POLICY Signing_Policy $ref;
@@ -615,7 +641,8 @@ sub Update_CRL($) {
     }
 
     if ($install_new_crl) {
-        Vprint "Installing $ref->{_CRL_FILE}\n";
+        Vprint    "Installing $ref->{_CRL_FILE}\n";
+        Log $ref, "Installing $ref->{_CRL_FILE}\n";
         system 'cp', '-p', $new_crl_file, "$ref->{_CRL_FILE}.$$";
         rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE};
     }
@@ -709,6 +736,17 @@ EOF
 # ----------------------------------------------------------------------
 
 #
+# Log a message.
+# Annotate the CA reference (first argument) with the message.
+#
+sub Log($$) {
+    my($ref, $message) = @_;
+    push @{$ref->{_MESSAGES}}, $message;
+} # Log
+
+# ----------------------------------------------------------------------
+
+#
 # Report an error.
 # Annotate the CA reference (first argument) with the error message.
 #
@@ -721,25 +759,49 @@ sub Error($$) {
 
 #
 # Send an error notification by e-mail.
+# Log messages to log file.
 #
-sub Error_Notification() {
-    my $ca_count = 0;
+sub Notify() {
+    my $total_ca_count = scalar @ca_info;
+    my $error_ca_count = 0;
     my $error_count = 0;
-    my $message = '';
+    my $message_body = '';
+
+    my $log_file = "$Install_Dir/var/$Program_Name.log";
+    open LOG, ">>$log_file";
+    print LOG Time_Image $now, " $Program_Name\n";
 
     foreach my $ref (@ca_info) {
         if (defined $ref->{_ERRORS}) {
-            $ca_count ++;
-            my @error_list = @{$ref->{_ERRORS}};
-            $error_count += scalar @error_list;
-            $message .= "$ref->{HASH} $ref->{CA_NAME}\n";
-            $message .= join '', @error_list;
-            $message .= "\n";
+            $error_ca_count ++;
+            $error_count += scalar @{$ref->{_ERRORS}};
         }
     }
 
+    foreach my $ref (@ca_info) {
+        if (defined $ref->{_MESSAGES}) {
+            print LOG "$ref->{HASH} $ref->{CA_NAME}:\n";
+            foreach my $message (@{$ref->{_MESSAGES}}) {
+                print LOG "    $message";
+            }
+        }
+
+        if (defined $ref->{_ERRORS}) {
+            my @error_list = @{$ref->{_ERRORS}};
+            $message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
+            $message_body .= join '', @error_list;
+            $message_body .= "\n";
+            foreach my $error (@error_list) {
+                print LOG "    >>> $error";
+            }
+        }
+    }
+
+    close LOG;
+
     if ($error_count > 0) {
-        my $subject = "$Program_Name error, $ca_count CAs, $error_count errors";
+        my $subject = "$Program_Name: $error_count error(s), " .
+                      "$error_ca_count/$total_ca_count CA(s)";
 
         my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
         my $mail_program = undef;
@@ -752,11 +814,11 @@ sub Error_Notification() {
 
         if (defined $mail_program) {
             open PIPE, "| $mail_program -s '$subject' $recipient";
-            print PIPE $message;
+            print PIPE $message_body;
             close PIPE;
         }
     }
-} # Error_Notification
+} # Notify
 
 # ----------------------------------------------------------------------
 
