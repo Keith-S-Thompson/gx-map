@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.31 2004-09-27 15:55:32-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.32 2004-10-14 01:55:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -129,7 +129,7 @@ my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
                    qw( dn map_to_name secondary email comment
-                       map_to_uid NAMESPACE ) );
+                       map_to_uid source ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
@@ -308,11 +308,24 @@ sub Get_Request_Info($) {
         $result->{OWNER_NAME} = $file_pw->{name};
     }
 
-    if (defined $result->{NAMESPACE}) {
-        if (defined $result->{OWNER_NAME} and
-            Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME})
-        {
-            # ok, leave NAMESPACE as it is
+    my $owner_is_admin =
+        ( defined $result->{OWNER_NAME} and
+          Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME} );
+
+    #
+    # By convention, user-defined options are in lower case, and
+    # annotations are in upper case.  The "source" option is
+    # both; it can be specified by an administrator running gx-map,
+    # and it can be set as an annotation.
+    #
+    # If "source" is not set, set "SOURCE" to "user" or "administrator",
+    # depending on who ran gx-map.
+    # If "source" it is set (only by an administrator), set "SOURCE"
+    # to the same value.
+    #
+    if (defined $result->{source}) {
+        if ($owner_is_admin) {
+            $result->{SOURCE} = $result->{source};
         }
         else {
             my $user;
@@ -323,13 +336,15 @@ sub Get_Request_Info($) {
                 $user = $result->{OWNER_UID};
             }
             push @{$result->{ERRORS}},
-                 "User $user tried to define NAMESPACE " .
-                 "\"$result->{NAMESPACE}\"\n";
+                 "User $user tried to define SOURCE " .
+                 "\"$result->{SOURCE}\"\n";
         }
     }
     else {
-        $result->{NAMESPACE} = $User_Opt->{namespace};
+        $result->{SOURCE} = ( $owner_is_admin ? "administrator" : "user" );
     }
+
+    $result->{NAMESPACE} = $User_Opt->{namespace};
 
     return $result;
 } # Get_Request_Info
