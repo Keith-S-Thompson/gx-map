@@ -1,4 +1,4 @@
-# $Id: 49f18420.infn.cadesc,v 1.4 2004-10-08 20:44:38-07 kst Exp $
+# $Id: 49f18420.infn.cadesc,v 1.5 2004-10-10 03:21:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
 
 CA_NAME             INFN Certification Authority
@@ -22,3 +22,5 @@ DISABLE             no
 # The CRL referenced from the DataGrid Certificate Authorities page.
 # <http://security.fi.infn.it/CA/crl.crl>, is in DER format.
 #
+
+# MD5 fingerprint from 49f18420.0 downloaded 2004-10-10
