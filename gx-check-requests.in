@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.15 2003-07-24 22:39:20-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.16 2003-07-25 02:11:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -81,7 +81,7 @@ my $Default_Data_Dir = "$Install_Dir/var";
 
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
-             qw( help namespace=s directory=s debugging ) );
+             qw( help namespace=s directory=s copy=s debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -164,9 +164,19 @@ if (not -d "$Data_Dir/RCS") {
 Append_To_Log $errors_log,   @bad_requests;
 Append_To_Log $requests_log, @good_requests;
 
+if (defined $User_Opt->{copy}) {
+    Gridmap_Utils::Untaint $User_Opt->{copy};
+    Gridmap_Utils::Untaint $requests_log;
+    my $target_file = $User_Opt->{copy};
+    my $tmp_file = $User_Opt->{copy} . ".new";
+
+    my $result = system '/bin/cp', '-p', '-f', $requests_log, $tmp_file;
+    rename $tmp_file, $target_file;
+}
+
 #
 # Now that the records have been safely appended to the log and
-# checked into RCS, move the individual requst files into appropriate
+# checked into RCS, move the individual request files into appropriate
 # subdirectories.
 #
 my @rename_errors = ();
@@ -386,6 +396,8 @@ Usage: $Prog_Name [options]
     -namespace name : Specify namespace (e.g., "%NAMESPACE%"); mandatory
     -directory dir  : Data directory
                       Default is $Default_Data_Dir
+    -copy file      : Copy the requests.log file to the specified location
+                      (e.g., to make it visible on a web page)
     -debugging      : Enable debugging output
 EOF
     exit 1;
