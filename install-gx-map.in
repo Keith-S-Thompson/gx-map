@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.33 2004-11-24 16:56:34-08 kst Exp $
+# $Id: install-gx-map.in,v 1.34 2004-11-26 12:14:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -64,7 +64,7 @@ DATA_DIR=%DATA_DIR%
 BIN_FILES="gx-map"
 SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
-ETC_FILES="README README.CA README.CA-SECURITY README.Cross-Site README.TeraGrid README.UPGRADE Relnotes gx-map.ppt gx-map.pdf"
+ETC_FILES="README README.CA README.CA-Security README.Cross-Site README.TeraGrid README.Upgrade Relnotes gx-map.ppt gx-map.pdf"
 CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
