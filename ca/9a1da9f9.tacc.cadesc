@@ -1,4 +1,4 @@
-# $Id: 9a1da9f9.tacc.cadesc,v 1.7 2004-11-01 17:04:23-08 kst Exp $
+# $Id: 9a1da9f9.tacc.cadesc,v 1.8 2005-03-29 19:27:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9a1da9f9.tacc.cadesc,v $
 
 CA_NAME             TACC Certification Authority
@@ -8,9 +8,10 @@ HASH                9a1da9f9
 SUBJECT             /C=US/O=UTAustin/OU=TACC/CN=TACC Certification Authority/UID=caman
 MAY_SIGN            /C=US/O=UTAustin/OU=TACC/*
 CERTIFICATE_MD5     96:BC:9D:0C:B8:23:F5:5B:DA:80:AE:FD:F0:E1:B7:78
+# CERTIFICATE_SHA1    D6:54:B1:CD:98:C9:08:DF:09:84:AD:11:3B:D4:EB:3E:DA:A8:98:2F
 CERTIFICATE_URL     http://www.tacc.utexas.edu/CA/9a1da9f9.0
 SIGNING_POLICY_URL  http://www.tacc.utexas.edu/CA/9a1da9f9.signing_policy
 CERT_EXPIRES        Jul 16 18:56:08 2013 GMT
 CRL_URL             http://www.tacc.utexas.edu/CA/CRL
 
-# MD5 fingerprint from 9a1da9f9.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 9a1da9f9.0 downloaded 2005-03-29
