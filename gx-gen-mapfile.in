@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-gen-mapfile.in,v 1.5 2003-06-13 19:07:47-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.6 2003-06-13 19:08:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -423,7 +423,7 @@ Option names may be abbreviated.
                          If not specified, use the default
                          $Default_Requests_Log
                          which may be specified explicitly by the
-                         name "default".
+                         name "default" (which may not be abbreviated.)
     -debugging         : Enable debugging output.
     -permissions perm  : Specify permissions (in octal); default is 444
 One or more output files may be specified on the command line.
