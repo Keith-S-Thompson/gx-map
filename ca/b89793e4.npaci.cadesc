@@ -1,4 +1,4 @@
-# $Id: b89793e4.npaci.cadesc,v 1.9 2004-11-01 17:04:25-08 kst Exp $
+# $Id: b89793e4.npaci.cadesc,v 1.10 2005-03-29 19:27:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b89793e4.npaci.cadesc,v $
 
 CA_NAME             NPACI CA
@@ -8,10 +8,15 @@ HASH                b89793e4
 SUBJECT             /C=US/O=NPACI/OU=SDSC/CN=Certificate Manager/UID=certman
 MAY_SIGN            /C=US/O=NPACI/*
 CERTIFICATE_MD5     E0:71:16:82:21:D2:6F:8E:1B:F9:C1:1B:BE:36:77:23
+# CERTIFICATE_SHA1    A4:9D:C1:21:FB:5B:C1:34:11:FB:BF:6C:C2:03:2B:D5:14:25:54:2B
 CERTIFICATE_URL     http://www.npaci.edu/CA/b89793e4.0
 SIGNING_POLICY_URL  http://www.npaci.edu/CA/b89793e4.signing_policy
 CRL_URL             http://www.npaci.edu/CA/b89793e4.r0
 INDEX               http://www.npaci.edu/CA/ca.db.index
 CERT_EXPIRES        Oct 11 20:50:16 2020 GMT
 
-# MD5 fingerprint from b89793e4.0 downloaded 2004-10-10
+# This CA is not issuing any new certificates, but some certificates
+# it has issued are still valid.  SDSC users should obtain certificates
+# from the SDSC CA (see 3deda549.sdsc.cadesc).
+
+# MD5 and SHA1 fingerprints from b89793e4.0 downloaded 2005-03-29
