@@ -1,4 +1,4 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.4 2004-10-08 20:44:37-07 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.5 2004-10-10 03:21:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
 CA_NAME             EACL NorduGrid CA
@@ -13,3 +13,5 @@ SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/1f0e8352.signi
 CRL_URL             http://www.nbi.dk/HEP/CA/1f0e8352.r0
 CRL_WARNING         48 hours
 DISABLE             no
+
+# MD5 fingerprint from 1f0e8352.0 downloaded 2004-10-10
