@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.24 2003-09-04 17:43:59-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.25 2003-12-03 22:09:42-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -47,6 +47,13 @@
 ########################################################################
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
+
+#
+# TO DO:
+#
+# Check the new grid-mapfile into an RCS directory.
+# Add a "-norcs" option to disable this.
+#
 
 use strict;
 
@@ -401,6 +408,7 @@ foreach my $output_file (@Output_Files) {
     my $intermediate_file = "${output_file}-tmp-$$";
     # Gridmap_Utils::Check_Tainting '$intermediate_file', $intermediate_file;
     # Gridmap_Utils::Check_Tainting '$tmp_file', $tmp_file;
+    Gridmap_Utils::Use_Commands 'cp';
     system 'cp', '-f', $tmp_file, $intermediate_file;
     if (not -e $intermediate_file or
         -s $tmp_file != -s $intermediate_file)
