@@ -1,4 +1,4 @@
-# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.4 2004-10-08 20:44:39-07 kst Exp $
+# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.5 2004-10-10 03:21:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6b4ddd18.cnrs-datagrid.cadesc,v $
 
 CA_NAME             CNRS-DataGrid
@@ -21,3 +21,5 @@ DISABLE             yes
 #
 # The CA web page doesn't provide easy access to the various files.
 #
+
+# MD5 fingerprint from 6b4ddd18.0 downloaded 2004-10-10
