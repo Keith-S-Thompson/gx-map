@@ -1,4 +1,4 @@
-# $Id: 26bf3386.usc-kerberos.cadesc,v 1.1 2005-03-01 03:08:00-08 kst Exp $
+# $Id: 26bf3386.usc-kerberos.cadesc,v 1.2 2005-03-01 11:03:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/26bf3386.usc-kerberos.cadesc,v $
 
 CA_NAME             USC Kerberos Certification Authority
@@ -9,7 +9,7 @@ SIGNED_BY           /C=US/ST=California/L=Los Angeles/O=University of Southern C
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/CN=University of Southern California KCA v1/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            ?
 CERTIFICATE_MD5     52:11:CD:D5:E9:A7:23:01:53:FE:AF:8C:84:3D:0F:52
-CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/USCKCA.cert.txt
+CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/26bf3386.0
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
 CERT_EXPIRES        Jan 25 22:40:14 2006 GMT
