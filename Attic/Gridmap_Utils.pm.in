@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.10 2003-07-16 21:15:30-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.11 2003-07-17 03:14:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -15,30 +15,58 @@ BEGIN {
 
 # ----------------------------------------------------------------------
 
+sub Is_Tainted($);
+sub Check_Tainting($$);
+sub Untaint(\$);
+
+sub Get_mtime($);
+sub Get_PW(;$);
+sub Get_GR(;$);
+sub Get_Groups($);
+sub Get_Hostname();
+
+sub Is_Globus_Admin($);
+
+sub Ensure_RCS();
+
+sub Time_Image($);
+
+sub Write_Records($@);
+sub Read_Records($);
+
+sub Valid_Mappings($);
+
+sub Init_Cache_Info();
+sub Cache_File($);
+
 sub Debug(@);
 sub Debugf(@);
 
-# sub Is_Tainted($);
-# sub Check_Tainting($$);
+# ----------------------------------------------------------------------
+
+sub Is_Tainted($) {
+    my($arg) = @_;
+    my $nada = substr($arg, 0, 0);  # zero-length
+    local $@;  # preserve caller's version
+    eval { eval "# $nada" };
+    return length($@) != 0;
+} # Is_Tainted
 
 # ----------------------------------------------------------------------
 
-# sub Is_Tainted($) {
-#     my($arg) = @_;
-#     my $nada = substr($arg, 0, 0);  # zero-length
-#     local $@;  # preserve caller's version
-#     eval { eval "# $nada" };
-#     return length($@) != 0;
-# } # Is_Tainted
+sub Check_Tainting($$) {
+    my($name, $value) = @_;
+    if (Is_Tainted $value) {
+        die ">>> $name = \"$value\" is tainted\n";
+    }
+} # Check_Tainting
 
 # ----------------------------------------------------------------------
 
-# sub Check_Tainting($$) {
-#     my($name, $value) = @_;
-#     if (Is_Tainted $value) {
-#         die ">>> $name = \"$value\" is tainted\n";
-#     }
-# } # Check_Tainting
+sub Untaint(\$) {
+    my($ref) = @_;
+    ($$ref) = ($$ref =~ /(.*)/);
+} # Untaint
 
 # ----------------------------------------------------------------------
 
@@ -78,7 +106,7 @@ sub Get_PW(;$) {
     else {
         @pw = getpwnam($_[0]);
     }
-    if (scalar @pw != 9) { 
+    if (scalar @pw != 9) {
         return undef;
     }
     else {
@@ -171,7 +199,7 @@ sub Get_Hostname() {
 
     chomp($hostname = `/bin/hostname 2>/dev/null`);
 
-    if ($hostname =~ /\./) { 
+    if ($hostname =~ /\./) {
         #
         # hostname returned an FQDN; return it
         #
@@ -466,8 +494,11 @@ sub Init_Cache_Info() {
         my $url = <URL>;
         chomp $url;
         close URL;
-        $Cache_File{$url} = "$Download_Dir/$subdir/" .
-                            File::Basename::basename $url;
+        my $filename = "$Download_Dir/$subdir/" .
+                       File::Basename::basename $url;
+        Untaint $url;
+        Untaint $filename;
+        $Cache_File{$url} = $filename;
     }
     closedir DIR;
 } # Init_Cache_Info
@@ -531,7 +562,7 @@ sub Cache_File($) {
 
 # ----------------------------------------------------------------------
 
-sub Debug(@) { 
+sub Debug(@) {
     print @_ if $Debugging;
 } # Debug   
 
