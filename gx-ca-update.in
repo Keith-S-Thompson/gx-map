@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.22 2004-09-28 20:25:58-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.23 2004-09-29 20:49:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -74,6 +74,7 @@ sub Seconds_To_String($);
 sub Time_Image($);
 sub Signing_Policy($);
 sub Date_To_Seconds($);
+sub Disabled($);
 sub CRL_Info($$);
 sub Certificate_Expiration($);
 sub Update_Certificate($);
@@ -222,8 +223,13 @@ Gridmap_Utils::Use_Commands 'openssl';
 
 Gridmap_Utils::Init_Cache_Info;
 
+CA:
 foreach my $ref (@ca_info) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
+    if (Disabled $ref) {
+        Vprint "CA is disabled\n";
+        next CA;
+    }
 
     my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
     $ref->{_CERT_FILE}           = "$prefix.0";
@@ -416,6 +422,17 @@ sub Date_To_Seconds($) {
     }
     return undef;
 } # Date_To_Seconds
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the DISABLED field in the *.cadesc file exists and is
+# set to "yes", false otherwise.
+#
+sub Disabled($) {
+    my($ref) = @_;
+    return (defined $ref->{DISABLED} and lc $ref->{DISABLED} eq 'yes');
+} # Disabled
 
 # ----------------------------------------------------------------------
 
