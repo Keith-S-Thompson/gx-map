@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.1 2003-05-27 18:44:21-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.2 2003-05-27 21:10:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -390,8 +390,8 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no SITE\n";
         return ();
     }
-    if ($request->{SITE} ne 'SDSC') {
-        Debug ">>> Invalid, SITE ne 'SDSC'\n";
+    if ($request->{SITE} ne '%SITE%') {
+        Debug ">>> Invalid, SITE ne '%SITE%'\n";
         return ();
     }
     if (exists $request->{map_to_name}) {
