@@ -1,4 +1,4 @@
-# $Id: 5f54f417.grid-canada.cadesc,v 1.5 2004-10-13 17:44:59-07 kst Exp $
+# $Id: 5f54f417.grid-canada.cadesc,v 1.6 2004-11-01 17:04:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/5f54f417.grid-canada.cadesc,v $
 
 CA_NAME             Grid Canada CA
@@ -11,6 +11,6 @@ CERTIFICATE_MD5     3C:8F:D4:4D:BA:E2:8E:28:24:38:0F:2D:71:4C:9C:84
 CERTIFICATE_URL     http://www.gridcanada.ca/ca/5f54f417.0
 SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/5f54f417.signing_policy
 CRL_URL             http://www.gridcanada.ca/ca/5f54f417.r0
-DISABLE             no
+CERT_EXPIRES        Apr 10 03:59:29 2007 GMT
 
 # MD5 fingerprint from 5f54f417.0 downloaded 2004-10-10
