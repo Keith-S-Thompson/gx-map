@@ -1,4 +1,4 @@
-# $Id: README,v 1.4 2003-07-21 04:14:27-07 kst Exp $
+# $Id: README,v 1.5 2003-07-25 01:07:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
@@ -16,5 +16,7 @@ may map any DN to any Unix account.
 Some DNs may be mapped automatically without user intervention; in
 particular, certificates issued by the NPACI/SDSC certificate authority
 (cacl) are automatically mapped to the corresponding user account.
+This is handled by a separate tool (not included here) that watches
+for updates in the cacl index file and invokes gx-map.
 
 All commands accept a "-help" option to print a brief usage message.
