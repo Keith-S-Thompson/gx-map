@@ -1,5 +1,11 @@
-# $Id: README.CA,v 1.1 2004-10-20 14:54:42-07 kst Exp $
+# $Id: README.CA,v 1.2 2004-10-20 17:20:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
+
+************************************************************************
+* IMPORTANT SECURITY NOTICE:                                           *
+* Please read the file SECURITY in this directory before deploying     *
+* this software.                                                       *
+************************************************************************
 
 Each *.cadesc file contains information about a Certificate Authority
 whose certificates can be used with Globus.  The file names are of
