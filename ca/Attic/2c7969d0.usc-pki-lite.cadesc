@@ -1,11 +1,11 @@
-# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.3 2004-09-24 20:58:53-07 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.4 2004-10-06 19:58:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/2c7969d0.usc-pki-lite.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
 HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/
 CONTACT             Shelley Henderson <shelley@usc.edu>
 HASH                2c7969d0
-SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/Email=nmiadmin@usc.edu
+SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/2c7969d0.0
 SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2c7969d0.signing_policy
