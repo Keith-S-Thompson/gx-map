@@ -1,10 +1,10 @@
-# $Id: Gridmap_Utils.pm.in,v 1.55 2004-12-26 20:33:37-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.56 2005-01-07 17:14:03-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2004 The Regents of the University of California. All
+# Copyright (c) 2005 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
