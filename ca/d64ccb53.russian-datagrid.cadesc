@@ -1,4 +1,4 @@
-# $Id: d64ccb53.russian-datagrid.cadesc,v 1.1 2004-10-07 21:37:41-07 kst Exp $
+# $Id: d64ccb53.russian-datagrid.cadesc,v 1.2 2004-10-08 13:59:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d64ccb53.russian-datagrid.cadesc,v $
 
 CA_NAME             Russian DataGRID CA
@@ -11,5 +11,4 @@ CERTIFICATE_URL     http://lhc.sinp.msu.ru/CA/ca-cert.pem
 SIGNING_POLICY_URL  http://lhc.sinp.msu.ru/CA/d64ccb53.signing_policy
 CRL_URL             http://lhc.sinp.msu.ru/CA/ca-crl.pem
 CRL_WARNING         24 hours
-INDEX               ?
 DISABLE             no
