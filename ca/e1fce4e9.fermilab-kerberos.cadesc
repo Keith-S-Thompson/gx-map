@@ -1,4 +1,4 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.3 2004-10-06 16:58:19-07 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.4 2004-10-08 13:59:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
@@ -12,7 +12,6 @@ CERTIFICATE_URL     http://computing.fnal.gov/security/pki/e1fce4e9.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/e1fce4e9.signing_policy
 CRL_URL             ?
 CRL_WARNING         30 days
-INDEX               ?
 DISABLE             no
 
 # DER format CRL at  http://computing.fnal.gov/security/pki/e1fce4e9.crl
