@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.7 2003-07-14 17:51:22-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.8 2003-07-14 17:58:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -12,14 +12,7 @@ BEGIN {
     $VERSION = "1.0";
 
     @ISA         = qw( Exporter );
-    @EXPORT      = qw( $Debugging
-                       @Get_mtime
-                       &Get_PW &Get_GR &Get_Hostname
-                       &Is_Globus_Admin &Ensure_RCS &Time_Image 
-                       &Write_Records &Read_Records
-                       &Valid_Mappings
-                       &Cache_File
-                       &Debug &Debugf );
+    @EXPORT      = qw( );
     %EXPORT_TAGS = qw();
     @EXPORT_OK   = qw();
     # use AutoLoader qw(AUTOLOAD);
