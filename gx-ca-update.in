@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.18 2004-09-27 15:42:19-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.19 2004-09-27 15:54:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -52,6 +52,7 @@
 use strict;
 
 use File::Basename ();
+use File::Copy ();
 use Getopt::Long ();
 use Time::Local ();
 
@@ -216,7 +217,7 @@ if ($User_Opt->{debugging}) {
     Gridmap_Utils::Write_Records '-multiple', '-', @ca_info;
 }
 
-Gridmap_Utils::Use_Commands 'cp', 'openssl';
+Gridmap_Utils::Use_Commands 'openssl';
 
 Gridmap_Utils::Init_Cache_Info;
 
@@ -525,9 +526,10 @@ sub Update_Certificate($) {
                 else {
                     Vprint    "Installing $ref->{_CERT_FILE}\n";
                     Log $ref, "Installing $ref->{_CERT_FILE}\n";
-                    system 'cp', '-p', '-f', $cache_file,
-                                             "$ref->{_CERT_FILE}.$$";
-                    rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE};
+                    File::Copy::copy $cache_file,"$ref->{_CERT_FILE}.$$"
+                        or Error $ref, "Failed to copy certificate: $!\n";
+                    rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
+                        or Error $ref, "Failed to rename certificate: $!\n";
                 }
             }
             else {
@@ -645,8 +647,10 @@ sub Update_CRL($) {
     if ($install_new_crl) {
         Vprint    "Installing $ref->{_CRL_FILE}\n";
         Log $ref, "Installing $ref->{_CRL_FILE}\n";
-        system 'cp', '-p', $new_crl_file, "$ref->{_CRL_FILE}.$$";
-        rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE};
+        File::Copy::copy $new_crl_file, "$ref->{_CRL_FILE}.$$"
+            or Error $ref, "Failed to copy CRL: $!\n";
+        rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE}
+            or Error $ref, "Failed to rename CRL: $!\n";
     }
 
     #
