@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.16 2004-08-17 22:04:45-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.17 2004-08-17 22:08:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -168,6 +168,9 @@ sub Valid_Mappings($) {
     my @result = ();
 
     if (defined $request->{dn}) {
+        #
+        # Create duplicate entries if necessary for GT2/GT3 compatibility.
+        #
         foreach my $dn (Gridmap_Utils::DN_List $request->{dn}) {
             my $entry = { dn => $dn };
             if (defined $request->{map_to_name}) {
@@ -179,7 +182,7 @@ sub Valid_Mappings($) {
     else {
         my $entry = {};
         if (defined $request->{map_to_name}) {
-            $mapping->{map_to_name} = $request->{map_to_name}
+            $entry->{map_to_name} = $request->{map_to_name}
         }
         push @result, $entry;
     }
