@@ -1,4 +1,4 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.9 2004-11-01 17:04:31-08 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.10 2005-03-29 19:27:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
@@ -9,9 +9,10 @@ SUBJECT             /DC=gov/DC=fnal/O=Fermilab/OU=Certificate Authorities/CN=Ker
 MAY_SIGN            /DC=gov/DC=fnal/O=Fermilab/OU=People/*
 MAY_SIGN            /DC=gov/DC=fnal/O=Fermilab/OU=Robots/*
 CERTIFICATE_MD5     6D:7C:A7:04:22:75:CD:42:29:3D:59:7C:E6:3F:EA:B1
+# CERTIFICATE_SHA1    1F:BC:47:25:DB:C0:E6:FF:C5:CC:3A:F3:54:3A:BB:73:67:EA:03:CC
 CERTIFICATE_URL     http://computing.fnal.gov/security/pki/e1fce4e9.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/e1fce4e9.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/e1fce4e9.base64
 CERT_EXPIRES        Oct 23 20:16:45 2005 GMT
 
-# MD5 fingerprint from e1fce4e9.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from e1fce4e9.0 downloaded 2005-03-29
