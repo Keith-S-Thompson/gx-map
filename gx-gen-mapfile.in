@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.9 2003-07-09 21:01:49-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.10 2003-07-10 02:46:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -8,9 +8,12 @@ use strict;
 use File::Basename ();
 use Getopt::Long ();
 
+# sub Is_Tainted($);
+# sub Check_Tainting($$);
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
+sub Die_Handler($);
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
@@ -66,6 +69,13 @@ $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 my @Output_Files = @ARGV;
 my $Write_To_Stdout = (scalar @Output_Files == 0);
 my %Force_Update = ();
+
+#
+# Untaint the output file names
+#
+foreach (@Output_Files) {  
+    ($_) = (/^(.*)$/);
+}
 
 if ($User_Opt->{permissions} !~ /^[0-7][0-7][0-7]$/) {
     Usage "Permissions must be a 3-digit octal number\n";
@@ -170,7 +180,7 @@ foreach my $request (@requests) {
     }
 }
 
-my $tmp_file = "/tmp/gx-gen-mapfile-$$";
+my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
 
 #
 # If we're creating output files, write to a single temp file and
@@ -183,6 +193,8 @@ if ($Write_To_Stdout) {
 else {
     open OUT, ">$tmp_file" or die "$tmp_file: $!\n";
 }
+
+$SIG{__DIE__} = \&Die_Handler;
 
 my $Now = Gridmap_Utils::Time_Image time;
 $Now =~ s/^\d+ //;       # We don't need the raw numeric timestamp
@@ -245,13 +257,17 @@ foreach my $output_file (@Output_Files) {
     # so?), preventing any processes from seeing a partially updated
     # grid-mapfile.
     #
+    Check_Tainting '$output_file', $output_file;
     my $intermediate_file = "${output_file}-tmp-$$";
+    Check_Tainting '$intermediate_file', $intermediate_file;
+    Check_Tainting '$tmp_file', $tmp_file;
     system 'cp', '-f', $tmp_file, $intermediate_file;
     if (not -e $intermediate_file or
         -s $tmp_file != -s $intermediate_file)
     {
         die "$Prog_Name: copy to $intermediate_file failed\n";
     }
+    Check_Tainting '$output_file', $output_file;
     rename $intermediate_file, $output_file
         or die "rename $intermediate_file, $output_file: $!\n";
     if (not chmod $User_Opt->{permissions}, $output_file) {
@@ -262,6 +278,25 @@ foreach my $output_file (@Output_Files) {
 unlink $tmp_file;
 
 ########################################################################
+
+# sub Is_Tainted($) {
+#     my($arg) = @_;
+#     my $nada = substr($arg, 0, 0);  # zero-length
+#     local $@;  # preserve caller's version
+#     eval { eval "# $nada" };
+#     return length($@) != 0;
+# } # Is_Tainted
+
+# ----------------------------------------------------------------------
+
+# sub Check_Tainting($$) {
+#     my($name, $value) = @_;
+#     if (Is_Tainted $value) {
+#         die ">>> $name = \"$value\" is tainted\n";
+#     }
+# } # Check_Tainting
+
+# ----------------------------------------------------------------------
 
 #
 # Given a list of file names, returns a list of names of files that need
@@ -392,6 +427,14 @@ sub User_Real_Name($) {
     $gcos =~ s/,.*$//;
     return $gcos;
 } # User_Real_Name
+
+# ----------------------------------------------------------------------
+
+sub Die_Handler($) {
+    unlink $tmp_file;
+    #
+    # Perl will now pirnt the message and terminate.
+} # Die_Handler
 
 # ----------------------------------------------------------------------
 
