@@ -1,4 +1,4 @@
-# $Id: 6df70cb1.germangrid-old.cadesc,v 1.4 2004-10-10 03:21:58-07 kst Exp $
+# $Id: 6df70cb1.germangrid-old.cadesc,v 1.5 2004-10-13 17:44:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6df70cb1.germangrid-old.cadesc,v $
 
 CA_NAME             GermanGrid CA (old)
@@ -12,7 +12,6 @@ CERTIFICATE_MD5     1E:49:6A:74:C5:64:5C:D8:EB:3E:1A:56:6D:F5:44:2D
 CERTIFICATE_URL     http://grid.fzk.de/ca/6df70cb1.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/6df70cb1.signing_policy
 CRL_URL             http://grid.fzk.de/ca/fzk-crl.pem
-CRL_WARNING         12 hours
 DISABLE             yes
 
 #
