@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.22 2003-08-27 19:11:38-07 kst Exp $
+# $Id: gx-map.in,v 1.23 2003-12-03 22:20:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -394,6 +394,9 @@ unless ($Options->{force} and $Options->{quiet}) {
 # 
 # The output must be a single line starting with '/'; otherwise,
 # returns undef.
+#
+# Note that we do *not* call Use_Commands 'openssl' here; we depend
+# on the "openssl" command being in the user's $PATH.
 # 
 sub Get_DN_From_File($) {
     my($file) = @_;
