@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.47 2005-03-28 00:18:53-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.48 2005-03-28 00:28:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -418,12 +418,14 @@ else {
     #
     foreach my $dn (sort keys %Mappings) {
         my @names = ();
+        my $primary_name = undef;
 
         #
         # First the primary name, if any.
         #
         if (defined $Mappings{$dn}->{primary}) {
             push @names, $Mappings{$dn}->{primary};
+            $primary_name = $Mappings{$dn}->{primary};
         }
 
         #
@@ -431,7 +433,10 @@ else {
         #
         if (defined $Mappings{$dn}->{secondary}) {
             my $ref = $Mappings{$dn}->{secondary};
-            push @names, sort { $ref->{$a} <=> $ref->{$b} } keys %$ref;
+            foreach my $name (sort { $ref->{$a} <=> $ref->{$b} } keys %$ref) {
+                next if defined $primary_name and $name eq $primary_name;
+                push @names, $name;
+            }
         }
 
         if (@names) {
