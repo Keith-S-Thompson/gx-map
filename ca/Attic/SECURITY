@@ -1,0 +1,65 @@
+# $Id: SECURITY,v 1.1 2004-10-20 14:54:42-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/SECURITY,v $
+
+The gx-ca-update program automatically installs signing certificates,
+CRLs (Certificate Revocation Lists), and signing_policy files for
+use with Globus.  This is a security-critical activity; mistakes
+can easily leave your system vulnerable to unauthorized access.
+I've designed the gx-ca-update program to minimize the risks, but I
+can make no guarantees whatsoever.  The responsibility for securing
+your system is entirely yours.
+
+Before Globus will recognize a user or host certificate (or in the
+case of a user certificate a proxy signed by the certificate),
+it requires the certificate to be valid.  A user certificate
+must have its subject name in the grid-mapfile (normally in
+the /etc/grid-security directory).  It must also be signed by an
+recognized CA (Certificate Authority).  The CA's signing certificate
+and signing_policy files must be installed on your system (normally
+in the /etc/grid-security/certificates directory).
+
+One potential problem with this approach is that it's easy, using
+OpenSSL commands, to create a forged CA certificate.
+
+For example, suppose use John Smith has a certificate with the subject
+name "/O=Grid/OU=example.org/CN=John Smith".  You have an entry
+in your grid-mapfile that looks like:
+
+"/O=Grid/OU=example.org/CN=John Smith" jsmith
+
+The certificate was issued by a CA whose certificate has the subject
+name "/O=Grid/OU=example.org/CN=example.org Root CA".
+
+Using OpenSSL, I can easily generate my own forged CA certificate
+with same subject name and use it to sign a forged user certificate
+with the same subject name as John Smith's certificate.  This gives
+me access to John Smith's account on your system -- but only if
+I can fool you into installing my forged CA certificate in your
+/etc/grid-security/certificates directory.  Thus the security of the
+/etc/grid-security directory is critical.
+
+The CERTIFICATE_MD5 attribute is the primary method for avoiding
+forged signing certificates.  Each cadesc file distributed with
+the gx-map system includes an MD5 fingerprint for the corresponding
+signing certificate, and a comment indicating how I determined it.
+You should double-check this yourself.  Each cadesc file specifies
+URLs from which the files can be downloaded; you need to decide whether
+you trust the specified sites.  Be careful out there.  I've indicated,
+in each cadesc file, how I determined the MD5 fingerprint.
+
+Globus makes CRLs (Certificate Revocation Lists) optional.  A CRL
+specifies a list of certificates that have been revoked.  Each CRL
+has a specified lifetime, forcing each site to download a new copy
+periodically.  If you install a current CRL file (xxxxxxxx.r0),
+Globus will reject any revoked certificates.  If you don't install a
+CRL file at all, Globus will accept all certificates issued by the
+corresponding CA, including revoked certificates.  If you have an
+expired CRL, all certificates issued by the CA will be rejected.
+
+By default, gx-ca-update requires current CRLs for all CAs.  If a
+CRL is not available, the CA certificate will not be installed.  If a
+CRL has expired and a new one is not available, the expired one will
+be left in place.  The gx-ca-update command allows you to specify a
+more lax policy if you wish, allowing CAs without CRLs and/or removing
+CRLs that are about to expire, but only if you explicitly provide the
+"-unsafe" command line option.
