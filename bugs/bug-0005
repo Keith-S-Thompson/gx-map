@@ -1,0 +1,19 @@
+# $Id: bug-0005,v 1.1 2005-03-24 19:06:16-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0005,v $
+
+gx-map bug 0005
+Date: Thu 2005-03-24
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+
+Summary:
+New feature: In *.cadesc files, add a new attribute indicating that a
+CRL is not required, perhaps "SHORT_TERM_ONLY yes".  If this attribute
+is set, it's equivalent to specifying "-UNSAFE -allow-missing-crl"
+just for that CA.
+
+Currently, KCAs such as 85ca9edc (PSC) and 26bf3386 (USC) require
+special handling, because gx-ca-update requires CRLs by default.
+The consensus seems to be that CRLs are unnecessary for KCAs, since
+they issue only short-term certificates (up to 10 days or so).
