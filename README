@@ -1,4 +1,4 @@
-# $Id: README,v 1.11 2003-12-03 22:04:25-08 kst Exp $
+# $Id: README,v 1.12 2004-06-10 16:32:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
@@ -44,7 +44,14 @@ NOTES: (not included in gx-map-0.3 release):
 	HP-UX systems allow non-root users to use chown, though this
 	can be disabled with setprivgrp.  Some brief experiments on
 	public-hp.ncsa.uiuc.edu indicate that this applies only on
-	locally mounted filesystems.
+	locally mounted filesystems -- but see IRIX, below.
+
+    IRIX:
+	As on HP-UX, SGI's IRIX allows non-root users to use
+	chown, though this can be disabled by setting the variable
+	"restricted_chown".  Experiment shows that non-root chown is
+	allowed on an NFS filesystem where the NFS server is an IRIX
+	system, even if the client is not.
 
     Solaris:
 	Non-root users are forbidden to use chown by default, but
@@ -56,6 +63,9 @@ NOTES: (not included in gx-map-0.3 release):
     able to chown files in the data directory.  If the data directory
     is NFS-mounted, make sure users cannot use chown in that directory
     from any system that mounts it.
+
+    A future release will check whether non-root chown is allowed in
+    the data directory, and refuse to run if it is.
 
 3.  A Globus grid-mapfile may have multiple user names associated
     with a single DN:
@@ -132,6 +142,16 @@ NOTES: (not included in gx-map-0.3 release):
     This should be corrected in the next release.  It looks like I'm
     going to have to change some assumptions about consistency of
     numeric UIDs between systems.  Details TBD.
+
+7.  The gx-check-requests and gx-gen-mapfile commands use Perl's "-T"
+    option, which enables checking for "tainted" data (for example,
+    it disallows arbitrary values for $PATH).  As of release 0.3, $PATH
+    is the only environment variable that is set to a safe value, but
+    several other environment variables are also checked, namely $IFS,
+    $CDPATH, $ENV, and BASH_ENV.  The next release will unset these
+    environment variables.  (Wendy Lin <af5@taiyang.cc.purdue.edu>
+    ran into this problem.)
+
 ========================================================================
 
 This is release 0.3; more documentation will follow later.
