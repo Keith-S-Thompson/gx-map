@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.14 2003-07-24 22:39:20-07 kst Exp $
+# $Id: gx-map.in,v 1.15 2003-07-25 03:33:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -360,16 +360,16 @@ $request->{email}       = $Options->{email}    if defined $Options->{email};
 $request->{comment}     = $Options->{comment}  if defined $Options->{comment};
 
 #
-# Be paranoid.  Create the file, close it, chmod it to 200,
-# re-open it, append the data, close it, chmod it to 444.
+# If gx-check-requests sees a partial request file, it will reject it
+# and move it to the bad-requests directory.  To avoid this, create
+# a temporary request file with a name ending in ".tmp" (making it
+# invisible to gx-check-requests).  After the temporary file is created
+# and has the proper permissions, rename it to the correct name.
 #
-open REQUEST, ">$Request_File" or die "$Request_File: $!\n";
-close REQUEST;
-chmod 0200, $Request_File or die "$Request_File: $!\n";
-
-Gridmap_Utils::Write_Records $Request_File, $request;
-
-chmod 0444, $Request_File;
+my $tmp_file = $Request_File . ".tmp";
+Gridmap_Utils::Write_Records $tmp_file, $request;
+chmod 0444, $tmp_file;
+rename $tmp_file, $Request_File;
 
 unless ($Options->{force} and $Options->{quiet}) {
     print "Mapping request submitted.\n";
