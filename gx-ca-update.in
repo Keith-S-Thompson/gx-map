@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.14 2004-09-26 20:44:55-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.15 2004-09-27 00:25:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -77,10 +77,11 @@ sub Certificate_Expiration($);
 sub Update_Certificate($);
 sub Update_Signing_Policy($);
 sub Update_CRL($);
+sub Notify($@);
 sub Usage(@);
 sub Debug(@);
 
-my $Prog_Name = File::Basename::basename $0;
+my $Program_Name = File::Basename::basename $0;
 my $now = time;
 
 my $User_Opt = {};
@@ -88,6 +89,7 @@ my @Opts = ( $User_Opt,
              qw( help!
                  version!
                  ca=s@
+                 list-cas!
                  target-dir=s
                  expire-crl=s
                  force!
@@ -96,8 +98,26 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
 
+my @Errors = ();
+
 if ($User_Opt->{version}) {
     print "gx-ca-update, part of gx-map version $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+my $ca_conf_dir = "$Install_Dir/var/ca.conf";
+my @ca_list_all;
+
+opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
+@ca_list_all = sort grep /\.cadesc$/, readdir CONF_DIR;
+closedir CONF_DIR;
+
+if ($User_Opt->{'list-cas'}) {
+    foreach my $ca (@ca_list_all) {
+        $ca =~ s/\.cadesc$//;
+        $ca =~ s/\./ /g;
+        print "$ca\n";
+    }
     exit 0;
 }
 
@@ -142,13 +162,6 @@ if ($User_Opt->{debugging}) {
     }
 }
 
-my $ca_conf_dir = "$Install_Dir/var/ca.conf";
-my @ca_list_all;
-
-opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
-@ca_list_all = sort grep /\.cadesc$/, readdir CONF_DIR;
-closedir CONF_DIR;
-
 if (scalar @ca_list_all == 0) {
     die "No *.cadesc files in $ca_conf_dir\n";
 }
@@ -174,11 +187,6 @@ foreach my $requested_ca (@requested_ca_list) {
 }
 
 my @ca_list = grep $selected{$_}, @ca_list_all;
-
-print "\@ca_list = (\n    ",
-      join(",\n    ", @ca_list),
-      "\n)\n";
-exit 42;
 
 if (scalar @ca_list == 0) {
     die "No CAs selected\n";
@@ -220,6 +228,10 @@ foreach my $ref (@ca_info) {
     Update_CRL            $ref;
 
     print "\n";
+}
+
+if (@Errors) {
+    Notify "Errors in $Program_Name", @Errors;
 }
 
 ########################################################################
@@ -476,6 +488,7 @@ sub Update_Certificate($) {
             # Error in Cache_File function
             #
             print ">>> $@";
+            push @Errors, $@;
         }
         elsif (defined $cache_file and -r $cache_file) {
             my $expire = Certificate_Expiration $cache_file;
@@ -484,6 +497,9 @@ sub Update_Certificate($) {
                     print ">>> $cache_file expired ",
                           Seconds_To_String $now - $expire,
                           " ago\n";
+                    push @Errors, "$cache_file expired ",
+                                  Seconds_To_String $now - $expire,
+                                  " ago\n";
                 }
                 else {
                     print "Installing $ref->{_CERT_FILE}\n";
@@ -495,6 +511,8 @@ sub Update_Certificate($) {
             else {
                 print ">>> Unable to determine expiration date " .
                       "for $cache_file\n";
+                push @Errors, "Unable to determine expiration date " .
+                              "for $cache_file\n";
             }
         }
     }
@@ -549,6 +567,7 @@ sub Update_CRL($) {
             # To do: more robust error handling.
             #
             print ">>> $@";
+            push @Errors, "$@";
         }
     }
     my $new_crl_info = CRL_Info $new_crl_file, $ref->{_CERT_FILE};
@@ -560,14 +579,19 @@ sub Update_CRL($) {
         my $remaining = $new_crl_info->{next_update} - $now;
         if ($remaining <= 0) {
             print ">>> New CRL has expired\n";
+            push @Errors, "New CRL $new_crl_file has expired\n";
         }
         elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
             print ">>> New CRL expires in " .
                   Seconds_To_String($remaining) .
                   ", not installing\n";
+            push @Errors, "New CRL $new_crl_file expires in " .
+                          Seconds_To_String($remaining) .
+                          ", not installing\n";
         }
         elsif (not $new_crl_info->{verified}) {
             print ">>> Can't verify new CRL\n";
+            push @Errors, "Can't verify new CRL $new_crl_file\n";
         }
         elsif (defined $old_crl_info) {
             #
@@ -584,6 +608,9 @@ sub Update_CRL($) {
             {
                 print ">>> New CRL expires sooner than old CRL, " .
                       "not installing\n";
+                push @Errors,
+                     "New CRL $new_crl_file expires sooner than old CRL, " .
+                     "not installing\n";
             }
             else {
                 $install_new_crl = 1;
@@ -602,6 +629,7 @@ sub Update_CRL($) {
         }
         else {
             print ">>> Unable to get information for CRL\n";
+            push @Errors, "Unable to get information for CRL $ref->{CRL_URL}\n";
         }
     }
 
@@ -622,6 +650,7 @@ sub Update_CRL($) {
         if (defined $crl_info) {
             if (not $crl_info->{verified}) {
                 print ">>> Removing unverified CRL\n";
+                push @Errors, "Removing unverified CRL $ref->{_CRL_FILE}\n";
                 $remove_crl = 1;
             }
             elsif (defined $CRL_Expiration and
@@ -630,6 +659,9 @@ sub Update_CRL($) {
                 print ">>> CRL will expire in " .
                       Seconds_To_String($remaining) .
                       ", removing it\n";
+                push @Errors, "CRL will expire in " .
+                              Seconds_To_String($remaining) .
+                              ", removing it\n";
                 $remove_crl = 1;
             }
             if ($remove_crl) {
@@ -637,37 +669,69 @@ sub Update_CRL($) {
             }
             else {
                 my $how_long = Seconds_To_String abs $remaining;
+                my $notify = 0;
                 if (defined $ref->{CRL_WARNING_SECONDS} and
                     $remaining <= $ref->{CRL_WARNING_SECONDS})
                 {
                     print ">>> ";
+                    $notify = 1;
                 }
                 if ($remaining < 0) {
                     print "CRL expired $how_long ago\n";
+                    push @Errors, "CRL $ref->{_CRL_FILE} expired $how_long ago\n" if $notify;
                 }
                 elsif ($remaining == 0) {
                     print "CRL expires NOW\n";
+                    push @Errors,"CRL $ref->{_CRL_FILE} expires NOW\n" if $notify;
                 }
                 else {
                     print "CRL expires in $how_long\n";
+                    push @Errors,"CRL $ref->{_CRL_FILE} expires in $how_long\n" if $notify;
                 }
                 if (not $crl_info->{verified}) {
                     print ">>> CRL is not verified\n";
+                    push @Errors, "CRL $ref->{_CRL_FILE} is not verified\n";
                 }
             }
         }
     }
     else {
         print ">>> No CRL\n";
+        push @Errors, "No CRL for $ref->{CA_NAME}\n";
     }
 } # Update_CRL
+
+# ----------------------------------------------------------------------
+
+#
+# Send a notification by e-mail.
+# First argument is subject header of e-mail message; remaining arguments
+# are the message.
+#
+sub Notify($@) {
+    my($subject, @message) = @_;
+    my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+    my $mail_program = undef;
+    if (-x '/bin/mailx') {
+        $mail_program = '/bin/mailx';
+    }
+    elsif (-x '/bin/mail') {
+        $mail_program = '/bin/mail';
+    }
+
+    if (defined $mail_program) {
+        open PIPE, "| $mail_program -s '$subject' $recipient";
+        print PIPE @message;
+        close PIPE;
+    }
+} # Notify
 
 # ----------------------------------------------------------------------
 
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Prog_Name [options]
+Usage: $Program_Name [options]
     -help              Display this message and exit
     -version           Display version information and exit
     -ca name           Name of a CA.  This argument may be given multiple
@@ -675,6 +739,7 @@ Usage: $Prog_Name [options]
                        blanks.  The argument is a field of the *.cadesc
                        file name; use the hash value to avoid ambiguity
     -ca ALL            Use all available CAs
+    -list-cas          List available CAs and exit
     -target-dir dir    Target directory
     -expire-crl time   Remove a CRL that will expire within
                        "time".  "time" is expressed as a number
