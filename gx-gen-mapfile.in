@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.29 2004-08-17 20:02:43-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.30 2004-08-17 22:06:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -347,8 +347,6 @@ EOF
 foreach my $dn (sort keys %Mappings) {
     my @names = ();
 
-    my @dns = Gridmap_Utils::DN_List $dn;
-
     #
     # First the primary name, if any.
     #
@@ -365,22 +363,20 @@ foreach my $dn (sort keys %Mappings) {
     }
 
     if (@names) {
-        foreach my $output_dn (@dns) {
-            if ($User_Opt->{'real-name'}) {
-                my @real_names = ();
-                foreach my $name (@names) {
-                    my $real_name = User_Real_Name $name;
-                    push @real_names, ( defined $real_name ? $real_name : '?' );
-                }
-                print OUT "$output_dn ",
-                          join(',', @names),
-                          " # ",
-                          join(',', @real_names),
-                          "\n";
+        if ($User_Opt->{'real-name'}) {
+            my @real_names = ();
+            foreach my $name (@names) {
+                my $real_name = User_Real_Name $name;
+                push @real_names, ( defined $real_name ? $real_name : '?' );
             }
-            else {
-                print OUT "$output_dn ", join(',', @names), "\n";
-            }
+            print OUT "$dn ",
+                      join(',', @names),
+                      " # ",
+                      join(',', @real_names),
+                      "\n";
+        }
+        else {
+            print OUT "$dn ", join(',', @names), "\n";
         }
     }
 }
@@ -587,7 +583,7 @@ sub User_Real_Name($) {
 sub Die_Handler($) {
     unlink $tmp_file;
     #
-    # Perl will now pirnt the message and terminate.
+    # Perl will now print the message and terminate.
 } # Die_Handler
 
 # ----------------------------------------------------------------------
@@ -608,6 +604,7 @@ Option names may be abbreviated.
                          name "default" (which may not be abbreviated.)
     -debugging         : Enable debugging output.
     -permissions perm  : Specify permissions (in octal); default is 444
+    -real-name         : Include real names as comments.
 One or more output files may be specified on the command line.
 If no output files are specified, output is written to stdout.
 If output files are specified, they are generated only if necessary, i.e.,
