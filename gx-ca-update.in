@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.30 2004-10-07 22:16:39-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.31 2004-10-10 01:04:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -90,7 +90,7 @@ sub Date_To_Seconds($);
 sub Get_CA_Ref($);
 sub Disabled($);
 sub CRL_Info($$);
-sub Certificate_Expiration($);
+sub Certificate_Info($);
 sub Update_Certificate($);
 sub Update_Signing_Policy($);
 sub Update_CRL($);
@@ -216,10 +216,6 @@ if (scalar @ca_list == 0) {
 my @ca_info = ();
 
 foreach my $ca_desc_file (@ca_list) {
-    #
-    # To do: Verify that the cadesc file has all the required
-    # fields; if not, issue a warning and ignore the file.
-    #
     my $ref = Get_CA_Ref "$ca_conf_dir/$ca_desc_file";
     push @ca_info, $ref if defined $ref;
 }
@@ -386,15 +382,8 @@ sub Signing_Policy($) {
                  "pos_rights     globus  CA:sign\n" .
                  "cond_subjects  globus  $cond_subjects\n";
 
-    my $gt2_body = $body;
-    $gt2_body =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=)g;
-    $gt2_body =~ s(/UID=)(/USERID=)g;
-    $gt2_body =~ s(/emailAddress=)(/Email=)g;
-
-    my $gt3_body = $body;
-    $gt3_body =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=)g;
-    $gt3_body =~ s(/USERID=)(/UID=)g;
-    $gt3_body =~ s(/Email=)(/emailAddress=)g;
+    my $gt2_body = Gridmap_Utils::GT2_Subject $body;
+    my $gt3_body = Gridmap_Utils::GT3_Subject $body;
 
     $result .= $gt2_body;
     if ($gt3_body ne $gt2_body) {
@@ -452,9 +441,15 @@ sub Get_CA_Ref($) {
 
     my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
                                     SIGNED_BY SUBJECT MAY_SIGN
-                                    CERTIFICATE_URL SIGNING_POLICY_URL
-                                    CRL_URL CRL_WARNING INDEX DISABLE );
-    my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN CERTIFICATE_URL );
+                                    CERTIFICATE_MD5 CERTIFICATE_URL
+                                    SIGNING_POLICY_URL CRL_URL CRL_WARNING
+                                    INDEX DISABLE );
+    my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
+		       CERTIFICATE_URL );
+                       # CERTIFICATE_MD5
+    my %remap = ( SIGNED_BY => 1,
+                  SUBJECT   => 1,
+                  MAY_SIGN  => 1 );
                        
     foreach my $key (@required) {
         if (not defined $ref->{$key}) {
@@ -469,6 +464,17 @@ sub Get_CA_Ref($) {
         if ($key =~ /_URL$/) {
             if ($ref->{$key} ne '?' and $ref->{$key} !~ m<^(https?|ftp):>) {
                 push @errors, "Bad value for $key\n";
+            }
+        }
+        #
+        # Map subject names to GT3-compatible forms.
+        #
+        if ($remap{$key}) {
+            if (ref $ref->{$key} eq 'ARRAY') {
+                map { $_ = Gridmap_Utils::GT3_Subject $_ } @{$ref->{$key}};
+            }
+            else {
+                $ref->{$key} = Gridmap_Utils::GT3_Subject $ref->{$key};
             }
         }
     }
@@ -522,8 +528,9 @@ sub Disabled($) {
 # information about the CRL:
 #     hash
 #     issuer
-#     last_update
-#     next_update
+#     last_update (raw timestamp)
+#     next_update (raw timestamp)
+#     lifetime    (in seconds)
 #     verified
 #
 sub CRL_Info($$) {
@@ -539,7 +546,7 @@ sub CRL_Info($$) {
                "-hash -issuer -lastupdate -nextupdate |" or return undef;
     while (<PIPE>) {
         chomp;
-        if (/^[\0-9a-f]{8}$/) {
+        if (/^[\da-f]{8}$/) {
             $result->{hash} = $_;
         }
         elsif (/^issuer=\s*(.*)$/) {
@@ -576,19 +583,44 @@ sub CRL_Info($$) {
 
 #
 # Given the name of a certificate file, return its expiration date.
+# returns a reference to information about the certificate:
+#     hash
+#     issuer
+#     subject
+#     md5sum
+#     startdate (raw timestamp)
+#     enddate   (raw timestamp)
 #
-sub Certificate_Expiration($) {
+sub Certificate_Info($) {
     my($cert_file) = @_;
-    my $result = undef;
     return undef if not -r $cert_file;
-    open PIPE, "openssl x509 -in $cert_file -noout -enddate |" or return undef;
+    my $result = {};
+    open PIPE, "openssl x509 -in $cert_file -noout -hash -issuer -subject " .
+               "-md5 -fingerprint -startdate -enddate |";
     while (<PIPE>) {
-        if (/^notAfter=\s*(.*)$/) {
-            $result = Date_To_Seconds $1;
+        chomp;
+        if (/^[\da-f]{8}$/) {
+            $result->{hash} = $_;
+        }
+        elsif (/^issuer=\s*(.*)$/) {
+            $result->{issuer} = Gridmap_Utils::GT3_Subject $1;
+        }
+        elsif (/^subject=\s*(.*)$/) {
+            $result->{subject} = Gridmap_Utils::GT3_Subject $1;
+        }
+        elsif (/^md5.*=\s*(.*)$/i) {
+            $result->{md5sum} = $1;
+        }
+        elsif (/^notBefore=\s*(.*)$/) {
+            $result->{startdate} = Date_To_Seconds $1;
+        }
+        elsif (/^notAfter=\s*(.*)$/) {
+            $result->{enddate} = Date_To_Seconds $1;
         }
     }
+    close PIPE;
     return $result;
-} # Certificate_Expiration
+} # Certificate_Info
 
 # ----------------------------------------------------------------------
 
@@ -615,24 +647,40 @@ sub Update_Certificate($) {
             Error $ref, $@;
         }
         elsif (defined $cache_file and -r $cache_file) {
-            my $expire = Certificate_Expiration $cache_file;
-            if (defined $expire) {
-                if ($expire < $now) {
+            my $cert_info = Certificate_Info $cache_file;
+            if (defined $cert_info->{enddate}) {
+                if ($cert_info->{enddate} < $now) {
                     Error $ref, "Certificate expired " .
-                                Seconds_To_String($now - $expire) .
+                                Seconds_To_String
+                                    ($now - $cert_info->{enddate}) .
                                 " ago\n";
-                }
-                else {
-                    Vprint    "Installing $ref->{_CERT_FILE}\n";
-                    Log $ref, "Installing $ref->{_CERT_FILE}\n";
-                    File::Copy::copy $cache_file,"$ref->{_CERT_FILE}.$$"
-                        or Error $ref, "Failed to copy certificate: $!\n";
-                    rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
-                        or Error $ref, "Failed to rename certificate: $!\n";
                 }
             }
             else {
                 Error $ref, "Unable to determine certificate expiration date\n";
+            }
+            if ($cert_info->{hash} ne $ref->{HASH}) {
+                Error $ref, "Mismatched hash, expected $ref->{HASH}, " .
+                            "got $cert_info->{hash}\n";
+            }
+            if ($cert_info->{subject} ne $ref->{SUBJECT}) {
+                Error $ref, "Mismatched subject, expected " .
+                            "\"$ref->{SUBJECT}\", got " .
+                            "\"$cert_info->{subject}\"\n";
+            }
+#           if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
+#               Error $ref, "Mismatched md5 fingerprint, expected " .
+#                           "\"$ref->{CERTIFICATE_MD5}\", got " .
+#                           "\"$cert_info->{md5sum}\"\n";
+#           }
+
+            if (not defined $ref->{_ERRORS}) {
+                Vprint    "Installing $ref->{_CERT_FILE}\n";
+                Log $ref, "Installing $ref->{_CERT_FILE}\n";
+                File::Copy::copy $cache_file,"$ref->{_CERT_FILE}.$$"
+                    or Error $ref, "Failed to copy certificate: $!\n";
+                rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
+                    or Error $ref, "Failed to rename certificate: $!\n";
             }
         }
     }
