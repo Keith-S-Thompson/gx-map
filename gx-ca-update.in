@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.29 2004-10-02 14:45:31-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.30 2004-10-07 22:16:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -48,6 +48,19 @@
 ########################################################################
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
+
+#
+# TO DO:
+#
+#      If the SIGNED_BY field is set, verify that the corresponding
+#      CA certificate has been installed.
+#
+#      Drop the CRL_WARNING field (or make it optional?); instead,
+#      warn if the CRL is past 90% of its lifetime.
+#
+#      Do a bit more error checking.  Confirm that the HASH and SUBJECT
+#      fields are correct (or just derive them from the certificate).
+#
 
 use strict;
 
@@ -434,17 +447,13 @@ sub Date_To_Seconds($) {
 #
 sub Get_CA_Ref($) {
     my($filename) = @_;
-    #
-    # To do: Verify that the cadesc file has all the required
-    # fields; if not, issue a warning and ignore the file.
-    #
     my $ref = Gridmap_Utils::Read_Records '-single', $filename;
     my @errors = ();
 
     my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
-                                    SUBJECT MAY_SIGN CERTIFICATE_URL
-                                    SIGNING_POLICY_URL CRL_URL
-                                    CRL_WARNING INDEX DISABLE );
+                                    SIGNED_BY SUBJECT MAY_SIGN
+                                    CERTIFICATE_URL SIGNING_POLICY_URL
+                                    CRL_URL CRL_WARNING INDEX DISABLE );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN CERTIFICATE_URL );
                        
     foreach my $key (@required) {
