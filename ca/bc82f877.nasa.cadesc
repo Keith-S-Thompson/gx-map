@@ -1,4 +1,4 @@
-# $Id: bc82f877.nasa.cadesc,v 1.6 2004-09-24 20:58:54-07 kst Exp $
+# $Id: bc82f877.nasa.cadesc,v 1.7 2004-10-08 10:53:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
 
 CA_NAME             NASA CA
@@ -12,3 +12,11 @@ SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-se
 CRL_URL             ?
 CRL_WARNING         ?
 INDEX               ?
+
+#
+# There does not appear to be a CRL.
+# I've found copies of the certificate and signing_policy at the Fermilab
+# web site, but not on any NASA site.
+#
+# There does not appear to be a CRL.
+#
