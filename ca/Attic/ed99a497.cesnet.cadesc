@@ -1,4 +1,4 @@
-# $Id: ed99a497.cesnet.cadesc,v 1.1 2004-10-07 21:37:42-07 kst Exp $
+# $Id: ed99a497.cesnet.cadesc,v 1.2 2004-10-08 13:59:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/ed99a497.cesnet.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -12,7 +12,6 @@ CERTIFICATE_URL     http://www.cesnet.cz/pki/certs/cca.pem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ed99a497.signing_policy
 CRL_URL             ?
 CRL_WARNING         48 hours
-INDEX               ?
 DISABLE             no
 
 #
