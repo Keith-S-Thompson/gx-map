@@ -1,0 +1,287 @@
+#
+# $Id: tg-user-map,v 1.1 2003-12-03 15:55:59-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/tg-user-map,v $
+# 
+# This file defines the mapping of user names across the TeraGrid systems.
+#
+# It consists of multiple entries.  Each entry corresponds to a single
+# user, and consists of the following:
+#     An opening curly brace '{'
+#         A "real name" field, such as "Keith Thompson", consisting of
+#         the user's real name enclosed in double quotes.
+#             (If you don't want to specify a real name, use "".)
+#             This field is for documentation; the gx-map system doesn't
+#             use it.
+#         One or more "username:UID@NAMESPACE" fields, indicating the
+#         user's Unix username and numeric UID in that namespace.
+#     A closing curly brace '}'
+#
+# Entries are free-format; each entry may be on a single line or may span
+# multiple lines.
+#
+# Entries may be given in any order.  Fields within each entry may be
+# given in any order.
+#
+# Leading and trailing blanks are ignored.
+# Comments extend from a '#' character to the end of the line.
+# There is currently no mechanism for escaping '#' or '"' characters
+# in fields.
+#
+# Entries were generated from the etc/passwd files at the five sites,
+# manipulated with a combination of Perl scripts (to match by first and
+# last name) and manual editing (to resolve people who share names,
+# different forms of the same person's name, and to eliminate system
+# accounts).
+#
+
+# Got 1681 entries
+
+{ inca:755@UC       inca:2018@CACR         inca:29410@NCSA     inca:19329@PSC     inca:454339@SDSC     "Inca User Account" }
+{ jalameda:1015@UC  jalameda:14958@CACR    jalameda:5641@NCSA  alameda:8362@PSC   ux400689:400689@SDSC "Jay Alameda" }
+{                                          gallen:16054@NCSA   gallen:14013@PSC   ux450302:450302@SDSC "Gabrielle Allen" }
+{ jalt:1014@UC                             jalt:27751@NCSA                        ux454815:454815@SDSC "Jason Alt" }
+{                   uxpaul:15067@CACR      uxpaul:28619@NCSA                      uxpaul:16179@SDSC    "Paul Andersen" }
+{                   sanderso:15038@CACR    sanderso:20322@NCSA                    ux454328:454328@SDSC "Sarah E. Anderson" }
+{                                                              apra:17975@PSC     ux452496:452496@SDSC "Edoardo Apra" }
+{                                          darchbel:30101@NCSA                    dave:15985@SDSC      "David Archbell" }
+{ arnoldg:1006@UC   arnoldg:14959@CACR     arnoldg:25114@NCSA  arnoldg:19475@PSC  ux453915:453915@SDSC "Galen Arnold" }
+{ aydt:1007@UC      aydt:15105@CACR        aydt:13708@NCSA     aydt:19219@PSC     ux454542:454542@SDSC "Ruth Aydt" }
+{                                          baden:20217@NCSA    baden:17389@PSC    baden:8229@SDSC      "Scott B. Baden" }
+{                                                              nbaker:18708@PSC   u14831:14831@SDSC    "Nathan Baker" }
+{ bramesh:788@UC    bramesh:15109@CACR     bramesh:25991@NCSA  bramesh:19440@PSC  ux452710:452710@SDSC "Ramesh Balakrishnan" }
+{                   mark:10048@CACR        bartelt:28268@NCSA  mbartelt:18944@PSC uxmark:452569@SDSC   "Mark Bartelt" }
+{                   jbasney:14907@CACR     jbasney:25555@NCSA                     jbasney:16392@SDSC   "Jim Basney" }
+{ gbauer:753@UC                            gbauer:21412@NCSA   gbauer:18269@PSC   ux454372:454372@SDSC "Gregory Bauer" }
+{                   beckman:14990@CACR     beckman:28633@NCSA  beckmanp:19030@PSC ux454139:454139@SDSC "Pete Beckman" }
+{ binns:709@UC      binns:15053@CACR       binns:29189@NCSA                       ux454384:454384@SDSC "Justin Binns" }
+{                                          birnbaum:29413@NCSA birnbaum:19063@PSC birnbaum:16340@SDSC  "Adam Birnbaum" }
+{ bittner:500@UC    bittner:15046@CACR     bittner:27473@NCSA                     sbittner:16383@SDSC  "Sandra Bittne" }
+{                                          rblake:27767@NCSA   rjb:19432@PSC      ux454695:454695@SDSC "Richard Blake" }
+{ mbletzin:1008@UC                         mbletzin:25145@NCSA                                         "Michael Bletzinger" }
+{                                          ruxandra:27171@NCSA bondares:18568@PSC ux454087:454087@SDSC "Ruxandra Bondarescu" }
+{ jbordner:739@UC                          bordner:10902@NCSA  bordner:17234@PSC  ux452912:452912@SDSC "James Bordner" }
+{ bresnaha:785@UC                                              bresnaha:19441@PSC bresnaha:454720@SDSC "John M. Bresnahan" }
+{                   leesa:14946@CACR       leesa:28173@NCSA                       leesa:16206@SDSC     "Leesa Brieger" }
+{                                          srb:28492@NCSA      srb:18873@PSC      srb:15322@SDSC       "Storage Resource Broker" }
+{ ian:772@UC                               ian:27793@NCSA      ibrooks:18259@PSC  ux453928:453928@SDSC "Ian Brooks" }
+{                   sharon:12012@CACR      brunett:22558@NCSA                     u13436:13436@SDSC    "Sharon Brunett" }
+{                   brunner:10090@CACR                         rbrunner:12195@PSC ux450327:450327@SDSC "Robert Brunner" }
+{ julian:746@UC     julian:10033@CACR      julian:26836@NCSA                      ux421033:421033@SDSC "Julian J. Bunn" }
+{                                          gpfs1:27340@NCSA                       ux454335:454335@SDSC "Michelle L Butler" }
+{                                          rbyrnes:29076@NCSA                     rbyrnes:28304@SDSC   "Robert Byrnes" }
+{                                          tmgadmin:29260@NCSA tmgadmin:19037@PSC ux454455:454455@SDSC "Nada Cagle" }
+{                                                              pcao:17681@PSC     ux454324:454324@SDSC "Peter Cao" }
+{                                                              lcarring:17458@PSC lnett:15589@SDSC     "Laura Carrington" }
+{                   acheng:14977@CACR      acheng:2546@NCSA    acheng4:17675@PSC  ux421010:421010@SDSC "Albert K. Cheng" }
+{                                          achien:12353@NCSA   achien:18983@PSC   ux454407:454407@SDSC "Andrew A. Chien" }
+{                                          chinj:29982@NCSA    chinj:19150@PSC                         "Jonathan Chin" }
+{                   dchoi:14937@CACR       dchoi:22124@NCSA                       dchoi:894@SDSC       "Dong Ju Choi" }
+{ chrabakh:727@UC                          chrabakh:29111@NCSA chrabakh:19555@PSC ux454293:454293@SDSC "Wahid Chrabakh" }
+{                                          tmx:29082@NCSA                         ux454319:454319@SDSC "Tom Christian" }
+{                   gchun:15054@CACR       gchun:29071@NCSA                       ux453416:453416@SDSC "Gregory Chun" }
+{                                          cotofana:29469@NCSA civitr:19284@PSC                        "Neil Cotofana" }
+{                                          yfcui:28269@NCSA    ycui:19139@PSC                          "Yifeng Cui" }
+{                   cummings:10181@CACR                        jcumming:11065@PSC ux452645:452645@SDSC "Julian C. Cummings" }
+{                                          cutchin:27426@NCSA  cutchin:18859@PSC                       "Steve Cutchin" }
+{                                          daues:16805@NCSA    daues:14463@PSC    ux453102:453102@SDSC "Gregory E. Daues" }
+{                                          decastro:28585@NCSA                    decastro:15966@SDSC  "Alex DeCastro" }
+{                                          deelman:29222@NCSA  deelman:19220@PSC  ux454543:454543@SDSC "Ewa Deelman" }
+{                                                              delorme:19437@PSC  ux454271:454271@SDSC "Arnaud Delorme" }
+{ dickens:1020@UC                          dickens:27786@NCSA  dickens:19471@PSC  ux454783:454783@SDSC "Phillip Dickens" }
+{                                          diegella:5033@NCSA                     diegella:128@SDSC    "Larry A. Diegel" }
+{ disz:768@UC                                                  disz:19435@PSC     ux454697:454697@SDSC "Terry Disz" }
+{                                          dombrowh:28334@NCSA                    dombrowh:105@SDSC    "Jay Dombrowski" }
+{ dorn:784@UC       dorn:15101@CACR        dorn:18323@NCSA     dorn:19286@PSC     ux428193:428193@SDSC "Patrick Dorn" }
+{                                          todrews:25350@NCSA                     ux453930:453930@SDSC "Timothy Drews" }
+{ dvorak:719@UC     dvorak:15107@CACR      dvorak:29558@NCSA   dvorak:19185@PSC   ux454538:454538@SDSC "Michael Dvorak" }
+{ jenos:728@UC      jenos:14906@CACR       jenos:20152@NCSA    jenos:19218@PSC    jenos:16396@SDSC     "Jeremy Enos" }
+{ kericson:740@UC   kericson:14936@CACR    kericson:28161@NCSA kericson:18777@PSC kericson:16287@SDSC  "Kate Ericson" }
+{                                          evard:20230@NCSA    evard:12902@PSC                         "Remy Evard" }
+{ mfaerman:741@UC                          mfaerman:29471@NCSA faerman:17614@PSC  mfaerman:14801@SDSC  "Marcio Faerman" }
+{                                          fariba:29072@NCSA                      fariba:15493@SDSC    "Fariba Fana" }
+{                   feldmann:14823@CACR    feldmann:26435@NCSA                    ux453876:453876@SDSC "Michael Feldmann" }
+{ jfettig:748@UC                           jfettig:25211@NCSA                     ux454514:454514@SDSC "John Fettig" }
+{ finley:503@UC     finley:15055@CACR      finley:29073@NCSA   bfinley:19028@PSC  ux454326:454326@SDSC "Brian Finley" }
+{ fischer:759@UC                           pfischer:29910@NCSA pfischer:17537@PSC                      "Paul F. Fischer" }
+{                                          frederik:25695@NCSA                    frederik:16074@SDSC  "Donald Frederick" }
+{                                          gardner:19244@NCSA  mgardner:19367@PSC                      "Mark K. Gardner" }
+{                                          patrickg:27235@NCSA                    ux454331:454331@SDSC "Patrick Geoffray" }
+{                                          kgibbs:28317@NCSA                      ux454598:454598@SDSC "Kevin Gibbs" }
+{                                          gjertsen:17249@NCSA                    ux450312:450312@SDSC "Rob Gjertsen" }
+{                   gleicher:10179@CACR    gleicher:29378@NCSA gleicher:19040@PSC gleicher:401@SDSC    "Michael Gleicher" }
+{                   goodale:14978@CACR                                            ux451455:451455@SDSC "Tom Goodale" }
+{                                          sgottlie:12937@NCSA gottlieb:7000@PSC                       "Steven Gottlieb" }
+{ mgower:793@UC                            mgower:27031@NCSA   mgower:19459@PSC   ux453809:453809@SDSC "Michelle Gower" }
+{ jgreen:756@UC     jgreen:14960@CACR      jgreen:27680@NCSA                      ux453932:453932@SDSC "Joseph Greenseid" }
+{ zzcgurh:781@UC    zzcgurh:15112@CACR     zzcgurh:29975@NCSA  zzcgurh:19468@PSC  ux454755:454755@SDSC "Robert Haines" }
+{                   harkness:15050@CACR    harkness:25552@NCSA harkness:1187@PSC  harkness:14992@SDSC  "Robert P. Harkness" }
+{ jharting:791@UC                          harting:30013@NCSA  harting:19147@PSC  ux454758:454758@SDSC "Jens Harting" }
+{                   rjhartma:14961@CACR                                           ux453916:453916@SDSC "Rebecca Hartman-Baker" }
+{ eric:730@UC       eriche:15090@CACR      eriche:29259@NCSA                      ux454453:454453@SDSC "Eric He" }
+{ jiahua:779@UC                            jiahua:29970@NCSA   jiahua:19438@PSC   ux454809:454809@SDSC "Jiahua He" }
+{                   jheffner:15119@CACR    jheffner:30087@NCSA jheffner:16153@PSC ux454814:454814@SDSC "John Heffner" }
+{                                          ux452554:29145@NCSA henchman:18935@PSC ux452554:452554@SDSC "Richard Humfry Henchman" }
+{                   dodi:14951@CACR        dodi:25892@NCSA     heryadi:19049@PSC  ux452347:452347@SDSC "Dodi Heryadi" }
+{                                          holland:25594@NCSA  dholland:17461@PSC holland:15598@SDSC   "Dominic Holland" }
+{                                          yfhu:30100@NCSA                        yhu:16461@SDSC       "Yuanfang Hu" }
+{ humphrey:1019@UC                         mhumphre:25724@NCSA                    ux454413:454413@SDSC "Marty A. Humphrey" }
+{                                          parry:28289@NCSA    husbands:18304@PSC ux454816:454816@SDSC "Parry Husbands" }
+{ ikegami:1012@UC                          ikegami:30088@NCSA                     ux454813:454813@SDSC "Tsutomu Ikegami" }
+{ insley:754@UC     insley:15056@CACR                                             ux454089:454089@SDSC "Joseph Insley" }
+{ weddie:749@UC     wdionj:14962@CACR      weddie:27817@NCSA                      ux453927:453927@SDSC "Weddie Jackson" }
+{ josephja:782@UC   jjacob:10185@CACR      jjacob:29473@NCSA   jjacob2:19116@PSC  ux451398:451398@SDSC "Joseph Jacob" }
+{ jacob:761@UC                                                 rjacob:18593@PSC                        "Rob Jacob" }
+{ hjafri:744@UC                            hjafri:28645@NCSA   hjafri:19282@PSC   ux454559:454559@SDSC "Hassan Jafri" }
+{ praveen:771@UC    praveen:14963@CACR     praveen:27675@NCSA  praveen:19042@PSC  ux453926:453926@SDSC "Praveen Jagadishprasad" }
+{                                          sjohn:5109@NCSA                        sjohn:691@SDSC       "Susan John" }
+{                                          tkaiser:25592@NCSA                     tkaiser:15794@SDSC   "Timothy Kaiser" }
+{                                          lkale:9784@NCSA     lkale:17123@PSC                         "Laxmikant V. Kale" }
+{                   karonis:15086@CACR     karonis:24391@NCSA  karonis:18986@PSC  ux421134:421134@SDSC "Nicholas Karonis" }
+{                   kaushik:14971@CACR     kaushik:24393@NCSA                     ux453146:453146@SDSC "Dinesh Kumar Kaushik" }
+{                   ikelley:14981@CACR                         ikelley:18133@PSC  ux454094:454094@SDSC "Ian R. Kelley" }
+{ kettimut:786@UC                                                                 kettimut:454719@SDSC "Rajkumar Kettimuthu" }
+{ yskee:1017@UC                            yskee:30105@NCSA                       ux454817:454817@SDSC "Yang Seok Ki" }
+{ bdkim:1003@UC     bdkim:15057@CACR       bdkim:28716@NCSA                                            "Byoung-Do Kim" }
+{                                                              bdkim:19470@PSC    ux454323:454323@SDSC "Byoungdo Kim" }
+{                                          jnkim:22085@NCSA    jkim5:18883@PSC    ux450643:450643@SDSC "Jeongnim Kim" }
+{                                          koenig:23536@NCSA                      ux453913:453913@SDSC "Gregory A Koenig" }
+{ rok:745@UC                                                   rkonecny:18934@PSC ux453813:453813@SDSC "Robert Konecny" }
+{                   skoranda:14859@CACR                        skoranda:17395@PSC ux453046:453046@SDSC "Scott Koranda" }
+{                                          skoric:21989@NCSA   koric:17396@PSC    ux452300:452300@SDSC "Seid Koric" }
+{                                          pkovatch:26372@NCSA                    pkovatch:16351@SDSC  "Patricia Kovatch" }
+{ kremenek:726@UC   kremenek:14834@CACR    kremenek:29074@NCSA kremenek:14938@PSC kremenek:679@SDSC    "George Kremenek" }
+{ rkufrin:776@UC    rkufrin:15049@CACR                                            rkufrin:9415@SDSC    "Rick Kufrin" }
+{ kurc:773@UC                              tkurc:29923@NCSA    kurc:19434@PSC     ux450790:450790@SDSC "Tahsin Kurc" }
+{                   kwok:14940@CACR        kwok:24885@NCSA                        kwok:16400@SDSC      "Wai Yip Kwok" }
+{                                          gregor:22083@NCSA                      ux421105:421105@SDSC "Gregor von Laszewski" }
+{ dvd:774@UC                               dleitko:29081@NCSA                     ux454317:454317@SDSC "David Leitko" }
+{                                          wilfred:29075@NCSA                     wilfred:29426@SDSC   "Wilfred Li" }
+{                                          xiaoye:21764@NCSA   xlid:19100@PSC                          "Xiaoye Sherry Li" }
+{                                          junwoo:28489@NCSA   jlim:18109@PSC     ux414016:414016@SDSC "Junwoo Lim" }
+{                   lindheim:12006@CACR                                           u13437:13437@SDSC    "Jan Lindheim" }
+{                                          slindsey:28591@NCSA                    lindsey:874@SDSC     "Susan Lindsey" }
+{ link:507@UC                                                                     link:424718@SDSC     "Joseph M. Link" }
+{ mlink:787@UC                                                                    mlink:454721@SDSC    "Michael E. Link" }
+{                   litvin:10203@CACR      litvin:25947@NCSA   litvin:18975@PSC   ux454327:454327@SDSC "Vladimir Litvin" }
+{ lxin:764@UC                              lxin:29386@NCSA     lxin:19433@PSC     ux454752:454752@SDSC "Xin Liu" }
+{                   loftis:14942@CACR      bruce:22044@NCSA    loftis:10169@PSC   u15326:15326@SDSC    "Bruce Loftis" }
+{                                          longa:29223@NCSA    longa:18996@PSC    longa:806@SDSC       "Antoinette Long" }
+{                   slu:15058@CACR         slu:23290@NCSA      rlu:17678@PSC      ux453807:453807@SDSC "Songyu Lu" }
+{                                          macfadye:22607@NCSA aim:19144@PSC      ux454507:454507@SDSC "Andrew MacFadyen" }
+{ kcm:765@UC        kcm:15123@CACR         kmacinni:29931@NCSA kcm:19215@PSC      ux454018:454018@SDSC "Ken MacInnis" }
+{ gmkumar:729@UC                                               kmahinth:19142@PSC u15898:15898@SDSC    "Kumar Mahinthakumar" }
+{                   majumdar:15074@CACR    majumdar:22123@NCSA majumdaa:18857@PSC majumdar:15296@SDSC  "Amitava Majumdar" }
+{                                          marcusiu:254@NCSA                      ux400360:400360@SDSC "Doru I Marcusiu" }
+{                                          mmargo:29614@NCSA   mmargo:19285@PSC   mmargo:28269@SDSC    "Martin Margo" }
+{                                                              mccammon:8925@PSC  u7080:7080@SDSC      "James Andrew McCammon" }
+{ mcq:736@UC        mcq:14857@CACR         mcq:21514@NCSA      mcq:19034@PSC      ux454454:454454@SDSC "John McCorquodale" }
+{                   davem:14964@CACR       davem:208@NCSA      dmcwilli:17402@PSC davem:270@SDSC       "David G McWilliams" }
+{                                          gmehta:28594@NCSA   gmehta:19221@PSC   ux454544:454544@SDSC "Gaurang Mehta" }
+{ ljmiller:1011@UC  larry:15075@CACR                                              ux453886:453886@SDSC "Lawrence Miller" }
+{                                                              mmiller7:18488@PSC mmiller:29575@SDSC   "Mark Miller" }
+{ cmills:780@UC                            cmills:28087@NCSA   cmills:19436@PSC   cmills:415982@SDSC   "Catherine Mills" }
+{                   mock:14934@CACR        mock:25597@NCSA     mock:17205@PSC     mock:14768@SDSC      "Stephen Mock" }
+{                                                              mongan:18949@PSC   ux454343:454343@SDSC "John Mongan" }
+{                                          natarajn:24245@NCSA natarajn:19041@PSC ux454457:454457@SDSC "Shreedhar Natarajan" }
+{                   navarro:15039@CACR     jnavarro:22169@NCSA jnavarro:19018@PSC                      "John-Paul Navarro" }
+{                                          dnave:29585@NCSA                       ux454557:454557@SDSC "Demian Nave" }
+{                                          bnenow:29077@NCSA                      ux454318:454318@SDSC "Robert Nenow" }
+{                   newman:14615@CACR      hnewman:25268@NCSA                                          "Harvey B. Newman" }
+{                                                              norman:9891@PSC    u11726:11726@SDSC    "Michael Norman" }
+{                                          oneal:13750@NCSA                       ux453109:453109@SDSC "David C. O'Neal" }
+{                                          bwoshea:23947@NCSA                     ux453739:453739@SDSC "Brian W. O'Shea" }
+{                                          kbolsen:29799@NCSA  kolsen:18070@PSC                        "Kim Bak Olsen" }
+{ olson:762@UC                             rolson:21797@NCSA                                           "Robert Olson" }
+{                                          bosmond:2813@NCSA   bosmond:19356@PSC  ux454694:454694@SDSC "Brian Osmond" }
+{ mpackard:1013@UC  mpackard:15104@CACR    mpackard:25934@NCSA packard:18853@PSC  mpackard:416432@SDSC "Mike Packard" }
+{                                          spamidig:12216@NCSA pamidigh:17394@PSC                      "Sudhakar V. Pamidighantam" }
+{ apant:738@UC      apant:15099@CACR       apant:21060@NCSA                       ux453899:453899@SDSC "Avneesh Pant" }
+{ papka:711@UC                             papka:15732@NCSA                       ux453808:453808@SDSC "Michael E. Papka" }
+{ scottp:1000@UC    scottp:14994@CACR      scottp:17928@NCSA                      ux451021:451021@SDSC "Scott Parker" }
+{                   patton:12008@CACR                                             patton:28201@SDSC    "James M. Patton" }
+{ mpaul:792@UC                             markp:29547@NCSA    mpaul:19224@PSC                         "Mark Paul" }
+{                   epaulson:15127@CACR                                           ux454167:454167@SDSC "Erik Paulson" }
+{                                          dmitryp:25598@NCSA                     dmitry:16073@SDSC    "Dmitry Pekurovsky" }
+{                                          robp:22013@NCSA     penningt:7049@PSC  robpenn:450103@SDSC  "Robert L. Pennington" }
+{                                          pfeiffer:27812@NCSA                    pfeiffer:673@SDSC    "Wayne Pfeiffer" }
+{                   mikep:14965@CACR       mikep:9552@NCSA                        ux453898:453898@SDSC "Michael Pflugmacher" }
+{                                          jphillip:18767@NCSA jphillip:14767@PSC                      "James C. Phillips" }
+{ pickles:1016@UC                          pickles:30021@NCSA  pickles:16542@PSC  ux454767:454767@SDSC "Stephen Pickles" }
+{                   pingleto:14966@CACR    pingleto:10839@NCSA                    ux453929:453929@SDSC "Michael Robert Pingleton" }
+{ pinning:769@UC    zzcgurp:15108@CACR     pinning:29922@NCSA  pinning:19341@PSC  ux454696:454696@SDSC "Robin Pinning" }
+{                   pollney:14979@CACR                         pollney:17989@PSC  ux454092:454092@SDSC "Denis Pollney" }
+{                                          joshuap:28982@NCSA                     joshuap:719@SDSC     "Joshua Polterock" }
+{                   jpool:13181@CACR       jpool:29141@NCSA                                            "James C.T. Pool" }
+{ zzcguap:783@UC    zzcguap:15110@CACR     zzcguap:29977@NCSA  aporter:19457@PSC  ux454753:454753@SDSC "Andrew Porter" }
+{                   tradke:14982@CACR                          tradke:17991@PSC   ux452883:452883@SDSC "Thomas Radke" }
+{                   raymond:15059@CACR     raymond:13655@NCSA  raymond:183@PSC    u621:621@SDSC        "Richard Raymond" }
+{ rreddy:742@UC     rreddy:15120@CACR      rreddy:13814@NCSA   rreddy:2189@PSC    u14056:14056@SDSC    "Raghurama Reddy" }
+{                                          lrenambo:29308@NCSA renambot:19031@PSC ux454458:454458@SDSC "Luc Renambot" }
+{                   rideout:14976@CACR                         rideout:17988@PSC  ux454093:454093@SDSC "David P. Rideout" }
+{ rross:703@UC      rross:15060@CACR       rross:26857@NCSA                       ux454383:454383@SDSC "Robert B. Ross" }
+{                                          arossi:27352@NCSA                      ux453877:453877@SDSC "Albert L. Rossi" }
+{ zzcgukr:778@UC    zzcgukr:15111@CACR     zzcgukr:29976@NCSA  zzcgukr:19469@PSC  ux454754:454754@SDSC "Kevin Roy" }
+{                                          ruddk:29080@NCSA                       ux454316:454316@SDSC "Kevin Rudd" }
+{ rynge:733@UC      rynge:15076@CACR       rynge:29542@NCSA    rynge:19184@PSC    ux454281:454281@SDSC "Mats Rynge" }
+{                                                              saied:8652@PSC     fsaied:15572@SDSC    "Faisal Saied" }
+{                   ams:15061@CACR                             sandersa:18858@PSC ams:16408@SDSC       "Andrew Sanderson" }
+{ msayeed:731@UC                           msayeed:27822@NCSA  sayeed:19143@PSC   ux453783:453783@SDSC "Mohamed Sayeed" }
+{ danielss:1005@UC                         dans1:19702@NCSA                                            "Daniel Seth Schaffer" }
+{                                          schroede:4355@NCSA                     schroede:122@SDSC    "Wayne Schroeder" }
+{                                          kschulte:1400@NCSA  schulten:9138@PSC                       "Klaus J. Schulten" }
+{                                          dsears:23272@NCSA   dsears:19288@PSC   ux454575:454575@SDSC "Duane Searsmith" }
+{                                          sekiguti:30089@NCSA                    ux454811:454811@SDSC "Satoshi Sekiguchi" }
+{                                          jshalf:18664@NCSA   shalf:13549@PSC    jshalf:15570@SDSC    "John Shalf" }
+{                                                              psherwoo:17726@PSC ux454421:454421@SDSC "Paul Sherwood" }
+{                                          pshin:29468@NCSA    pshin:19096@PSC    kg:16166@SDSC        "Peter Shin" }
+{                                          mshow:20160@NCSA                       mshow:16381@SDSC     "Michael Showerman" }
+{ dsimmel:1004@UC   dsimmel:15124@CACR     dsimmel:28472@NCSA  dsimmel:17780@PSC  ux454184:454184@SDSC "Derek Simmel" }
+{                                          gurmeet:29557@NCSA  gurmeet:19223@PSC  ux454546:454546@SDSC "Gurmeet Singh" }
+{ ssmallen:751@UC   shava:15062@CACR       ssmallen:25014@NCSA smallen:18855@PSC  ssmallen:445032@SDSC "Shava Smallen" }
+{                                          sobh:24012@NCSA     sobh:19038@PSC     ux454456:454456@SDSC "Nahil Sobh" }
+{                                          jsommerf:28390@NCSA jasons:16412@PSC   ux454782:454782@SDSC "Jason Sommerfield" }
+{                   csteffen:14939@CACR    csteffen:28198@NCSA                    ux453875:453875@SDSC "Craig Steffen" }
+{ nstone:1009@UC    nstone:15122@CACR      nstone:30079@NCSA   nstone:15799@PSC   ux454786:454786@SDSC "Nathan Stone" }
+{                                          straka:206@NCSA     straka:7421@PSC    straka:412@SDSC      "Mark Anton Straka" }
+{ mei:737@UC                               meisu:29556@NCSA    meisu:19225@PSC    u15454:15454@SDSC    "MeiHui Su" }
+{                   spamidig:14967@CACR                                           ux421154:421154@SDSC "Pamidighantam Sudhakar" }
+{ wibke:763@UC                                                                    wibke:16349@SDSC     "Wibke Sudholt" }
+{                                          sugar:9451@NCSA     sugar:3556@PSC                          "Robert L. Sugar" }
+{                                          emad:25035@NCSA     tajkhors:17158@PSC                      "Emad Tajkhorshid" }
+{                                          takemiya:30091@NCSA takemiya:18497@PSC ux454812:454812@SDSC "Hiroshi Takemiya" }
+{ tanaka:1010@UC                           ytanaka:30090@NCSA                     ux454810:454810@SDSC "Yoshio Tanaka" }
+{                                          tangmuna:30098@NCSA tangmuna:19108@PSC ux454495:454495@SDSC "Hongsuda Tangmunarunkit" }
+{ jtaylor:717@UC    jtaylor:15106@CACR     jntaylor:27479@NCSA                    ux454539:454539@SDSC "John Taylor" }
+{                                          jtchieu:29079@NCSA                     jtchieu:29563@SDSC   "Jason Tchieu" }
+{ kst:718@UC        kst:14935@CACR         kst:28058@NCSA      kthompso:18854@PSC kst:15996@SDSC       "Keith Thompson" }
+{                                          atong:28649@NCSA                       ux454784:454784@SDSC "Anthony Tong" }
+{                                          dtoussai:12940@NCSA toussain:7021@PSC                       "Douglas Toussaint" }
+{ metryby:789@UC                           metryby:29609@NCSA  metryby:19439@PSC  ux454756:454756@SDSC "Michael Tryby" }
+{                                                              urbanic:6531@PSC   ux453108:453108@SDSC "John Urbanic" }
+{                                          vahi:29548@NCSA     vahi:19222@PSC     ux454545:454545@SDSC "Karan Vahi" }
+{ veytser:735@UC                           vveytser:29520@NCSA veytser:19180@PSC  veytser:452838@SDSC  "Vladimir Veytser" }
+{                                          voeckler:28488@NCSA                    ux453946:453946@SDSC "Jens Voeckler" }
+{                   longwang:14980@CACR                                           ux454091:454091@SDSC "Long Wang" }
+{ ywg:747@UC                                                   ywangd:17933@PSC   ux415548:415548@SDSC "Yang Wang" }
+{                                                              weberd:10518@PSC   ux450414:450414@SDSC "Dan Weber" }
+{ pwefel:732@UC     pwefel:15102@CACR      pwefel:26211@NCSA   wefel:19326@PSC    pwefel:28197@SDSC    "Paul Wefel" }
+{ welling:766@UC                           welling:29191@NCSA  welling:118@PSC    ux454385:454385@SDSC "Joel Welling" }
+{                   dwheeler:15103@CACR    dwheeler:23291@NCSA dwheeler:19327@PSC dwheeler:28198@SDSC  "David Wheeler" }
+{ swhitmor:775@UC                          swhitmor:21837@NCSA swhitmor:18995@PSC swhitmor:16445@SDSC  "Shannon D. Whitmore" }
+{                                          wilde:29078@NCSA                       ux454325:454325@SDSC "Michael Wilde" }
+{ wilkinsn:1018@UC  wilkinsn:14973@CACR    wilkinsn:22122@NCSA wilkinsd:12502@PSC wilkinsn:782@SDSC    "Nancy Wilkins-Diehr" }
+{                   roy:12011@CACR         royw:28088@NCSA     royw:19097@PSC     ux400560:400560@SDSC "Roy Williams" }
+{ winkler:527@UC    winkler:14814@CACR     winkler:27475@NCSA  winkler:19029@PSC  lwinkler:28200@SDSC  "Linda Winkler" }
+{                                          wolter:29237@NCSA   wolter:17725@PSC   wolter:16200@SDSC    "Nicole Wolter" }
+{                                                              wongc:18929@PSC    ux451684:451684@SDSC "Chung F. Wong" }
+{ xwu:750@UC                               xwu1:29188@NCSA     xwu1:18985@PSC     ux454409:454409@SDSC "Ryan Wu" }
+{ hxia:743@UC                              hxia:29187@NCSA     hxia1:18984@PSC    ux454408:454408@SDSC "Huaxia Xia" }
+{                                          qiaoxin:30119@NCSA  qiao:19283@PSC     qiao:428310@SDSC     "Qiao Xin" }
+{                                          smyan:27229@NCSA                       ux453931:453931@SDSC "Shengquan Yan" }
+{ ymuqun:1021@UC                           ymuqun:17929@NCSA   ymuqun:19226@PSC   ux454547:454547@SDSC "Muqun (Kent) Yang" }
+{ kenneth:752@UC    kenneth:15100@CACR     kenneth:28566@NCSA  yoshimot:19065@PSC kenneth:15984@SDSC   "Kenneth Yoshimoto" }
+{                                          youssef:29519@NCSA                     ux454516:454516@SDSC "Saul Youssef" }
+{                                          yanan:28567@NCSA                       yanan:453641@SDSC    "Yanan Yu" }
+{                                          gzheng:24169@NCSA   zhengg:17157@PSC                        "Gengbin Zheng" }
+{                   bzhu:14984@CACR                                               bzhu:16039@SDSC      "Bing Zhu" }
+{                                          fzhu:26567@NCSA     fzhu:17377@PSC                          "Fangqiang Zhu" }
