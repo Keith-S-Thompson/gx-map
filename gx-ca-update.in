@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.46 2004-11-12 13:45:20-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.47 2004-11-17 20:12:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -162,7 +162,7 @@ if (defined $User_Opt->{ca} and $User_Opt->{'all-cas'}) {
 my $Data_Dir = "$Install_Dir/var";
 my $lock_file = "$Data_Dir/.gx-ca-update.lock";
 
-my $ca_conf_dir = "$Install_Dir/etc/ca.conf";
+my $ca_conf_dir = "$Install_Dir/etc/ca-config";
 my @ca_list_all;
 my $requested_all = undef; # true if user specified "-ca ALL"
 
