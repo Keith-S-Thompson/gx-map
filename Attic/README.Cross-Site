@@ -1,0 +1,44 @@
+# $Id: README.Cross-Site,v 1.1 2004-11-24 16:52:34-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/README.Cross-Site,v $
+
+gx-map has some limited support for automatically propagating
+grid-mapfile information across sites.
+
+If you have two or more systems sharing a common user namespace
+(so that a given account name and numeric UID are guaranteed to be
+the same person on both sites), you can share the "requests.log"
+data between them.  It's easiest if they share a common writable
+(NFS?) filesystem; put the data directory on that filesystem,
+and let the systems share it.  Run gx-check-requests on one system
+(preferably one on all users have accounts), and run gx-gen-mapfile
+on each system that needs a distinct grid-mapfile (e.g., if not all
+users have accounts on all systems).
+
+If there is no shared filesystem, each system can have its own
+data directory, and the requests.log files can be shared via http or
+anonymous ftp.  Use the "-copy" option of gx-check-requests to write a
+copy of the requests.log file to a directory that's made available by
+http or ftp, and use the "-req" option of gx-gen-mapfile to specify
+the URL of the remote requests.log file.  This is currently being
+used to propagate information from SDSC's internal systems to SDSC's
+Datastar and Teragrid systems (but not vice versa).
+
+For systems with distinct namespaces, where "jsmith" on one system
+may not be the same user as "jsmith" on another system, there's
+currently no good mechanism for automatically propagating information.
+This requires users (or administrators) to run the "gx-map" command
+separately on each system.  There are some hooks in place to customize
+the Gridmap_Valid_Mappings.pm Perl module, allowing translations from
+one namespace to another, but this hasn't been widely used.
+
+Release 0.4.0 adds a "-dump" option to gx-gen-mapfile.  Rather than
+generating a grid-mapfile, this generates an ordered listing of all the
+transactions in the requests.log file.  Each entry includes a "source"
+attribute, indicating whether the mapping was requested by a user,
+by an administrator, or by some automated mechanism.  The intent is
+that a tool (not yet implemented) could use this to watch for new
+requests and propagate the information to other systems via a user
+database.  It's intended for use with the TeraGrid user database.
+The "source" attribute is intended to prevent duplication of requests
+that are already in the user database.  Not all the details have been
+worked out.
