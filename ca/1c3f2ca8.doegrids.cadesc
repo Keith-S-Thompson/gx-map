@@ -1,10 +1,11 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.5 2004-09-30 15:53:33-07 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.6 2004-10-07 22:09:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
 HOMEPAGE            http://pki1.doegrids.org/
 CONTACT             ?
 HASH                1c3f2ca8
+SIGNED_BY           /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Root CA 1
 SUBJECT             /DC=org/DC=DOEGrids/OU=Certificate Authorities/CN=DOEGrids CA 1
 MAY_SIGN            /DC=org/DC=DOEGrids/*
 MAY_SIGN            /DC=org/DC=doegrids/*
