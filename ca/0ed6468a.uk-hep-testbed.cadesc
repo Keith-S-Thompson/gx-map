@@ -1,4 +1,4 @@
-# $Id: 0ed6468a.uk-hep-testbed.cadesc,v 1.2 2004-10-08 13:59:27-07 kst Exp $
+# $Id: 0ed6468a.uk-hep-testbed.cadesc,v 1.3 2004-10-08 20:44:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0ed6468a.uk-hep-testbed.cadesc,v $
 
 CA_NAME             UK HEP Testbed CA
@@ -7,6 +7,7 @@ CONTACT             ca@hep.grid.ac.uk
 HASH                0ed6468a
 SUBJECT             /O=Grid/O=UKHEP/CN=UK HEP Testbed CA
 MAY_SIGN            /O=Grid/O=UKHEP/*
+CERTIFICATE_MD5     2F:44:EA:D2:F4:19:9C:26:E9:16:7D:81:66:29:C5:16
 CERTIFICATE_URL     http://www.gridpp.ac.uk/ca/software/0ed6468a.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/0ed6468a.signing_policy
 CRL_URL             http://www.gridpp.ac.uk/ca/ca-crl.pem
