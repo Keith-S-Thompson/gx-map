@@ -1,4 +1,4 @@
-# $Id: d2a353a5.pkgrid.cadesc,v 1.4 2004-10-08 20:44:44-07 kst Exp $
+# $Id: d2a353a5.pkgrid.cadesc,v 1.5 2004-10-10 03:22:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d2a353a5.pkgrid.cadesc,v $
 
 CA_NAME             PK-Grid-CA
@@ -21,3 +21,5 @@ DISABLE             yes
 # As of 2004-10-08, the web server does not respond.
 # Disabling until they fix things.
 #
+
+# MD5 fingerprint from d2a353a5.0 downloaded 2004-10-07
