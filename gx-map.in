@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.9 2003-06-05 19:44:08-07 kst Exp $
+# $Id: gx-map.in,v 1.10 2003-06-12 02:16:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -20,7 +20,7 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
-my $Data_Dir = "$Install_Dir/var";
+my $Default_Data_Dir = "$Install_Dir/var";
 
 sub Usage(@);
 sub Long_Usage();
@@ -33,12 +33,6 @@ sub Get_DN_From_File($);
 sub Gen_Request_File_Name();
 sub Debug(@);
 sub Debugf(@);
-
-my $Requests_Dir = "$Data_Dir/new-requests";
-
-die "No directory $Data_Dir\n"  if not -d $Data_Dir;
-die "No directory $Requests_Dir\n" if not -d $Requests_Dir;
-die "Directory $Requests_Dir is not writable\n" if not -w $Requests_Dir;
 
 my $Prog_Name = File::Basename::basename $0;
 my $hostname;
@@ -83,7 +77,9 @@ my @Opts = ( $User_Opt,
                  remove remove-dn remove-user
                  update
                  quiet force no-admin
-                 dn=s certificate-file=s username=s namespace=s email=s
+                 dn=s certificate-file=s username=s
+                 directory=s
+                 email=s
                  force-dn no-email comment=s
                  debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -129,6 +125,12 @@ Debug "Options =>\n";
 foreach my $key (sort keys %$Options) {
     Debug "    $key => $Options->{$key}\n";;
 }
+
+my $Requests_Dir = "$Options->{directory}/new-requests";
+
+die "No directory $Options->{directory}\n" if not -d $Options->{directory};
+die "No directory $Requests_Dir\n" if not -d $Requests_Dir;
+die "Directory $Requests_Dir is not writable\n" if not -w $Requests_Dir;
 
 if ($Options->{operation} eq 'update') {
     Request_Update();
@@ -306,12 +308,11 @@ my $request = {
     requested_by_name => $PW->{name},
     hostname          => $hostname
 };
-$request->{dn}          = "\"$Options->{dn}\""   if defined $Options->{dn};
-$request->{map_to_name} = $Options->{username}   if defined $Options->{username};
-$request->{map_to_uid}  = $requested_uid         if defined $requested_uid;
-$request->{email}       = $Options->{email}      if defined $Options->{email};
-$request->{comment}     = $Options->{comment}    if defined $Options->{comment};
-$request->{NAMESPACE}   = $User_Opt->{namespace} if defined $User_Opt->{namespace};
+$request->{dn}          = "\"$Options->{dn}\"" if defined $Options->{dn};
+$request->{map_to_name} = $Options->{username} if defined $Options->{username};
+$request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
+$request->{email}       = $Options->{email}    if defined $Options->{email};
+$request->{comment}     = $Options->{comment}  if defined $Options->{comment};
 
 #
 # Be paranoid.  Create the file, close it, chmod it to 200,
@@ -584,20 +585,20 @@ EOF
 
         if ($need_user_name) {
             while (not defined $Options->{username}) {
-		if ($PW->{name} eq 'root') {
-		    print "What user name do you want to $what? ";
-		}
-		else {
-		    print "What user name do you want to $what ",
-			  "(default is $PW->{name}) ? ";
-		}
+                if ($PW->{name} eq 'root') {
+                    print "What user name do you want to $what? ";
+                }
+                else {
+                    print "What user name do you want to $what ",
+                          "(default is $PW->{name}) ? ";
+                }
                 chomp($response = scalar <STDIN>);
                 $response =~ s/^ *//;
                 $response =~ s/ *$//;
                 if ($response eq '') {
-		    if ($PW->{name} ne 'root') {
-			$Options->{username} = $PW->{name};
-		    }
+                    if ($PW->{name} ne 'root') {
+                        $Options->{username} = $PW->{name};
+                    }
                 }
                 else {
                     $Options->{username} = $response;
@@ -770,13 +771,16 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
-    if (defined $User_Opt->{namespace}) {
+    if (defined $User_Opt->{directory}) {
         if ($Globus_Admin) {
-            $Options->{NAMESPACE} = $User_Opt->{namespace};
+            $Options->{directory} = $User_Opt->{directory};
         }
         else {
-            Usage "Only a Globus administrator may specify a namespace\n"
+            Usage "Only a Globus administrator may specify a data directory\n"
         }
+    }
+    else {
+        $Options->{directory} = $Default_Data_Dir;
     }
 
     if (defined $User_Opt->{dn}) {
@@ -881,9 +885,11 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -username name          : Unix user name to map.
                               This option is for use by Globus
                               administrators only.
-    -namespace name         : Specify a namespace.
+    -directory dir          : Specify an alternate data directory.
                               This option is for use by Globus administrators
                               only, and is not available in interactive mode.
+                              The default data directory is
+                              $Default_Data_Dir .
     -email addr             : Your contact e-mail address.
                               This may be used to contact you if there's
                               a problem with your certificate.  If you
