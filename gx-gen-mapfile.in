@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.15 2003-07-17 03:14:41-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.16 2003-07-17 22:18:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -29,6 +29,7 @@ BEGIN {
     unshift @INC, "$Install_Dir/lib";
 }
 use Gridmap_Utils ();
+use Gridmap_Valid_Mappings ();
 
 my $Data_Dir             = "$Install_Dir/var";
 my $Default_Requests_Log = "$Data_Dir/requests.log";
@@ -77,7 +78,10 @@ else {
     $User_Opt->{'requests-log'} = [ $Default_Requests_Log ];
 }
 
-$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+if ($User_Opt->{debugging}) {
+    $Gridmap_Utils::Debugging = 1;
+    $Gridmap_Valid_Mappings::Debugging = 1;
+}
 
 my @Output_Files = @ARGV;
 my $Write_To_Stdout = (scalar @Output_Files == 0);
@@ -134,7 +138,7 @@ foreach my $request (@requests) {
     # The Valid_Mappings function may return multiple mappings for a
     # single request.
     #
-    my @request_mappings = Gridmap_Utils::Valid_Mappings $request;
+    my @request_mappings = Gridmap_Valid_Mappings::Valid_Mappings $request;
     my $operation = $request->{operation};
     foreach my $mapping (@request_mappings) {
         #
