@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.11 2003-07-10 14:23:11-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.12 2003-07-17 00:20:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -56,8 +56,17 @@ Usage if $User_Opt->{help};
 # 'default' with the name of the default log.
 #
 if (@{$User_Opt->{'requests-log'}}) {
-    foreach (@{$User_Opt->{'requests-log'}}) {
-        $_ = $Default_Requests_Log if $_ eq 'default';
+    foreach my $log (@{$User_Opt->{'requests-log'}}) {
+        #
+        # $log is an alias for each element of the array, and can be
+        # used to modify it.
+        #
+        if ($log eq 'default') {
+            $log = $Default_Requests_Log;
+        }
+        elsif (m<^(http|ftp)://>) {
+            $log = Gridmap_Utils::Cache_File $_;
+        }
     }
 }
 else {
