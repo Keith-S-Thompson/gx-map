@@ -1,5 +1,5 @@
 #
-# $Id: ncsa-sdsc-user-map,v 1.5 2003-08-18 00:32:11-07 kst Exp $
+# $Id: ncsa-sdsc-user-map,v 1.6 2003-08-22 10:46:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ncsa-sdsc-user-map,v $
 # 
 # This file is a first cut at a mapping of user names between SDSC's
@@ -144,6 +144,8 @@ jfettig@ncsa     ux454514@sdsc     # John Fettig
 rynge@ncsa       ux454281@sdsc     # Mats Rynge
 
 inca@ncsa        inca@sdsc         # Shava Smallen / Inca User Account
+
+gurmeet@ncsa     ux454546@sdsc     # Gurmeet Singh
 
 # xcao@ncsa        ux454324@sdsc     # Xiangchi Cao / Peter Cao
 # chrisman@sdsc    cameron@sdsc      # Rachel Chrisman / Cameron Chrisman
