@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.32 2004-10-08 11:04:28-07 kst Exp $
+# $Id: gx-map.in,v 1.33 2004-10-08 11:28:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -553,7 +553,7 @@ EOF
         $response =~ s/^\s*//;
         $response =~ s/\s*$//;
         if ($response ne '') {
-            $Options->{directory} = $response;
+            $Options->{source} = $response;
         }
     }
     #
