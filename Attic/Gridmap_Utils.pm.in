@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.30 2004-08-17 20:02:22-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.31 2004-08-17 20:37:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -46,19 +46,6 @@
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
 
-########################################################################
-# Configuration variables:
-#
-# PERL          %PERL%
-# PATH          %PATH%
-# NAMESPACE     %NAMESPACE%
-# INSTALL_DIR   %INSTALL_DIR%
-# DATA_DIR      %DATA_DIR%
-# GLOBUS_ADMINS %GLOBUS_ADMINS%
-# DN_FORMAT     %DN_FORMAT%
-# ADMIN_EMAIL   %ADMIN_EMAIL%
-########################################################################
-
 use strict;
 
 package Gridmap_Utils;
@@ -72,12 +59,26 @@ package Gridmap_Utils;
 # The value of the VERSION variable is the version number for the entire
 # gx-map system.
 #
+# The %Config hash contains values generated before installation by
+# configure-gx-map.  Note that the PERL and INSTALL_DIR options are
+# necessarily expanded directly in each file, and the VALID_MAPPINGS is
+# used directly by configure-gx-map; other options should be referenced
+# from the %Gridmap_Utils::Config hash.
+# 
 
 BEGIN {
     require 5.004;
-    use vars qw($VERSION $Debugging);
+    use vars qw($VERSION $Debugging %Config);
     $VERSION = "0.4-alpha";
     $Debugging = undef;
+    %Config = ( PERL          => '%PERL%',
+                PATH          => '%PATH%',
+                NAMESPACE     => '%NAMESPACE%',
+                INSTALL_DIR   => '%INSTALL_DIR%',
+                DATA_DIR      => '%DATA_DIR%',
+                GLOBUS_ADMINS => '%GLOBUS_ADMINS%',
+                DN_FORMAT     => '%DN_FORMAT%',
+                ADMIN_EMAIL   => '%ADMIN_EMAIL%' );
     use File::Basename ();
 }
 
@@ -272,7 +273,7 @@ sub Get_Hostname() {
         #
         # Localize $ENV{PATH} to avoid taint check
         #
-        local($ENV{PATH}) = '%PATH%';
+        local($ENV{PATH}) = $Gridmap_Utils::Config{PATH};
         chomp($hostname = `/bin/hostname 2>/dev/null`);
     }
 
@@ -315,7 +316,7 @@ my %is_globus_admin = ();
 
 sub Is_Globus_Admin($) {
     my($user) = @_;
-    my $admins = '%GLOBUS_ADMINS%';
+    my $admins = $Gridmap_Utils::Config{GLOBUS_ADMINS};
 
     if (scalar keys %is_globus_admin == 0) {
         foreach my $entry (split /\s+/, $admins) {
@@ -342,7 +343,7 @@ sub Is_Globus_Admin($) {
 sub Use_Commands(@) {
     my(@commands) = @_;
     my @unfound = ();
-    $ENV{PATH} = '%PATH%';
+    $ENV{PATH} = $Gridmap_Utils::Config{PATH};
     my @path = split /:/, $ENV{PATH};
     foreach my $command (@commands) {
         my $foundit = 0;
@@ -465,7 +466,7 @@ sub Read_Records($) {
 # ----------------------------------------------------------------------
 
 my %Cache_File = ();
-my $Download_Dir = "%INSTALL_DIR%/var/cache";
+my $Download_Dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var/cache";
 my $Download_Index = 0;
 
 # ----------------------------------------------------------------------
@@ -866,13 +867,15 @@ sub Read_Admin_List($) {
 
 #
 # Given a single DN, returns a list of one or two DNs depending on the
-# setting of the DN_FORMAT configuration variable.
+# setting of the DN_FORMAT configuration option.
 # 
 sub DN_List($) {
     my $dn = $_[0];
+    my $dn_format = $Gridmap_Utils::Config{DN_FORMAT};
 
     my $gt2_dn;
-    if ('%DN_FORMAT%' eq 'GT2' or '%DN_FORMAT%' eq 'BOTH') {
+    if ($dn_format eq 'GT2' or $dn_format eq 'BOTH')
+    {
         $gt2_dn = $dn;
         $gt2_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=);
         $gt2_dn =~ s(/UID=)(/USERID=);
@@ -880,7 +883,7 @@ sub DN_List($) {
     }
 
     my $gt3_dn;
-    if ('%DN_FORMAT%' eq 'GT3' or '%DN_FORMAT%' eq 'BOTH') {
+    if ($dn_format eq 'GT3' or $dn_format eq 'BOTH') {
         $gt3_dn = $dn;
         $gt3_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=);
         $gt3_dn =~ s(/USERID=)(/UID=);
@@ -888,16 +891,16 @@ sub DN_List($) {
     }
 
     my @result;
-    if ('%DN_FORMAT%' eq 'RAW') {
+    if ($dn_format eq 'RAW') {
         @result = ($dn);
     }
-    elsif ('%DN_FORMAT%' eq 'GT2') {
+    elsif ($dn_format eq 'GT2') {
         @result = ($gt2_dn);
     }
-    elsif ('%DN_FORMAT%' eq 'GT3') {
+    elsif ($dn_format eq 'GT3') {
         @result = ($gt3_dn);
     }
-    elsif ('%DN_FORMAT%' eq 'BOTH') {
+    elsif ($dn_format eq 'BOTH') {
         if ($gt2_dn eq $gt3_dn) {
             @result = ($gt2_dn);
         }
@@ -906,7 +909,7 @@ sub DN_List($) {
         }
     }
     else {
-        die "Internal error, DN_FORMAT = %DN_FORMAT%";
+        die "Internal error, DN_FORMAT = $dn_format";
     }
     return @result;
 } # DN_List
