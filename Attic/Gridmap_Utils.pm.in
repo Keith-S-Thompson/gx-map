@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.44 2004-10-14 02:47:50-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.45 2004-10-14 03:20:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -323,9 +323,9 @@ sub Get_Hostname() {
 # "new-requests" directory.
 # If the directory is ok, returns undef (denoting no error).
 # Otherwise, returns a message describing the problem.
-# Directory must have permissions 1733, non-root users must be able to
-# create files, and non-root users must *not* be able to use chown to
-# change the ownership of a file.
+# Directory must have permissions 1733 or 2733, non-root users must be
+# able to create files, and non-root users must *not* be able to use
+# chown to change the ownership of a file.
 #
 sub Dir_Error($) {
     my($dir) = @_;
@@ -335,8 +335,8 @@ sub Dir_Error($) {
     my @stat = stat $dir;
     return "Cannot stat $dir" if not @stat;
     my $mode = $stat[2] & 07777;
-    if ($mode != 01733) {
-        return "Bad permissions on $dir, should be 1733";
+    if ($mode != 01733 and $monde != 02733) {
+        return "Bad permissions on $dir, should be 1733 (or 2733)";
     }
 
     my $temp_file_name = "$dir/tmp-" . time . "-$$";
