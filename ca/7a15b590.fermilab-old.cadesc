@@ -1,4 +1,4 @@
-# $Id: 7a15b590.fermilab-old.cadesc,v 1.1 2004-10-17 23:23:39-07 kst Exp $
+# $Id: 7a15b590.fermilab-old.cadesc,v 1.2 2004-11-01 17:04:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7a15b590.fermilab-old.cadesc,v $
 
 CA_NAME             Fermilab Root CA (old)
@@ -12,7 +12,7 @@ CERTIFICATE_MD5     3E:50:1B:6A:D7:AD:A0:9E:2A:AA:44:A3:FF:77:EB:A9
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/7a15b590.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/7a15b590.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/fnal-root-crl.base64
-INDEX               ?
+CERT_EXPIRES        Dec  4 19:19:52 2003 GMT
 DISABLE             yes
 
 # The certificate expired 2003-12-04.
