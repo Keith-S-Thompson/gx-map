@@ -1,4 +1,4 @@
-# $Id: b89793e4.npaci.cadesc,v 1.5 2004-10-06 19:57:57-07 kst Exp $
+# $Id: b89793e4.npaci.cadesc,v 1.6 2004-10-08 20:44:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b89793e4.npaci.cadesc,v $
 
 CA_NAME             NPACI CA
@@ -7,6 +7,7 @@ CONTACT             Bill Link <bill@sdsc.edu>
 HASH                b89793e4
 SUBJECT             /C=US/O=NPACI/OU=SDSC/CN=Certificate Manager/UID=certman
 MAY_SIGN            /C=US/O=NPACI/*
+CERTIFICATE_MD5     E0:71:16:82:21:D2:6F:8E:1B:F9:C1:1B:BE:36:77:23
 CERTIFICATE_URL     http://www.npaci.edu/CA/b89793e4.0
 SIGNING_POLICY_URL  http://www.npaci.edu/CA/b89793e4.signing_policy
 CRL_URL             http://www.npaci.edu/CA/b89793e4.r0
