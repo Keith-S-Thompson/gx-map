@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.19 2004-09-14 19:20:05-07 kst Exp $
+# $Id: install-gx-map.in,v 1.20 2004-09-27 16:01:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -58,6 +58,7 @@ INSTALL_DIR=%INSTALL_DIR%
 BINDIR=$INSTALL_DIR/bin
 SBINDIR=$INSTALL_DIR/sbin
 LIBDIR=$INSTALL_DIR/lib
+ETCDIR=$INSTALL_DIR/etc
 DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
@@ -70,6 +71,7 @@ for dir in $INSTALL_DIR \
            $BINDIR \
            $SBINDIR \
            $LIBDIR \
+           $ETCDIR \
            $DATA_DIR \
            $DATA_DIR/RCS \
            $DATA_DIR/cache \
@@ -87,7 +89,7 @@ verbosely cp -f $BIN_FILES  $BINDIR/.
 verbosely cp -f $SBIN_FILES $SBINDIR/.
 verbosely cp -f $LIB_FILES  $LIBDIR/.
 verbosely cp -f $DATA_FILES $DATA_DIR/.
-verbosely cp -f $CA_FILES   $DATA_DIR/ca.conf/.
+verbosely cp -f $CA_FILES   $ETC_DIR/ca.conf/.
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
     verbosely mkdir -m 1733 $DATA_DIR/new-requests
