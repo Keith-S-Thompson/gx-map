@@ -1,4 +1,4 @@
-# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.9 2004-10-08 13:59:31-07 kst Exp $
+# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.10 2004-10-08 20:17:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/9d8753eb.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -13,3 +13,9 @@ SIGNING_POLICY_URL  ?
 CRL_URL             ?
 CRL_WARNING         ?
 DISABLE             yes
+
+#
+# The certificate expired 2004-01-10.
+# An expired DER-format CRL is available at
+# <http://www.doegrids.org/Docs/crls/doesgcrl.crl>.
+#
