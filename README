@@ -1,9 +1,17 @@
-# $Id: README,v 1.5 2003-07-25 01:07:44-07 kst Exp $
+# $Id: README,v 1.6 2003-07-27 17:30:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
 
-This is an initial release; more documentation will follow later.
+This is release 0.3; more documentation will follow later.
+
+Release 0.1 was an SDSC internal system.
+
+Release 0.2 was an alpha release, reworked for use at multiple sites.
+Use of release 0.2 is no longer recommended.
+
+Release 0.3 is probably somewhere between alpha and beta (depending on
+how many bugs turn up).  It includes fixes for some fairly nasty bugs.
 
 The "gx-map" command is used to request the addition or deletion
 of an entry in the grid-mapfile.  Users should normally run
@@ -19,4 +27,7 @@ particular, certificates issued by the NPACI/SDSC certificate authority
 This is handled by a separate tool (not included here) that watches
 for updates in the cacl index file and invokes gx-map.
 
-All commands accept a "-help" option to print a brief usage message.
+All commands accept a "-help" option to print a brief usage message
+and a "-version" option to display the current version.  The gx-map
+command also accepts a "-long-help" option with information on
+non-interactive use.
