@@ -1,0 +1,19 @@
+# $Id: bug-0001,v 1.1 2005-03-23 21:46:26-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0001,v $
+
+gx-map bug 0001
+Date: Mon 2005-03-21
+Severity: High
+Reported by: Mark Bartelt <mark@cacr.caltech.edu>
+Version: 0.4.1
+
+Summary:
+Removing a secondary mapping causes an error in gx-gen-mapfile:
+Use of uninitialized value in string eq at /usr/local/apps/gx-map-0.4.1/sbin/gx-gen-mapfile line 298, <FILE> line 236.
+
+To reproduce:
+% gx-map -add -dn '/O=FOO/CN=Phred Pharkle' -username phred -secondary
+% gx-map -remove -dn '/O=FOO/CN=Phred Pharkle' -username phred
+% gx-check-requests -namespace KST
+% gx-gen-mapfile /usr/local/apps/grid-security/grid-mapfile
+Use of uninitialized value in string eq at /usr/local/apps/gx-map-0.4.1/sbin/gx-gen-mapfile line 298, <FILE> line 251.
