@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: die_handler_demo,v 1.3 2005-03-27 14:08:49-08 kst Exp $
+# $Id: die_handler_demo,v 1.4 2005-03-27 14:13:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/die_handler_demo,v $
 
 #
@@ -109,18 +109,17 @@ sub Die_Handler($) {
     while (1) {
         my @caller = caller $i;
         last if not @caller;
-        push @traceback, { file => $caller[1],
-                           line => $caller[2],
+        push @traceback, { file    => $caller[1],
+                           line    => $caller[2],
                            subname => $caller[3] };
-        $i ++;
+        $i++;
     }
 
     print STDERR "Traceback:\n";
-    for (my $i = 0; $i <= $#traceback; $i ++) {
+    for (my $i = 0; $i <= $#traceback; $i++) {
         my $curr = $traceback[$i];
         if ($i < $#traceback) {
             my $next = $traceback[$i+1];
-            next if $next->{subname} =~ /::Die_Handler$/;
             print STDERR "    $curr->{file}:$curr->{line} in ",
                          "$next->{subname}\n";
         }
