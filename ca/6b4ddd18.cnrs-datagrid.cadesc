@@ -1,4 +1,4 @@
-# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.7 2004-11-01 17:04:20-08 kst Exp $
+# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.8 2004-11-16 18:23:40-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6b4ddd18.cnrs-datagrid.cadesc,v $
 
 CA_NAME             CNRS-DataGrid
@@ -6,7 +6,7 @@ HOMEPAGE            http://igc.services.cnrs.fr/Datagrid-fr/
 CONTACT             Sophie.Nicoud@urec.cnrs.fr
 HASH                6b4ddd18
 SUBJECT             /C=FR/O=CNRS/CN=Datagrid-fr
-MAY_SIGN            /*
+MAY_SIGN            ?
 CERTIFICATE_MD5     A4:1C:C2:BB:43:34:AB:F1:C5:BD:D6:A8:50:9E:E7:2A
 CERTIFICATE_URL     http://crls.services.cnrs.fr/Datagrid-fr/getpem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/6b4ddd18.signing_policy
