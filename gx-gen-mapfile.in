@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.17 2003-07-18 19:53:15-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.18 2003-07-21 04:27:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -296,6 +296,12 @@ unlink $tmp_file;
 # Given a list of file names, returns a list of names of files that need
 # to be updated.
 #
+# Checks the modification times of the ".update" file and /etc/passwd.
+# On systems that don't use YP/NIS or something similar, this detects
+# additions and deletions of user accounts.  On other systems (where
+# new accounts aren't necessarily reflected in the /etc/passwd file),
+# consider running "gx-map -update" periodically.
+# 
 # Side effect: updates %Force_Update for files that need to be updated
 # even if they haven't changed.
 #
@@ -312,6 +318,7 @@ sub Update_List(@) {
     my $newest_input_mtime = undef;
 
     my $dot_update_mtime = Gridmap_Utils::Get_mtime $Dot_Update;
+    my $etc_passwd_mtime = Gridmap_Utils::Get_mtime '/etc/passwd';
 
     foreach my $log (@{$User_Opt->{'requests-log'}}) {
         my $mtime = Gridmap_Utils::Get_mtime $log;
@@ -326,11 +333,15 @@ sub Update_List(@) {
     foreach my $output_file (@Output_Files) {
         my $output_mtime = Gridmap_Utils::Get_mtime $output_file;
         if (defined $output_mtime) {
-            if (defined $dot_update_mtime and
-                $output_mtime <= $dot_update_mtime)
+            if (( defined $dot_update_mtime and
+                  $output_mtime <= $dot_update_mtime )
+                or
+                ( defined $etc_passwd_mtime and
+                  $output_mtime <= $etc_passwd_mtime ))
             {
                 #
-                # The output file is older than the .update file.
+                # The output file is older than the .update file
+                # and/or the /etc/passwd file.
                 # Regenerate the file and update it even if it hasn't changed.
                 # (This may involve just updating the file's timestamp.)
                 #
