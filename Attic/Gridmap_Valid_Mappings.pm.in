@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.10 2004-07-30 01:29:15-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.11 2004-07-30 17:58:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -56,7 +56,7 @@ my $Install_Dir;
 BEGIN {
     require 5.004;
     use vars qw($VERSION $Debugging);
-    $VERSION = "0.2";
+    $VERSION = "0.4-alpha";
     $Debugging = undef;
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
@@ -129,11 +129,12 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no OWNER_NAME\n";
         return ();
     }
-    if (defined $request->{map_to_name} and
-                not getpwnam $request->{map_to_name})
-    {
-        Debug ">>> Invalid, no such user\n";
-        return ();
+    if (defined $request->{map_to_name}) {
+	my @pw = getpwnam $request->{map_to_name};
+	if (not @pw) {
+	    Debug ">>> Invalid, no such user\n";
+	    return ();
+	}
     }
     if (not defined $request->{NAMESPACE}) {
         Debug ">>> Invalid, no NAMESPACE\n";
