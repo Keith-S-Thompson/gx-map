@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.45 2004-11-05 02:41:11-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.46 2004-11-12 13:45:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -175,7 +175,7 @@ closedir CONF_DIR;
 if ($User_Opt->{'list-cas'}) {
     foreach my $ca (@ca_list_all) {
         #
-        # This clobbers the contents of @ca_list all, but that's ok
+        # This clobbers the contents of @ca_list_all, but that's ok
         # since we're going to exit.
         #
         $ca =~ s/\.cadesc$//;
@@ -188,8 +188,18 @@ if ($User_Opt->{'list-cas'}) {
 if (not $User_Opt->{'all-cas'} and not defined $User_Opt->{ca}) {
     Usage "No CA specified\n"
 }
+
 if (not defined $User_Opt->{'target-dir'}) {
     Usage "No target directory specified\n"
+}
+elsif (not -e $User_Opt->{'target-dir'}) {
+    Usage "Target directory $User_Opt->{'target-dir'} does not exist\n";
+}
+elsif (not -d $User_Opt->{'target-dir'}) {
+    Usage "Target $User_Opt->{'target-dir'} is not a directory\n";
+}
+elsif (not -w $User_Opt->{'target-dir'}) {
+    Usage "Can't write target directory $User_Opt->{'target-dir'}\n";
 }
 
 my $CRL_Expiration = undef;
