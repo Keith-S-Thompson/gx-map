@@ -1,4 +1,4 @@
-# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.4 2004-10-06 19:58:49-07 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.5 2004-10-08 10:42:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/2c7969d0.usc-pki-lite.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -12,3 +12,7 @@ SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2c7969d0.signing_po
 CRL_URL             ?
 CRL_WARNING         ?
 INDEX               ?
+
+#
+# As of 2004-10-08, there is no CRL.
+#
