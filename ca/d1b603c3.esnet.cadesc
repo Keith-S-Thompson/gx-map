@@ -1,4 +1,4 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.4 2004-09-24 20:58:54-07 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.5 2004-10-06 19:49:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
@@ -9,7 +9,7 @@ SUBJECT             /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Ro
 MAY_SIGN            /DC=org/DC=DOEGrids/OU=Certificate Authorities/*
 MAY_SIGN            /DC=net/DC=ES/*
 CERTIFICATE_URL     http://www.es.net/CA/d1b603c3/d1b603c3.0
-SIGNING_POLICY_URL  ?
+SIGNING_POLICY_URL  http://www.es.net/CA/d1b603c3/d1b603c3.signing_policy
 CRL_URL             http://es.net/CA/d1b603c3/CRL/d1b603c3.r0
 CRL_WARNING         14 days
 INDEX               ?
