@@ -1,0 +1,131 @@
+#!%PERL% -w
+
+# $Id: gx-convert-log.in,v 1.1 2004-11-03 17:53:41-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
+
+use strict;
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2004 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Grid and Cluster Computing Group
+# at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use File::Basename ();
+use Getopt::Long ();
+
+$| = 1;
+
+my $Program_Name = File::Basename::basename $0;
+
+# 
+# Make warnings fatal.
+# 
+$SIG{__WARN__} = sub { die @_ };
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+my $Now = time;
+
+my $Rev = '$Revision: 1.1 $';
+$Rev =~ s/^\\s*//;
+$Rev =~ s/\s*\$$//;
+
+Usage if scalar @ARGV != 1;
+Usage "Can't read file $ARGV[0]\n" if not -r $ARGV[0];
+
+my @refs = Gridmap_Utils::Read_Records $ARGV[0];
+
+print '# $', 'Id:$', "\n";
+print '# $', 'Source:$', "\n";
+print "# Converted " . Time_Image $now . " by $Program_Name revision $Rev\n";
+print "# Got ", scalar @refs, " records\n";
+print "\n";
+
+foreach my $ref (@refs) {
+    next if defined $ref->{SOURCE};
+    my $owner_is_admin =
+	( defined $result->{OWNER_NAME} and
+	  Gridmap_Utils::Is_Globus_Admin $ref->{OWNER_NAME} );
+
+    my $comment = $ref->{comment};
+    $comment = '' if not defined $ref->{comment};
+
+    if ($owner_is_admin) {
+	if ($ref->{comment} =~ /^cacl certificate/) {
+	    $ref->{SOURCE} = 'NPACI-CA';
+	}
+	elsif ($ref->{comment} =~ /^NPACI CA certificate/) {
+	    $ref->{SOURCE} = 'NPACI-CA';
+	}
+	elsif ($ref->{comment} =~ /^SDSC CA certificate/) {
+	    $ref->{SOURCE} = 'SDSC-CA';
+	}
+	else {
+	    $ref->{SOURCE} = 'administrator';
+	}
+    }
+    else {
+	$ref->{SOURCE} = 'user';
+    }
+}
+
+Gridmap_Utils::Write_Records '-', @refs;
+
+print "# Done.\n";
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name logfile
+Reads a gx-map 0.3 requests.log file and writes on stdout an equivalent
+file for use with gx-map release 0.4.
+EOF
+    exit 1;
+} # Usage
