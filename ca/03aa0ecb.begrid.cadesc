@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.1 2004-10-07 21:37:37-07 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.2 2004-10-08 13:59:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -11,7 +11,6 @@ CERTIFICATE_URL     https://gridra.belnet.be/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             https://gridra.belnet.be/pub/crl/cacrl.pem
 CRL_WARNING         48 hours
-INDEX               ?
 DISABLE             yes
 
 #
