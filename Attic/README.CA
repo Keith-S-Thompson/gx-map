@@ -1,0 +1,113 @@
+# $Id: README.CA,v 1.1 2004-10-20 14:54:42-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
+
+Each *.cadesc file contains information about a Certificate Authority
+whose certificates can be used with Globus.  The file names are of
+the form "hash.name.cadesc", where "hash" is the 8-digit hexadecimal
+hash of the signing certificate and "name" is an arbitrary brief name
+for the CA.
+
+The file 00000000.example.cadesc is a template for creating new
+cadesc files.
+
+Each cadesc file specifies a number of attributes associated with a
+Certificate Authority.  Comment lines are indicated with a leading
+'#' character.  End-of-line comments are not supported; a '#' within
+a line is treated as part of the line, not as a comment delimiter.
+Blank lines are ignored.
+
+I've collected information on several dozen certificate authorities and
+included the corresponding *.cadesc files in the gx-map distribution.
+You're free to add *.cadesc files of your own, or to modify the
+ones I've provided.  If you have information on a CA that should be
+added to the distribution, please let me know.  If you find an error,
+please let me know as soon as possible.
+
+
+Mandatory attributes are
+    CA_NAME
+    HASH
+    SUBJECT
+    MAY_SIGN
+    CERTIFICATE_MD5
+    CERTIFICATE_URL
+Optional attributes may be omitted or set to a single '?' character,
+except that DISABLE, if present, must be set to "yes" or "no".
+
+
+CA_NAME is a brief informal name for the CA; it's included in the
+signing_policy file as a comment.  This needn't match the name included
+in the name of the cadesc file.
+
+HOMEPAGE is the URL of web page for the CA.
+It's included for reference; gx-ca-update doesn't use it.
+
+CONTACT is an e-mail address for the CA.
+It's included for reference; gx-ca-update doesn't use it.
+
+HASH is the 8-digit hexadecimal hash for the certificate's subject name.
+It can be computed by
+    openssl x509 -hash -in FILENAME.0 -noout
+The hash is incorporated into the names of the certificate,
+CRL, and signing_policy files (xxxxxxxx.0, xxxxxxxx.r0, and
+xxxxxxxx.signing_policy, respectively).  The specified hash is checked
+against the downloaded certificate.
+
+SIGNED_BY specifies the subject name of the signer of the CA
+certificate.  This is mandatory if the certificate is not self-signed;
+if it is self-signed, SIGNED_BY should be omitted.  This is checked
+against the actual issuer of the certificate.  gx-ca-update may also
+check whether the issuing certificate is installed (this check has
+not yet been implemented).
+
+SUBJECT is the subject name of the signing certificate.  This is
+checked against the actual subject name of the downloaded certificate.
+
+MAY_SIGN is a pattern (either a wildcard or a single subject name)
+used to construct the signing_policy file.  More than one MAY_SIGN
+attributes may be specified.
+
+CERTIFICATE_MD5 is the MD5 fingerprint of the signing certificate.
+This can be determined by 
+    openssl x509 -md5 -fingerprint -in FILENAME.0 -noout
+This is checked against the actual fingerprint of the downloaded
+certificate.
+
+CERTIFICATE_URL is a URL from which the signing certificate (in PEM
+format) can be downloaded.
+
+SIGNING_POLICY_URL is a URL from which a signing_policy file can
+be downloaded.  This is included for reference; gx-ca-update doesn't
+use it.  Intstead, the signing_policy file is constructed from the
+SUBJECT and MAY_SIGN attributes.  This allows a site to impose a
+stricter policy than the one suggested by the CA's owner (or a looser
+policy, but that's seldom a good idea).
+
+CRL_URL is a URL from which the certificate revocation list, in PEM
+format, can be downloaded.
+
+INDEX is a URL from which a ca.db.index file can be downloaded.
+This is provided by CACL-based CAs.  This attribute is not currently
+used by gx-ca-update.
+
+DISABLED, if set to "yes", indicates that the CA files are not to
+be installed.  Note that setting DISABLED to "no", or omitting it,
+doesn't mean that the CA files will be installed.  The set of CAs to
+be recongized is specified by the "-ca" option to the gx-ca-update
+program.
+
+
+For consistency, the SIGNED_BY, SUBJECT, and MAY_SIGN attributes should
+use forms compatible with GT3 and OpenSSL 0.9.7:
+    Use "/UID=...", not "/USERID=..." or "/0.9.2342.19200300.100.1.1=..."
+    Use "/emailAddress=...", not "/Email=...".
+though gx-ca-update will translate to this form if necessary.
+See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575> for
+more information about this issue.
+
+All URLs may be specified with a prefix of either "http://",
+"https://", or "ftp://".  http and https URLs are downloaded using
+wget (an ssl-enabled version of wget is required for https URLs).
+ftp URLs are downloaded using ncftpget.
+
+                --- Keith Thompson <kst@sdsc.edu> 2004-10-20
