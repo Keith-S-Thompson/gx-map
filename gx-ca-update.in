@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.40 2004-10-20 15:57:42-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.41 2004-11-02 16:38:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -86,8 +86,9 @@ sub Disabled($);
 sub CRL_Info($$);
 sub Certificate_Info($);
 sub Update_Certificate($);
-sub Update_Signing_Policy($);
 sub Update_CRL($);
+sub Install_Certificate($);
+sub Update_Signing_Policy($);
 sub Check_Dependencies();
 sub Log($$);
 sub Error($$);
@@ -103,9 +104,14 @@ my $User_Opt = { email => 1 };
 my @Opts = ( $User_Opt,
              qw( help!
                  version!
+                 unsafe!
+                 U! UN! UNS! UNSA! UNSAF!
+                 UNSAFE!
                  ca=s@
+                 all-cas!
                  list-cas!
                  target-dir=s
+                 allow-missing-crl!
                  expire-crl=s
                  warn-crl=s
                  force!
@@ -113,6 +119,7 @@ my @Opts = ( $User_Opt,
                  email!
                  verbose!
                  debugging! ) );
+$Getopt::Long::ignorecase = 0; # options are case-sensitive
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -123,6 +130,34 @@ if ($User_Opt->{version}) {
 }
 
 $| = 1 if $User_Opt->{verbose};
+
+if (defined $User_Opt->{unsafe}) {
+    Usage "The \"-UNSAFE\" option is case-sensitive\n";
+}
+foreach my $opt (qw(U UN UNS UNSA UNSAF)) {
+    if (defined $User_Opt->{$opt}) {
+        Usage "The \"-UNSAFE\" option must be spelled out in full\n";
+    }
+}
+
+if (not $User_Opt->{UNSAFE}) {
+    my @errors = ();
+    foreach my $opt ( qw( all-cas
+                          allow-missing-crl
+                          expire-crl
+                          ignore-disable ) )
+    {
+        if (defined $User_Opt->{$opt}) {
+            push @errors, "The \"$opt\" option is disabled " .
+                          "(use \"-UNSAFE\" to enable it).\n";
+        }
+    }
+    Usage @errors if @errors;
+}
+
+if (defined $User_Opt->{ca} and $User_Opt->{'all-cas'}) {
+    Usage "The \"-ca\" and \"-all-cas\" options may not be used together\n";
+}
 
 my $ca_conf_dir = "$Install_Dir/etc/ca.conf";
 my @ca_list_all;
@@ -143,7 +178,7 @@ if ($User_Opt->{'list-cas'}) {
     exit 0;
 }
 
-if (not defined $User_Opt->{ca}) {
+if (not $User_Opt->{'all-cas'} and not defined $User_Opt->{ca}) {
     Usage "No CA specified\n"
 }
 if (not defined $User_Opt->{'target-dir'}) {
@@ -160,7 +195,7 @@ foreach my $opt (qw(expire-crl warn-crl)) {
             elsif ($2 eq 'd') { $CRL_Expiration *= 86400 }
         }
         else {
-            Usage "Invalid argument to -$opt option\n";
+            Usage "Invalid argument to \"-$opt\" option\n";
         }
     }
 }
@@ -193,26 +228,33 @@ if (scalar @ca_list_all == 0) {
 my %selected = ();
 
 my @requested_ca_list = ();
-foreach my $arg (@{$User_Opt->{ca}}) {
-    push @requested_ca_list, split /[ ,]/, $arg;
+if (defined $User_Opt->{ca}) {
+    foreach my $arg (@{$User_Opt->{ca}}) {
+        push @requested_ca_list, split /[ ,]/, $arg;
+    }
 }
+
+Debug "\@ca_list_all = ( @ca_list_all )\n";
+Debug "\@requested_ca_list = ( @requested_ca_list )\n";
 
 my @mismatches = ();
 
-foreach my $requested_ca (@requested_ca_list) {
-    if ($requested_ca eq 'ALL') {
-        %selected = map { $_ => 1 } @ca_list_all;
-        $requested_all = 1;
-    }
-    else {
-        my $matched = 0;
+if ($User_Opt->{'all-cas'}) {
+    %selected = map { $_ => 1 } @ca_list_all;
+}
+else {
+    foreach my $requested_ca (@requested_ca_list) {
+        my $match = 0;
         foreach my $ca (@ca_list_all) {
             if (Match_CA_Name $requested_ca, $ca) {
                 $selected{$ca} = 1;
-                $matched = 1;
+                $match = 1;
+                last;
             }
         }
-        push @mismatches, $requested_ca;
+        if (not $match) {
+            push @mismatches, $requested_ca;
+        }
     }
 }
 
@@ -223,8 +265,11 @@ if (scalar @ca_list == 0 or scalar @mismatches > 0) {
     if (scalar @ca_list == 0) {
         push @message, "No CAs selected"
     }
-    if (scalar @mismatches > 0) {
-        push @message, "No CA matching " . join(', ', @mismatches);
+    if (scalar @mismatches == 1) {
+        push @message, "No CA matching $mismatches[0]";
+    }
+    elsif (scalar @mismatches > 1) {
+        push @message, "No CA matching any of " . join(', ', @mismatches);
     }
     die join(', ', @message), "\n";
 }
@@ -260,23 +305,25 @@ foreach my $ref (@ca_info) {
             Error $ref, "CA is disabled\n";
         }
         if ($User_Opt->{'ignore-disable'}) {
-            Vprint "Ignoring \"disable\" attribute\n";
+            Vprint "Overriding \"DISABLE\" attribute\n";
+            $ref->{DISABLE} = 'no';
         }
     }
-    else {
+    if (not Disabled $ref) {
         my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
         $ref->{_CERT_FILE}           = "$prefix.0";
         $ref->{_SIGNING_POLICY_FILE} = "$prefix.signing_policy";
         $ref->{_CRL_FILE}            = "$prefix.r0";
 
         Update_Certificate    $ref;
-        Update_Signing_Policy $ref;
         Update_CRL            $ref;
+        Install_Certificate   $ref;
+        Update_Signing_Policy $ref;
 
-        if (defined $ref->{_ERRORS}) {
-            foreach my $error (@{$ref->{_ERRORS}}) {
-                Vprint ">>> $error";
-            }
+    }
+    if (defined $ref->{_ERRORS}) {
+        foreach my $error (@{$ref->{_ERRORS}}) {
+            Vprint ">>> $error";
         }
     }
 
@@ -296,11 +343,16 @@ Notify;
 #
 sub Match_CA_Name($$) {
     my($requested_ca, $cadesc_filename) = @_;
+    # Debug "Match_CA_Name \"$requested_ca\", \"$cadesc_filename\"";
     my @fields = split /\./, $cadesc_filename;
     pop @fields; # drop ".cadesc" suffix
     foreach my $field (@fields) {
-        return 1 if lc $requested_ca eq lc $field;
+        if (lc $requested_ca eq lc $field) {
+            # Debug " => 1\n";
+            return 1;
+        }
     }
+    # Debug " => 0\n";
     return 0;
 } # Match_CA_Name
 
@@ -465,7 +517,7 @@ sub Get_CA_Ref($) {
 
     $ref->{_FILENAME} = $filename;
 
-    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes') {
+    if (Disabled $ref) {
         return $ref;
     }
 
@@ -473,7 +525,7 @@ sub Get_CA_Ref($) {
                                     SIGNED_BY SUBJECT MAY_SIGN
                                     CERTIFICATE_MD5 CERTIFICATE_URL
                                     SIGNING_POLICY_URL CRL_URL
-                                    INDEX DISABLE
+                                    INDEX CERT_EXPIRES DISABLE
                                     _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_URL );
@@ -665,6 +717,9 @@ sub Certificate_Info($) {
 
 #
 # Update CA certificate if necessary.
+# Don't install it yet; wait until after we've checked the CRL.
+# (We need the certificate to validate the CRL, but we don't to
+# see whether we have a CRL before installing the certificate.)
 # If the file exists, we assume it doesn't need to be updated unless the
 # "-force" option was specified.
 # Refuse to install an expired certificate, but leave it alone if
@@ -689,6 +744,7 @@ sub Update_Certificate($) {
             Error $ref, $@;
         }
         elsif (defined $cache_file and -r $cache_file) {
+            $ref->{_CACHED_CERT_FILE} = $cache_file;
             my $cert_info = Certificate_Info $cache_file;
             if (defined $cert_info->{enddate}) {
                 if ($cert_info->{enddate} < $now) {
@@ -733,44 +789,12 @@ sub Update_Certificate($) {
                             "\"$cert_info->{md5sum}\"\n";
             }
 
-            if (not defined $ref->{_ERRORS}) {
-                Vprint    "Installing $ref->{_CERT_FILE}\n";
-                Log $ref, "Installing $ref->{_CERT_FILE}\n";
-                File::Copy::copy $cache_file,"$ref->{_CERT_FILE}.$$"
-                    or Error $ref, "Failed to copy certificate: $!\n";
-                rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
-                    or Error $ref, "Failed to rename certificate: $!\n";
-            }
         }
     }
     else {
         Vprint "No URL given for certificate\n";
     }
 } # Update_Certificate
-
-# ----------------------------------------------------------------------
-
-#
-# Update signing_policy file if necessary.
-# If the file exists, we assume it doesn't need to be updated unless the
-# "-force" option was specified.
-# For now, we ignore the SIGNING_POLICY_URL; the signing_policy is
-# generated from the MAY_SIGN attributes.
-#
-sub Update_Signing_Policy($) {
-    my($ref) = @_;
-    if (not $User_Opt->{force} and -e $ref->{_SIGNING_POLICY_FILE}) {
-        Vprint "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
-    }
-    else {
-        Vprint    "Creating $ref->{_SIGNING_POLICY_FILE}\n";
-        Log $ref, "Creating $ref->{_SIGNING_POLICY_FILE}\n";
-        open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
-            or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
-        print POLICY Signing_Policy $ref;
-        close POLICY;
-    }
-} # Update_Signing_Policy
 
 # ----------------------------------------------------------------------
 
@@ -796,7 +820,24 @@ sub Update_CRL($) {
             Error $ref, $@;
         }
     }
-    my $new_crl_info = CRL_Info $new_crl_file, $ref->{_CERT_FILE};
+    else {
+        if (not $User_Opt->{'allow-missing-crl'}) {
+            Error $ref, "No CRL specified\n";
+        }
+    }
+    #
+    # Verify signature against cached certificate file if we've just
+    # downloaded it, otherwise validate against installed certificate
+    # file.
+    #
+    my $cert_file;
+    if (defined $ref->{_CACHED_CERT_FILE}) {
+        $cert_file = $ref->{_CACHED_CERT_FILE};
+    }
+    else {
+        $cert_file = $ref->{_CERT_FILE};
+    }
+    my $new_crl_info = CRL_Info $new_crl_file, $cert_file;
 
     if (defined $new_crl_info) {
         #
@@ -925,10 +966,65 @@ sub Update_CRL($) {
 
 # ----------------------------------------------------------------------
 
+sub Install_Certificate($) {
+    my($ref) = @_;
+    if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
+        Vprint "Certificate $ref->{hash}.0 is already installed\n";
+        return;
+    }
+    #
+    # Don't install the certificate file if there are any errors.
+    # This includes a missing CRL if the "-allow-missing-crl" option
+    # was not specified.
+    #
+    if (not defined $ref->{_ERRORS}) {
+        Vprint    "Installing $ref->{_CERT_FILE}\n";
+        Log $ref, "Installing $ref->{_CERT_FILE}\n";
+        File::Copy::copy $ref->{_CACHED_CERT_FILE}, "$ref->{_CERT_FILE}.$$"
+            or Error $ref, "Failed to copy certificate: $!\n";
+        rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
+            or Error $ref, "Failed to rename certificate: $!\n";
+    }
+} # Install_Certificate
+
+# ----------------------------------------------------------------------
+
+#
+# Update signing_policy file if necessary.
+# If the file exists, we assume it doesn't need to be updated unless the
+# "-force" option was specified.
+# For now, we ignore the SIGNING_POLICY_URL; the signing_policy is
+# generated from the MAY_SIGN attributes.
+# Don't bother to install if there have been any errors.
+#
+sub Update_Signing_Policy($) {
+    my($ref) = @_;
+    if (not $User_Opt->{force} and -e $ref->{_SIGNING_POLICY_FILE}) {
+        Vprint "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
+    }
+    else {
+        if (defined $ref->{_ERRORS}) {
+            Vprint "Skipping $ref->{_SIGNING_POLICY_FILE} " .
+                   "due to previous errors\n";
+        }
+        else {
+            Vprint    "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+            Log $ref, "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+            open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
+                or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
+            print POLICY Signing_Policy $ref;
+            close POLICY;
+            $ref->{_INSTALLED_SIGNING_POLICY} = 1;
+        }
+    }
+} # Update_Signing_Policy
+
+# ----------------------------------------------------------------------
+
 #
 # 
 sub Check_Dependencies() {
-
+    Vprint "Dependency checking not yet implemented\n";
 } # Check_Dependencies
 
 # ----------------------------------------------------------------------
@@ -1050,35 +1146,53 @@ sub Debug(@) {
 # ----------------------------------------------------------------------
 
 sub Usage(@) {
-    print @_ if @_;
-    print <<"EOF";
+    if (@_) {
+        print @_;
+        print "Run \"$Program_Name -help\" for more information\n";
+    }
+    else {
+        print <<"EOF";
 Usage: $Program_Name [options]
-    -help              Display this message and exit
-    -version           Display version information and exit
+    -help              Display this message and exit.
+    -version           Display version information and exit.
+    -UNSAFE            By default, options that can create security
+                       problems are disabled.  You can use the
+                       "-UNSAFE" option (case-sensitive) to enable
+                       them.  The "unsafe" options are:
+                            -all-cas
+                            -allow-missing-crl
+                            -expire-crl time
+                            -ignore-disable
     -ca name           Name of a CA.  This argument may be given multiple
                        times, or CA names may be delimited by commas or
                        blanks.  The argument is a field of the *.cadesc
-                       file name; use the hash value to avoid ambiguity
-    -ca ALL            Use all available CAs
-    -list-cas          List available CAs and exit
-    -target-dir dir    Target directory
+                       file name; use the hash value to avoid ambiguity.
+    -all-cas           Use all available CAs.
+                       Requires "-UNSAFE".
+    -list-cas          List available CAs and exit.
+    -target-dir dir    Target directory.
+    -allow-missing-crl Allow a CA with no CRL to be installed.
+                       Requires "-UNSAFE".
     -expire-crl time   Remove a CRL that will expire within
                        "time".  "time" is expressed as a number
                        followed by 's' (seconds), 'm' (minutes),
                        'h' (hours) or 'd' (days); for example
                        "-expire-crl 75m".  By default, expiring CRLs
                        are left in place.
+                       Requires "-UNSAFE".
     -warn-crl time     Issue a warning message if the CRL will expire
                        within the specified time.  Regardless of this
                        option, a warning will also be issued if the CRL
                        has used more than 90% of its lifetime.
     -force             Force file updates (applies to certificate and
-                       signing_policy files)
+                       signing_policy files).
     -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
+                       Requires "-UNSAFE".
     -email             Send e-mail to configured ADMIN_EMAIL address on errors.
                        Default is "-email"; use "-noemail" to disable.
-    -verbose           Print verbose messages
-    -debugging         Enable debugging output
+    -verbose           Print verbose messages.
+    -debugging         Enable debugging output.
 EOF
+    }
     exit 1;
 } # Usage
