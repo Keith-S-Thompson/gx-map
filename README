@@ -1,4 +1,4 @@
-# $Id: README,v 1.10 2003-09-03 15:45:56-07 kst Exp $
+# $Id: README,v 1.11 2003-12-03 22:04:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
@@ -96,6 +96,11 @@ NOTES: (not included in gx-map-0.3 release):
     groups; guaranteeing that each member of a group is someone who
     should have administrative access can be more difficult that you
     might anticipate.
+
+5a. As of release 0.4, the GLOBUS_ADMINS variable is a series of
+    one or more space-delimited Unix user names.  Group names are
+    no longer allowed.  The "user:" prefix is no longer allowed;
+    each argument is a bare user name.
 
 6.  I've just discovered a bug in the gx-map system (thanks to Mei-Hui
     Su of ISI for running into it).  It should only affect sites with
