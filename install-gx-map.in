@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.28 2004-11-21 17:17:58-08 kst Exp $
+# $Id: install-gx-map.in,v 1.29 2004-11-21 23:00:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -87,7 +87,7 @@ for dir in $INSTALL_DIR \
            $DATA_DIR/cache
 do
     if [ ! -d $dir ] ; then
-        verbosely mkdir     $dir
+        verbosely mkdir -p  $dir
         verbosely chmod 755 $dir
     fi
 done
@@ -99,12 +99,19 @@ verbosely cp -f $BIN_FILES  $BIN_DIR/.
 verbosely cp -f $SBIN_FILES $SBIN_DIR/.
 verbosely cp -f $LIB_FILES  $LIB_DIR/.
 if [ -r .config-file ] ; then
-    verbosely cp -f `cat .config-file` $ETC_DIR/.
+    config_file=`cat .config-file`
+    echo "Copying $config_file"
+    (
+        echo "# This copy of the config file is included here for reference."
+        echo "# Modifying this copy will have no effect."
+        echo ""
+        cat $config_file
+    ) > $ETC_DIR/$config_file
 fi
 verbosely cp -f $CA_FILES   $ETC_DIR/ca-config/.
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
-    verbosely mkdir      $DATA_DIR/new-requests
+    verbosely mkdir -p   $DATA_DIR/new-requests
     verbosely chmod 1733 $DATA_DIR/new-requests
 fi
 
