@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.24 2003-12-03 22:11:37-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.25 2004-07-29 20:44:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -187,7 +187,7 @@ if (defined $User_Opt->{copy}) {
     my $target_file = $User_Opt->{copy};
     my $tmp_file = $User_Opt->{copy} . ".new";
 
-    Gridmap_Utils::Use_Command 'cp';
+    Gridmap_Utils::Use_Commands 'cp';
     my $result = system 'cp', '-p', '-f', $requests_log, $tmp_file;
     rename $tmp_file, $target_file;
     chmod 0444, $target_file;
