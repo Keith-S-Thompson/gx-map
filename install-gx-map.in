@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.24 2004-11-03 17:55:36-08 kst Exp $
+# $Id: install-gx-map.in,v 1.25 2004-11-17 20:13:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -54,6 +54,14 @@ verbosely () {
     if [ $? -ne 0 ] ; then exit 1 ; fi
 }
 
+all=0
+
+if [ $# -eq 1 ] ; then
+    if [ "$1" -eq "-all" ] ; then
+	all=1
+    fi
+fi
+
 INSTALL_DIR=%INSTALL_DIR%
 BIN_DIR=$INSTALL_DIR/bin
 SBIN_DIR=$INSTALL_DIR/sbin
@@ -62,7 +70,11 @@ ETC_DIR=$INSTALL_DIR/etc
 DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
-SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log"
+if [ $all -eq 1 ] ; then
+    SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
+else
+    SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log"
+fi
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 DATA_FILES="ncsa-sdsc-user-map"
 CA_FILES=ca/*.cadesc
@@ -72,7 +84,7 @@ for dir in $INSTALL_DIR \
            $SBIN_DIR \
            $LIB_DIR \
            $ETC_DIR \
-           $ETC_DIR/ca.conf \
+           $ETC_DIR/ca-config \
            $DATA_DIR \
            $DATA_DIR/RCS \
            $DATA_DIR/cache
@@ -90,7 +102,10 @@ verbosely cp -f $BIN_FILES  $BIN_DIR/.
 verbosely cp -f $SBIN_FILES $SBIN_DIR/.
 verbosely cp -f $LIB_FILES  $LIB_DIR/.
 verbosely cp -f $DATA_FILES $DATA_DIR/.
-verbosely cp -f $CA_FILES   $ETC_DIR/ca.conf/.
+if [ -r .config-file ] ; then
+    verbosely cp -f `cat .config-file` $ETC_DIR/.
+fi
+verbosely cp -f $CA_FILES   $ETC_DIR/ca-config/.
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
     verbosely mkdir      $DATA_DIR/new-requests
