@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.1 2003-05-27 18:58:35-07 kst Exp $
+# $Id: configure-gx-map,v 1.2 2003-05-27 19:21:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -11,6 +11,7 @@ use strict;
 
 use File::Basename;
 
+sub Home_Dir($);
 sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
@@ -39,6 +40,11 @@ while (<CONFIG>) {
 
     if (/^(\w+)\s+(.*)$/) {
         my($name, $value) = ($1, $2);
+        eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
+        if ($@) {
+            chomp $@;
+            push @errors, "$@, $Config_File line $.\n";
+        }
         if ($Valid_Var_Name{$name}) {
             if (exists $Config{$name}) {
                 push @errors,
@@ -57,7 +63,7 @@ close CONFIG;
 
 foreach my $name (@Var_Names) {
     if (not defined $Config{$name}) {
-        push @errors, "Missing definition for \"$name\"\n";
+        push @errors, "Missing definition for \"$name\" in $Config_File\n";
     }
 }
 
@@ -66,6 +72,7 @@ die @errors if @errors;
 opendir DIR, '.' or die ".: $!\n";
 my @in_files = sort grep /\.in$/, readdir DIR;
 closedir DIR;
+
 die "No *.in files found\n" if not @in_files;
 
 foreach my $in_file (@in_files) {
@@ -88,6 +95,23 @@ foreach my $in_file (@in_files) {
 }
 
 ########################################################################
+
+my %home_dir = ();
+
+sub Home_Dir($) {
+    my($user) = @_;
+    if (not exists $home_dir{$user}) {
+        my @pw = getpwnam $user;
+        if (@pw) {
+            $home_dir{$user} = $pw[7];
+        }
+        else {
+            die "No such user \"$user\"\n";
+        }
+    }
+} # Home_Dir
+
+# ----------------------------------------------------------------------
 
 sub Usage(@) {
     print @_ if @_;
