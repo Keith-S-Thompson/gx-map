@@ -1,0 +1,15 @@
+# $Id: 34a5e0db.telescience.cadesc,v 1.1 2004-11-04 22:31:39-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/34a5e0db.telescience.cadesc,v $
+
+CA_NAME             UCSD Telescience CA
+HOMEPAGE            https://telescience.ucsd.edu/CA/
+CONTACT             Tomas Molina <tmolina@ncmir.ucsd.edu>
+HASH                34a5e0db
+SUBJECT             /C=US/O=NCMIR/OU=Telescience/CN=certman
+MAY_SIGN            /C=US/O=NCMIR/*
+CERTIFICATE_MD5     42:E7:43:39:EC:D7:CE:AA:E9:F4:22:6D:97:65:72:3A
+CERTIFICATE_URL     https://telescience.ucsd.edu/CA/34a5e0db.0
+SIGNING_POLICY_URL  https://telescience.ucsd.edu/CA/34a5e0db.signing_policy
+CRL_URL             ?
+CERT_EXPIRES        Jan 26 17:23:17 2014 GMT
+DISABLE             no
