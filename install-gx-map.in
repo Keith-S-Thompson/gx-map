@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.6 2003-07-16 20:32:40-07 kst Exp $
+# $Id: install-gx-map.in,v 1.7 2003-07-17 22:18:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 verbosely () {
@@ -17,7 +17,7 @@ DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
 SBIN_FILES="gx-check-requests gx-gen-mapfile cacl/gx-check-cacl-index"
-LIB_FILES="Gridmap_Utils.pm"
+LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 
 for dir in $INSTALL_DIR $BINDIR $SBINDIR $LIBDIR ; do
     if [ ! -d $dir ] ; then
