@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.42 2004-11-16 00:53:42-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.43 2005-01-04 18:57:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -391,7 +391,6 @@ else {
 $SIG{__DIE__} = \&Die_Handler;
 
 my $Now = Gridmap_Utils::Time_Image time;
-$Now =~ s/^\d+ //;       # We don't need the raw numeric timestamp
 my $Hostname = Gridmap_Utils::Get_Hostname;
 print OUT <<"EOF";
 #
@@ -534,7 +533,7 @@ sub Update_List(@) {
 
     foreach my $log (@{$User_Opt->{'requests-log'}}) {
         my $mtime = Gridmap_Utils::Get_mtime $log;
-        Debug "input mtime ", Gridmap_Utils::Time_Image $mtime, "\n";
+        Debug "input mtime ", Gridmap_Utils::Long_Time_Image $mtime, "\n";
         if (not defined $newest_input_mtime or
             $mtime > $newest_input_mtime)
         {
@@ -545,7 +544,9 @@ sub Update_List(@) {
     foreach my $output_file (@Output_Files) {
         my $output_mtime = Gridmap_Utils::Get_mtime $output_file;
         Debug "output_file $output_file, output_mtime = " .
-              (defined $output_mtime ? Gridmap_Utils::Time_Image $output_mtime : 'undef') .
+              (defined $output_mtime
+		   ? Gridmap_Utils::Long_Time_Image $output_mtime
+		   : 'undef') .
               "\n";
         if (defined $output_mtime) {
             if (( defined $dot_update_mtime and
