@@ -1,4 +1,4 @@
-# $Id: 6349a761.doe-sg-old.cadesc,v 1.7 2004-10-08 20:44:38-07 kst Exp $
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.8 2004-10-10 03:21:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -18,3 +18,5 @@ DISABLE             yes
 # 
 # Superseded by DOEGrids CA
 #
+
+# MD5 fingerprint from 6349a761.0 downloaded 2004-10-10
