@@ -1,4 +1,4 @@
-# $Id: 5aba75cb.ncsa-old.cadesc,v 1.5 2004-10-08 10:45:47-07 kst Exp $
+# $Id: 5aba75cb.ncsa-old.cadesc,v 1.6 2004-10-08 13:59:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5aba75cb.ncsa-old.cadesc,v $
 
 CA_NAME             NCSA CA (old)
@@ -11,7 +11,6 @@ CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/5aba75cb.0
 SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/5aba75cb.signing_policy
 CRL_URL             ?
 CRL_WARNING         ?
-INDEX               ?
 
 #
 # There appears to be no CRL for this CA.
