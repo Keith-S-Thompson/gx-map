@@ -1,4 +1,4 @@
-# $Id: 84c1f123.cygrid.cadesc,v 1.3 2004-10-08 20:44:39-07 kst Exp $
+# $Id: 84c1f123.cygrid.cadesc,v 1.4 2004-10-10 03:21:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/84c1f123.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -13,3 +13,5 @@ SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/84c1f123.signing_poli
 CRL_URL             http://www.cs.ucy.ac.cy/Projects/crossgrid/cygrid/cygrid-ca/crl.pem
 CRL_WARNING         48 hours
 DISABLE             no
+
+# MD5 fingerprint from 84c1f123.0 downloaded 2004-10-10
