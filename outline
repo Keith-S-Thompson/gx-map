@@ -1,0 +1,129 @@
+# $Id: outline,v 1.1 2003-04-23 17:25:34-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/outline,v $
+
+The gx-map system works across a set of systems that share a writable
+(presumably NFS-mounted) filesytem.
+
+========== Step 1: A user or administrator runs gx-map. ==========
+
+This generates a request file in a world-writable (presumably
+shared) directory.  The request file is owned by the user who
+ran the gx-map command; this is how the request is validated.
+(To do: allow for other means of validation.)
+
+The request file is a plain ASCII file that might look something
+like this:
+
+{
+	operation           add
+	timestamp           1048813459 Fri 2003-03-28 01:04:19 UTC
+	dn                  "/O=Grid/O=Globus/OU=sdsc.edu/CN=Keith Thompson"
+	map_to_uid          15996
+	map_to_name         kst
+	requested_by_uid    15996
+	requested_by_name   kst
+	hostname            elmak.sdsc.edu
+}
+
+The request is written to a uniquely named file on the shared
+filesystem.  The filename incorporates the timestamp, the user name,
+and perhaps a process id and a random number.
+
+A few notes on the fields:
+
+The "operation" field can be either "add" or "remove".
+
+The timestamp is in two parts.  The first part is a raw Unix timestamp,
+the number of seconds since 1970-01-01 00:00:00 GMT.  The second part
+is human-readable, and is ignored by the gx-map system.
+
+The "hostname" field specifies the name of the host on which the
+gx-map command was executed.
+
+In addition, there are several optional fields: "email" (the user's
+e-mail address, if provided) and "comment" (an optional comment).
+These fields will be passed through to the global log file unchanged.
+
+========== Step 2: The request is processed.  ==========
+
+A cron job, running under some *trusted* user account (typically
+"globus"), periodically checks for new request files.  This job
+runs on a single system.  For example, it might invoke the command
+"gx-cron" every 5 minutes.
+
+If there are any unprocessed request files, the gx-cron command
+reads them, validates them, and appends them to a global request
+log file.  It annotates the request with some additional information.
+(For clarity, the added attributes have names in all-caps.)  The new
+entry might look something like this:
+
+{
+	operation           add
+	timestamp           1048813459 Fri 2003-03-28 01:04:19 UTC
+	dn                  "/O=Grid/O=Globus/OU=sdsc.edu/CN=Keith Thompson"
+	map_to_uid          15996
+	map_to_name         kst
+	requested_by_uid    15996
+	requested_by_name   kst
+	hostname            elmak.sdsc.edu
+	REQUEST_FILE        1048813459-elmak.sdsc.edu-kst-16769.request
+	PROCESSED           1048813500 Fri 2003-03-28 01:05:00 UTC
+	OWNER_UID           15996 kst
+	OWNER_NAME          kst
+}
+
+The globus request log is owned by, and can only be written by,
+the trusted user, typically "globus".
+
+The "REQUEST_FILE" field records the name of the request file.
+This is included for information only.
+
+The "PROCESSED" field specifies when the request was processed
+by gx-cron.  This is included for information only.
+
+The "OWNER_UID" and "OWNER_NAME" fields record the owner of the request
+file as determined by gx-cron.  If the user doesn't have an account
+on the machine where gx-cron is running, the OWNER_NAME field will
+be omitted.
+
+If there is an error processing a request file, a (possibly incomplete)
+record will be appended to the log with an "ERROR" field.  The value
+of the "ERROR" field will be a human-readable description of the problem.
+
+Once the record has been successfully appended to the log, the request
+file is moved to an appropriate subdirectory, either "good-requests"
+or "bad-requests".
+
+Note that there are three different sets of fields that will normally
+contain the uid and user name of the user generating the request.
+The "map_to_*" fields specify the user account to which the certificate
+is to be mapped.  The "requested_by_*" fields specify the user who
+actually ran the gx-map command.  For most users, these two fields
+must match, but if the "requested_by_*" fields identify a Globus
+administrator, the "map_to_*" fields can specify any user account.
+(In other words, most users can map any specified DN to their own
+account, but a Globus administrator can map any specified DN to
+any specified account.)  Finally, the "OWNER_*" fields, which are
+added by gx-cron, identifies the actual owner of the request file.
+These must match the "requested_by_*" fields.
+
+========== Step 3: Generating the grid-mapfile.  ==========
+
+The command "gx-gen-mapfile" reads the log file into memory, traverses
+the requests, ignores any invalid records (e.g., records for which the
+"requested_by_*" and "OWNER_*" fields don't match, or records with an
+"ERROR" field), and generates a new grid-mapfile.  By default, the
+grid-mapfile contains entries only for accounts that are actually
+on the system; with the "-all" option, all entries are generated,
+even those for users who don't have accounts on the system.
+
+TODO: I need to think about the "-all" option.  As written, it could
+allow invalid mappings for user accounts that don't exist on the
+system where gx-cron runs.  It might make more sense remove the "-all"
+option, and generate a grid-mapfile from (a copy of) the request log.
+
+It's assumed that the records in the log file are in chronological
+order (this can be checked).  This is important because "add" and
+"remove" requests for a given DN and user name must be processed
+in the correct order; similarly, a later mapping for a given DN may
+override an earlier one.
