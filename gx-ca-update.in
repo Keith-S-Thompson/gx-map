@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.24 2004-09-29 20:57:10-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.25 2004-09-30 00:09:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -227,7 +227,7 @@ CA:
 foreach my $ref (@ca_info) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     if (Disabled $ref) {
-        Vprint "CA is disabled\n";
+        Vprint "CA is disabled\n\n";
         next CA;
     }
 
@@ -242,7 +242,7 @@ foreach my $ref (@ca_info) {
 
     if (defined $ref->{_ERRORS}) {
         foreach my $error (@{$ref->{_ERRORS}}) {
-            Vprint ">>> $error\n";
+            Vprint ">>> $error";
         }
     }
 
