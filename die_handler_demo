@@ -1,0 +1,134 @@
+#!/usr/bin/perl -w
+
+# $Id: die_handler_demo,v 1.1 2005-03-26 12:21:43-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/die_handler_demo,v $
+
+#
+# This is an experimental Perl program designed to test an error traceback
+# mechanism.
+#
+
+use strict;
+
+sub Outer();
+sub Inner();
+sub Get_Traceback();
+sub Format_Traceback(@);
+sub Die_Handler($);
+sub Register_Handler_Function($);
+sub Cleanup();
+
+$SIG{__DIE__} = \&Die_Handler;
+
+my $Registered_Handler_Function = undef;
+
+#
+# Die in Inner by default
+#
+my $Outer = 0;
+my $Eval = 0;
+my $Main = 0;
+my $Register = 0;
+
+if (scalar @ARGV > 0) {
+    if ($ARGV[0] eq '-o') {
+	$Outer = 1;
+    }
+    elsif ($ARGV[0] eq '-e') {
+	$Eval = 1;
+    }
+    elsif ($ARGV[0] eq '-m') {
+	$Main = 1;
+    }
+    elsif ($ARGV[0] eq '-r') {
+	$Register = 1;
+    }
+    else {
+	print "Usage: $0 [-i|-e]\n";
+	print "    -o : die in Outer\n";
+	print "    -e : die in eval()\n";
+	print "    -r : Register a handler function\n";
+	print "dies in Inner by default\n";
+	exit 1;
+    }
+}
+
+if ($Register) {
+    Register_Handler_Function \&Cleanup;
+}
+
+die "Die in main\n" if $Main;
+eval "die \"Die in eval\n\"" if $Eval;
+
+Outer;
+
+########################################################################
+
+sub Outer() {
+    die "Die in Outer\n" if $Outer;
+    Inner;
+} # Outer
+
+# ----------------------------------------------------------------------
+
+sub Inner() {
+    die "die in Inner\n";
+} # Inner
+
+# ----------------------------------------------------------------------
+
+sub Get_Traceback() {
+    my @result = ();
+    for (my $i = 0; ; $i ++) {
+	my @caller = caller $i;
+	last if not @caller;
+	my $ref = {};
+	$ref->{pack}    = $caller[0];
+	$ref->{file}    = $caller[1];
+	$ref->{line}    = $caller[2];
+	$ref->{subname} = $caller[3];
+	push @result, $ref;
+    }
+    return @result;
+} # Get_Traceback
+
+# ----------------------------------------------------------------------
+
+sub Format_Traceback(@) {
+    my @traceback = @_;
+    my $result = "Traceback:\n";
+
+    for (my $i = 0; $i <= $#traceback; $i ++) {
+	my $curr = $traceback[$i];
+	if ($i < $#traceback) {
+	    my $next = $traceback[$i+1];
+	    next if $next->{subname} =~ /::Die_Handler$/;
+	    $result .= "    $curr->{file}:$curr->{line} in $next->{subname}\n";
+	}
+	else {
+	    $result .= "    $curr->{file}:$curr->{line}\n";
+	}
+    }
+    return $result;
+} # Format_Traceback
+
+# ----------------------------------------------------------------------
+
+sub Die_Handler($) {
+    if (defined $Registered_Handler_Function) {
+	&$Registered_Handler_Function;
+    }
+    print STDERR Format_Traceback Get_Traceback;
+} # Die_Handler
+
+# ----------------------------------------------------------------------
+
+sub Register_Handler_Function($) {
+    $Registered_Handler_Function = $_[0];
+} # Register_Handler_Function
+
+# ----------------------------------------------------------------------
+
+sub Cleanup() {
+    print "Cleaning up ...\n";
+} # Cleanup
