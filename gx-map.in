@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.34 2004-11-04 03:46:05-08 kst Exp $
+# $Id: gx-map.in,v 1.35 2004-11-08 09:00:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -548,12 +548,19 @@ EOF
     }
 
     if ($Globus_Admin) {
-        print "Source (default is none): ";
-        chomp($response = scalar <STDIN>);
-        $response =~ s/^\s*//;
-        $response =~ s/\s*$//;
-        if ($response ne '') {
-            $Options->{source} = $response;
+        undef $response;
+        while (not defined $response) {
+            print "Source (default is none): ";
+            chomp($response = scalar <STDIN>);
+            $response =~ s/^\s*//;
+            $response =~ s/\s*$//;
+            if ($response ne '') {
+                $Options->{source} = $response;
+            }
+            elsif ($response !~ /^[\w-]+$/) {
+                print ">>> Invalid value (use only a-z A-Z 0-9 - _)\n";
+                undef $response;
+            }
         }
     }
     #
@@ -868,6 +875,9 @@ sub Get_Options_From_Command_Line() {
 
     if (defined $User_Opt->{source}) {
         if ($Globus_Admin) {
+            if ($User_Opt-{source} !~ /^[\w-]+$/) {
+                Usage "Invalid argument to \"-source\" option\n";
+            }
             $Options->{source} = $User_Opt->{source};
         }
         else {
@@ -1027,6 +1037,8 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -no-email               : Ignored (provided for compatibility with 0.3).
     -comment "string"       : Comment to be added to request log (optional)
     -source string          : Specify the source of the mapping.
+                              Argument may consist only of letters, digits,
+                              underscore, and hyphen characters.
                               This option is for use by Globus administrators
                               only.
     -debugging              : Enable debugging output.
