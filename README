@@ -1,4 +1,4 @@
-# $Id: README,v 1.16 2004-11-04 14:28:47-08 kst Exp $
+# $Id: README,v 1.17 2004-11-22 18:02:42-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
@@ -12,79 +12,15 @@ Unix account.  An administrator (as specified in the config file)
 may map any DN to any Unix account.
 
 Some DNs may be mapped automatically without user intervention; in
-particular, certificates issued by the NPACI/SDSC certificate authority
-(cacl) are automatically mapped to the corresponding user account.
-This is handled by a separate tool (not included here) that watches
-for updates in the cacl index file and invokes gx-map.
+particular, certificates issued by the NPACI and SDSC certificate
+authorities (cacl) are automatically mapped to the corresponding
+user account.  This is handled by a separate tool (not included here)
+that watches for updates in the cacl index file and invokes gx-map.
 
 All commands accept a "-help" option to print a brief usage message
 and a "-version" option to display the current version.  The gx-map
 command also accepts a "-long-help" option with information on
 non-interactive use.
-
-
-This is release 0.4.0; more documentation will follow later.
-
-Release 0.1 was an SDSC internal system.
-
-Release 0.2 was an alpha release, reworked for use at multiple sites.
-Use of release 0.2 is no longer recommended.
-
-Release 0.3 is probably somewhere between alpha and beta (depending on
-how many bugs turn up).  It includes fixes for some fairly nasty bugs.
-
-Release 0.4.0 includes some new tools:
-
-    gx-ingest reads an existing grid-mapfile and generates a script
-    that invokes gx-map to incorporate the entries into the database.
-
-    gx-ca-update downloads and installs certificates, CRLs, and
-    signing_policy files.  See ca/README and ca/SECURITY in this
-    distribution for more information.
-
-    gx-convert-log converts data from a previous gx-map installation
-    for use with gx-map 0.4.
-
-(I've decided to call this release 0.4.0 rather than 0.4 so the name
-of the tarball will sort properly in a directory listing if there's
-a 0.4.1 release.)
-
-New features in 0.4.0:
-
-Multiple user names can be supported for a grid-mapfile entry by
-treating some mappings as "secondary".
-
-An administrator may use the "-source" option to specify the source
-of a mapping; this will eventually be used for cross-site propagation.
-
-The gx-map system depends critically on checking file ownership
-to confirm that a request was made by an authorized user.  The
-gx-check-requests command now fails if a non-root user is able to
-use chown on a file in the new-requests directory.
-
-The generated grid-mapfile is compatible with both GT2 (OpenSSL
-0.9.6) and GT3 (OpenSSL 0.9.7).  (The expand-grid-mapfile
-command used by some sites with gx-map 0.3 is no longer needed.)
-See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575> for
-more information on this issue.
-
-The syntax of the GLOBUS_ADMINS configuration variable changed from 0.3
-to 0.4.0.  The argument is now a series of one or more space-delimited
-Unix user names.  Group names are no longer allowed.  The "user:"
-prefix is no longer allowed.
-
-It is recommended that the GLOBUS_ADMINS variable be set to a single
-non-human account name other than "root".  Making a human user an admin
-can cause problems if the account's owner leaves the organization.
-Using "root" can cause problems if an NFS filesystem holding the data
-files is mounted in a way that maps the "root" account to "nobody".
-
-The "globus" account is probably a good choice, or you can create a
-custom account ("gxmap"?) for the purpose.  Make sure that access to
-the administrative account is restricted to trusted users.
-
-The gx-convert-log command supports changing the set of admins in an
-existing requests.log file.
 
 Support for propagation of information across sites is still
 incomplete.  The "ncsa-sdsc-user-map" is specific to NCSA and SDSC
@@ -120,3 +56,5 @@ gx-gen-mapfile ignores requests without a valid OWNER_NAME field.
 
 This bug was discovered in release 0.3, and has not yet been fixed
 as of release 0.4.0.
+
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-22
