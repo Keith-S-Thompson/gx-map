@@ -1,9 +1,18 @@
-# $Id: Relnotes,v 1.1 2004-11-23 20:32:30-08 kst Exp $
+# $Id: Relnotes,v 1.2 2004-11-30 16:39:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
 
-Release 0.4.0
+Release 0.4.1, 2004-11-30
+
+    This is a bug fix release.  In release 0.4.0, I inadvertently did
+    not implement the REQUESTS_LOG_PERMISSIONS configuration option.
+    Instead, it unconditionally set the permissions of the requests.log
+    file to 400 (readable only by the owner).  This is now corrected.
+    (You can still set REQUESTS_LOG_PERMISSIONS to 400 if you don't
+    want the requests.log file to be world-readable.)
+
+Release 0.4.0, 2004-11-26
 
     (I've decided to call this release 0.4.0 rather than 0.4 so the
     name of the tarball will sort properly in a directory listing if
@@ -71,18 +80,18 @@ Release 0.4.0
     The gx-convert-log command supports changing the set of admins in an
     existing requests.log file.
 
-Release 0.3
+Release 0.3, 2003-07-28
 
     This should probably be considered beta release.  It included
     fixes for some fairly nasty bugs.  It's been in use at SDSC and
     on several TeraGrid sites since July 2003.
 
-Release 0.2
+Release 0.2, 2003-07-23
 
     This was an alpha release, reworked for use at multiple sites.
     It was used briefly at SDSC and on some TeraGrid sites.  It is
     no longer supported, and its use is not recommended.
 
-Release 0.1
+Release 0.1, date unknown
 
     This was an SDSC internal system; it was never released.
