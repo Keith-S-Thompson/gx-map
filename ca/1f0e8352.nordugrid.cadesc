@@ -1,0 +1,15 @@
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.1 2004-10-02 14:40:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
+
+CA_NAME             EACL NorduGrid CA
+HOMEPAGE            http://www.nbi.dk/HEP/CA/
+CONTACT             ca@nbi.dk
+HASH                1f0e8352
+SUBJECT             /O=Grid/O=NorduGrid/CN=NorduGrid Certification Authority
+MAY_SIGN            /O=Grid/O=NorduGrid/*
+CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/1f0e8352.0
+SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/1f0e8352.signing_policy
+CRL_URL             http://www.nbi.dk/HEP/CA/1f0e8352.r0
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
