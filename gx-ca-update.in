@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.43 2004-11-03 15:46:15-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.44 2004-11-03 16:58:03-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -159,6 +159,9 @@ if (defined $User_Opt->{ca} and $User_Opt->{'all-cas'}) {
     Usage "The \"-ca\" and \"-all-cas\" options may not be used together\n";
 }
 
+my $Data_Dir = "$Install_Dir/var";
+my $lock_file = "$Data_Dir/.gx-ca-update.lock";
+
 my $ca_conf_dir = "$Install_Dir/etc/ca.conf";
 my @ca_list_all;
 my $requested_all = undef; # true if user specified "-ca ALL"
@@ -292,6 +295,13 @@ if ($User_Opt->{debugging}) {
 
 Gridmap_Utils::Use_Commands 'openssl';
 
+if (-e $lock_file) {
+    my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
+    die "Locked for ", $now - $lock_time, " seconds\n";
+}
+open LOCK, ">$lock_file";
+close LOCK;
+
 Gridmap_Utils::Init_Cache_Info;
 
 CA:
@@ -337,6 +347,8 @@ foreach my $ref (@ca_info) {
 Check_Dependencies;
 
 Notify;
+
+unlink $lock_file;
 
 ########################################################################
 
