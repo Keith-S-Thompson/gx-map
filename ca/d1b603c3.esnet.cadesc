@@ -1,0 +1,15 @@
+# $Id: d1b603c3.esnet.cadesc,v 1.1 2004-09-14 20:21:07-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
+
+CA_DESC         ESnet Root CA
+HOMEPAGE        http://pki1.doegrids.org/
+CONTACT		?
+HASH            d1b603c3
+SUBJECT         /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Root CA 1
+MAY_SIGN	/DC=org/DC=DOEGrids/OU=Certificate Authorities/*
+MAY_SIGN	/DC=net/DC=ES/*
+CERTIFICATE     http://www.es.net/CA/d1b603c3/d1b603c3.0
+SIGNING_POLICY  ?
+CRL             http://es.net/CA/d1b603c3/CRL/d1b603c3.r0
+CRL_MAX_AGE     12 hours
+INDEX           ?
