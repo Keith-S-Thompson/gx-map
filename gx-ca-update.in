@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.33 2004-10-10 01:38:49-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.34 2004-10-11 14:10:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -532,6 +532,9 @@ sub Disabled($) {
 #     lifetime    (in seconds)
 #     verified
 #
+# Returns undef if the hash, issuer, last_update, and next_update values
+# cannot be determined.
+#
 sub CRL_Info($$) {
     my($CRL_file, $cert_file) = @_;
     my $result = {};
@@ -561,6 +564,13 @@ sub CRL_Info($$) {
     close PIPE;
     
     #
+    # If we didn't get everything we need, don't return any information.
+    #
+    foreach my $key (qw(hash issuer last_update next_update)) {
+        return undef if not defined $result->{$key};
+    }
+
+    #
     # Verify CRL against certificate.
     # (If it's ok, openssl prints "verify OK" to stderr.)
     #
@@ -581,14 +591,16 @@ sub CRL_Info($$) {
 # ----------------------------------------------------------------------
 
 #
-# Given the name of a certificate file, return its expiration date.
-# returns a reference to information about the certificate:
+# Given the name of a certificate file, returns a reference to information
+# about the certificate:
 #     hash
 #     issuer
 #     subject
 #     md5sum
 #     startdate (raw timestamp)
 #     enddate   (raw timestamp)
+#
+# Returns undef if any of these fields cannot be determined.
 #
 sub Certificate_Info($) {
     my($cert_file) = @_;
@@ -618,6 +630,11 @@ sub Certificate_Info($) {
         }
     }
     close PIPE;
+
+    foreach my $key (qw(hash issuer subject md5sum startdate enddate)) {
+        return undef if not defined $result->{$key};
+    }
+
     return $result;
 } # Certificate_Info
 
@@ -748,8 +765,8 @@ sub Update_CRL($) {
         }
         elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
             Error $ref, "Newly downloaded CRL expires in " .
-                          Seconds_To_String($remaining) .
-                          ", not installing\n";
+                        Seconds_To_String($remaining) .
+                        ", not installing\n";
         }
         elsif (not $new_crl_info->{verified}) {
             Error $ref, "Can't verify new CRL\n";
