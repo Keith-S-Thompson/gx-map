@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.22 2005-01-14 19:04:19-08 kst Exp $
+# $Id: configure-gx-map,v 1.23 2005-01-18 07:28:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -54,191 +54,323 @@
 
 use strict;
 
-use File::Basename;
+use File::Basename ();
+use Getopt::Long ();
 
 sub Home_Dir($);
 sub Command_Exists($$);
+sub Perl_OK($);
+sub Same_File($$);
 sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
-my $Config_File = undef;
-my %Config = ();
-my @Var_Names = qw( PERL PATH
-                    NAMESPACE
-                    INSTALL_DIR DATA_DIR
-                    REQUESTS_LOG_PERMISSIONS
-                    GLOBUS_ADMINS ADMIN_EMAIL );
-my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
-$Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
 
-if (scalar @ARGV == 1 and -e $ARGV[0]) {
-    $Config_File = $ARGV[0];
+my $User_Opt = {};
+my @Opts = ( $User_Opt,
+             qw( help
+                 perl=s
+                 path=s
+                 namespace=s
+                 install-dir|prefix=s
+                 data-dir=s
+                 requests-log-permissions=s
+                 globus-admins=s
+                 admin-email=s
+                 valid-mappings-file=s
+                 debugging ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+
+my %Config = ();
+
+my @Commands = qw( wget ncftpget rcs ci openssl hostname );
+my @Missing_Commands = ();
+my @Errors = ();
+
+if (defined $User_Opt->{perl}) {
+    $Config{PERL} = $User_Opt->{perl};
 }
 else {
-    Usage;
-}
-
-my @errors = ();
-my @warnings = ();
-
-#
-# Record the name of the config file so it can be installed in etc
-#
-open CONFIG_FILE_NAME, ">.config-file";
-print CONFIG_FILE_NAME "$Config_File\n";
-close CONFIG_FILE_NAME;
-
-open CONFIG, $Config_File or die "$Config_File: $!\n";
-while (<CONFIG>) {
-    s/#.*$//;
-    s/^\s+//;
-    s/\s+$//;
-    next if /^$/;
-
-    chomp;
-
-    if (/^(\w+)\s+(.*)$/) {
-        my($name, $value) = ($1, $2);
-        eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
-        if ($@) {
-            chomp $@;
-            push @errors, "$@, $Config_File line $.\n";
-        }
-        if ($Valid_Var_Name{$name}) {
-            if (exists $Config{$name}) {
-                push @errors,
-                     "Duplicate name \"$name\", $Config_File line $.\n";
-            }
-            else {
-                $Config{$name} = $value;
-            }
-        }
-        else {
-            push @errors, "Invalid name \"$name\", $Config_File line $.\n";
-        }
+    if (Perl_OK '/usr/bin/perl') {
+	$Config{PERL} = '/usr/bin/perl';
     }
-}
-close CONFIG;
-
-foreach my $name (@Var_Names) {
-    if (not defined $Config{$name}) {
-        push @errors, "Missing definition for \"$name\" in $Config_File\n";
+    elsif (Perl_OK '/usr/local/bin/perl') {
+	$Config{PERL} = '/usr/local/bin/perl';
+    }
+    else {
+	$Config{PERL} = undef;
     }
 }
 
-#
-# Do some quick sanity checks (especially for GLOBUS_ADMINS, whose syntax
-# has changed in release 0.4).
-#
-if (defined $Config{PERL} and
-    ($Config{PERL} !~ /^\// or not -x $Config{PERL}))
-{
-    push @errors, "$Config_File: Bad value for \"PERL\"\n";
+if (defined $User_Opt->{path}) {
+    $Config{PATH} = $User_Opt->{path};
 }
-if (defined $Config{PATH}) {
-    foreach my $dir (split /:/, $Config{PATH}) {
-        if ($dir !~ /^\// or not -d $dir) {
-            push @errors, "$Config_File: Bad directory \"$dir\" in PATH\n";
-        }
+else {
+    my $path = '/bin';
+    $path .= ':/usr/bin' if not Same_File '/bin', '/usr/bin';
+    foreach my $command (@Commands) {
+	if (not Command_Exists $command, $path and
+	    -x "/usr/local/bin/$command")
+	{
+	    $path .= ':/usr/local/bin';
+	    last;
+	}
     }
-    #
-    # The wget and ncftpget commands are not required if you don't use
-    # a downloadable requests log.
-    #
-    my %optional = (wget => 1, ncftpget => 1);
-    foreach my $command (qw(wget ncftpget rcs ci cp)) {
-        if (not Command_Exists $command, $Config{PATH}) {
-            if ($optional{$command}) {
-                push @warnings,
-                     "Command $command not found in configured PATH\n";
-            }
-            else {
-                push @errors,
-                     "Command $command not found in configured PATH\n";
-            }
-        }
-    }
-}
-foreach my $name (qw(INSTALL_DIR DATA_DIR)) {
-    if (defined $Config{$name} and $Config{$name} !~ /^\//) {
-        push @errors, "$Config_File: Bad value for \"$name\"\n";
-    }
-}
-if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
-    my %ok = ( '400' => 1, '440' => 1, '444' => 1 );
-    if (not $ok{$Config{REQUESTS_LOG_PERMISSIONS}}) {
-        push @errors, "$Config_File: Bad REQUESTS_LOG_PERMISSIONS " .
-                      "(use 400, 440, or 444)\n";
-    }
-}
-if (defined $Config{GLOBUS_ADMINS}) {
-    foreach my $admin (split /\s+/, $Config{GLOBUS_ADMINS}) {
-        if ($admin =~ /^user:(.*)/) {
-            my $admin_name = $1;
-            push @errors,
-                 "$Config_File: Replace \"$admin\" with \"$admin_name\" " .
-                 "in GLOBUS_ADMINS\n";
-        }
-        elsif ($admin =~ /^group:/) {
-            push @errors, "$Config_File: Groups are no longer supported " .
-                          "in GLOBUS_ADMINS\n";
-        }
-        else {
-            my @pw = getpwnam $admin;
-            if (not @pw) {
-                push @errors,
-                     "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
-            }
-        }
+    foreach my $command (@Commands) {
+	if (not Command_Exists $command, $path) {
+	    push @Missing_Commands, $command;
+	}
     }
 }
 
-die @errors if @errors;
-
-opendir DIR, '.' or die ".: $!\n";
-my @in_files = sort grep /\.in$/, readdir DIR;
-closedir DIR;
-
-die "No *.in files found\n" if not @in_files;
-
-my $max_len = 0;
-foreach my $in_file (@in_files) {
-    $max_len = length $in_file if length $in_file > $max_len;
+if (defined $User_Opt->{namespace}) {
+    $Config{NAMESPACE} = $User_Opt->{namespace};
+}
+else {
+    $Config{NAMESPACE} = 'UNDEF';
 }
 
-foreach my $in_file (@in_files) {
-    my $out_file = $in_file;
-    $out_file =~ s/\.in$//;
-
-    if ($in_file eq 'Gridmap_Valid_Mappings.pm.in' and
-        defined $Config{VALID_MAPPINGS_FILE})
-    {
-        #
-        # Special case: The VALID_MAPPINGS_FILE configuration option
-        # overrides the name of the input file (but not the output file)
-        # for Gridmap_Valid_Mappings.pm.
-        #
-        $in_file = $Config{VALID_MAPPINGS_FILE};
-    }
-
-    printf "%-${max_len}s --> %s\n", $in_file, $out_file;
-    open IN, $in_file or die "$in_file: $!\n";
-    open OUT, ">$out_file" or die "$out_file: $!\n";
-    while (<IN>) {
-        foreach my $var (@Var_Names) {
-            s/%$var%/$Config{$var}/g;
-        }
-        if (/%\w+%/) {
-            warn ">>> Unrecognized variable $&, $in_file line $.\n";
-        }
-        print OUT;
-    }
-    close IN;
-    close OUT;
-
-    my $mode = (stat $in_file)[2];
-    chmod $mode, $out_file;
+if (defined $User_Opt->{'install-dir'}) {
+    $Config{INSTALL_DIR} = $User_Opt->{'install-dir'};
 }
+else {
+    push @Errors, "-install-dir not specified\n";
+}
+
+if (defined $User_Opt->{'data-dir'}) {
+    $Config{DATA_DIR} = $User_Opt->{'data-dir'};
+}
+else {
+    push @Errors, "-data-dir not specified\n";
+}
+
+if (defined $User_Opt->{'requests-log-permissions'}) {
+    my $perms = $User_Opt->{'requests-log-permissions'};
+    if ($perms eq '444' or $perms eq '440' or $perms eq '400') {
+	$Config{REQUEST_LOG_PERMISSIONS} = $perms;
+    }
+    else {
+	push @Errors, "Argument to -requests-log-permissions " .
+		      "must be 444, 440, or 400\n";
+    }
+}
+else {
+    $Config{REQUEST_LOG_PERMISSIONS} = '444';
+}
+
+if (defined $User_Opt->{'globus-admins'}) {
+    $Config{GLOBUS_ADMINS} = $User_Opt->{'globus-admins'};
+}
+else {
+    my @pw = getpwnam 'globus';
+    if (@pw) {
+	$Config{GLOBUS_ADMINS} = 'globus';
+    }
+    else {
+	$Config{GLOBUS_ADMINS} = undef;
+    }
+}
+
+if (defined $User_Opt->{'admin-email'}) {
+    $Config{ADMIN_EMAIL} = $User_Opt->{'admin-email'};
+}
+else {
+    $Config{ADMIN_EMAIL} = 'UNDEF';
+}
+
+if (defined $User_Opt->{'valid-mappings-file'}) {
+    $Config{VALID_MAPPINGS_FILE} = $User_Opt->{'valid-mappings-file'};
+}
+else {
+    $Config{VALID_MAPPINGS_FILE} = 'UNDEF';
+}
+
+foreach my $key (sort keys %Config) {
+    print "$key => ",
+	  ( defined $Config{$key} ? $Config{$key} : 'undef' ),
+	  "\n";
+}
+
+if (@Errors) {
+    print "Error(s):\n", @Errors;
+}
+
+## my @Var_Names = qw( PERL PATH
+##                     NAMESPACE
+##                     INSTALL_DIR DATA_DIR
+##                     REQUESTS_LOG_PERMISSIONS
+##                     GLOBUS_ADMINS ADMIN_EMAIL );
+## my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
+## $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
+## 
+## if (scalar @ARGV == 1 and -e $ARGV[0]) {
+##     $Config_File = $ARGV[0];
+## }
+## else {
+##     Usage;
+## }
+## 
+## my @errors = ();
+## my @warnings = ();
+## 
+## #
+## # Record the name of the config file so it can be installed in etc
+## #
+## open CONFIG_FILE_NAME, ">.config-file";
+## print CONFIG_FILE_NAME "$Config_File\n";
+## close CONFIG_FILE_NAME;
+## 
+## open CONFIG, $Config_File or die "$Config_File: $!\n";
+## while (<CONFIG>) {
+##     s/#.*$//;
+##     s/^\s+//;
+##     s/\s+$//;
+##     next if /^$/;
+## 
+##     chomp;
+## 
+##     if (/^(\w+)\s+(.*)$/) {
+##         my($name, $value) = ($1, $2);
+##         eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
+##         if ($@) {
+##             chomp $@;
+##             push @errors, "$@, $Config_File line $.\n";
+##         }
+##         if ($Valid_Var_Name{$name}) {
+##             if (exists $Config{$name}) {
+##                 push @errors,
+##                      "Duplicate name \"$name\", $Config_File line $.\n";
+##             }
+##             else {
+##                 $Config{$name} = $value;
+##             }
+##         }
+##         else {
+##             push @errors, "Invalid name \"$name\", $Config_File line $.\n";
+##         }
+##     }
+## }
+## close CONFIG;
+## 
+## foreach my $name (@Var_Names) {
+##     if (not defined $Config{$name}) {
+##         push @errors, "Missing definition for \"$name\" in $Config_File\n";
+##     }
+## }
+## 
+## #
+## # Do some quick sanity checks (especially for GLOBUS_ADMINS, whose syntax
+## # has changed in release 0.4).
+## #
+## if (defined $Config{PERL} and
+##     ($Config{PERL} !~ /^\// or not -x $Config{PERL}))
+## {
+##     push @errors, "$Config_File: Bad value for \"PERL\"\n";
+## }
+## if (defined $Config{PATH}) {
+##     foreach my $dir (split /:/, $Config{PATH}) {
+##         if ($dir !~ /^\// or not -d $dir) {
+##             push @errors, "$Config_File: Bad directory \"$dir\" in PATH\n";
+##         }
+##     }
+##     #
+##     # The wget and ncftpget commands are not required if you don't use
+##     # a downloadable requests log.
+##     #
+##     my %optional = (wget => 1, ncftpget => 1);
+##     foreach my $command (qw(wget ncftpget rcs ci cp)) {
+##         if (not Command_Exists $command, $Config{PATH}) {
+##             if ($optional{$command}) {
+##                 push @warnings,
+##                      "Command $command not found in configured PATH\n";
+##             }
+##             else {
+##                 push @errors,
+##                      "Command $command not found in configured PATH\n";
+##             }
+##         }
+##     }
+## }
+## foreach my $name (qw(INSTALL_DIR DATA_DIR)) {
+##     if (defined $Config{$name} and $Config{$name} !~ /^\//) {
+##         push @errors, "$Config_File: Bad value for \"$name\"\n";
+##     }
+## }
+## if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
+##     my %ok = ( '400' => 1, '440' => 1, '444' => 1 );
+##     if (not $ok{$Config{REQUESTS_LOG_PERMISSIONS}}) {
+##         push @errors, "$Config_File: Bad REQUESTS_LOG_PERMISSIONS " .
+##                       "(use 400, 440, or 444)\n";
+##     }
+## }
+## if (defined $Config{GLOBUS_ADMINS}) {
+##     foreach my $admin (split /\s+/, $Config{GLOBUS_ADMINS}) {
+##         if ($admin =~ /^user:(.*)/) {
+##             my $admin_name = $1;
+##             push @errors,
+##                  "$Config_File: Replace \"$admin\" with \"$admin_name\" " .
+##                  "in GLOBUS_ADMINS\n";
+##         }
+##         elsif ($admin =~ /^group:/) {
+##             push @errors, "$Config_File: Groups are no longer supported " .
+##                           "in GLOBUS_ADMINS\n";
+##         }
+##         else {
+##             my @pw = getpwnam $admin;
+##             if (not @pw) {
+##                 push @errors,
+##                      "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
+##             }
+##         }
+##     }
+## }
+## 
+## die @errors if @errors;
+## 
+## opendir DIR, '.' or die ".: $!\n";
+## my @in_files = sort grep /\.in$/, readdir DIR;
+## closedir DIR;
+## 
+## die "No *.in files found\n" if not @in_files;
+## 
+## my $max_len = 0;
+## foreach my $in_file (@in_files) {
+##     $max_len = length $in_file if length $in_file > $max_len;
+## }
+## 
+## foreach my $in_file (@in_files) {
+##     my $out_file = $in_file;
+##     $out_file =~ s/\.in$//;
+## 
+##     if ($in_file eq 'Gridmap_Valid_Mappings.pm.in' and
+##         defined $Config{VALID_MAPPINGS_FILE})
+##     {
+##         #
+##         # Special case: The VALID_MAPPINGS_FILE configuration option
+##         # overrides the name of the input file (but not the output file)
+##         # for Gridmap_Valid_Mappings.pm.
+##         #
+##         $in_file = $Config{VALID_MAPPINGS_FILE};
+##     }
+## 
+##     printf "%-${max_len}s --> %s\n", $in_file, $out_file;
+##     open IN, $in_file or die "$in_file: $!\n";
+##     open OUT, ">$out_file" or die "$out_file: $!\n";
+##     while (<IN>) {
+##         foreach my $var (@Var_Names) {
+##             s/%$var%/$Config{$var}/g;
+##         }
+##         if (/%\w+%/) {
+##             warn ">>> Unrecognized variable $&, $in_file line $.\n";
+##         }
+##         print OUT;
+##     }
+##     close IN;
+##     close OUT;
+## 
+##     my $mode = (stat $in_file)[2];
+##     chmod $mode, $out_file;
+## }
 
 ########################################################################
 
@@ -277,10 +409,48 @@ sub Command_Exists($$) {
 
 # ----------------------------------------------------------------------
 
+sub Perl_OK($) {
+    my($perl) = @_;
+    return 0 if not -x $perl;
+    system "$perl -e 'require 5.006' >/dev/null 2>/dev/null";
+    return $? == 0;
+} # Perl_OK
+
+# ----------------------------------------------------------------------
+
+sub Same_File($$) {
+    my($file1, $file2) = @_;
+    my @stat1 = stat $file1;
+    return 0 if not @stat1;
+    my @stat2 = stat $file2;
+    return 0 if not @stat2;
+    my ($dev1, $ino1) = ($stat1[0], $stat1[1]);
+    my ($dev2, $ino2) = ($stat2[0], $stat2[1]);
+    return ($dev1 == $dev2 and $ino1 == $ino2);
+} # Same_File;
+
+# ----------------------------------------------------------------------
+
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Program_Name config-file
+Usage: $Program_Name [options]
+    -help               Show this message and exit
+    -perl command       Full path to Perl command
+    -path value         Value to be used for \$PATH
+    -namespace value    Namespace (default is UNDEF)
+    -install-dir dir    Installation directory (mandatory)
+    -prefix dir         Alias for "-install-dir dir"
+    -data-dir dir       Data directory (mandatory)
+    -requests-log-permissions octal
+                        Permissions for requests.log (default 444)
+    -globus-admins accounts
+                        Administrative account(s) (default globus)
+    -admin-email addr   E-mail address for admin contact
+    -valid-mappings-file file
+                        File containing customized Gridmap_Valid_Mappings
+                        Perl module (not normally needed)
+    -debugging          Enable debugging
 EOF
     exit 1;
 } # Usage
