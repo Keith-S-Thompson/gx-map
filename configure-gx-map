@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.24 2005-01-18 20:44:12-08 kst Exp $
+# $Id: configure-gx-map,v 1.25 2005-01-28 18:00:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -74,6 +74,7 @@ my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( help
+                 version
                  perl=s
                  path=s
                  namespace=s
@@ -86,6 +87,10 @@ my @Opts = ( $User_Opt,
                  debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
+if ($User_Opt->{version}) {
+    die "\"-version\" option not implemented in configure-gx-map\n",
+        "See \$VERSION in Gridmap_Utils.pm.in\n";
+}
 
 my %Config = ();
 
@@ -225,7 +230,7 @@ else {
 }
 
 foreach my $key (sort keys %Config) {
-    printf "%-20s => %s\n",
+    printf "%-24s => %s\n",
            $key,
            ( defined $Config{$key} ? $Config{$key} : 'undef' );
 }
@@ -237,11 +242,27 @@ if (@Errors) {
 open TEMPLATE, 'gx-map.conf.in' or die "gx-map.conf.in: $!\n";
 open CONFIG,  '>gx-map.conf'    or die "gx-map.conf: $!\n";
 while (<TEMPLATE>) {
+    chomp;
     my $var_error = undef;
     if (/^([A-Z_]+)/) {
-        my $var = $1;
+        my ($var, $blanks1, $value, $blanks2, $comment)
+            = /^([A-Z_]+)(\s+)(.*?)(\s*)(#.*|)$/;
+#       print ">>> var     = \"$var\"\n";
+#       print ">>> blanks1 = \"$blanks1\"\n";
+#       print ">>> value   = \"$value\"\n";
+#       print ">>> blanks2 = \"$blanks2\"\n";
+#       if (defined $comment) {
+#           print ">>> comment = \"$comment\"\n";
+#       }
+#       else {
+#           print ">>> comment = undef\n";
+#       }
+#       print "\n";
+
         if (defined $Config{$var}) {
-            s/\S+$/$Config{$var}/;
+
+            $value = $Config{$var};
+	    $_ = "$var$blanks1$value$blanks2$comment";
 
             if ($var eq 'PATH') {
                 s/\S+$/$Config{PATH}/;
@@ -267,7 +288,7 @@ while (<TEMPLATE>) {
             $var_error = "# >>> Unrecognized variable $var\n";
         }
     }
-    print CONFIG;
+    print CONFIG "$_\n";
     print CONFIG $var_error if defined $var_error;
 }
 close TEMPLATE;
