@@ -1,4 +1,4 @@
-# $Id: README.CA-Security,v 1.4 2004-11-01 16:53:25-08 kst Exp $
+# $Id: README.CA-Security,v 1.5 2004-11-22 17:53:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA-Security,v $
 
 The gx-ca-update program automatically installs signing certificates,
