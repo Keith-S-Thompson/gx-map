@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.4 2004-11-08 08:43:07-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.5 2004-11-12 14:57:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -99,7 +99,7 @@ if (defined $User_Opt->{'new-admin'}) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.4 $';
+my $Rev = '$Revision: 1.5 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -116,29 +116,31 @@ $timestamp =~ s/^\d+ //;
 
 print '# $', 'Id:$', "\n";
 print '# $', 'Source:$', "\n";
-print "# Converted $timestamp by $Program_Name revision $Rev\n";
+print "# Converted $timestamp by $Program_Name ",
+      "(gx-map $Gridmap_Utils::VERSION)\n";
 print "# Converting ", scalar @refs, " records\n";
 print "\n";
 
 foreach my $ref (@refs) {
-    next if defined $ref->{SOURCE};
     my $owner_is_admin = Owned_By_Admin $ref;
 
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
     my $new_comment = undef;
 
     if ($owner_is_admin) {
-        if ($comment =~ /^cacl certificate/) {
-            $ref->{SOURCE} = 'NPACI-CA';
-        }
-        elsif ($comment =~ /^NPACI CA certificate/) {
-            $ref->{SOURCE} = 'NPACI-CA';
-        }
-        elsif ($comment =~ /^SDSC CA certificate/) {
-            $ref->{SOURCE} = 'SDSC-CA';
-        }
-        else {
-            $ref->{SOURCE} = 'admin';
+        if (not defined $ref->{SOURCE}) {
+            if ($comment =~ /^cacl certificate/) {
+                $ref->{SOURCE} = 'NPACI-CA';
+            }
+            elsif ($comment =~ /^NPACI CA certificate/) {
+                $ref->{SOURCE} = 'NPACI-CA';
+            }
+            elsif ($comment =~ /^SDSC CA certificate/) {
+                $ref->{SOURCE} = 'SDSC-CA';
+            }
+            else {
+                $ref->{SOURCE} = 'admin';
+            }
         }
         if (defined $User_Opt->{'new-admin'} and
             $User_Opt->{'new-admin'} ne $ref->{OWNER_NAME})
@@ -155,7 +157,9 @@ foreach my $ref (@refs) {
         }
     }
     else {
-        $ref->{SOURCE} = 'user';
+        if (not defined $ref->{SOURCE}) {
+            $ref->{SOURCE} = 'user';
+        }
     }
 
     my @comments = ();
