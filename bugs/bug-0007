@@ -1,0 +1,32 @@
+# $Id: bug-0007,v 1.1 2005-03-24 19:06:17-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0007,v $
+
+gx-map bug 0007
+Date: Thu 2005-03-24
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+
+Summary:
+New configuration system.
+
+This is currently a work in progress.
+
+Rather than requiring the installer to write a configuration file
+to drive the installation, use a configure/make/make install setup.
+The --prefix must be specified (there is no default); most other
+options may be omitted.  A run-time configuration file is created,
+and all commands read this file (and have an option to specify a
+different configuration file).
+
+If enough information is provided to configure, the installation will
+be complete.  If not, certain fields are left blank, and any attempt
+to read the configuration file will cause the command to die with a
+message indicating that it needs to be updated.  Consider providing
+a gx-config command that displays and/or updates the current
+configuration (and tracks changes in RCS, perhaps).
+
+Motivation: Simplify installation and make it work better with a
+future NMI release.
+
+See also "new-config" in the gx-map CVS directory.
