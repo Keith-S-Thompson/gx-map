@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.38 2004-09-13 16:48:00-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.39 2004-09-20 16:32:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -645,7 +645,12 @@ sub Cache_File($) {
             chdir '..';
             rmdir $dir;
             my $cmd = $is_ftp ? 'ncftpget' : 'wget';
-            die "$cmd failed for $url, system() returned $result\n";
+            if ($result % 256 == 0) {
+                die "$cmd failed for $url, exit(" . $result / 256 . ")\n";
+            }
+            else {
+                die "$cmd failed for $url, system() returned $result\n";
+            }
         }
     }
     else {
