@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.35 2004-11-08 09:00:30-08 kst Exp $
+# $Id: gx-map.in,v 1.36 2004-11-08 09:05:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -557,8 +557,8 @@ EOF
             if ($response ne '') {
                 $Options->{source} = $response;
             }
-            elsif ($response !~ /^[\w-]+$/) {
-                print ">>> Invalid value (use only a-z A-Z 0-9 - _)\n";
+            elsif ($response !~ /^[A-Za-z0-9._-]+$/) {
+                print ">>> Invalid value (use only [A-Za-z0-9._-])\n";
                 undef $response;
             }
         }
@@ -875,7 +875,7 @@ sub Get_Options_From_Command_Line() {
 
     if (defined $User_Opt->{source}) {
         if ($Globus_Admin) {
-            if ($User_Opt-{source} !~ /^[\w-]+$/) {
+            if ($User_Opt-{source} !~ /^[A-Za-z0-9._-]+$/) {
                 Usage "Invalid argument to \"-source\" option\n";
             }
             $Options->{source} = $User_Opt->{source};
@@ -1038,7 +1038,8 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -comment "string"       : Comment to be added to request log (optional)
     -source string          : Specify the source of the mapping.
                               Argument may consist only of letters, digits,
-                              underscore, and hyphen characters.
+                              underscore, period, and hyphen characters
+			      ([A-Za-z0-9_.-]).
                               This option is for use by Globus administrators
                               only.
     -debugging              : Enable debugging output.
