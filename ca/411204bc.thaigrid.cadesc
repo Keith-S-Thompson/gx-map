@@ -1,4 +1,4 @@
-# $Id: 411204bc.thaigrid.cadesc,v 1.7 2004-11-01 17:04:18-08 kst Exp $
+# $Id: 411204bc.thaigrid.cadesc,v 1.8 2005-03-29 19:27:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/411204bc.thaigrid.cadesc,v $
 
 CA_NAME             ThaiGrid CA
@@ -8,6 +8,7 @@ HASH                411204bc
 SUBJECT             /O=Grid/OU=ThaiGrid/CN=ThaiGrid CA
 MAY_SIGN            /O=Grid/OU=ThaiGrid/*
 CERTIFICATE_MD5     9F:77:C4:44:39:93:2D:AE:09:28:F0:C9:65:48:55:3B
+# CERTIFICATE_SHA1    1A:30:D7:B3:0F:E7:78:CD:68:38:E4:15:F6:F0:1A:DE:D6:03:0A:BB
 CERTIFICATE_URL     http://osl.cpe.ku.ac.th/pub/thaigrid/CA/411204bc.0
 SIGNING_POLICY_URL  http://osl.cpe.ku.ac.th/pub/thaigrid/CA/411204bc.signing_policy
 CRL_URL             ?
@@ -17,4 +18,4 @@ CERT_EXPIRES        Jun 23 07:40:07 2008 GMT
 # I've been unable to find a CRL
 #
 
-# MD5 fingerprint from 411204bc.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 411204bc.0 downloaded 2005-03-29
