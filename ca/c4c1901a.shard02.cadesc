@@ -1,0 +1,19 @@
+# $Id: c4c1901a.shard02.cadesc,v 1.1 2004-10-17 22:39:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/c4c1901a.shard02.cadesc,v $
+
+CA_NAME             shard02.sdsc.edu Simple CA
+HOMEPAGE            ?
+CONTACT             ?
+HASH                c4c1901a
+SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=shard02.sdsc.edu/CN=Globus Simple CA
+MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=shard02.sdsc.edu/*
+CERTIFICATE_MD5     D8:67:8E:59:D1:73:FC:98:CF:52:80:35:D3:21:6A:CB
+CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c4c1901a.0
+SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c4c1901a.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             no
+
+# There is no CRL.
+
+# MD5 fingerprint from c4c1901a.0 downloaded 2004-10-17
