@@ -1,179 +1,7 @@
-# $Id: README,v 1.14 2004-07-29 20:02:13-07 kst Exp $
+# $Id: README,v 1.15 2004-11-04 02:40:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
-
-========================================================================
-NOTES: (not included in gx-map-0.3 release):
-
-1.  There's a bug in release 0.3 affecting the "gx-map -update"
-    command.  This command updates a file in the data directory,
-    causing "gx-gen-mapfile" to regenerate the grid-mapfile the next
-    time it runs.  The permissions on the updated file are not set
-    correctly; as a result, after a user has run "gx-map -update",
-    any other users who attempt to run it will get a "Permission
-    denied" error.
-
-    This will be corrected in release 0.4.  Until then, you can work
-    around it by doing the following after "make install":
-
-        cd DATA_DIR/new-requests   (DATA_DIR as specified in the config file)
-        touch .update
-        chmod 666 .update
-
-2.  The gx-map system depends critically on checking file ownership
-    to confirm that a request was made by an authorized user.  If the
-    operating system allows users to "give away" files, this check can
-    be subverted.  Specifically, if user "foo" can create a request
-    file requesting that a given DN be mapped to user "bar", then use
-    "chown" to change the ownership of the request file to user "bar",
-    this can fool gx-map into allowing "foo" to run arbitrary commands
-    under "bar"'s account.
-
-    On most Unix-like systems, only root can change file ownerships,
-    but there are exceptions:
-
-    Linux:
-        As far as I can tell, Linux systems do not allow non-root
-        users to use chown; this is not configurable.
-
-    AIX 5:
-        As on Linux, non-root users are not allowed to use chown.
-
-    HP-UX:
-        HP-UX systems allow non-root users to use chown, though this
-        can be disabled with setprivgrp.  Some brief experiments on
-        public-hp.ncsa.uiuc.edu indicate that this applies only on
-        locally mounted filesystems -- but see IRIX, below.
-
-    IRIX:
-        As on HP-UX, SGI's IRIX allows non-root users to use
-        chown, though this can be disabled by setting the variable
-        "restricted_chown".  Experiment shows that non-root chown is
-        allowed on an NFS filesystem where the NFS server is an IRIX
-        system, even if the client is not.
-
-    Solaris:
-        Non-root users are forbidden to use chown by default, but
-        this can be enabled by adding the line
-            set rstchown = 0
-        to /etc/system.
-
-    Before deploying the gx-map system, make sure that users are not
-    able to chown files in the data directory.  If the data directory
-    is NFS-mounted, make sure users cannot use chown in that directory
-    from any system that mounts it.
-
-    A future release will check whether non-root chown is allowed in
-    the data directory, and refuse to run if it is.
-
-3.  A Globus grid-mapfile may have multiple user names associated
-    with a single DN:
-        "/O=Foo/OU=Bar/CN=John Q. Smith" user1,user2,user3
-    For most Globus tools, only the first listed user name is used.
-    For gsissh (and possibly some other tools), the first name listed
-    is the default, but other names may be specified.
-
-    gx-map does not currently support multiple user names for a
-    given DN.  (Even if you manually edit the grid-mapfile, the next
-    update will overwrite it.)
-
-    The next release, 0.4, will add this support.
-
-4.  Some site-specific files currently includes in the gx-map
-    distribution will probably be provided separately in future
-    releases.  Specifically, the "ncsa-sdsc-user-map" file is extremely
-    site-specific, needs to be updated more frequently than the gx-map
-    distribution itself, and may not be appropriate for distribution
-    anyway.  Similarly, the *.conf files (other than a sample or two)
-    and the site-specific Gridmap_Valid_Mappings.pm.in.* files will
-    probably be excluded.  I haven't decided yet how to manage these.
-
-5.  The documentation and sample config file are unclear about the
-    syntax of the GLOBUS_ADMINS variable.
-
-    The argument is a series of one or more space-delimited arguments;
-    each arguments must start with the string "user:" or "group:".
-    Each arguments specifies a single Unix user or group name.
-    For example, if you want users "root" and "phred" to have
-    administrative access, this is specified as
-
-        GLOBUS_ADMINS user:root user:phred
-
-    In the current release, incorrect arguments are silently ignored.
-
-    You can mix "user:" and "group:" arguments.  Be careful with
-    groups; guaranteeing that each member of a group is someone who
-    should have administrative access can be more difficult that you
-    might anticipate.
-
-5a. As of release 0.4, the GLOBUS_ADMINS variable is a series of
-    one or more space-delimited Unix user names.  Group names are
-    no longer allowed.  The "user:" prefix is no longer allowed;
-    each argument is a bare user name.
-
-5b. It is recommended that the GLOBUS_ADMINS variable be set to a
-    single non-human account name other than "root".  Making a human
-    user an admin can cause problems if the account's owner leaves
-    the organization.  Using "root" can cause problems if an NFS
-    filesystem holding the data files is mounted in a way that maps
-    the "root" account to "nobody".
-
-    The "globus" account is probably a good choice, or you can create
-    a custom account ("gxmap"?) for the purpose.  Make sure that access
-    to the administrative account is restricted to trusted users.
-
-6.  I've just discovered a bug in the gx-map system (thanks to Mei-Hui
-    Su of ISI for running into it).  It should only affect sites with
-    multiple systems sharing a data directory.
-
-    The scenario:
-
-    1.  A user runs gx-map, generating a request file (owned by the
-        user) in the shared data directory.
-
-    2.  A few minutes later, the gx-check-requests command runs
-        under control of a cron job.  Recall that gx-check-requests
-        runs on only a single system.  It picks up the request file,
-        processes it, and appends it (with some annotations) to the
-        shared requests.log file.
-
-    3.  Shortly after that, the gx-gen-mapfile command is run,
-        possibly on several systems.  It sees that the requests.log
-        file has been updated, and re-generates the grid-mapfile.
-
-    The problem: The user who ran gx-map in step 1 does not happen
-    to have an account on the system running gx-check-requests.
-    As a result, the record appended to the requests.log file has a
-    valid OWNER_UID field (the numeric UID of the user), but does not
-    have an OWNER_NAME field (since gx-check-requests can't determine
-    the name).  Currently, gx-gen-mapfile ignores requests without
-    a valid OWNER_NAME field.
-
-    This should be corrected in the next release.  It looks like I'm
-    going to have to change some assumptions about consistency of
-    numeric UIDs between systems.  Details TBD.
-
-7.  The gx-check-requests and gx-gen-mapfile commands use Perl's "-T"
-    option, which enables checking for "tainted" data (for example,
-    it disallows arbitrary values for $PATH).  As of release 0.3, $PATH
-    is the only environment variable that is set to a safe value, but
-    several other environment variables are also checked, namely $IFS,
-    $CDPATH, $ENV, and BASH_ENV.  The next release will unset these
-    environment variables.  (Wendy Lin <af5@taiyang.cc.purdue.edu>
-    ran into this problem.)
-
-========================================================================
-
-This is release 0.3; more documentation will follow later.
-
-Release 0.1 was an SDSC internal system.
-
-Release 0.2 was an alpha release, reworked for use at multiple sites.
-Use of release 0.2 is no longer recommended.
-
-Release 0.3 is probably somewhere between alpha and beta (depending on
-how many bugs turn up).  It includes fixes for some fairly nasty bugs.
 
 The "gx-map" command is used to request the addition or deletion
 of an entry in the grid-mapfile.  Users should normally run
@@ -193,3 +21,98 @@ All commands accept a "-help" option to print a brief usage message
 and a "-version" option to display the current version.  The gx-map
 command also accepts a "-long-help" option with information on
 non-interactive use.
+
+
+This is release 0.4.0; more documentation will follow later.
+
+Release 0.1 was an SDSC internal system.
+
+Release 0.2 was an alpha release, reworked for use at multiple sites.
+Use of release 0.2 is no longer recommended.
+
+Release 0.3 is probably somewhere between alpha and beta (depending on
+how many bugs turn up).  It includes fixes for some fairly nasty bugs.
+
+Release 0.4.0 includes some new tools:
+
+    gx-ingest reads an existing grid-mapfile and generates a script
+    that invokes gx-map to incorporate the entries into the database.
+
+    gx-ca-update downloads and installs certificates, CRLs, and
+    signing_policy files.  See ca/README and ca/SECURITY in this
+    distribution for more information.
+
+    gx-convert-log converts data from a previous gx-map installation
+    for use with gx-map 0.4.
+
+New features in 0.4.0:
+
+Multiple user names can be supported for a grid-mapfile entry by
+treating some mappings as "secondary".
+
+An administrator may use the "-source" option to specify the source
+of a mapping; this will eventually be used for cross-site propagation.
+
+The gx-map system depends critically on checking file ownership
+to confirm that a request was made by an authorized user.  The
+gx-check-requests command now fails if a non-root user is able to
+use chown on a file in the new-requests directory.
+
+The generated grid-mapfile is compatible with both GT2 (OpenSSL
+0.9.6) and GT3 (OpenSSL 0.9.7).  (The expand-grid-mapfile
+command used by some sites with gx-map 0.3 is no longer needed.)
+See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575> for
+more information on this issue.
+
+The syntax of the GLOBUS_ADMINS configuration variable changed from 0.3
+to 0.4.0.  The argument is now a series of one or more space-delimited
+Unix user names.  Group names are no longer allowed.  The "user:"
+prefix is no longer allowed.
+
+It is recommended that the GLOBUS_ADMINS variable be set to a single
+non-human account name other than "root".  Making a human user an admin
+can cause problems if the account's owner leaves the organization.
+Using "root" can cause problems if an NFS filesystem holding the data
+files is mounted in a way that maps the "root" account to "nobody".
+
+The "globus" account is probably a good choice, or you can create a
+custom account ("gxmap"?) for the purpose.  Make sure that access to
+the administrative account is restricted to trusted users.
+
+The gx-convert-log command supports changing the set of admins in an
+existing requests.log file.
+
+Support for propagation of information across sites is still
+incomplete.  The "ncsa-sdsc-user-map" is specific to NCSA and SDSC
+systems, and is out of date.  (The new SOURCE attribute is intended
+to enable tracking where each transaction was entered.)
+
+Documentation is still sadly lacking.
+
+There is a known bug in the gx-map system (inadvertently discovered
+by Mei-Hui Su of ISI) that can affect sites with multiple systems
+sharing a data directory.
+
+The scenario:
+
+1.  A user runs gx-map, generating a request file (owned by the user)
+    in the shared data directory.
+
+2.  A few minutes later, the gx-check-requests command runs under
+    control of a cron job.  Recall that gx-check-requests runs on only
+    a single system.  It picks up the request file, processes it, and
+    appends it (with some annotations) to the shared requests.log file.
+
+3.  Shortly after that, the gx-gen-mapfile command is run, possibly
+    on several systems.  It sees that the requests.log file has been
+    updated, and re-generates the grid-mapfile.
+
+The problem: The user who ran gx-map in step 1 does not happen to have
+an account on the system running gx-check-requests.  As a result,
+the record appended to the requests.log file has a valid OWNER_UID
+field (the numeric UID of the user), but does not have an OWNER_NAME
+field (since gx-check-requests can't determine the name).  Currently,
+gx-gen-mapfile ignores requests without a valid OWNER_NAME field.
+
+This bug was discovered in release 0.3, and has not yet been fixed
+as of release 0.4.0.
