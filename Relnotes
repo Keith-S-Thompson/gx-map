@@ -1,0 +1,88 @@
+# $Id: Relnotes,v 1.1 2004-11-23 20:32:30-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Relnotes,v $
+
+Release notes for gx-map
+
+Release 0.4.0
+
+    (I've decided to call this release 0.4.0 rather than 0.4 so the
+    name of the tarball will sort properly in a directory listing if
+    there's a 0.4.1 release.)
+
+    Like previous releases, gx-map 0.4.0 is still somewhat lacking in
+    coherent documentation.  It is therefore recommended for users who
+    want to upgrade from gx-map 0.3, or who are willing to spend some
+    time getting the system working.  Future releases will include
+    man pages.
+
+    This release includes several new tools:
+
+	gx-ingest reads an existing grid-mapfile and generates a
+	script that invokes gx-map to incorporate the entries into
+	the database.
+
+	gx-ca-update downloads and installs certificates, CRLs, and
+	signing_policy files.  See README.CA and README.CA-SECURITY
+	in this distribution for more information.  Note that this
+	can be used independently of the gx-map command; even if you
+	don't use gx-map to maintain your grid-mapfile, you can still
+	use gx-ca-update to maintain your CA files.
+
+	gx-convert-log converts data from a previous gx-map
+	installation for use with gx-map 0.4.
+
+	gx-admins reads an existing requests.log file and guesss which
+	users are treated as administrators (useful when upgrading
+	from gx-map 0.3).
+
+    Multiple user names can be supported for a grid-mapfile entry by
+    treating some mappings as "secondary".
+
+    An administrator may use the "-source" option to specify the
+    source of a mapping; this will eventually be used to manage
+    cross-site propagation.
+
+    The gx-map system depends critically on checking file ownership
+    to confirm that a request was made by an authorized user.
+    The gx-check-requests command now fails if a non-root user is
+    able to use chown on a file in the new-requests directory.
+
+    The generated grid-mapfile is compatible with both GT2 (OpenSSL
+    0.9.6) and GT3 (OpenSSL 0.9.7).  (The expand-grid-mapfile
+    command used by some sites with gx-map 0.3 is no longer needed.)
+    See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>
+    for more information on this issue.
+
+    The syntax of the GLOBUS_ADMINS configuration variable changed from 0.3
+    to 0.4.0.  The argument is now a series of one or more space-delimited
+    Unix user names.  Group names are no longer allowed.  The "user:"
+    prefix is no longer allowed.
+
+    It is recommended that the GLOBUS_ADMINS variable be set to
+    a single non-human account name other than "root".  Making a
+    human user an admin can cause problems if the account's owner
+    leaves the organization.  Using "root" can cause problems if an
+    NFS filesystem holding the data files is mounted in a way that
+    maps the "root" account to "nobody".  My recommendation: Make the
+    "globus" account the only administrative account, make sure any
+    administrative users have access to that account.  Be careful not
+    to give any untrusted users access to any administrative account.
+
+    The gx-convert-log command supports changing the set of admins in an
+    existing requests.log file.
+
+Release 0.3
+
+    This should probably be considered beta release.  It included
+    fixes for some fairly nasty bugs.  It's been in use at SDSC and
+    on several TeraGrid sites since July 2003.
+
+Release 0.2
+
+    This was an alpha release, reworked for use at multiple sites.
+    It was used briefly at SDSC and on some TeraGrid sites.  It is
+    no longer supported, and its use is not recommended.
+
+Release 0.1
+
+    This was an SDSC internal system; it was never released.
