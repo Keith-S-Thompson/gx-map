@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.8 2004-10-08 20:44:36-07 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.9 2004-10-10 03:21:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
@@ -12,3 +12,5 @@ CERTIFICATE_URL     http://www.grid-support.ac.uk/ca/user-documentation/01621954
 SIGNING_POLICY_URL  http://www.grid-support.ac.uk/ca/user-documentation/01621954.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/cgi-bin/importCRL.pem
 CRL_WARNING         48 hours
+
+# MD5 fingerprint from 01621954.0 downloaded 2004-10-10
