@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.37 2004-10-13 17:53:01-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.38 2004-10-13 18:48:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -197,24 +197,36 @@ foreach my $arg (@{$User_Opt->{ca}}) {
     push @requested_ca_list, split /[ ,]/, $arg;
 }
 
+my @mismatches = ();
+
 foreach my $requested_ca (@requested_ca_list) {
     if ($requested_ca eq 'ALL') {
         %selected = map { $_ => 1 } @ca_list_all;
         $requested_all = 1;
     }
     else {
+        my $matched = 0;
         foreach my $ca (@ca_list_all) {
             if (Match_CA_Name $requested_ca, $ca) {
                 $selected{$ca} = 1;
+                $matched = 1;
             }
         }
+        push @mismatches, $requested_ca;
     }
 }
 
 my @ca_list = grep $selected{$_}, @ca_list_all;
 
-if (scalar @ca_list == 0) {
-    die "No CAs selected\n";
+if (scalar @ca_list == 0 or scalar @mismatches > 0) {
+    my @message = ();
+    if (scalar @ca_list == 0) {
+        push @message, "No CAs selected"
+    }
+    if (scalar @mismatches > 0) {
+        push @message, "No CA matching " . join(', ', @mismatches);
+    }
+    die join(', ', @message), "\n";
 }
 
 my @ca_info = ();
@@ -250,24 +262,21 @@ foreach my $ref (@ca_info) {
         if ($User_Opt->{'ignore-disable'}) {
             Vprint "Ignoring \"disable\" attribute\n";
         }
-        else {
-            Vprint "\n";
-            next CA;
-        }
     }
+    else {
+        my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
+        $ref->{_CERT_FILE}           = "$prefix.0";
+        $ref->{_SIGNING_POLICY_FILE} = "$prefix.signing_policy";
+        $ref->{_CRL_FILE}            = "$prefix.r0";
 
-    my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
-    $ref->{_CERT_FILE}           = "$prefix.0";
-    $ref->{_SIGNING_POLICY_FILE} = "$prefix.signing_policy";
-    $ref->{_CRL_FILE}            = "$prefix.r0";
+        Update_Certificate    $ref;
+        Update_Signing_Policy $ref;
+        Update_CRL            $ref;
 
-    Update_Certificate    $ref;
-    Update_Signing_Policy $ref;
-    Update_CRL            $ref;
-
-    if (defined $ref->{_ERRORS}) {
-        foreach my $error (@{$ref->{_ERRORS}}) {
-            Vprint ">>> $error";
+        if (defined $ref->{_ERRORS}) {
+            foreach my $error (@{$ref->{_ERRORS}}) {
+                Vprint ">>> $error";
+            }
         }
     }
 
