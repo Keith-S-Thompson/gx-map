@@ -1,0 +1,15 @@
+# $Id: 47183fda.kisti-root.cadesc,v 1.1 2004-10-07 21:37:38-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
+
+CA_NAME             KISTI Grid Certificate Authority
+HOMEPAGE            https://ca.gridcenter.or.kr/
+CONTACT             jhkwak@kisti.re.kr
+HASH                47183fda
+SUBJECT             /C=KR/O=KISTI/CN=KISTI GRID ROOT CA
+MAY_SIGN            /C=KR/O=KISTI/*
+CERTIFICATE_URL     https://ca.gridcenter.or.kr/certificates/47183fda.0
+SIGNING_POLICY_URL  https://ca.gridcenter.or.kr/certificates/47183fda.signing_policy
+CRL_URL             https://ca.gridcenter.or.kr/CRL/47183fda.crl
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
