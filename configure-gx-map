@@ -1,0 +1,98 @@
+#!/usr/bin/perl -w
+
+# $Id: configure-gx-map,v 1.1 2003-05-27 18:58:35-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
+
+# This script should be executed from the base source directory of the
+# gx-map package.  If you don't have a Perl executable in /usr/bin/perl,
+# just run it as "perl ./configure-gx-map config-file".
+
+use strict;
+
+use File::Basename;
+
+sub Usage(@);
+
+my $Program_Name = File::Basename::basename $0;
+my $Config_File = undef;
+my %Config = ();
+my @Var_Names = qw( PERL INSTALL_DIR DATA_DIR GLOBUS_ADMINS ADMIN_EMAIL );
+my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
+
+if (scalar @ARGV == 1) {
+    $Config_File = $ARGV[0];
+}
+else {
+    Usage;
+}
+
+my @errors = ();
+
+open CONFIG, $Config_File or die "$Config_File: $!\n";
+while (<CONFIG>) {
+    s/#.*$//;
+    s/^\s+//;
+    s/\s+$//;
+    next if /^$/;
+
+    chomp;
+
+    if (/^(\w+)\s+(.*)$/) {
+        my($name, $value) = ($1, $2);
+        if ($Valid_Var_Name{$name}) {
+            if (exists $Config{$name}) {
+                push @errors,
+                     "Duplicate name \"$name\", $Config_File line $.\n";
+            }
+            else {
+                $Config{$name} = $value;
+            }
+        }
+        else {
+            push @errors, "Invalid name \"$name\", $Config_File line $.\n";
+        }
+    }
+}
+close CONFIG;
+
+foreach my $name (@Var_Names) {
+    if (not defined $Config{$name}) {
+        push @errors, "Missing definition for \"$name\"\n";
+    }
+}
+
+die @errors if @errors;
+
+opendir DIR, '.' or die ".: $!\n";
+my @in_files = sort grep /\.in$/, readdir DIR;
+closedir DIR;
+die "No *.in files found\n" if not @in_files;
+
+foreach my $in_file (@in_files) {
+    my $out_file = $in_file;
+    $out_file =~ s/\.in$//;
+    print "$in_file --> $out_file\n";
+    open IN, $in_file or die "$in_file: $!\n";
+    open OUT, ">$out_file" or die "$out_file: $!\n";
+    while (<IN>) {
+        foreach my $var (@Var_Names) {
+            s/%$var%/$Config{$var}/g;
+        }
+        if (/%\w+%/) {
+            warn "Unrecognized variable $&, $in_file line $.\n";
+        }
+        print OUT;
+    }
+    close IN;
+    close OUT;
+}
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name config-file
+EOF
+    exit 1;
+} # Usage
