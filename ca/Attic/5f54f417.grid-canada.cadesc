@@ -1,0 +1,15 @@
+# $Id: 5f54f417.grid-canada.cadesc,v 1.1 2004-10-02 14:40:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/5f54f417.grid-canada.cadesc,v $
+
+CA_NAME             Grid Canada CA
+HOMEPAGE            http://www.gridcanada.ca/ca/
+CONTACT             ca@gridcanada.ca
+HASH                5f54f417
+SUBJECT             /C=CA/O=Grid/CN=Grid Canada CA
+MAY_SIGN            /C=CA/O=Grid/*
+CERTIFICATE_URL     http://www.gridcanada.ca/ca/5f54f417.0
+SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/5f54f417.signing_policy
+CRL_URL             http://www.gridcanada.ca/ca/5f54f417.r0
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
