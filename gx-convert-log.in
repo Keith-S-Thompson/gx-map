@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.2 2004-11-03 18:27:10-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.3 2004-11-04 02:42:03-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -53,6 +53,7 @@ use strict;
 use File::Basename ();
 use Getopt::Long ();
 
+sub Owned_By_Admin($);
 sub Usage(@);
 
 $| = 1;
@@ -71,21 +72,45 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
+my $User_Opt = {};
+my @Opts = ( $User_Opt,
+             qw( old-admins=s
+                 new-admin=s
+                 help! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if scalar @ARGV != 1;
+my $Input_Log = $ARGV[0];
+
+my $Is_Old_Admin = undef;
+if (defined $User_Opt->{'old-admins'}) {
+    foreach my $name (split /,/, $User_Opt->{'old-admins'}) {
+        $Is_Old_Admin->{$name} = 1;
+    }
+}
+
+my $new_admin_uid = undef;
+if (defined $User_Opt->{'new-admin'}) {
+    my $pw = Gridmap_Utils::Get_PW $User_Opt->{'new-admin'};
+    if (defined $pw) {
+        $new_admin_uid = $pw->{uid};
+    }
+}
+
 my $now = time;
 
-my $Rev = '$Revision: 1.2 $';
+my $Rev = '$Revision: 1.3 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
-Usage if scalar @ARGV != 1;
-Usage "Can't read file $ARGV[0]\n" if not -r $ARGV[0];
+Usage "Can't read file $Input_Log\n" if not -r $Input_Log;
 
-my @refs = Gridmap_Utils::Read_Records '-multiple', $ARGV[0];
+my @refs = Gridmap_Utils::Read_Records '-multiple', $Input_Log;
 
 my $timestamp = Gridmap_Utils::Time_Image $now;
 #
 # The result of Time_Image starts with a raw timestamp.
-# We don't want that in the log.
+# We don't need that in the log.
 #
 $timestamp =~ s/^\d+ //;
 
@@ -97,26 +122,61 @@ print "\n";
 
 foreach my $ref (@refs) {
     next if defined $ref->{SOURCE};
-    my $owner_is_admin =
-        ( defined $ref->{OWNER_NAME} and
-          Gridmap_Utils::Is_Globus_Admin $ref->{OWNER_NAME} );
+    my $owner_is_admin = Owned_By_Admin $ref;
 
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
+    my $new_comment = undef;
 
-    if (not $owner_is_admin) {
-        $ref->{SOURCE} = 'user';
-    }
-    elsif ($comment =~ /^cacl certificate/) {
-        $ref->{SOURCE} = 'NPACI-CA';
-    }
-    elsif ($comment =~ /^NPACI CA certificate/) {
-        $ref->{SOURCE} = 'NPACI-CA';
-    }
-    elsif ($comment =~ /^SDSC CA certificate/) {
-        $ref->{SOURCE} = 'SDSC-CA';
+    if ($owner_is_admin) {
+        if ($comment =~ /^cacl certificate/) {
+            $ref->{SOURCE} = 'NPACI-CA';
+        }
+        elsif ($comment =~ /^NPACI CA certificate/) {
+            $ref->{SOURCE} = 'NPACI-CA';
+        }
+        elsif ($comment =~ /^SDSC CA certificate/) {
+            $ref->{SOURCE} = 'SDSC-CA';
+        }
+        else {
+            $ref->{SOURCE} = 'administrator';
+        }
+        if (defined $User_Opt->{'new-admin'} and
+            $User_Opt->{'new-admin'} ne $ref->{OWNER_NAME})
+        {
+            $new_comment
+                = "$Program_Name changed OWNER_NAME from " .
+                  "$ref->{OWNER_NAME} to $User_Opt->{'new-admin'}";
+            $ref->{OWNER_NAME} = $User_Opt->{'new-admin'};
+            if (defined $new_admin_uid) {
+                $new_comment .=
+                    ", OWNER_UID from $ref->{OWNER_UID} to $new_admin_uid";
+                $ref->{OWNER_UID} = $new_admin_uid;
+            }
+        }
     }
     else {
-        $ref->{SOURCE} = 'administrator';
+        $ref->{SOURCE} = 'user';
+    }
+
+    my @comments = ();
+    if (defined $ref->{comment}) {
+        if (ref $ref->{comment} eq 'ARRAY') {
+            @comments = @{$ref->{comment}};
+        }
+        else {
+            @comments = ( $ref->{comment} );
+        }
+    }
+    if (defined $new_comment) {
+        push @comments, $new_comment;
+    }
+    if (@comments) {
+        if (scalar @comments == 1) {
+            $ref->{comment} = $comments[0];
+        }
+        else {
+            $ref->{comment} = \@comments;
+        }
     }
 }
 
@@ -126,12 +186,35 @@ print "# $Program_Name done.\n\n";
 
 ########################################################################
 
+sub Owned_By_Admin($) {
+    my($ref) = @_;
+    return 0 if not defined $ref->{OWNER_NAME};
+    if (defined $Is_Old_Admin) {
+        return $Is_Old_Admin->{$ref->{OWNER_NAME}};
+    }
+    else {
+        return Gridmap_Utils::Is_Globus_Admin $ref->{OWNER_NAME};
+    }
+} # Owned_By_Admin
+
+# ----------------------------------------------------------------------
+
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Program_Name logfile
-Reads a gx-map 0.3 requests.log file and writes on stdout an equivalent
-file for use with gx-map release 0.4.
+Usage: $Program_Name [options] logfile
+
+Reads a gx-map requests.log file and writes on stdout an equivalent
+file for use with gx-map release 0.4.  Adds a SOURCE attribute
+to each record that doesn't already have one.
+
+If the "-old-admins" or "-new-admin" option is specified, the
+OWNER_NAME and OWNER_UID attributes are updated.  This is useful if
+you want to change the set of administrative accounts.
+
+    -old-admins name,name       Account(s) treated as administrators in
+                                input log
+    -new-admin name             Administrative account for output log
 EOF
     exit 1;
 } # Usage
