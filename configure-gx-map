@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.23 2005-01-18 07:28:44-08 kst Exp $
+# $Id: configure-gx-map,v 1.24 2005-01-18 20:44:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -59,9 +59,15 @@ use Getopt::Long ();
 
 sub Home_Dir($);
 sub Command_Exists($$);
-sub Perl_OK($);
+sub Perl_Error($);
+sub Globus_Admins_Error($);
 sub Same_File($$);
 sub Usage(@);
+
+#
+# Make warnings fatal.
+#
+$SIG{__WARN__} = sub { die @_ };
 
 my $Program_Name = File::Basename::basename $0;
 
@@ -84,43 +90,60 @@ Usage if $User_Opt->{help};
 my %Config = ();
 
 my @Commands = qw( wget ncftpget rcs ci openssl hostname );
-my @Missing_Commands = ();
+my %Missing_Command = ();
 my @Errors = ();
 
 if (defined $User_Opt->{perl}) {
-    $Config{PERL} = $User_Opt->{perl};
-}
-else {
-    if (Perl_OK '/usr/bin/perl') {
-	$Config{PERL} = '/usr/bin/perl';
-    }
-    elsif (Perl_OK '/usr/local/bin/perl') {
-	$Config{PERL} = '/usr/local/bin/perl';
+    my $err = Perl_Error $User_Opt->{perl};
+    if (defined $err) {
+        push @Errors, $err;
     }
     else {
-	$Config{PERL} = undef;
+        $Config{PERL} = $User_Opt->{perl};
+    }
+}
+else {
+    if (not defined Perl_Error '/usr/bin/perl') {
+        $Config{PERL} = '/usr/bin/perl';
+    }
+    elsif (not defined Perl_Error '/usr/local/bin/perl') {
+        $Config{PERL} = '/usr/local/bin/perl';
+    }
+    else {
+        push @Errors, "Can't find Perl 5.006 or better in " .
+                      "/usr/bin or /usr/local/bin\n" .
+                      "Specify -perl option\n";
     }
 }
 
 if (defined $User_Opt->{path}) {
+    my @bad = ();
+    foreach my $dir (split /:/, $User_Opt->{path}) {
+        push @bad, $dir if not -d $dir;
+    }
+    if (@bad) {
+        my $directories = scalar @bad == 1 ? 'directory' : 'directories';
+        push @Errors, "Invalid $directories in path: @bad\n";
+    }
     $Config{PATH} = $User_Opt->{path};
 }
 else {
-    my $path = '/bin';
-    $path .= ':/usr/bin' if not Same_File '/bin', '/usr/bin';
+    my $path = '/usr/bin';
+    $path .= ':/bin' if not Same_File '/usr/bin', '/bin';
     foreach my $command (@Commands) {
-	if (not Command_Exists $command, $path and
-	    -x "/usr/local/bin/$command")
-	{
-	    $path .= ':/usr/local/bin';
-	    last;
-	}
+        if (not Command_Exists $command, $path and
+            -x "/usr/local/bin/$command")
+        {
+            $path .= ':/usr/local/bin';
+            last;
+        }
     }
     foreach my $command (@Commands) {
-	if (not Command_Exists $command, $path) {
-	    push @Missing_Commands, $command;
-	}
+        if (not Command_Exists $command, $path) {
+            $Missing_Command{$command} = 1;
+        }
     }
+    $Config{PATH} = $path;
 }
 
 if (defined $User_Opt->{namespace}) {
@@ -131,14 +154,24 @@ else {
 }
 
 if (defined $User_Opt->{'install-dir'}) {
-    $Config{INSTALL_DIR} = $User_Opt->{'install-dir'};
+    if ($User_Opt->{'install-dir'} !~ /^\//) {
+        push @Errors, "Bad value for -install-dir\n";
+    }
+    else {
+        $Config{INSTALL_DIR} = $User_Opt->{'install-dir'};
+    }
 }
 else {
     push @Errors, "-install-dir not specified\n";
 }
 
 if (defined $User_Opt->{'data-dir'}) {
-    $Config{DATA_DIR} = $User_Opt->{'data-dir'};
+    if ($User_Opt->{'data-dir'} !~ /^\//) {
+        push @Errors, "Bad value for -data-dir\n";
+    }
+    else {
+        $Config{DATA_DIR} = $User_Opt->{'data-dir'};
+    }
 }
 else {
     push @Errors, "-data-dir not specified\n";
@@ -147,27 +180,33 @@ else {
 if (defined $User_Opt->{'requests-log-permissions'}) {
     my $perms = $User_Opt->{'requests-log-permissions'};
     if ($perms eq '444' or $perms eq '440' or $perms eq '400') {
-	$Config{REQUEST_LOG_PERMISSIONS} = $perms;
+        $Config{REQUESTS_LOG_PERMISSIONS} = $perms;
     }
     else {
-	push @Errors, "Argument to -requests-log-permissions " .
-		      "must be 444, 440, or 400\n";
+        push @Errors, "Argument to -requests-log-permissions " .
+                      "must be 444, 440, or 400\n";
     }
 }
 else {
-    $Config{REQUEST_LOG_PERMISSIONS} = '444';
+    $Config{REQUESTS_LOG_PERMISSIONS} = '444';
 }
 
 if (defined $User_Opt->{'globus-admins'}) {
-    $Config{GLOBUS_ADMINS} = $User_Opt->{'globus-admins'};
+    my $err = Globus_Admins_Error $User_Opt->{'globus-admins'};
+    if (defined $err) {
+        push @Errors, $err;
+    }
+    else {
+        $Config{GLOBUS_ADMINS} = $User_Opt->{'globus-admins'};
+    }
 }
 else {
     my @pw = getpwnam 'globus';
     if (@pw) {
-	$Config{GLOBUS_ADMINS} = 'globus';
+        $Config{GLOBUS_ADMINS} = 'globus';
     }
     else {
-	$Config{GLOBUS_ADMINS} = undef;
+        $Config{GLOBUS_ADMINS} = 'UNDEF';
     }
 }
 
@@ -186,14 +225,55 @@ else {
 }
 
 foreach my $key (sort keys %Config) {
-    print "$key => ",
-	  ( defined $Config{$key} ? $Config{$key} : 'undef' ),
-	  "\n";
+    printf "%-20s => %s\n",
+           $key,
+           ( defined $Config{$key} ? $Config{$key} : 'undef' );
 }
 
 if (@Errors) {
-    print "Error(s):\n", @Errors;
+    die "Error(s):\n", @Errors;
 }
+
+open TEMPLATE, 'gx-map.conf.in' or die "gx-map.conf.in: $!\n";
+open CONFIG,  '>gx-map.conf'    or die "gx-map.conf: $!\n";
+while (<TEMPLATE>) {
+    my $var_error = undef;
+    if (/^([A-Z_]+)/) {
+        my $var = $1;
+        if (defined $Config{$var}) {
+            s/\S+$/$Config{$var}/;
+
+            if ($var eq 'PATH') {
+                s/\S+$/$Config{PATH}/;
+                if (scalar keys %Missing_Command > 0) {
+                    my $s = scalar keys %Missing_Command == 1 ? '' : 's';
+                    print CONFIG "# >>> Missing command$s in PATH: ",
+                                 join(' ', sort keys %Missing_Command),
+                                 "\n";
+                    if ($Missing_Command{ncftpget} or $Missing_Command{wget}) {
+                        print CONFIG "#     You may not need ",
+                                     "ncftpget or wget\n";
+                    }
+                }
+            }
+
+            if ($var ne 'VALID_MAPPINGS_FILE' and
+                $Config{$var} eq 'UNDEF')
+            {
+                $var_error = "# >>> Need to set a valid value for $var\n";
+            }
+        }
+        else {
+            $var_error = "# >>> Unrecognized variable $var\n";
+        }
+    }
+    print CONFIG;
+    print CONFIG $var_error if defined $var_error;
+}
+close TEMPLATE;
+close CONFIG;
+
+print "Created gx-map.conf\n";
 
 ## my @Var_Names = qw( PERL PATH
 ##                     NAMESPACE
@@ -409,12 +489,34 @@ sub Command_Exists($$) {
 
 # ----------------------------------------------------------------------
 
-sub Perl_OK($) {
+sub Perl_Error($) {
     my($perl) = @_;
-    return 0 if not -x $perl;
+    return 'No such file'   if not -e $perl;
+    return 'Not executable' if not -x $perl;
     system "$perl -e 'require 5.006' >/dev/null 2>/dev/null";
-    return $? == 0;
-} # Perl_OK
+    return 'Perl 5.006 or better required' if $? != 0;
+    return undef;
+} # Perl_Error
+
+# ----------------------------------------------------------------------
+
+sub Globus_Admins_Error($) {
+    my $globus_admins = @_;
+    my @missing_users = ();
+    foreach my $admin (split /\s+/, $globus_admins) {
+        my @pw = getpwnam $admin;
+        if (not @pw) {
+             push @missing_users, $admin;
+        }
+    }
+    if (scalar @missing_users == 0) {
+        return undef; # no error
+    }
+    else {
+        my $s = ( scalar @missing_users == 1 ? '' : 's' );
+        return "No user$s ", join(', ', @missing_users), "\n";
+    }
+} # Globus_Admins_Error
 
 # ----------------------------------------------------------------------
 
