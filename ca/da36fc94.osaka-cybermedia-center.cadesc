@@ -1,0 +1,23 @@
+# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.1 2004-10-17 22:39:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/da36fc94.osaka-cybermedia-center.cadesc,v $
+
+CA_NAME             Osaka University Cybermedia Center CA
+HOMEPAGE            ?
+CONTACT             date@ais.cmc.osaka-u.ac.jp
+HASH                da36fc94
+SUBJECT             /C=JP/ST=Osaka/L=Ibaraki/O=Osaka University/OU=Cybermedia Center/CN=Susumu Date/emailAddress=date@ais.cmc.osaka-u.ac.jp
+MAY_SIGN            /C=JP/ST=Kyoto/L=Uji/O=Kyoto University/OU=Bioinformatics Center/*
+MAY_SIGN            /C=JP/ST=Osaka/L=Ibaraki/O=Osaka University/*
+MAY_SIGN            /C=JP/ST=Nara/L=Ikoma/O=NAIST/*
+MAY_SIGN            /C=JP/ST=Osaka/O=Osaka University/*
+MAY_SIGN            /C=JP/ST=Osaka/*
+CERTIFICATE_MD5     89:EB:43:36:CC:CA:9A:EE:FF:C9:49:DD:F2:9B:47:7B
+CERTIFICATE_URL     https://www.apgrid.org/CA/da36fc94.0
+SIGNING_POLICY_URL  https://www.apgrid.org/CA/da36fc94.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             no
+
+# There does not appear to be a CRL.
+
+# MD5 fingerprint from da36fc94.0 downloaded 2004-10-17
