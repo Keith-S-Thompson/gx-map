@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-ingest.in,v 1.8 2005-01-07 17:17:39-08 kst Exp $
+# $Id: gx-ingest.in,v 1.9 2005-01-07 17:31:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -102,6 +102,11 @@ while (<>) {
         print "# >>> Can't parse line $.: $_\n";
     }
     else {
+        #
+        # Normally, only one user is specified, but it's also possible
+        # to have a list of user name separated by commas.  Treat all
+        # but the first as "secondary" mappings.
+        #
         my @users = split /,/, $users;
         my $is_secondary = 0;
         foreach my $user (@users) {
@@ -112,8 +117,8 @@ while (<>) {
             $command .= "-secondary " if $is_secondary;
             $command .= "-dn $DN";
             print "$command\n";
+            $is_secondary = 1;
         }
-        $is_secondary = 1;
     }
 }
 
