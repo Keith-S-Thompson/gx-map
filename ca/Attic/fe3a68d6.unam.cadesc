@@ -1,4 +1,4 @@
-# $Id: fe3a68d6.unam.cadesc,v 1.2 2004-11-01 17:04:32-08 kst Exp $
+# $Id: fe3a68d6.unam.cadesc,v 1.3 2005-03-29 19:27:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/fe3a68d6.unam.cadesc,v $
 
 CA_NAME             UNAM
@@ -8,6 +8,7 @@ HASH                fe3a68d6
 SUBJECT             /O=DGSCA-UNAM/OU=Supercomputo-UNAM/CN=Aut Cert Supercomputo UNAM
 MAY_SIGN            ?
 CERTIFICATE_MD5     D3:BA:A7:C2:A9:D6:8B:15:7A:AD:E5:B2:D3:91:2E:06
+# CERTIFICATE_SHA1    76:16:42:96:A3:16:C3:37:E9:AC:0A:A5:BF:70:42:74:9A:F2:5B:F6
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/fe3a68d6.0
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
@@ -19,4 +20,4 @@ DISABLE             yes
 # I can't find a signing_policy file.  This CA is marked as
 # disabled until I can get more information.
 
-# MD5 fingerprint from fe3a68d6.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from fe3a68d6.0 downloaded 2005-03-29
