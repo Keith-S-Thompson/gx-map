@@ -1,3 +1,6 @@
+# $Id: TGCDB.pm,v 1.2 2005-02-14 17:58:30-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/tgcdb/TGCDB.pm,v $
+
 use strict;
 use warnings;
 use DBI;
