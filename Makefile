@@ -1,10 +1,10 @@
-# $Id: Makefile,v 1.7 2004-11-22 17:57:12-08 kst Exp $
+# $Id: Makefile,v 1.8 2005-01-14 19:04:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Makefile,v $
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2004 The Regents of the University of California. All
+# Copyright (c) 2005 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
