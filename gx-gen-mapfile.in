@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.41 2004-11-16 00:37:58-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.42 2004-11-16 00:53:42-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -229,11 +229,19 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             my $op        = Image $request->{operation};
             my $user      = Image $mapping->{map_to_name};
             my $dn        = Image $mapping->{dn};
-            my $priority = 'P';
-            if (defined $request->{secondary} and
-                $request->{secondary} eq 'yes')
-            {
-                $priority = 'S';
+            my $priority;
+            if ($op eq 'add') {
+                if (defined $request->{secondary} and
+                    $request->{secondary} eq 'yes')
+                {
+                    $priority = 'S';
+                }
+                else {
+                    $priority = 'P';
+                }
+            }
+            else {
+                $priority = '?';
             }
             push @dump_lines,
                  sprintf "%-10s %-8s %-8s %-11s %-8s %s %s\n",
@@ -397,7 +405,7 @@ if ($User_Opt->{dump}) {
     print OUT <<'EOF';
 # This is a log dump, not a grid-mapfile
 # Fields are:
-# timestamp source namespace operation user priority dn
+#     timestamp source namespace operation user priority dn
 # (priority is 'P' for a primary mapping, 'S' for a secondary mapping)
 
 EOF
