@@ -1,16 +1,16 @@
-# $Id: a7792cdb.npaci-old.cadesc,v 1.6 2004-09-29 20:20:08-07 kst Exp $
+# $Id: a7792cdb.npaci-old.cadesc,v 1.7 2004-09-29 20:53:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a7792cdb.npaci-old.cadesc,v $
 
-CA_DESC         NPACI (old)
+CA_NAME         NPACI (old)
 HOMEPAGE        http://www.npaci.edu/CA/
 CONTACT		Bill Link <bill@sdsc.edu>
 HASH            a7792cdb
 SUBJECT         /C=US/O=NPACI/OU=SDSC/CN=Certificate Manager
 MAY_SIGN        /C=US/O=NPACI/*
 MAY_SIGN	/C=US/O=SDSC/*
-CERTIFICATE     ?
-SIGNING_POLICY  ?
-CRL             ?
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
 CRL_WARNING     ?
 INDEX           ?
 DISABLE         yes
