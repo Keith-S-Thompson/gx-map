@@ -1,4 +1,4 @@
-# $Id: README.CA-Security,v 1.1 2004-10-20 14:54:42-07 kst Exp $
+# $Id: README.CA-Security,v 1.2 2004-10-20 17:21:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA-Security,v $
 
 The gx-ca-update program automatically installs signing certificates,
@@ -39,22 +39,31 @@ I can fool you into installing my forged CA certificate in your
 /etc/grid-security directory is critical.
 
 The CERTIFICATE_MD5 attribute is the primary method for avoiding
-forged signing certificates.  Each cadesc file distributed with
-the gx-map system includes an MD5 fingerprint for the corresponding
-signing certificate, and a comment indicating how I determined it.
-You should double-check this yourself.  Each cadesc file specifies
-URLs from which the files can be downloaded; you need to decide whether
-you trust the specified sites.  Be careful out there.  I've indicated,
-in each cadesc file, how I determined the MD5 fingerprint.
+forged signing certificates.  Each cadesc file distributed with the
+gx-map system includes an MD5 fingerprint for the corresponding signing
+certificate, and a comment indicating how I determined it.  You should
+double-check this yourself.  Each cadesc file specifies URLs from
+which the files can be downloaded.  In some cases, these URLs point
+to sites other than the issuer of the CA.  You need to decide whether
+you trust the CA issuer *and* the specified download sites.  You also
+need to consider the possibility of various forms of URL spoofing.
+
+I've indicated, in each cadesc file, how I determined the MD5
+fingerprint, usually by downloading the CA certificate from the
+specified URL.  I promise that I have tried to get this right in each
+case; I do not promise that I have succeded.
+
+Be careful out there.  
 
 Globus makes CRLs (Certificate Revocation Lists) optional.  A CRL
-specifies a list of certificates that have been revoked.  Each CRL
+specifies the list of certificates that have been revoked.  Each CRL
 has a specified lifetime, forcing each site to download a new copy
 periodically.  If you install a current CRL file (xxxxxxxx.r0),
-Globus will reject any revoked certificates.  If you don't install a
-CRL file at all, Globus will accept all certificates issued by the
-corresponding CA, including revoked certificates.  If you have an
-expired CRL, all certificates issued by the CA will be rejected.
+Globus will reject any revoked certificates.  If you don't install
+a CRL file at all, Globus will accept all certificates issued by the
+corresponding CA, including revoked certificates; this is arguably a
+security hole.  If you have an expired CRL, all certificates issued
+by the CA will be rejected.
 
 By default, gx-ca-update requires current CRLs for all CAs.  If a
 CRL is not available, the CA certificate will not be installed.  If a
@@ -63,3 +72,5 @@ be left in place.  The gx-ca-update command allows you to specify a
 more lax policy if you wish, allowing CAs without CRLs and/or removing
 CRLs that are about to expire, but only if you explicitly provide the
 "-unsafe" command line option.
+
+                -- Keith Thompson <kst@sdsc.edu> 2004-10-20
