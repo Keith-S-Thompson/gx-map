@@ -1,8 +1,8 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.2 2004-10-03 23:50:06-07 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.3 2004-10-06 16:58:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
-HOMEPAGE            example.org CAttp://example.org/CA/
+HOMEPAGE            http://computing.fnal.gov/security/pki/
 CONTACT             nightwatch@fnal.gov
 HASH                e1fce4e9
 SUBJECT             /DC=gov/DC=fnal/O=Fermilab/OU=Certificate Authorities/CN=Kerberized CA
