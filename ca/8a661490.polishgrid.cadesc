@@ -1,0 +1,15 @@
+# $Id: 8a661490.polishgrid.cadesc,v 1.1 2004-10-07 21:37:40-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/8a661490.polishgrid.cadesc,v $
+
+CA_NAME             Polish Grid CA
+HOMEPAGE            http://www.man.poznan.pl/plgrid-ca
+CONTACT             plgrid-ca@man.poznan.pl
+HASH                8a661490
+SUBJECT             /C=PL/O=GRID/CN=Polish Grid CA
+MAY_SIGN            /C=PL/O=GRID/*
+CERTIFICATE_URL     http://www.man.poznan.pl/plgrid-ca/8a661490.0
+SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/8a661490.signing_policy
+CRL_URL             http://www.man.poznan.pl/plgrid-ca/crl.pem
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
