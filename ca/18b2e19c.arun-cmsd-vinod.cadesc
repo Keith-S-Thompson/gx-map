@@ -1,4 +1,4 @@
-# $Id: 18b2e19c.arun-cmsd-vinod.cadesc,v 1.1 2004-10-17 22:39:26-07 kst Exp $
+# $Id: 18b2e19c.arun-cmsd-vinod.cadesc,v 1.2 2004-11-01 17:04:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/18b2e19c.arun-cmsd-vinod.cadesc,v $
 
 CA_NAME             arun-cmsd-vinod
@@ -11,8 +11,7 @@ CERTIFICATE_MD5     4D:2B:8A:BC:0F:AD:A8:DD:15:14:6D:14:C1:59:8F:84
 CERTIFICATE_URL     https://www.apgrid.org/CA/18b2e19c.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/18b2e19c.signing_policy
 CRL_URL             ?
-INDEX               ?
-DISABLE             yes
+CERT_EXPIRES        Aug 30 06:03:32 2008 GMT
 
 # References:
 #     ApGrid <http://www.apgrid.org/>
