@@ -1,7 +1,7 @@
-# $Id: 6349a761.doe-sg-old.cadesc,v 1.1 2004-09-21 01:20:19-07 kst Exp $
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.2 2004-09-23 18:11:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
 
-CA_DESC         DOE SG Root CA (old)
+CA_NAME         DOE SG Root CA (old)
 HOMEPAGE        http://www.doegrids.org/OldDOEScienceGridRootCA/
 CONTACT		?
 HASH            6349a761
