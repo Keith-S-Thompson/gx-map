@@ -1,0 +1,5 @@
+# $Id: _set-gx-map.lutefisk,v 1.1 2004-10-07 17:43:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/_set-gx-map.lutefisk,v $
+
+set gx = /usr/local/apps/gx-map-0.4-alpha
+set path = ( $gx/{bin,sbin} $path )
