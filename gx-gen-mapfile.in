@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.39 2004-11-12 15:04:30-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.40 2004-11-15 16:30:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -74,7 +74,6 @@ use Getopt::Long ();
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
-sub Dup_Request($);
 sub Die_Handler($);
 sub Usage(@);
 sub Debug(@);
@@ -109,6 +108,8 @@ my @Opts = ( $User_Opt,
                  debugging!
                  requests-log=s@
                  permissions=s
+                 all!
+                 dump!
                  real-name! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -117,6 +118,8 @@ if ($User_Opt->{version}) {
     print "gx-map version $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+Usage "-dump option is not yet implemented\n" if defined $User_Opt->{dump};
 
 #
 # If the requests-log array is empty (i.e., the user didn't give the
@@ -193,14 +196,15 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 #
 my %Mappings = (); # key = DN, value = hash ref
 
-foreach my $request (map Dup_Request $_, @requests) {
+foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
     #
     # By calling Valid_Mappings, we eliminate any requests for accounts
     # that don't exist on this system.  This should also eliminate any
     # unauthorized requests (which theoretically, could be created only
     # by something like a hacked copy of gx-map).  The Valid_Mappings
-    # function can also be modified for site-specific requirements,
-    # such as rejecting mappings for certificates issued by the Globus CA.
+    # function can also be modified for site-specific requirements, such
+    # as rejecting mappings for certain accounts or for certificates
+    # issued by certain CAs.
     #
     # The Valid_Mappings function may return multiple mappings for a
     # single request.
@@ -210,7 +214,10 @@ foreach my $request (map Dup_Request $_, @requests) {
     # come from the original request, and thus may not be modified by
     # the Valid_Mappings function.
     #
-    my @request_mappings = Gridmap_Valid_Mappings::Valid_Mappings $request;
+    my @options = ();
+    push @options, '-all' if $User_Opt->{all};
+    my @request_mappings
+        = Gridmap_Valid_Mappings::Valid_Mappings @options, $request;
     my $operation = $request->{operation};
     foreach my $mapping (@request_mappings) {
         #
@@ -481,7 +488,7 @@ sub Update_List(@) {
 
     foreach my $log (@{$User_Opt->{'requests-log'}}) {
         my $mtime = Gridmap_Utils::Get_mtime $log;
-        Debug "input  mtime ", scalar localtime $mtime, "\n";
+        Debug "input mtime ", Gridmap_Utils::Time_Image $mtime, "\n";
         if (not defined $newest_input_mtime or
             $mtime > $newest_input_mtime)
         {
@@ -491,6 +498,9 @@ sub Update_List(@) {
 
     foreach my $output_file (@Output_Files) {
         my $output_mtime = Gridmap_Utils::Get_mtime $output_file;
+        Debug "output_file $output_file, output_mtime = " .
+              (defined $output_mtime ? Gridmap_Utils::Time_Image $output_mtime : 'undef') .
+              "\n";
         if (defined $output_mtime) {
             if (( defined $dot_update_mtime and
                   $output_mtime <= $dot_update_mtime )
@@ -594,48 +604,6 @@ sub User_Real_Name($) {
 
 # ----------------------------------------------------------------------
 
-#
-# Given a reference to a request record, returns either the same reference
-# or a list of two references, one GT2-compatible and one GT3-compatible.
-# If some of the keys are references to arrays (or to hashes), the two
-# returned references may share some data; this shouldn't be a problem.
-#
-sub Dup_Request($) {
-    my($ref) = @_;
-
-    Debug "Entering Dup_Request:\n";
-    if ($User_Opt->{debugging}) {
-	Gridmap_Utils::Write_Records '-multiple', '-', $ref;
-    }
-    if (not defined $ref->{dn}) {
-	return $ref;
-    }
-
-    my $gt2_dn = Gridmap_Utils::GT2_Subject $ref->{dn};
-    my $gt3_dn = Gridmap_Utils::GT3_Subject $ref->{dn};
-    if ($gt2_dn eq $gt3_dn) {
-	return $ref;
-    }
-
-    $ref->{dn} = $gt2_dn;
-    my $gt3_ref = {};
-    foreach my $key (keys %$ref) {
-        if ($key eq 'dn') {
-            $gt3_ref->{$key} = $gt3_dn;
-        }
-        else {
-            $gt3_ref->{$key} = $ref->{$key};
-        }
-    }
-    if ($User_Opt->{debugging}) {
-	Debug "Dup_Request returning pair of records:\n";
-	Gridmap_Utils::Write_Records '-multiple', '-', $ref, $gt3_ref;
-    }
-    return ( $ref, $gt3_ref );
-} # Dup_Request;
-
-# ----------------------------------------------------------------------
-
 sub Die_Handler($) {
     unlink $tmp_file;
     #
@@ -660,6 +628,10 @@ Option names may be abbreviated.
                          name "default" (which may not be abbreviated.)
     -debugging         : Enable debugging output.
     -permissions perm  : Specify permissions (in octal); default is 444
+    -all               : Include entries for nonexistent accounts
+                         (not normally recommended)
+    -dump              : Instead of generating a grid-mapfile, generate
+                         a sorted formatted dump of the requests log file(s).
     -real-name         : Include real names as comments.
 One or more output files may be specified on the command line.
 If no output files are specified, output is written to stdout.
