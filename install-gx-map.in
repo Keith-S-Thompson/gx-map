@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.1 2003-05-27 20:36:21-07 kst Exp $
+# $Id: install-gx-map.in,v 1.2 2003-06-12 02:50:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 verbosely () {
@@ -21,7 +21,7 @@ LIB_FILES="Gridmap_Utils.pm"
 
 for dir in $INSTALL_DIR $BINDIR $SBINDIR $LIBDIR ; do
     if [ ! -d $dir ] ; then
-	verbosely mkdir -m 755 $dir
+        verbosely mkdir -m 755 $dir
     fi
 done
 
@@ -33,7 +33,7 @@ if [ ! -d $DATA_DIR ] ; then
     verbosely mkdir -m 755 $DATA_DIR
 fi
 if [ ! -d $DATA_DIR/new-requests ] ; then
-    verbosely mkdir -m 1777 $DATA_DIR/new-requests
+    verbosely mkdir -m 1733 $DATA_DIR/new-requests
 fi
 if [ ! -L $INSTALL_DIR/var ] ; then
     verbosely ln -s $DATA_DIR $INSTALL_DIR/var
