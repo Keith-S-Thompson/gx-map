@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.4 2004-09-14 19:21:47-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.5 2004-09-14 19:59:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -120,19 +120,20 @@ if ($User_Opt->{debugging}) {
 my @ca_info = ();
 my $ca_conf_dir = "$Gridmap_Utils::Config{DATA_DIR}/ca.conf";
 
-if (scalar $User_Opt->{ca} == 1 and
-    $User_Opt->{ca}->[0] eq 'ALL')
-{
+my @ca_list = @{$User_Opt->{ca}};
+if (scalar @ca_list == 1 and $ca_list[0] eq 'ALL') {
     opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
-    my @files = sort grep /\.cadesc$/, readdir CONF_DIR;
+    @ca_list = sort grep /\.cadesc$/, readdir CONF_DIR;
     closedir CONF_DIR;
-    if (not @files) {
+    Debug "\@files = ( @ca_list )\n";
+    if (not @ca_list) {
         die "No *.cadesc files in $ca_conf_dir\n";
     }
-    @{$User_Opt->{ca}} = map s/\.cadesc$//, @files;
+    map s/\.cadesc$//, @ca_list;
+    Debug "\@ca_list = ( @ca_list )\n";
 }
 
-foreach my $ca (@{$User_Opt->{ca}}) {
+foreach my $ca (@ca_list) {
     my $ca_desc_file = "$ca_conf_dir/$ca.cadesc";
     my $ref = Gridmap_Utils::Read_Records '-single', $ca_desc_file;
     if (defined $ref->{CRL_MAX_AGE}) {
