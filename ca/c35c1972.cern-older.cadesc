@@ -1,4 +1,4 @@
-# $Id: c35c1972.cern-older.cadesc,v 1.1 2004-10-17 23:23:39-07 kst Exp $
+# $Id: c35c1972.cern-older.cadesc,v 1.2 2004-11-01 17:04:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c35c1972.cern-older.cadesc,v $
 
 CA_NAME             CERN CA (older)
@@ -14,11 +14,10 @@ CERTIFICATE_MD5     6B:EC:7E:C0:8C:FB:B7:9D:8B:80:96:13:3B:C9:22:34
 CERTIFICATE_URL     http://www.usatlas.bnl.gov/~fisyak/atlas/chimera/post-install/certificates/c35c1972.0
 SIGNING_POLICY_URL  http://www.usatlas.bnl.gov/~fisyak/atlas/chimera/post-install/certificates/c35c1972.signing_policy
 CRL_URL             http://globus.home.cern.ch/globus/ca/cern.crl.pem
-INDEX               ?
+CERT_EXPIRES        Oct  3 07:44:41 2002 GMT
 DISABLE             yes
 
 # This certificate expired 2002-10-03.
 # This information is provided mostly for historical purposes.
-
 
 # MD5 fingerprint from c35c1972.0 downloaded 2004-10-17
