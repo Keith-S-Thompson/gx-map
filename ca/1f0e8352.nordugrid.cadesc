@@ -1,4 +1,4 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.7 2004-11-01 17:04:16-08 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.8 2005-03-29 19:27:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
 CA_NAME             EACL NorduGrid CA
@@ -9,8 +9,9 @@ SUBJECT             /O=Grid/O=NorduGrid/CN=NorduGrid Certification Authority
 MAY_SIGN            /O=Grid/O=NorduGrid/*
 CERTIFICATE_MD5     D0:BB:8D:0A:48:28:BB:8E:92:0A:D9:6C:E2:54:E5:EB
 CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/1f0e8352.0
+# CERTIFICATE_SHA1    EE:49:34:9A:47:AC:0F:0D:AC:C9:31:3B:92:D0:83:A9:10:62:4C:CC
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/1f0e8352.signing_policy
 CRL_URL             http://www.nbi.dk/HEP/CA/1f0e8352.r0
 CERT_EXPIRES        May 22 11:18:48 2006 GMT
 
-# MD5 fingerprint from 1f0e8352.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded 2005-03-29
