@@ -1,4 +1,4 @@
-# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.12 2004-10-10 03:21:58-07 kst Exp $
+# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.13 2004-10-13 17:45:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/9d8753eb.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -12,7 +12,6 @@ CERTIFICATE_MD5     84:6B:77:F8:CF:1B:EB:75:BF:C7:32:2C:FA:BB:4C:B1
 CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/9d8753eb.0
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
-CRL_WARNING         ?
 DISABLE             yes
 
 #
