@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.9 2003-07-20 23:41:59-07 kst Exp $
+# $Id: install-gx-map.in,v 1.10 2003-07-21 02:46:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 verbosely () {
@@ -47,6 +47,6 @@ if [ ! -d $DATA_DIR/new-requests ] ; then
     verbosely mkdir -m 1733 $DATA_DIR/new-requests
 fi
 
-if [ ! -L $INSTALL_DIR/var ] ; then
+if [ ! -h $INSTALL_DIR/var ] ; then
     verbosely ln -s $DATA_DIR $INSTALL_DIR/var
 fi
