@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.21 2004-11-15 16:01:16-08 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.22 2004-11-15 16:50:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -153,8 +153,12 @@ sub Valid_Mappings(@) {
             Debug ">>> Invalid, no such user\n";
             return ();
         }
-        if ($pw[2] == 0) {
-            Debug ">>> Invalid, cannot map to UID 0 (root)\n";
+        if ($request->{map_to_name} eq 'root') {
+            Debug ">>> Invalid, cannot map to root\n";
+            return ();
+        }
+        if (defined $pw[2] and $pw[2] == 0) {
+            Debug ">>> Invalid, cannot map to UID 0\n";
             return ();
         }
     }
