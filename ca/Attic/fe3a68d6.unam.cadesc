@@ -1,4 +1,4 @@
-# $Id: fe3a68d6.unam.cadesc,v 1.1 2004-10-17 22:39:30-07 kst Exp $
+# $Id: fe3a68d6.unam.cadesc,v 1.2 2004-11-01 17:04:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/fe3a68d6.unam.cadesc,v $
 
 CA_NAME             UNAM
@@ -11,7 +11,7 @@ CERTIFICATE_MD5     D3:BA:A7:C2:A9:D6:8B:15:7A:AD:E5:B2:D3:91:2E:06
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/fe3a68d6.0
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
-INDEX               ?
+CERT_EXPIRES        Sep 15 20:47:03 2008 GMT
 DISABLE             yes
 
 # There is no CRL
