@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.34 2004-10-11 14:10:27-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.35 2004-10-13 10:41:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -125,6 +125,8 @@ if ($User_Opt->{version}) {
     print "gx-ca-update, part of gx-map version $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+$| = 1 if $User_Opt->{verbose};
 
 my $ca_conf_dir = "$Install_Dir/etc/ca.conf";
 my @ca_list_all;
@@ -439,11 +441,18 @@ sub Get_CA_Ref($) {
     my $ref = Gridmap_Utils::Read_Records '-single', $filename;
     my @errors = ();
 
+    $ref->{_FILENAME} = $filename;
+
+    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes') {
+        return $ref;
+    }
+
     my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
                                     SIGNED_BY SUBJECT MAY_SIGN
                                     CERTIFICATE_MD5 CERTIFICATE_URL
                                     SIGNING_POLICY_URL CRL_URL CRL_WARNING
-                                    INDEX DISABLE );
+                                    INDEX DISABLE
+				    _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_URL );
     my %remap = ( SIGNED_BY => 1,
@@ -489,13 +498,8 @@ sub Get_CA_Ref($) {
             push @errors, "Bad value for CRL_WARNING\n";
         }
     }
-    if (defined $ref->{DISABLE}) {
-        if (lc $ref->{DISABLE} eq 'yes') {
-            return undef;
-        }
-        elsif (lc $ref->{DISABLE} ne 'no') {
-            push @errors, "Value for DISABLE must be \"yes\" or \"no\"\n";
-        }
+    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
+        push @errors, "Value for DISABLE must be \"yes\" or \"no\"\n";
     }
 
     if (@errors) {
@@ -530,6 +534,9 @@ sub Disabled($) {
 #     last_update (raw timestamp)
 #     next_update (raw timestamp)
 #     lifetime    (in seconds)
+#     used        (proportion of lifetime already used, e.g.
+#                 0.0 if it was just issued,
+#                 1.0 if it's just now expiring)
 #     verified
 #
 # Returns undef if the hash, issuer, last_update, and next_update values
@@ -545,14 +552,14 @@ sub CRL_Info($$) {
     # Get attributes of CRL
     #
     open PIPE, "openssl crl -in $CRL_file -noout " .
-               "-hash -issuer -lastupdate -nextupdate |" or return undef;
+               "-hash -issuer -lastupdate -nextupdate 2>&1 |" or return undef;
     while (<PIPE>) {
         chomp;
         if (/^[\da-f]{8}$/) {
             $result->{hash} = $_;
         }
         elsif (/^issuer=\s*(.*)$/) {
-            $result->{issuer} = $1;
+            $result->{issuer} = Gridmap_Utils::GT3_Subject $1;
         }
         elsif (/^lastUpdate=\s*(.*)$/) {
             $result->{last_update} = Date_To_Seconds $1;
@@ -569,6 +576,9 @@ sub CRL_Info($$) {
     foreach my $key (qw(hash issuer last_update next_update)) {
         return undef if not defined $result->{$key};
     }
+
+    $result->{lifetime} = $result->{next_update} - $result->{last_update};
+    $result->{used} = ($now - $result->{last_update}) / $result->{lifetime};
 
     #
     # Verify CRL against certificate.
@@ -655,7 +665,10 @@ sub Update_Certificate($) {
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(https?|ftp)://>) {
         my $cache_file;
-        eval { $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE_URL} };
+        eval {
+            $cache_file = Gridmap_Utils::Cache_File
+                              $ref->{CERTIFICATE_URL}
+        };
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
@@ -673,7 +686,8 @@ sub Update_Certificate($) {
                 }
             }
             else {
-                Error $ref, "Unable to determine certificate expiration date\n";
+                Error $ref,
+                      "Unable to determine certificate expiration date\n";
             }
             if ($cert_info->{hash} ne $ref->{HASH}) {
                 Error $ref, "Mismatched hash, expected $ref->{HASH}, " .
@@ -841,25 +855,32 @@ sub Update_CRL($) {
                 unlink $ref->{_CRL_FILE};
             }
             else {
+                my $expiration_string = Time_Image $crl_info->{next_update};
                 my $how_long = Seconds_To_String abs $remaining;
                 my $notify = 0;
-                if (defined $ref->{CRL_WARNING_SECONDS} and
-                    $remaining <= $ref->{CRL_WARNING_SECONDS})
-                {
+#               if (defined $ref->{CRL_WARNING_SECONDS} and
+#                   $remaining <= $ref->{CRL_WARNING_SECONDS})
+#               {
+#                   $notify = 1;
+#               }
+                if ($crl_info->{used} > 0.9) {
                     $notify = 1;
                 }
                 if ($remaining < 0) {
-                    Error $ref, "CRL expired $how_long ago\n";
+                    Error $ref, "CRL expired at $expiration_string " .
+                                "($how_long ago)\n";
                 }
                 elsif ($remaining == 0) {
-                    Error $ref, "CRL expires NOW\n";
+                    Error $ref, "CRL expires at $expiration_string\n";
                 }
                 else {
                     if ($notify) {
-                        Error $ref, "CRL expires in $how_long\n";
+                        Error $ref, "CRL will expire at $expiration_string " .
+                                    "($how_long from now)\n";
                     }
                     else {
-                        Vprint "CRL expires in $how_long\n";
+                        Vprint "CRL will expire at $expiration_string " .
+                               "($how_long from now)\n";
                     }
                 }
                 if (not $crl_info->{verified}) {
