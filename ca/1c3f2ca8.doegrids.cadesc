@@ -1,4 +1,4 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.7 2004-10-08 13:59:27-07 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.8 2004-10-08 20:44:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
@@ -13,6 +13,7 @@ MAY_SIGN            /O=DOEGrids.org/*
 MAY_SIGN            /O=doegrids.org/*
 MAY_SIGN            /O=doesciencegrid.org/*
 MAY_SIGN            /DC=org/DC=doesciencegrid/*
+CERTIFICATE_MD5     B3:76:40:75:F6:C4:BF:AF:82:CA:9A:D5:1D:FC:00:97
 CERTIFICATE_URL     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
 SIGNING_POLICY_URL  http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.signing_policy
 CRL_URL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
