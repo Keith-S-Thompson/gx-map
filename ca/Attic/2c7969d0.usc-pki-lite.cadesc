@@ -1,4 +1,4 @@
-# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.11 2004-11-04 22:25:08-08 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.12 2005-02-02 12:12:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/2c7969d0.usc-pki-lite.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -12,6 +12,7 @@ CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/CAcert.pem
 SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2c7969d0.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Jan  1 21:47:56 2011 GMT
+DISABLE             yes
 
 # As of 2004-11-04, there is no CRL.
 
@@ -20,5 +21,9 @@ CERT_EXPIRES        Jan  1 21:47:56 2011 GMT
 # CERTIFICATE_MD5  B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E,
 # CERT_EXPIRES     Jan  9 01:45:20 2005 GMT
 # and the same subject and hash.
+
+# This certificate is now deprecated.
+# It has been superseded by the certificate described in
+# 2ca73e82.usc-pki-lite-r1.cadesc .
 
 # MD5 fingerprint from certificate downloaded 2004-11-04
