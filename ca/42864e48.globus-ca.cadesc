@@ -1,0 +1,21 @@
+# $Id: 42864e48.globus-ca.cadesc,v 1.1 2004-10-02 14:40:28-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/42864e48.globus-ca.cadesc,v $
+
+CA_NAME             Globus CA (expired)
+HOMEPAGE            http://www.globus.org
+CONTACT             ?
+HASH                42864e48
+SUBJECT             /C=US/O=Globus/CN=Globus Certification Authority
+MAY_SIGN            /C=us/O=Globus/*
+MAY_SIGN            /C=US/O=Globus/*
+MAY_SIGN            /O=Grid/O=Globus/*
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
+CRL_WARNING         ?
+INDEX               ?
+DISABLE             yes
+
+#
+# The CA certificate expired 2004-01-23 and will not be renewed.
+#
