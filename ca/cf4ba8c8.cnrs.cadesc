@@ -1,4 +1,4 @@
-# $Id: cf4ba8c8.cnrs.cadesc,v 1.6 2004-11-01 17:04:27-08 kst Exp $
+# $Id: cf4ba8c8.cnrs.cadesc,v 1.7 2005-03-29 19:27:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/cf4ba8c8.cnrs.cadesc,v $
 
 CA_NAME             CNRS CA
@@ -9,9 +9,10 @@ SUBJECT             /C=FR/O=CNRS/CN=CNRS
 MAY_SIGN            /C=FR/O=CNRS/CN=CNRS-Projets
 MAY_SIGN            /C=FR/O=CNRS/CN=CNRS
 CERTIFICATE_MD5     92:1E:3C:80:4A:95:65:6C:9E:A2:F2:1E:12:BF:EF:6D
+# CERTIFICATE_SHA1    22:61:81:6A:9D:F6:86:6E:76:CE:8A:AC:6E:6F:52:3D:8B:09:32:D1
 CERTIFICATE_URL     http://crls.services.cnrs.fr/CNRS/getpem.crt
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/cf4ba8c8.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/CNRS/getpem.crl
 CERT_EXPIRES        Apr 22 05:44:36 2021 GMT
 
-# MD5 fingerprint from cf4ba8c8.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from getpem.crt (cf4ba8c8.0) downloaded 2005-03-29
