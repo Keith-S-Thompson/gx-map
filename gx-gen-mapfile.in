@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.46 2005-03-27 15:37:44-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.47 2005-03-28 00:18:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -297,7 +297,8 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
         }
         elsif ($operation eq 'remove') {
             if (exists $Mappings{$dn}) {
-                if ($Mappings{$dn}->{primary} eq $map_to_name) {
+                if (exists $Mappings{$dn}->{primary} and
+                    $Mappings{$dn}->{primary} eq $map_to_name) {
                     Debug ">>> Delete $dn --> $map_to_name (primary)\n";
                     delete $Mappings{$dn}->{primary};
                 }
@@ -546,8 +547,8 @@ sub Update_List(@) {
         my $output_mtime = Gridmap_Utils::Get_mtime $output_file;
         Debug "output_file $output_file, output_mtime = " .
               (defined $output_mtime
-		   ? Gridmap_Utils::Long_Time_Image $output_mtime
-		   : 'undef') .
+                   ? Gridmap_Utils::Long_Time_Image $output_mtime
+                   : 'undef') .
               "\n";
         if (defined $output_mtime) {
             if (( defined $dot_update_mtime and
