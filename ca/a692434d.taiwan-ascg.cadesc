@@ -1,4 +1,4 @@
-# $Id: a692434d.taiwan-ascg.cadesc,v 1.4 2004-10-10 03:21:59-07 kst Exp $
+# $Id: a692434d.taiwan-ascg.cadesc,v 1.5 2004-10-13 17:45:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a692434d.taiwan-ascg.cadesc,v $
 
 CA_NAME             Academia Sinica Grid Computing Certification Authority
@@ -12,7 +12,6 @@ CERTIFICATE_MD5     7E:2D:59:1F:EB:1C:93:1A:12:E5:13:65:56:16:28:41
 CERTIFICATE_URL     http://ca.grid.sinica.edu.tw/ASGCCA.pem
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/a692434d.signing_policy
 CRL_URL             http://ca.grid.sinica.edu.tw/CRL/ASGCCA-crl.pem
-CRL_WARNING         48 hours
 DISABLE             no
 
 # MD5 fingerprint from a692434d.0 downloaded 2004-10-10
