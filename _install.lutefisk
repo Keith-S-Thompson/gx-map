@@ -1,0 +1,18 @@
+#!/bin/sh
+
+# $Id: _install.lutefisk,v 1.1 2004-10-07 17:43:28-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/_install.lutefisk,v $
+
+verbosely() {
+    echo "% $@"
+    "$@"
+}
+
+verbosely rm -rf /usr/local/apps/gx-map-0.4-alpha
+verbosely rm -rf /var/gx-map/gx-map-0.4-alpha-data
+verbosely rm -rf /usr/local/apps/grid-security
+verbosely mkdir  /usr/local/apps/grid-security
+verbosely mkdir  /usr/local/apps/grid-security/certificates
+verbosely make clean
+verbosely ./configure-gx-map lutefisk.conf
+verbosely make install clean
