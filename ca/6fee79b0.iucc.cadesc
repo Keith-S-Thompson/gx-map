@@ -1,4 +1,4 @@
-# $Id: 6fee79b0.iucc.cadesc,v 1.3 2004-10-08 20:44:39-07 kst Exp $
+# $Id: 6fee79b0.iucc.cadesc,v 1.4 2004-10-10 03:21:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6fee79b0.iucc.cadesc,v $
 
 CA_NAME             IUCC CA
@@ -19,3 +19,5 @@ DISABLE             no
 # "UICC" rather than "globus" on the pos_rights and cond_subjects
 # lines.
 #
+
+# MD5 fingerprint from 6fee79b0.0 downloaded 2004-10-10
