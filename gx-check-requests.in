@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.27 2004-08-17 20:37:57-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.28 2004-09-11 21:58:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -226,14 +226,13 @@ unlink $lock_file;
 #
 sub Get_Request_Info($) {
     my($filename) = @_;
-    my @records;
     my $request_file = File::Basename::basename $filename,
     my $processed    = Gridmap_Utils::Time_Image time;
-    my $result = undef;
+    my $result;
 
     Debug "Get_Request_Info $filename\n";
     eval {
-        @records = Gridmap_Utils::Read_Records $filename;
+        $result = Gridmap_Utils::Read_Records '-single', $filename;
     };
     if ($@) {
         my $message = $@;
@@ -242,18 +241,6 @@ sub Get_Request_Info($) {
                  PROCESSED    => $processed,
                  ERRORS       => [ $message ] };
     }
-    elsif (scalar @records == 0) {
-        return { REQUEST_FILE => $request_file,
-                 PROCESSED    => $processed,
-                 ERRORS       => [ "No records in $filename" ] };
-    }
-    elsif (scalar @records > 1) {
-        return { REQUEST_FILE => $request_file,
-                 PROCESSED    => $processed,
-                 ERRORS       => [ "Multiple records in $filename" ] };
-    }
-
-    $result = $records[0];
 
     foreach my $key (sort keys %$result) {
         Debug "    $key => $result->{$key}\n";
@@ -393,7 +380,7 @@ sub Append_To_Log($@) {
         chmod 0600, $log_file or die "chmod $log_file: $!\n";
     }
 
-    Gridmap_Utils::Write_Records($log_file, @requests);
+    Gridmap_Utils::Write_Records '-multiple', $log_file, @requests;
 
     chmod 0400, $log_file or die "chmod $log_file: $!\n";
 
