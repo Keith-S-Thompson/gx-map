@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.17 2004-08-17 21:43:45-07 kst Exp $
+# $Id: configure-gx-map,v 1.18 2004-09-13 16:50:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -66,6 +66,7 @@ my %Config = ();
 my @Var_Names = qw( PERL PATH
                     NAMESPACE
                     INSTALL_DIR DATA_DIR
+                    REQUESTS_LOG_PERMISSIONS
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
@@ -152,6 +153,13 @@ if (defined $Config{PATH}) {
 foreach my $name (qw(INSTALL_DIR DATA_DIR)) {
     if (defined $Config{$name} and $Config{$name} !~ /^\//) {
         push @errors, "$Config_File: Bad value for \"$name\"\n";
+    }
+}
+if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
+    my $ok = ( '400' => 1, '440' => 1, '444' => 1 );
+    if (not $ok{$Config{REQUESTS_LOG_PERMISSIONS}}) {
+        push @errors, "$Config_File: Bad REQUESTS_LOG_PERMISSIONS " .
+		      "(use 400, 440, or 444)\n";
     }
 }
 if (defined $Config{GLOBUS_ADMINS}) {
