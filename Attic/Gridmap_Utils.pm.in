@@ -1,0 +1,434 @@
+# $Id: Gridmap_Utils.pm.in,v 1.1 2003-05-27 18:44:21-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
+
+package Gridmap_Utils;
+
+################ Module Preamble ################
+
+BEGIN {
+    require 5.004;
+    use Exporter ();
+    use vars     qw($VERSION @ISA @EXPORT @EXPORT_OK %EXPORT_TAGS);
+    $VERSION = "1.0";
+
+    @ISA         = qw( Exporter );
+    @EXPORT      = qw( $Debugging
+                       &Get_PW &Get_GR &Get_Hostname
+                       &Is_Globus_Admin &Ensure_RCS &Time_Image 
+                       &Write_Records &Read_Records
+                       &Valid_Mappings
+                       &Debug &Debugf );
+    %EXPORT_TAGS = qw();
+    @EXPORT_OK   = qw();
+    # use AutoLoader qw(AUTOLOAD);
+    $Debugging = undef;
+}
+
+# ----------------------------------------------------------------------
+
+sub Debug(@);
+sub Debugf(@);
+
+#
+# A friendlier getpw* function
+# Calls getpwent, getpwuid, or getpwnam depending on arguments (if any)
+# Returns a hash reference; keys are 'name', 'passwd', etc.
+# Returns undef on failure.
+#
+sub Get_PW(;$) {
+    my $user = @_ ? $_[0] : undef;
+    my @pw;
+   
+    if (not defined $user) {
+        @pw = getpwent;
+    }
+    elsif ($user =~ /^\d+$/) {
+        @pw = getpwuid($_[0]);
+    }
+    else {
+        @pw = getpwnam($_[0]);
+    }
+    if (scalar @pw != 9) { 
+        return undef;
+    }
+    else {
+        my $result;
+        my @fields = qw(name passwd uid gid quota comment gcos dir shell);
+        for (my $i = 0; $i <= $#fields; $i ++) {
+            $result->{$fields[$i]} = $pw[$i];
+        }
+        return $result;
+    }
+} # Get_PW
+
+# ----------------------------------------------------------------------
+
+#
+# A friendlier getgr* function
+# Calls getgrent, getgruid, or getgrnam depending on arguments (if any)
+# Returns a hash reference; keys are 'name', 'passwd', etc.
+# 'members' is a ref to an array of member names
+# Returns undef on failure.
+#
+sub Get_GR(;$) {
+    my $group = @_ ? $_[0] : undef;
+    my @gr;
+
+    if (not defined $group) {
+        @gr = getgrent;
+    }
+    elsif ($_[0] =~ /^\d+$/) {
+        @gr = getgrgid($group);
+    }
+    else {
+        @gr = getgrnam($group);
+    }
+    if (scalar @gr != 4) {
+        return undef;
+    }
+    else {
+        my $result;
+        $result->{name}   = $gr[0];
+        $result->{passwd} = $gr[1];
+        $result->{gid}    = $gr[2];
+        my @members = split / /, $gr[3];
+        $result->{members} = \@members;
+        return $result;
+    }
+} # Get_GR
+
+# ----------------------------------------------------------------------
+
+#
+# Returns a list of the groups to which the specified user belongs.
+# Groups are specified by name, not by number.
+#
+sub Get_Groups($) {
+    my($user) = @_;
+    my %is_member = ();
+    my $pw = Get_PW($user);
+    return () if not defined $pw;
+    my $primary_gid = $pw->{gid};
+    my $primary_group = Get_GR $primary_gid;
+    if (defined $primary_group) {
+        $is_member{$primary_group->{name}} = 1;
+    }
+
+    setgrent;
+    while (my $group = Get_GR()) {
+        MEMBER:
+        foreach my $member (@{$group->{members}}) {
+            if ($member eq $pw->{name}) {
+                $is_member{$group->{name}} = 1;
+                last MEMBER;
+            }
+        }
+    }
+    endgrent;
+
+    return sort keys %is_member;
+} # Get_Groups
+
+# ----------------------------------------------------------------------
+
+#
+# Return the current hostname, as a fully qualified domain name if
+# possible.
+#
+sub Get_Hostname() {
+    my $hostname   = undef;
+    my $domainname = undef;
+
+    chomp($hostname = `hostname 2>/dev/null`);
+
+    if ($hostname =~ /\./) { 
+        #
+        # hostname returned an FQDN; return it
+        #
+        return $hostname;
+    }
+
+    open FILE, '/etc/resolv.conf' or return $hostname;
+    LINE:
+    while (<FILE>) {
+        chomp;
+        my @fields = split;
+        if (scalar @fields == 2 and $fields[0] eq 'domain'
+            or
+            scalar @fields >= 2 and $fields[0] eq 'search')
+        {
+            $domainname = $fields[1];
+            last LINE;
+        } 
+    } 
+    close FILE;
+
+    if (defined $domainname) {
+        return "$hostname.$domainname";
+    }
+    else {       
+        #
+        # Punt.
+        #
+        return $hostname;
+    }
+} # Get_Hostname
+
+# ----------------------------------------------------------------------
+
+my %is_globus_admin = (); # cache for Is_Globus_Admin function
+
+sub Is_Globus_Admin($) {
+    my($user) = @_;
+    my $admins = '%GLOBUS_ADMINS%';
+
+    Debug ">>> Is_Globus_Admin \"$user\"\n";
+    if (exists $is_globus_admin{$user}) {
+        Debug "    value is cached\n";
+    }
+    if (not exists $is_globus_admin{$user}) {
+        ENTRY:
+        foreach my $entry (split /\s+/, $admins) {
+            if ($entry =~ /^user:(.*)$/) {
+                if ($1 eq $user) {
+                    Debug "    Yes for user $user\n";
+                    return ($is_globus_admin{$user} = 1);
+                }
+            }
+            elsif ($entry =~ /^group:(.*)$/) {
+                my $group = $1;
+                foreach my $gr (Get_Groups $user) {
+                    if ($gr eq $group) {
+                        Debug "    Yes for group $group\n";
+                        return ($is_globus_admin{$user} = 1);
+                        last ENTRY;
+                    }
+                }
+            }
+        }
+        Debug "    No\n";
+        return ($is_globus_admin{$user} = 0);
+    }
+
+    Debug "Returning $is_globus_admin{$user}\n";
+    return $is_globus_admin{$user};
+} # Is_Globus_Admin
+
+# ----------------------------------------------------------------------
+
+#
+# Ensure that the RCS commands co, ci, and rcs are available in $PATH.
+# Assumes they're all in the same directory, either already in $PATH
+# or in /usr/local/bin.
+#
+sub Ensure_RCS() {
+    my @path = split /:/, $ENV{PATH};
+    foreach my $dir (@path) {
+        if (-x "$dir/co" and -x "$dir/ci" and -x "$dir/rcs") {
+            return;
+        }
+    }
+    if (-x "/usr/local/bin/co" and
+        -x "/usr/local/bin/ci" and
+        -x "/usr/local/bin/rcs")
+    {
+        $ENV{PATH} = "/usr/local/bin:$ENV{PATH}";
+    }
+    else {
+        die "Can't find RCS commands\n";
+    }
+} # Ensure_RCS
+
+# ----------------------------------------------------------------------
+
+#
+# For a given time, returns a string of the form
+#     "ssssssssss YYYY-MM-DD hh:mm:ss UTC"
+# where "ssssssssss" is the raw Unix timestamp.
+#
+sub Time_Image($) {
+    my($time) = @_;
+    my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+        = gmtime $time;
+
+    return sprintf "%010d %s %04d-%02d-%02d %02d:%02d:%02d UTC",
+                   $time,
+                   (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
+                   1900+$year, 1+$mon, $mday, $hour, $min, $sec;
+}
+
+# ----------------------------------------------------------------------
+
+#
+# Given a file name and a list of records, write a text representation
+# of the records to the file.  The file is created if it doesn't already
+# exist; the records are then appended to the file.
+#
+# Each record is a reference to a hash, where the keys are field names.
+#
+sub Write_Records($@) {
+    my($filename, @refs) = @_;
+    return if not @refs;
+
+    my $output = "";
+
+    foreach my $ref (@refs) {
+        $output .= "{\n";
+
+        my $max_key_len = 0;
+        foreach my $key (keys %$ref) {
+            $max_key_len = length $key if length $key > $max_key_len;
+        }
+
+        foreach my $key (sort keys %$ref) {
+            $output .= sprintf "\t%-${max_key_len}s  %s\n",
+                               $key, $ref->{$key};
+        }
+
+        $output .= "}\n\n";
+    }
+
+    open FILE, ">>$filename" or die "${filename}: $!\n";
+    print FILE $output or die "printing to ${filename}: $!\n";
+    close FILE or die "closing ${filename}: $!\n";
+} # Write_Records
+
+# ----------------------------------------------------------------------
+
+#
+# Given a file name, reads (zero or more) records from the file and
+# returns them in a list.
+#
+sub Read_Records($) {
+    my ($filename) = @_;
+    open FILE, $filename or die "${filename}: $!\n";
+    my @result = ();
+    my $ref = undef;
+    LINE:
+    while (<FILE>) {
+        chomp;
+        s/^\s+//;
+        s/\s+$//;
+        next LINE if $_ eq '';
+        if (defined $ref) {
+            if ($_ eq '}') {
+                push @result, $ref;
+                undef $ref;
+            }
+            elsif (/(\w+)\s+(.*)$/) {
+                my($key, $value) = ($1, $2);
+                if (defined $ref->{$key}) {
+                    die "Duplicate key $key at line $. of $filename\n";
+                }
+                $ref->{$key} = $value;
+            }
+        }
+        else {
+            #
+            # Allow comments between records, not within them.
+            #
+            next LINE if /^#/;
+            if ($_ eq '{') {
+                $ref = {};
+            }
+            else {
+                die "Syntax error (expected '{' or EOF) " .
+                    "at line $. of $filename\n";
+            }
+        }
+    }
+    return @result;
+} # Read_Records
+
+# ----------------------------------------------------------------------
+
+#
+# Given a reference to a request record, returns a list of references
+# to hashes specifying valid mappings, where each hash has keys "dn" and
+# "map_to_name".  Both keys are optional; at least one will always be set.
+# (For "add" and "remove" operations, both "dn" and "map_to_name" are set;
+# for "remove-dn" only "dn" is set; for "remove-user" only "map_to_name"
+# is set.)  If there are no valid mappings, an empty list is returned.
+#
+# This function is intended to be customized for each installation.
+# In particular, the check for the SITE field will almost certainly need
+# to be modified.
+#
+# The most basic implementation returns a single mapping if the
+# map_to_name field (if set) is a valid account on this system, the
+# OWNER_NAME field either matches map_to_name (if set) or is a Globus
+# administrator, and the SITE field is correct.  If the map_to_name
+# field is not set (for a remove-dn operation), the OWNER_NAME field
+# must be a Globus administrator.
+#
+# A more sophisticated implementation might refer to a user database,
+# map to a local user derived from a (possibly remote) user name in the
+# record, confirm that the dn corresponds to a recognized CA, return
+# multiple mappings (see Globus Bugzilla # 575) and so forth.
+#
+sub Valid_Mappings($) {
+    my($request) = @_;
+
+    Debug ">>> Entering Valid_Mappings\n";
+    Debug "    operation = $request->{operation}\n";
+    Debug "    dn = ", (exists $request->{dn} ? $request->{dn} : 'undef'), "\n";
+    Debug "    map_to_name = ",
+          (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
+          "\n";
+
+    if (not defined $request->{OWNER_NAME}) {
+        Debug ">>> Invalid, no OWNER_NAME\n";
+        return ();
+    }
+    if (defined $request->{map_to_name} and
+                not getpwnam $request->{map_to_name})
+    {
+        Debug ">>> Invalid, no such user\n";
+        return ();
+    }
+    if (not defined $request->{SITE}) {
+        Debug ">>> Invalid, no SITE\n";
+        return ();
+    }
+    if ($request->{SITE} ne 'SDSC') {
+        Debug ">>> Invalid, SITE ne 'SDSC'\n";
+        return ();
+    }
+    if (exists $request->{map_to_name}) {
+        if ($request->{OWNER_NAME} ne $request->{map_to_name} and
+            not Is_Globus_Admin $request->{OWNER_NAME})
+        {
+            Debug ">>> Invalid, bad OWNER_NAME\n";
+            return ();
+        }
+    }
+    else {
+        if (not Is_Globus_Admin $request->{OWNER_NAME}) {
+            Debug ">>> Invalid, OWNER_NAME is not an admin\n";
+            return ();
+        }
+    }
+
+    my $mapping = {};
+    if (defined $request->{dn}) {
+        $mapping->{dn} = $request->{dn}
+    }
+    if (defined $request->{map_to_name}) {
+        $mapping->{map_to_name} = $request->{map_to_name}
+    }
+    return ( $mapping );
+} # Valid_Mappings
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) { 
+    print @_ if $Debugging;
+} # Debug   
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $Debugging; 
+} # Debugf  
+
+1;
