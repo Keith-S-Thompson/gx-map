@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.40 2005-01-07 17:14:03-08 kst Exp $
+# $Id: gx-map.in,v 1.41 2005-03-27 15:36:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -52,11 +52,6 @@ use strict;
 
 use File::Basename ();
 use Getopt::Long ();
-
-# 
-# Make warnings fatal.
-# 
-$SIG{__WARN__} = sub { die @_ };
 
 my $Install_Dir;
 BEGIN {
@@ -141,6 +136,9 @@ if ($User_Opt->{version}) {
 }
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
 
 #
 # First, gather and verify some basic information about the user.
