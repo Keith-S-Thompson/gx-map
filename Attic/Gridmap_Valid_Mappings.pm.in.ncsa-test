@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.ncsa-test,v 1.1 2003-07-20 19:58:40-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.ncsa-test,v 1.2 2003-07-20 20:37:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.ncsa-test,v $
 
 package Gridmap_Valid_Mappings;
@@ -32,7 +32,7 @@ my $Initialized = 0;
 sub Init_User_Map() {
     return if $Initialized;
 
-    my $filename = "$Install_Dir/var/ncsa-sdsc.user-map";
+    my $filename = "$Install_Dir/var/ncsa-sdsc-user-map";
     open FILE, $filename or die "${filename}: $!\n";
     while (<FILE>) {
         s/#.*$//;
