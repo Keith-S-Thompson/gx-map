@@ -1,0 +1,19 @@
+# $Id: 2dc3958a.rocks11.cadesc,v 1.1 2004-10-17 22:39:26-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/2dc3958a.rocks11.cadesc,v $
+
+CA_NAME             rocks11.sdsc.edu Simple CA
+HOMEPAGE            ?
+CONTACT             ?
+HASH                2dc3958a
+SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=rocks11.sdsc.edu/CN=Globus Simple CA
+MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=rocks11.sdsc.edu/*
+CERTIFICATE_MD5     BB:94:FE:2C:A8:50:75:41:B0:BA:CF:2B:5B:EE:F5:CC
+CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/2dc3958a.0
+SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/2dc3958a.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             no
+
+# There does not appear to be a CRL.
+
+# MD5 fingerprint from 2dc3958a.0 downloaded 2004-10-17
