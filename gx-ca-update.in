@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.21 2004-09-28 20:21:32-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.22 2004-09-28 20:25:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -98,6 +98,7 @@ my @Opts = ( $User_Opt,
                  target-dir=s
                  expire-crl=s
                  force!
+                 email!
                  verbose!
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
