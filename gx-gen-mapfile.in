@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.12 2003-07-17 00:20:15-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.13 2003-07-17 00:43:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -64,7 +64,7 @@ if (@{$User_Opt->{'requests-log'}}) {
         if ($log eq 'default') {
             $log = $Default_Requests_Log;
         }
-        elsif (m<^(http|ftp)://>) {
+        elsif ($log =~ m<^(http|ftp)://>) {
             $log = Gridmap_Utils::Cache_File $_;
         }
     }
