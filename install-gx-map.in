@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.25 2004-11-17 20:13:26-08 kst Exp $
+# $Id: install-gx-map.in,v 1.26 2004-11-17 20:17:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -55,9 +55,8 @@ verbosely () {
 }
 
 all=0
-
 if [ $# -eq 1 ] ; then
-    if [ "$1" -eq "-all" ] ; then
+    if [ "$1" = "-all" ] ; then
 	all=1
     fi
 fi
