@@ -1,0 +1,24 @@
+# $Id: bc870044.cern-old.cadesc,v 1.1 2004-10-17 23:23:39-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/bc870044.cern-old.cadesc,v $
+
+CA_NAME             CERN CA (old)
+HOMEPAGE            http://globus.home.cern.ch/globus/ca/
+CONTACT             service-grid-ca@cern.ch
+HASH                bc870044
+SUBJECT             /C=CH/O=CERN/OU=cern.ch/CN=CERN CA
+MAY_SIGN            /C=ch/O=CERN/*
+MAY_SIGN            /C=CH/O=CERN/*
+MAY_SIGN            /C=ch/O=CERN/OU=cern.ch/*
+MAY_SIGN            /C=CH/O=CERN/OU=cern.ch/*
+MAY_SIGN            /O=Grid/O=CERN/*
+MAY_SIGN            /O=CERN/O=Grid/
+CERTIFICATE_MD5     2E:51:32:53:E5:60:F5:11:6C:45:05:02:0B:4C:7E:30
+CERTIFICATE_URL     http://globus.home.cern.ch/globus/ca/bc870044.0
+SIGNING_POLICY_URL  http://globus.home.cern.ch/globus/ca/bc870044.signing_policy
+CRL_URL             http://globus.home.cern.ch/globus/ca/bc870044.r0
+INDEX               ?
+DISABLE             yes
+
+# The certificate expired 2003-11-30.
+
+# MD5 fingerprint from bc870044.0 downloaded 2004-10-17
