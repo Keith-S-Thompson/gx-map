@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.19 2003-08-27 19:01:19-07 kst Exp $
+# $Id: gx-map.in,v 1.20 2003-08-27 19:03:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -767,7 +767,7 @@ EOF
                     > multiple secondary mappings may be requested for a given
                     > DN.
                     >
-                    > If your confused, just type <return>.
+                    > If you're confused, just type <return>.
                     >
 EOF
                 }
