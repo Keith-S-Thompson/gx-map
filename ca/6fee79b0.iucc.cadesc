@@ -1,4 +1,4 @@
-# $Id: 6fee79b0.iucc.cadesc,v 1.4 2004-10-10 03:21:58-07 kst Exp $
+# $Id: 6fee79b0.iucc.cadesc,v 1.5 2004-10-13 17:44:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6fee79b0.iucc.cadesc,v $
 
 CA_NAME             IUCC CA
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     F7:37:49:67:18:C5:BD:C4:00:1F:FF:9E:7E:10:AA:3B
 CERTIFICATE_URL     http://certificate.iucc.ac.il/ca/cacert.pem
 SIGNING_POLICY_URL  http://certificate.iucc.ac.il/ca/6fee79b0.signing_policy
 CRL_URL             http://certificate.iucc.ac.il/ca/cacrl.pem
-CRL_WARNING         48 hours
 DISABLE             no
 
 #
