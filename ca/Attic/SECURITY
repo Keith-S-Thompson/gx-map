@@ -1,4 +1,4 @@
-# $Id: SECURITY,v 1.3 2004-11-01 16:02:03-08 kst Exp $
+# $Id: SECURITY,v 1.4 2004-11-01 16:53:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/SECURITY,v $
 
 The gx-ca-update program automatically installs signing certificates,
@@ -72,6 +72,7 @@ CRL has expired and a new one is not available, the expired one will
 be left in place.  The gx-ca-update command allows you to specify a
 more lax policy if you wish, allowing CAs without CRLs and/or removing
 CRLs that are about to expire, but only if you explicitly provide the
-"-UNSAFE" command line option (the option name is case-sensitive).
+"-UNSAFE" command line option (the option name is case-sensitive and
+must be spelled out in full).
 
                 -- Keith Thompson <kst@sdsc.edu> 2004-10-20
