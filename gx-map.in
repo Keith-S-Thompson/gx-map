@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.23 2003-12-03 22:20:02-08 kst Exp $
+# $Id: gx-map.in,v 1.24 2003-12-03 22:20:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -528,7 +528,7 @@ EOF
         > (u) Request an update of the grid-mapfiles
         > (x) Exit
 EOF
-        print "What do you want to do? [arqux] ";
+        print "What do you want to do? [arux] ";
         chomp($response = lc scalar <STDIN>);
         if ($response =~ /^a/) {
             $Options->{operation} = 'add';
