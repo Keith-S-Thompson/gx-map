@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.19 2003-07-27 17:24:40-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.20 2003-07-27 22:03:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -81,7 +81,8 @@ my $Default_Data_Dir = "$Install_Dir/var";
 
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
-             qw( help version namespace=s directory=s copy=s debugging ) );
+             qw( help version namespace=s copy=s debugging ) );
+             # directory=s
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -92,9 +93,10 @@ if ($User_Opt->{version}) {
     print "gx-check-requests, part of gx-map version $Gridmap_Utils::VERSION\n";
 }
 
-my $Data_Dir = defined $User_Opt->{directory}
-                     ? $User_Opt->{directory}
-                     : $Default_Data_Dir;
+# my $Data_Dir = defined $User_Opt->{directory}
+#                      ? $User_Opt->{directory}
+#                      : $Default_Data_Dir;
+my $Data_Dir = $Default_Data_Dir;
 Gridmap_Utils::Untaint $Data_Dir;
 if ($Data_Dir !~ /^\//) {
     die "Data directory $Data_Dir is not an absolute pathname\n";
@@ -411,13 +413,13 @@ Usage: $Prog_Name [options]
     -help           : Display this message and exit
     -version        : Display version information and exit
     -namespace name : Specify namespace (e.g., "%NAMESPACE%"); mandatory
-    -directory dir  : Data directory
-                      Default is $Default_Data_Dir
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
     -debugging      : Enable debugging output
 EOF
+#   -directory dir  : Data directory
+#                     Default is $Default_Data_Dir
     exit 1;
 } # Usage
 
