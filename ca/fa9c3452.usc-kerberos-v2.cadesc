@@ -1,0 +1,17 @@
+# $Id: fa9c3452.usc-kerberos-v2.cadesc,v 1.1 2005-03-03 10:55:08-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/fa9c3452.usc-kerberos-v2.cadesc,v $
+
+CA_NAME             USC Kerberos Certification Authority v2
+HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/
+CONTACT             authx@usc.edu
+HASH                fa9c3452
+SIGNED_BY           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
+SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/CN=University of Southern California KCA v2/emailAddress=nmiadmin@usc.edu
+MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/OU=University of Southern California KCA v2/emailAddress=nmiadmin@usc.edu/*
+CERTIFICATE_MD5     EB:E7:7B:72:70:87:42:13:D4:9D:63:7A:29:20:FF:9C
+CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/fa9c3452.0
+SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/fa9c3452.signing_policy
+CRL_URL             ?
+CERT_EXPIRES        Mar  2 22:57:34 2006 GMT
+
+# MD5 fingerprint from certificate downloaded 2005-03-03
