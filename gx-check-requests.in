@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.22 2003-07-27 23:04:35-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.23 2003-08-27 19:01:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -130,7 +130,8 @@ close LOCK;
 my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
-                   qw( dn map_to_name email comment map_to_uid NAMESPACE ) );
+                   qw( dn map_to_name secondary email comment
+		       map_to_uid NAMESPACE ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
