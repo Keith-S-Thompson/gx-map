@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.11 2004-07-30 17:58:42-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.12 2004-07-30 18:06:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -101,7 +101,7 @@ sub Valid_Mappings($);
 # field is not set (for a remove-dn operation), the OWNER_NAME field must
 # be a Globus administrator.  (If OWNER_NAME is not set but OWNER_UID
 # is, the OWNER_NAME is set by a passwd lookup on the OWNER_UID; this
-# applies only to the local namespace.)
+# should apply only to the local namespace.)
 #
 # A more sophisticated implementation might refer to a user database,
 # map to a local user derived from a (possibly remote) user name in the
@@ -130,11 +130,15 @@ sub Valid_Mappings($) {
         return ();
     }
     if (defined $request->{map_to_name}) {
-	my @pw = getpwnam $request->{map_to_name};
-	if (not @pw) {
-	    Debug ">>> Invalid, no such user\n";
-	    return ();
-	}
+        my @pw = getpwnam $request->{map_to_name};
+        if (not @pw) {
+            Debug ">>> Invalid, no such user\n";
+            return ();
+        }
+        if ($pw[2] == 0) {
+            Debug ">>> Invalid, cannot map to UID 0 (root)\n";
+            return ();
+        }
     }
     if (not defined $request->{NAMESPACE}) {
         Debug ">>> Invalid, no NAMESPACE\n";
