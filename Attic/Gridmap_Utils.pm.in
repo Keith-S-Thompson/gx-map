@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.41 2004-10-10 01:02:25-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.42 2004-10-10 01:15:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -634,11 +634,15 @@ sub Cache_File($) {
         chdir $dir or die "${dir}: $!\n";
         if ($is_ftp) {
             Gridmap_Utils::Use_Commands 'ncftpget';
-            $result = system "ncftpget -V $url 2>/dev/null";
+            $result = system "ncftpget -V -t 30 $url 2>/dev/null";
         }
         else {
             Gridmap_Utils::Use_Commands 'wget';
-            $result = system 'wget', '-N', '-o', '/dev/null', $url;
+            $result = system 'wget', '--timestamping',
+                                     '--output-file=/dev/null',
+                                     '--timeout=30',
+                                     '--tries=1',
+                                     $url;
         }
         if ($result == 0) {
             open URL, ">$dir/.url" or die "$dir/.url: $!\n";
@@ -671,7 +675,11 @@ sub Cache_File($) {
         }
         else {
             Gridmap_Utils::Use_Commands 'wget';
-            $result = system 'wget', '-N', '-o', '/dev/null', $url;
+            $result = system 'wget', '--timestamping',
+                                     '--output-file=/dev/null',
+                                     '--timeout=30',
+                                     '--tries=1',
+                                     $url;
         }
         #
         # Ignore errors; we already have a copy of the file.
