@@ -1,4 +1,4 @@
-# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.7 2004-11-01 17:04:16-08 kst Exp $
+# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.8 2005-03-29 19:27:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1e43b9cc.grid-ireland.cadesc,v $
 
 CA_NAME             Grid-Ireland Certification Authority
@@ -8,9 +8,10 @@ HASH                1e43b9cc
 SUBJECT             /C=IE/O=Grid-Ireland/CN=Grid-Ireland Certification Authority
 MAY_SIGN            /C=IE/O=Grid-Ireland/*
 CERTIFICATE_MD5     92:88:F8:93:5F:45:D8:5F:82:86:58:42:91:4F:74:A7
+# CERTIFICATE_SHA1    9C:C1:A7:7C:F9:C2:75:05:AD:3C:FE:3F:C8:B3:F4:76:02:25:A2:C5
 CERTIFICATE_URL     http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/1e43b9cc.signing_policy
 CRL_URL             http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.r0
 CERT_EXPIRES        Jul 27 17:10:40 2007 GMT
 
-# MD5 fingerprint from 1e43b9cc.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 1e43b9cc.0 downloaded 2005-03-29
