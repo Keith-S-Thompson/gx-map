@@ -1,10 +1,11 @@
-# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.14 2004-11-01 17:04:23-08 kst Exp $
+# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.15 2004-11-05 02:31:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/9d8753eb.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
 HOMEPAGE            http://www.doegrids.org/OldDOEScienceGridRootCA/
 CONTACT             ?
 HASH                9d8753eb
+SIGNED_BY           /O=DOE Science Grid/OU=Certificate Authorities/CN=Certificate Manager
 SUBJECT             /DC=net/DC=es/OU=Certificate Authorities/OU=DOE Science Grid/CN=pki1
 MAY_SIGN            /O=doesciencegrid.org/*
 MAY_SIGN            /DC=org/DC=doesciencegrid/*
