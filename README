@@ -1,4 +1,4 @@
-# $Id: README,v 1.20 2004-11-26 12:12:52-08 kst Exp $
+# $Id: README,v 1.21 2004-11-30 16:39:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
@@ -40,45 +40,17 @@ for information:
     README.CA-SECURITY  Security-specific information about gx-ca-update .
     README.TeraGrid     TeraGrid-specific information (which may also
                         be of interest for non-TeraGrid sites).
-    README.Upgrade      Upgrading from gx-map 0.3 to 0.4.0.
+    README.Upgrade      Upgrading from gx-map 0.3 to 0.4.1.
     README.Cross-Site   Using gx-map across multiple sites.
 
 I gave a brief presentation on gx-map at GlobusWorld 2004.  An expanded
 version of the PowerPoint slides from that presentation can be found
-in gx-map.ppt in this distribution; gx-map.pdf is the same thing in
-PDF format.
+in gx-map.ppt in this distribution; gx-map.pdf is the same presentation
+in PDF format.
 
-The README* and gx-map.{ppt,pdf} files are installed in the etc
-subdirectory when you install gx-map.
+The README, README.*, Relnotes, gx-map.ppt, and gx-map.pdf files are
+installed in the etc subdirectory when you install gx-map.
 
 Future releases will include man pages.
 
-There is a known bug in the gx-map system (inadvertently discovered
-by Mei-Hui Su of ISI) that can affect sites with multiple systems
-sharing a data directory.
-
-The scenario:
-
-1.  A user runs gx-map, generating a request file (owned by the user)
-    in the shared data directory.
-
-2.  A few minutes later, the gx-check-requests command runs under
-    control of a cron job.  Recall that gx-check-requests runs on only
-    a single system.  It picks up the request file, processes it, and
-    appends it (with some annotations) to the shared requests.log file.
-
-3.  Shortly after that, the gx-gen-mapfile command is run, possibly
-    on several systems.  It sees that the requests.log file has been
-    updated, and re-generates the grid-mapfile.
-
-The problem: The user who ran gx-map in step 1 does not happen to have
-an account on the system running gx-check-requests.  As a result,
-the record appended to the requests.log file has a valid OWNER_UID
-field (the numeric UID of the user), but does not have an OWNER_NAME
-field (since gx-check-requests can't determine the name).  Currently,
-gx-gen-mapfile ignores requests without a valid OWNER_NAME field.
-
-This bug was discovered in release 0.3, and has not yet been fixed
-as of release 0.4.0.
-
-                -- Keith Thompson <kst@sdsc.edu> 2004-11-26
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-30
