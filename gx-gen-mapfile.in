@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-gen-mapfile.in,v 1.4 2003-06-12 03:25:55-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.5 2003-06-13 19:07:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -34,7 +34,7 @@ my $Dot_Update           = "$Data_Dir/new-requests/.update";
 
 my $Prog_Name = File::Basename::basename $0;
 
-my $User_Opt = { 'requests-log' => [ $Default_Requests_Log ],
+my $User_Opt = { 'requests-log' => [],
                  'permissions'  => '444' };
 my @Opts = ( $User_Opt,
              qw( help
@@ -45,11 +45,20 @@ my @Opts = ( $User_Opt,
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
-Debug "requests-log = $User_Opt->{'requests-log'}";
-if (ref $User_Opt->{'requests-log'} eq 'ARRAY') {
-    Debug " --> ( @{$User_Opt->{'requests-log'}} )";
+#
+# If the requests-log array is empty (i.e., the user didn't give the
+# '-requests-log' option), set it to a single element consisting of the
+# name of the default log.  If it's non-empty, replace any occurrence of
+# 'default' with the name of the default log.
+#
+if (@{$User_Opt->{'requests-log'}}) {
+    foreach (@{$User_Opt->{'requests-log'}}) {
+        $_ = $Default_Requests_Log if $_ eq 'default';
+    }
 }
-Debug "\n";
+else {
+    $User_Opt->{'requests-log'} = [ $Default_Requests_Log ];
+}
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
@@ -407,11 +416,15 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Prog_Name [options] [files]
 Option names may be abbreviated.
-    -help              : Display this message and exit
-    -requests-log file : Use specified requests log file
-                         May be given multiple times
-    Default is $Default_Requests_Log
-    -debugging         : Enable debugging output
+    -help              : Display this message and exit.
+    -requests-log file : Use specified requests log file.
+                         May be given multiple times, e.g.,
+                             -req file1 -req file2
+                         If not specified, use the default
+                         $Default_Requests_Log
+                         which may be specified explicitly by the
+                         name "default".
+    -debugging         : Enable debugging output.
     -permissions perm  : Specify permissions (in octal); default is 444
 One or more output files may be specified on the command line.
 If no output files are specified, output is written to stdout.
