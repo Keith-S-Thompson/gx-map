@@ -1,4 +1,4 @@
-# $Id: 34a509c3.cnrs-projets.cadesc,v 1.5 2004-10-08 20:44:37-07 kst Exp $
+# $Id: 34a509c3.cnrs-projets.cadesc,v 1.6 2004-10-10 03:21:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a509c3.cnrs-projets.cadesc,v $
 
 CA_NAME             CNRS-Projets
@@ -15,3 +15,5 @@ SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/34a509c3.signi
 CRL_URL             http://crls.services.cnrs.fr/CNRS-Projets/getpem.crl
 CRL_WARNING         14 days
 DISABLE             no
+
+# MD5 fingerprint from 34a509c3.0 downloaded 2004-10-10
