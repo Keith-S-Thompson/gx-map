@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.5 2004-10-13 17:45:05-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.6 2004-11-01 17:04:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -11,6 +11,6 @@ CERTIFICATE_MD5     63:B3:08:9F:57:76:4A:B0:FC:D2:3D:26:15:14:CA:E7
 CERTIFICATE_URL     http://www.escience.am/ca/cacert.pem
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/d0c2a341.signing_policy
 CRL_URL             http://www.escience.am/ca/crl.pem
-DISABLE             no
+CERT_EXPIRES        Dec  1 23:29:21 2006 GMT
 
 # MD5 fingerprint from d0c2a341.0 downloaded 2004-10-10
