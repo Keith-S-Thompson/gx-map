@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.15 2004-08-17 20:57:17-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.16 2004-08-17 22:04:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -81,9 +81,7 @@ sub Valid_Mappings($);
 # for "remove-user" only "map_to_name" is set.)  If there are no valid
 # mappings, an empty list is returned.
 #
-# This function is intended to be customized for each installation.
-# In particular, the check for the NAMESPACE field will probably need
-# to be modified.
+# This function may be customized for each installation.
 #
 # To create a customized version, copy the file "Gridmap_Valid_Mappings.pm.in"
 # to, for example, "Gridmap_Valid_Mappings.pm.in.foo", and add an entry
@@ -103,9 +101,14 @@ sub Valid_Mappings($);
 # should apply only to the local namespace.)
 #
 # A more sophisticated implementation might refer to a user database,
-# map to a local user derived from a (possibly remote) user name in the
-# record, confirm that the dn corresponds to a recognized CA, return
-# multiple mappings (see Globus Bugzilla # 575) and so forth.
+# map to a local user derived from a (possibly remote) user name in
+# the record, confirm that the dn corresponds to a recognized CA, and
+# so forth.
+#
+# A recent addition uses the Gridmap_Utils::DN_List function to generate
+# (possibly) multiple entries for a single DN, for compatibility with
+# both GT2 and GT3 (USERID vs. UID, Email vs. emailAddress); see Globus
+# Bugzilla # 575.
 #
 sub Valid_Mappings($) {
     my($request) = @_;
@@ -162,14 +165,26 @@ sub Valid_Mappings($) {
         }
     }
 
-    my $mapping = {};
+    my @result = ();
+
     if (defined $request->{dn}) {
-        $mapping->{dn} = $request->{dn}
+        foreach my $dn (Gridmap_Utils::DN_List $request->{dn}) {
+            my $entry = { dn => $dn };
+            if (defined $request->{map_to_name}) {
+                $entry->{map_to_name} = $request->{map_to_name};
+            }
+            push @result, $entry;
+        }
     }
-    if (defined $request->{map_to_name}) {
-        $mapping->{map_to_name} = $request->{map_to_name}
+    else {
+        my $entry = {};
+        if (defined $request->{map_to_name}) {
+            $mapping->{map_to_name} = $request->{map_to_name}
+        }
+        push @result, $entry;
     }
-    return ( $mapping );
+
+    return @result;
 } # Valid_Mappings
 
 # ----------------------------------------------------------------------
