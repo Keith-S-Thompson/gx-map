@@ -1,0 +1,20 @@
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.1 2004-09-14 20:21:07-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
+
+CA_DESC         DOEGrids CA
+HOMEPAGE        http://pki1.doegrids.org/
+CONTACT		?
+HASH            1c3f2ca8
+SUBJECT         /DC=org/DC=DOEGrids/OU=Certificate Authorities/CN=DOEGrids CA 1
+MAY_SIGN	/DC=org/DC=DOEGrids/*
+MAY_SIGN	/DC=org/DC=doegrids/*
+MAY_SIGN	/O=DOEGrids.org/*
+MAY_SIGN	/O=doegrids.org/*
+MAY_SIGN	/O=doesciencegrid.org/*
+MAY_SIGN	/DC=org/DC=doesciencegrid/*
+CERTIFICATE     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
+SIGNING_POLICY  ?
+CRL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
+CRL_MAX_AGE     12 hours
+INDEX           ?
+
