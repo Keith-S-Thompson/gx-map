@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.13 2004-07-30 18:08:08-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.14 2004-08-17 20:37:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -144,8 +144,8 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no NAMESPACE\n";
         return ();
     }
-    if ($request->{NAMESPACE} ne '%NAMESPACE%') {
-        Debug ">>> Invalid, NAMESPACE ne '%NAMESPACE%'\n";
+    if ($request->{NAMESPACE} ne $Gridmap_Utils::Config{NAMESPACE}) {
+        Debug ">>> Invalid, NAMESPACE ne $Gridmap_Utils::Config{NAMESPACE}\n";
         return ();
     }
     if (exists $request->{map_to_name}) {
