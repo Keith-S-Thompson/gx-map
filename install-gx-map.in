@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.11 2003-07-24 22:39:20-07 kst Exp $
+# $Id: install-gx-map.in,v 1.12 2003-07-25 01:08:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -61,7 +61,7 @@ LIBDIR=$INSTALL_DIR/lib
 DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
-SBIN_FILES="gx-check-requests gx-gen-mapfile cacl/gx-check-cacl-index"
+SBIN_FILES="gx-check-requests gx-gen-mapfile"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 DATA_FILES="ncsa-sdsc-user-map"
 
@@ -71,9 +71,7 @@ for dir in $INSTALL_DIR \
            $LIBDIR \
            $DATA_DIR \
            $DATA_DIR/RCS \
-           $DATA_DIR/cache \
-           $DATA_DIR/cacl \
-           $DATA_DIR/cacl/RCS
+           $DATA_DIR/cache
 do
     if [ ! -d $dir ] ; then
         verbosely mkdir -m 755 $dir
