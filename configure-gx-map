@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.13 2003-12-03 22:08:54-08 kst Exp $
+# $Id: configure-gx-map,v 1.14 2004-07-30 18:00:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -66,6 +66,7 @@ my %Config = ();
 my @Var_Names = qw( PERL PATH
                     NAMESPACE
                     INSTALL_DIR DATA_DIR
+                    DN_FORMAT
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
@@ -137,16 +138,16 @@ if (defined $Config{PATH}) {
     #
     my %optional = (wget => 1, ncftpget => 1);
     foreach my $command (qw(wget ncftpget rcs ci cp)) {
-	if (not Command_Exists $command, $Config{PATH}) {
-	    if ($optional{$command}) {
-		push @warnings,
-		     "Command $command not found in configured PATH\n";
-	    }
-	    else {
-		push @errors,
-		     "Command $command not found in configured PATH\n";
-	    }
-	}
+        if (not Command_Exists $command, $Config{PATH}) {
+            if ($optional{$command}) {
+                push @warnings,
+                     "Command $command not found in configured PATH\n";
+            }
+            else {
+                push @errors,
+                     "Command $command not found in configured PATH\n";
+            }
+        }
     }
 }
 foreach my $name (qw(INSTALL_DIR DATA_DIR)) {
@@ -166,9 +167,20 @@ if (defined $Config{GLOBUS_ADMINS}) {
             push @errors,
                  "$Config_File: Groups are no longer supported in GLOBUS_ADMINS\n";
         }
-        elsif (not getpwnam $admin) {
-            push @errors, "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
+        else {
+            my @pw = getpwnam $admin;
+            if (not @pw) {
+                push @errors, "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
+            }
         }
+    }
+}
+
+if (defined $Config{DN_FORMAT}) {
+    my %ok = map { $_ => 1 } qw( RAW GT2 GT3 BOTH );
+    if (not $ok{$Config{DN_FORMAT}}) {
+        push @errors,
+             "$Config_File: Invalid DN_FORMAT\n";
     }
 }
 
@@ -247,9 +259,9 @@ sub Home_Dir($) {
 sub Command_Exists($$) {
     my ($command, $path) = @_;
     foreach my $dir (split /:/, $path) {
-	if (-x "$dir/$command") {
-	    return 1;
-	}
+        if (-x "$dir/$command") {
+            return 1;
+        }
     }
     return 0;
 } # Command_Exists
