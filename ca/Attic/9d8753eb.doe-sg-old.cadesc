@@ -1,4 +1,4 @@
-# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.7 2004-09-29 19:39:49-07 kst Exp $
+# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.8 2004-09-29 20:20:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/9d8753eb.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -13,4 +13,4 @@ SIGNING_POLICY_URL  ?
 CRL_URL             ?
 CRL_WARNING         ?
 INDEX               ?
-RETIRED             yes
+DISABLE             yes
