@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.20 2003-08-27 19:03:27-07 kst Exp $
+# $Id: gx-map.in,v 1.21 2003-08-27 19:09:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -365,6 +365,9 @@ $request->{map_to_name} = $Options->{username} if defined $Options->{username};
 $request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
 $request->{email}       = $Options->{email}    if defined $Options->{email};
 $request->{comment}     = $Options->{comment}  if defined $Options->{comment};
+if (defined $Options->{secondary} and $Options->{secondary} eq 'yes') {
+    $request->{secondary} = 'yes';
+}
 
 #
 # If gx-check-requests sees a partial request file, it will reject it
@@ -929,7 +932,13 @@ sub Get_Options_From_Command_Line() {
     }
 
     if (defined $User_Opt->{secondary}) {
-        $Options->{secondary} = 'yes';
+        if ($OP eq 'add') {
+            $Options->{secondary} = 'yes';
+        }
+        else {
+            Usage "The \"-secondary\" option may only be used with " .
+                  "an \"add\" request\n";
+        }
     }
 
     if (not defined $User_Opt->{email} and
