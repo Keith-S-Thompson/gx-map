@@ -1,17 +1,17 @@
-# $Id: README.CA,v 1.5 2004-11-22 17:53:03-08 kst Exp $
+# $Id: README.CA,v 1.6 2004-11-22 17:54:03-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
 
 ************************************************************************
 * IMPORTANT SECURITY NOTICE:                                           *
-* Please read the file SECURITY in this directory before deploying     *
-* this software.                                                       *
+* Please read the file README.CA-SECURITY in this directory before     *
+* deploying this software.                                             *
 ************************************************************************
 
-Each *.cadesc file contains information about a Certificate Authority
-whose certificates can be used with Globus.  The file names are of
-the form "hash.name.cadesc", where "hash" is the 8-digit hexadecimal
-hash of the signing certificate and "name" is an arbitrary brief name
-for the CA.
+Each *.cadesc file in the ca subdirectory contains information about
+a Certificate Authority whose certificates can be used with Globus.
+The file names are of the form "hash.name.cadesc", where "hash" is
+the 8-digit hexadecimal hash of the signing certificate and "name"
+is an arbitrary brief name for the CA.
 
 The file 00000000.example.cadesc is a template for creating new
 cadesc files.
@@ -122,4 +122,4 @@ All URLs may be specified with a prefix of either "http://",
 wget (an ssl-enabled version of wget is required for https URLs).
 ftp URLs are downloaded using ncftpget.
 
-                --- Keith Thompson <kst@sdsc.edu> 2004-10-20
+                --- Keith Thompson <kst@sdsc.edu> 2004-11-22
