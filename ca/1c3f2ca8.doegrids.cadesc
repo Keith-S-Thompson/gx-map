@@ -1,4 +1,4 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.8 2004-10-08 20:44:36-07 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.9 2004-10-10 03:21:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
@@ -18,3 +18,5 @@ CERTIFICATE_URL     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
 SIGNING_POLICY_URL  http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.signing_policy
 CRL_URL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
 CRL_WARNING         48 hours
+
+# MD5 fingerprint from 1c3f2ca8.0 downloaded 2004-10-10
