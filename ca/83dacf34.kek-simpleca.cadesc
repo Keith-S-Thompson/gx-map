@@ -1,4 +1,4 @@
-# $Id: 83dacf34.kek-simpleca.cadesc,v 1.2 2004-11-01 17:04:21-08 kst Exp $
+# $Id: 83dacf34.kek-simpleca.cadesc,v 1.3 2005-03-29 19:27:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/83dacf34.kek-simpleca.cadesc,v $
 
 CA_NAME             rcrd.jp.hep.net Simple CA
@@ -8,6 +8,7 @@ HASH                83dacf34
 SUBJECT             /C=jp/O=KEK/O=Gfarm/OU=rcrd.jp.hep.net/CN=Globus Simple CA
 MAY_SIGN            /C=jp/O=KEK/O=Gfarm/OU=rcrd.jp.hep.net/*
 CERTIFICATE_MD5     F9:FB:21:2E:BE:0A:8B:10:EF:61:B8:60:C5:7A:D0:22
+# CERTIFICATE_SHA1    D5:33:C9:90:5F:5F:BD:D5:3F:4B:41:D8:85:AC:D0:12:D0:8F:C9:9E
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/83dacf34.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/83dacf34.signing_policy
 CRL_URL             ?
@@ -15,4 +16,4 @@ CERT_EXPIRES        Jul 13 06:33:33 2008 GMT
 
 # There does not appear to be a CRL.
 
-# MD5 fingerprint from 83dacf34.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from 83dacf34.0 downloaded 2005-03-29
