@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.6 2004-10-13 17:44:56-07 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.7 2004-10-19 18:25:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -6,16 +6,15 @@ HOMEPAGE            https://gridra.belnet.be/pub/
 CONTACT             gridca@belnet.be
 HASH                03aa0ecb
 SUBJECT             /C=BE/O=BELNET/OU=BEGrid/CN=BEGrid CA/emailAddress=gridca@belnet.be
-MAY_SIGN            ?
+MAY_SIGN            /C=BE/O=BELNET/OU=BEGrid/CN=BEGrid CA/emailAddress=gridca@belnet.be
+MAY_SIGN            /C=BE/O=BEGRID/*
 CERTIFICATE_MD5     E3:90:39:1B:3C:E9:89:57:86:54:3E:AF:0F:B8:40:69
 CERTIFICATE_URL     https://gridra.belnet.be/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             https://gridra.belnet.be/pub/crl/cacrl.pem
-DISABLE             yes
 
-#
-# I haven't been able to find a signing_policy file for this CA.
-# You can generate one yourself (at your own risk).
-#
+# The signing_policy file doesn't appear to be available online, but I
+# received one by e-mail from Pascal Panneels <gridca@belnet.be>.
+# The MAY_SIGN attributes here are based on that.
 
 # MD5 fingerprint from 03aa0ecb.0 downloaded 2004-10-10
