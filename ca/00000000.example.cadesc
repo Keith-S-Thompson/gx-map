@@ -1,0 +1,15 @@
+# $Id: 00000000.example.cadesc,v 1.1 2004-10-02 12:28:58-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/00000000.example.cadesc,v $
+
+CA_NAME             example.org CA
+HOMEPAGE            http://example.org/CA/
+CONTACT             John Doe <johndoe@example.org>
+HASH                00000000
+SUBJECT             /O=Grid/OU=example.org/CN=example.org CA
+MAY_SIGN            /O=Grid/OU=example.org/*
+CERTIFICATE_URL     http://www.example.org/CA/00000000.0
+SIGNING_POLICY_URL  http://www.example.org/CA/00000000.signing_policy
+CRL_URL             http://www.example.org/CA/00000000.r0
+CRL_WARNING         12 hours
+INDEX               ?
+DISABLE             yes
