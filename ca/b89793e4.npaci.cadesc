@@ -1,4 +1,4 @@
-# $Id: b89793e4.npaci.cadesc,v 1.6 2004-10-08 20:44:43-07 kst Exp $
+# $Id: b89793e4.npaci.cadesc,v 1.7 2004-10-10 03:21:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b89793e4.npaci.cadesc,v $
 
 CA_NAME             NPACI CA
@@ -13,3 +13,5 @@ SIGNING_POLICY_URL  http://www.npaci.edu/CA/b89793e4.signing_policy
 CRL_URL             http://www.npaci.edu/CA/b89793e4.r0
 CRL_WARNING         12 hours
 INDEX               http://www.npaci.edu/CA/ca.db.index
+
+# MD5 fingerprint from b89793e4.0 downloaded 2004-10-10
