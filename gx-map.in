@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.7 2003-05-28 20:29:04-07 kst Exp $
+# $Id: gx-map.in,v 1.8 2003-06-02 02:29:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -584,13 +584,20 @@ EOF
 
         if ($need_user_name) {
             while (not defined $Options->{username}) {
-                print "What user name do you want to $what ",
-                      "(default is $PW->{name}) ? ";
+		if ($PW->{name} eq 'root') {
+		    print "What user name do you want to $what? ";
+		}
+		else {
+		    print "What user name do you want to $what ",
+			  "(default is $PW->{name}) ? ";
+		}
                 chomp($response = scalar <STDIN>);
                 $response =~ s/^ *//;
                 $response =~ s/ *$//;
                 if ($response eq '') {
-                    $Options->{username} = $PW->{name};
+		    if ($PW->{name} ne 'root') {
+			$Options->{username} = $PW->{name};
+		    }
                 }
                 else {
                     $Options->{username} = $response;
