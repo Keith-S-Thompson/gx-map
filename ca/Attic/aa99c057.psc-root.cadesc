@@ -1,4 +1,4 @@
-# $Id: aa99c057.psc-root.cadesc,v 1.4 2004-09-24 20:58:53-07 kst Exp $
+# $Id: aa99c057.psc-root.cadesc,v 1.5 2004-10-08 13:59:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/aa99c057.psc-root.cadesc,v $
 
 CA_NAME             PSC Root Certificate Authority
@@ -11,4 +11,3 @@ CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/aa99c057.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/aa99c057.signing_policy
 CRL_URL             http://ocsp.psc.edu:8000/ca/aa99c057.r0
 CRL_WARNING         2 hours
-INDEX               ?
