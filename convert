@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: convert,v 1.3 2003-07-15 16:30:28-07 kst Exp $
+# $Id: convert,v 1.4 2003-07-15 16:36:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/convert,v $
 
 use strict;
@@ -56,6 +56,7 @@ foreach my $old_ref (@old_refs) {
         $new_ref->{map_to_name} ne 'kst')
     {
         $new_ref->{OWNER_NAME} = 'globus';
+        $new_ref->{OWNER_UID} = '15634';
         $new_ref->{comment} .= " (OWNER_NAME changed from \"kst\" to \"globus\")";
     }
 
