@@ -1,0 +1,14 @@
+# $Id: aa99c057.psc-root.cadesc,v 1.1 2004-09-14 20:21:10-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/aa99c057.psc-root.cadesc,v $
+
+CA_DESC         PSC Root Certificate Authority
+HOMEPAGE        http://ocsp.psc.edu:8000/ca/
+CONTACT		?
+HASH            aa99c057
+SUBJECT         /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Root Certificate Authority
+MAY_SIGN        /C=US/O=Pittsburgh Supercomputing Center/*
+CERTIFICATE     http://ocsp.psc.edu:8000/ca/aa99c057.0
+SIGNING_POLICY  http://ocsp.psc.edu:8000/ca/aa99c057.signing_policy
+CRL             http://ocsp.psc.edu:8000/ca/aa99c057.r0
+CRL_MAX_AGE     12 hours
+INDEX           ?
