@@ -1,4 +1,4 @@
-# $Id: d64ccb53.russian-datagrid.cadesc,v 1.2 2004-10-08 13:59:33-07 kst Exp $
+# $Id: d64ccb53.russian-datagrid.cadesc,v 1.3 2004-10-08 20:44:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d64ccb53.russian-datagrid.cadesc,v $
 
 CA_NAME             Russian DataGRID CA
@@ -7,6 +7,7 @@ CONTACT             shamardin@theory.sinp.msu.ru
 HASH                d64ccb53
 SUBJECT             /C=RU/O=DataGrid/CN=Russian DataGrid CA
 MAY_SIGN            /C=RU/O=DataGrid/*
+CERTIFICATE_MD5     A4:56:E2:01:E6:DB:86:F6:FC:5B:E5:6C:9D:A5:E1:06
 CERTIFICATE_URL     http://lhc.sinp.msu.ru/CA/ca-cert.pem
 SIGNING_POLICY_URL  http://lhc.sinp.msu.ru/CA/d64ccb53.signing_policy
 CRL_URL             http://lhc.sinp.msu.ru/CA/ca-crl.pem
