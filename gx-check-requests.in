@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.13 2003-07-17 01:48:02-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.14 2003-07-17 03:14:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -26,8 +26,6 @@ sub Usage(@);
 sub Get_Request_Info($);
 sub Flatten_Errors($);
 sub Append_To_Log($@);
-# sub Is_Tainted($);
-# sub Check_Tainting($$);
 sub Debug(@);
 sub Debugf(@);
 
@@ -48,14 +46,9 @@ $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 my $Data_Dir = defined $User_Opt->{directory}
                      ? $User_Opt->{directory}
                      : $Default_Data_Dir;
-#
-# Untaint $Data_Dir and make sure it's an absolute pathname.
-#
-if ($Data_Dir =~ /^(\/.*)$/) {
-    $Data_Dir = $1;
-}
-else {
-    die "Invalid data directory: \"$Data_Dir\"\n";
+Gridmap_Utils::Untaint $Data_Dir;
+if ($Data_Dir !~ /^\//) {
+    die "Data directory $Data_Dir is not an absolute pathname\n";
 }
 my $requests_log     = "$Data_Dir/requests.log";
 my $errors_log       = "$Data_Dir/errors.log";
@@ -85,11 +78,8 @@ opendir DIR, $new_request_dir or die "$new_request_dir: $!\n";
 my @files = grep /\.request$/, sort readdir DIR;
 closedir DIR;
 
-#
-# Untaint the file names
-#
-foreach (@files) {
-    ($_) = (/^(.*)$/);
+foreach my $file (@files) {
+    Gridmap_Utils::Untaint $file;
 }
 
 my @good_requests = ();
@@ -340,25 +330,6 @@ sub Append_To_Log($@) {
     system "rcs -l $log_file >/dev/null 2>/dev/null";
     system "ci -u -f $log_file </dev/null >/dev/null 2>/dev/null";
 } # Append_To_Log
-
-# ----------------------------------------------------------------------
-
-# sub Is_Tainted($) {
-#     my($arg) = @_;
-#     my $nada = substr($arg, 0, 0);  # zero-length
-#     local $@;  # preserve caller's version
-#     eval { eval "# $nada" };
-#     return length($@) != 0;
-# } # Is_Tainted
-
-# ----------------------------------------------------------------------
-
-# sub Check_Tainting($$) {
-#     my($name, $value) = @_;
-#     if (Is_Tainted $value) {
-#         die ">>> $name = \"$value\" is tainted\n";
-#     }
-# } # Check_Tainting
 
 # ----------------------------------------------------------------------
 
