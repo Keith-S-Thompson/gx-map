@@ -1,4 +1,4 @@
-# $Id: bug-0009,v 1.1 2005-03-26 12:18:17-08 kst Exp $
+# $Id: bug-0009,v 1.2 2005-03-26 12:41:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0009,v $
 
 gx-map bug 0009
@@ -15,11 +15,11 @@ difficult to track down (for example, a number of functions in
 Gridmap_Utils die on failure.
 
 Suggested fix:
-Add the Die_Handler function from die_handler_demo to Gridmap_Utils,
-and let all programs set $SIG{__DIE__} to \&Gridmap_Utils::Die_Handler.
-Note that gx-gen-mapfile already has its own Die_Handler that deletes
-a temp file; add a registration function to allow Die_Handler to
-perform specified actions:
+Add the Die_Handler and Register_Handler_Function functions
+from die_handler_demo to Gridmap_Utils, and let all
+programs set $SIG{__DIE__} to \&Gridmap_Utils::Die_Handler.
+Register_Handler_Function is for use in gx-gen-mapfile, to register
+a function to delete the temp file:
 
     my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
 
