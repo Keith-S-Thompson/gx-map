@@ -1,4 +1,4 @@
-# $Id: 8a661490.polishgrid.cadesc,v 1.4 2004-10-10 03:21:58-07 kst Exp $
+# $Id: 8a661490.polishgrid.cadesc,v 1.5 2004-10-13 17:44:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8a661490.polishgrid.cadesc,v $
 
 CA_NAME             Polish Grid CA
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     AB:81:63:66:38:B2:81:B9:F8:13:11:9C:42:E6:F3:A4
 CERTIFICATE_URL     http://www.man.poznan.pl/plgrid-ca/8a661490.0
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/8a661490.signing_policy
 CRL_URL             http://www.man.poznan.pl/plgrid-ca/crl.pem
-CRL_WARNING         48 hours
 DISABLE             no
 
 # MD5 fingerprint from 8a661490.0 downloaded 2004-10-10
