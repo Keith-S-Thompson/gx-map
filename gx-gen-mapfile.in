@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.40 2004-11-15 16:30:12-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.41 2004-11-16 00:37:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -74,6 +74,7 @@ use Getopt::Long ();
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
+sub Image($);
 sub Die_Handler($);
 sub Usage(@);
 sub Debug(@);
@@ -118,8 +119,6 @@ if ($User_Opt->{version}) {
     print "gx-map version $Gridmap_Utils::VERSION\n";
     exit 0;
 }
-
-Usage "-dump option is not yet implemented\n" if defined $User_Opt->{dump};
 
 #
 # If the requests-log array is empty (i.e., the user didn't give the
@@ -195,16 +194,18 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 # Process removals
 #
 my %Mappings = (); # key = DN, value = hash ref
+my @dump_lines = ();
 
+REQUEST:
 foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
     #
     # By calling Valid_Mappings, we eliminate any requests for accounts
-    # that don't exist on this system.  This should also eliminate any
-    # unauthorized requests (which theoretically, could be created only
-    # by something like a hacked copy of gx-map).  The Valid_Mappings
-    # function can also be modified for site-specific requirements, such
-    # as rejecting mappings for certain accounts or for certificates
-    # issued by certain CAs.
+    # that don't exist on this system (unless the "-all" option was
+    # specified).  This should also eliminate any unauthorized requests
+    # (which theoretically, could be created only by something like a
+    # hacked copy of gx-map).  The Valid_Mappings function can also be
+    # modified for site-specific requirements, such as rejecting mappings
+    # for certain accounts or for certificates issued by certain CAs.
     #
     # The Valid_Mappings function may return multiple mappings for a
     # single request.
@@ -220,6 +221,31 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
         = Gridmap_Valid_Mappings::Valid_Mappings @options, $request;
     my $operation = $request->{operation};
     foreach my $mapping (@request_mappings) {
+        if ($User_Opt->{dump}) {
+            my $timestamp = Image $request->{timestamp};
+            $timestamp =~ s/ .*$//;
+            my $source    = Image $request->{SOURCE};
+            my $namespace = Image $request->{NAMESPACE};
+            my $op        = Image $request->{operation};
+            my $user      = Image $mapping->{map_to_name};
+            my $dn        = Image $mapping->{dn};
+            my $priority = 'P';
+            if (defined $request->{secondary} and
+                $request->{secondary} eq 'yes')
+            {
+                $priority = 'S';
+            }
+            push @dump_lines,
+                 sprintf "%-10s %-8s %-8s %-11s %-8s %s %s\n",
+                         $timestamp,
+                         $source,
+                         $namespace,
+                         $op,
+                         $user,
+                         $priority,
+                         $dn;
+            next REQUEST;
+        }
         #
         # $mapping is a reference to a hash with keys "dn" and
         # "map_to_name", both optional.
@@ -367,42 +393,54 @@ print OUT <<"EOF";
 #
 EOF
 
-#
-# Now traverse the %Mappings hash, sorted by DN, and generate a mapfile
-#
-foreach my $dn (sort keys %Mappings) {
-    my @names = ();
+if ($User_Opt->{dump}) {
+    print OUT <<'EOF';
+# This is a log dump, not a grid-mapfile
+# Fields are:
+# timestamp source namespace operation user priority dn
+# (priority is 'P' for a primary mapping, 'S' for a secondary mapping)
 
+EOF
+    print OUT @dump_lines;
+}
+else {
     #
-    # First the primary name, if any.
+    # Now traverse the %Mappings hash, sorted by DN, and generate a mapfile
     #
-    if (defined $Mappings{$dn}->{primary}) {
-        push @names, $Mappings{$dn}->{primary};
-    }
+    foreach my $dn (sort keys %Mappings) {
+        my @names = ();
 
-    #
-    # Then the secondary names, if any, sorted by timestamp.
-    #
-    if (defined $Mappings{$dn}->{secondary}) {
-        my $ref = $Mappings{$dn}->{secondary};
-        push @names, sort { $ref->{$a} <=> $ref->{$b} } keys %$ref;
-    }
-
-    if (@names) {
-        if ($User_Opt->{'real-name'}) {
-            my @real_names = ();
-            foreach my $name (@names) {
-                my $real_name = User_Real_Name $name;
-                push @real_names, ( defined $real_name ? $real_name : '?' );
-            }
-            print OUT "$dn ",
-                      join(',', @names),
-                      " # ",
-                      join(',', @real_names),
-                      "\n";
+        #
+        # First the primary name, if any.
+        #
+        if (defined $Mappings{$dn}->{primary}) {
+            push @names, $Mappings{$dn}->{primary};
         }
-        else {
-            print OUT "$dn ", join(',', @names), "\n";
+
+        #
+        # Then the secondary names, if any, sorted by timestamp.
+        #
+        if (defined $Mappings{$dn}->{secondary}) {
+            my $ref = $Mappings{$dn}->{secondary};
+            push @names, sort { $ref->{$a} <=> $ref->{$b} } keys %$ref;
+        }
+
+        if (@names) {
+            if ($User_Opt->{'real-name'}) {
+                my @real_names = ();
+                foreach my $name (@names) {
+                    my $real_name = User_Real_Name $name;
+                    push @real_names, ( defined $real_name ? $real_name : '?' );
+                }
+                print OUT "$dn ",
+                          join(',', @names),
+                          " # ",
+                          join(',', @real_names),
+                          "\n";
+            }
+            else {
+                print OUT "$dn ", join(',', @names), "\n";
+            }
         }
     }
 }
@@ -601,6 +639,20 @@ sub User_Real_Name($) {
     $gcos =~ s/,.*$//;
     return $gcos;
 } # User_Real_Name
+
+# ----------------------------------------------------------------------
+
+#
+# Returns '?' if the argument is undef, otherwise returns the argument.
+#
+sub Image($) {
+    if (defined $_[0]) {
+        return $_[0];
+    }
+    else {
+        return '?';
+    }
+} # Image
 
 # ----------------------------------------------------------------------
 
