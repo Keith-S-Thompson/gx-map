@@ -1,4 +1,4 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.5 2004-10-08 20:44:45-07 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.6 2004-10-10 03:22:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
@@ -16,3 +16,5 @@ CRL_WARNING         30 days
 DISABLE             no
 
 # DER format CRL at  http://computing.fnal.gov/security/pki/e1fce4e9.crl
+
+# MD5 fingerprint from e1fce4e9.0 downloaded 2004-10-10
