@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.3 2004-10-08 20:44:36-07 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.4 2004-10-10 03:21:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -18,3 +18,5 @@ DISABLE             yes
 # I haven't been able to find a signing_policy file for this CA.
 # You can generate one yourself (at your own risk).
 #
+
+# MD5 fingerprint from 03aa0ecb.0 downloaded 2004-10-10
