@@ -1,0 +1,130 @@
+# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.1 2003-07-17 22:16:56-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.uffda,v $
+
+package Gridmap_Valid_Mappings;
+
+################ Module Preamble ################
+
+my $Install_Dir;
+BEGIN {
+    require 5.004;
+    use vars qw($VERSION);
+    $VERSION = "0.2";
+    $Debugging = undef;
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+
+use File::Basename ();
+use Gridmap_Utils ();
+
+# ----------------------------------------------------------------------
+
+sub Debug(@);
+sub Debugf(@);
+sub Valid_Mappings($);
+
+# ----------------------------------------------------------------------
+
+#
+# Given a reference to a request record, the Valid_Mappings function
+# returns a list of references to hashes specifying valid mappings, where
+# each hash has keys "dn" and "map_to_name".  Both keys are optional;
+# at least one will always be set.  (For "add" and "remove" operations,
+# both "dn" and "map_to_name" are set; for "remove-dn" only "dn" is set;
+# for "remove-user" only "map_to_name" is set.)  If there are no valid
+# mappings, an empty list is returned.
+#
+# This function is intended to be customized for each installation.
+# In particular, the check for the NAMESPACE field will probably need
+# to be modified.
+#
+# To create a customized version, copy the file "Gridmap_Valid_Mappings.pm.in"
+# to, for example, "Gridmap_Valid_Mappings.pm.in.foo", and add an entry
+# to the configuration file (used by configure-gx-map) setting the
+# VALID_MAPPINGS_FILE parameter to the name of your file.
+#
+# If no value for VALID_MAPPINGS_FILE is specified, the default
+# implementation will be used.
+#
+# The most basic implementation returns a single mapping if the
+# map_to_name field (if set) is a valid account on this system, the
+# OWNER_NAME field either matches map_to_name (if set) or is a Globus
+# administrator, and the NAMESPACE field is correct.  If the map_to_name
+# field is not set (for a remove-dn operation), the OWNER_NAME field
+# must be a Globus administrator.
+#
+# A more sophisticated implementation might refer to a user database,
+# map to a local user derived from a (possibly remote) user name in the
+# record, confirm that the dn corresponds to a recognized CA, return
+# multiple mappings (see Globus Bugzilla # 575) and so forth.
+#
+sub Valid_Mappings($) {
+    my($request) = @_;
+
+    Debug ">>> Entering Valid_Mappings\n";
+    Debug "    operation = $request->{operation}\n";
+    Debug "    dn = ", (exists $request->{dn} ? $request->{dn} : 'undef'), "\n";
+    Debug "    map_to_name = ",
+          (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
+          "\n";
+
+    if (not defined $request->{OWNER_NAME}) {
+        Debug ">>> Invalid, no OWNER_NAME\n";
+        return ();
+    }
+    if (defined $request->{map_to_name} and
+                not getpwnam $request->{map_to_name})
+    {
+        Debug ">>> Invalid, no such user\n";
+        return ();
+    }
+    if (not defined $request->{NAMESPACE}) {
+        Debug ">>> Invalid, no NAMESPACE\n";
+        return ();
+    }
+    if ($request->{NAMESPACE} ne '%NAMESPACE%' and
+	$request->{NAMESPACE} ne 'SDSC')
+    {
+        Debug ">>> Invalid, bad NAMESPACE\n";
+        return ();
+    }
+    if (exists $request->{map_to_name}) {
+	Gridmap_Utils::Untaint $request->{OWNER_NAME};
+        if ($request->{OWNER_NAME} ne $request->{map_to_name} and
+            not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
+        {
+            Debug ">>> Invalid, bad OWNER_NAME\n";
+            return ();
+        }
+    }
+    else {
+        if (not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME}) {
+            Debug ">>> Invalid, OWNER_NAME is not an admin\n";
+            return ();
+        }
+    }
+
+    my $mapping = {};
+    if (defined $request->{dn}) {
+        $mapping->{dn} = $request->{dn}
+    }
+    if (defined $request->{map_to_name}) {
+        $mapping->{map_to_name} = $request->{map_to_name}
+    }
+    return ( $mapping );
+} # Valid_Mappings
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $Debugging;
+} # Debug   
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $Debugging; 
+} # Debugf  
+
+1;
