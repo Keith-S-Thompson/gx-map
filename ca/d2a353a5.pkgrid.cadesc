@@ -1,4 +1,4 @@
-# $Id: d2a353a5.pkgrid.cadesc,v 1.1 2004-10-07 21:37:41-07 kst Exp $
+# $Id: d2a353a5.pkgrid.cadesc,v 1.2 2004-10-08 10:23:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d2a353a5.pkgrid.cadesc,v $
 
 CA_NAME             PK-Grid-CA
@@ -12,9 +12,12 @@ SIGNING_POLICY_URL  http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/d2a353a5.signing_p
 CRL_URL             http://www.ncp.edu.pk/pk-grid-ca/CRL/crl_ncp.pem
 CRL_WARNING         12 hours
 INDEX               ?
-DISABLE             no
+DISABLE             yes
 
 #
 # As of 2004-10-07, the CRL has expired.
 # The URL for the signing_policy file is broken.
+#
+# As of 2004-10-08, the web server does not respond.
+# Disabling until they fix things.
 #
