@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-admins.in,v 1.1 2004-11-16 17:01:06-08 kst Exp $
+# $Id: gx-admins.in,v 1.2 2004-11-16 17:08:41-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
 
 use strict;
@@ -52,4 +52,6 @@ The logfile should be a gx-map "requests.log" file.
 $Program_Name guesses which accounts are administrative accounts
 by looking for requests where the "OWNER_NAME" and "map_to_name"
 fields don't match.
+EOF
+    exit 1;
 } # Usage
