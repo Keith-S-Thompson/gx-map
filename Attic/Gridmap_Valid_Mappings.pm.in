@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.14 2004-08-17 20:37:56-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.15 2004-08-17 20:57:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -55,8 +55,7 @@ package Gridmap_Valid_Mappings;
 my $Install_Dir;
 BEGIN {
     require 5.004;
-    use vars qw($VERSION $Debugging);
-    $VERSION = "0.4-alpha";
+    use vars qw($Debugging);
     $Debugging = undef;
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
