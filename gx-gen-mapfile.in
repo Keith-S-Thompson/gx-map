@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.14 2003-07-17 01:06:17-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.15 2003-07-17 03:14:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -8,8 +8,6 @@ use strict;
 use File::Basename ();
 use Getopt::Long ();
 
-# sub Is_Tainted($);
-# sub Check_Tainting($$);
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
@@ -63,14 +61,15 @@ if (@{$User_Opt->{'requests-log'}}) {
         #
         if ($log eq 'default') {
             $log = $Default_Requests_Log;
+            Debug "Setting \$log = \"$log\"\n";
         }
         elsif ($log =~ m<^(http|ftp)://>) {
+            #
+            # Untaint the log file name so the Cache_File function can
+            # use system() to pass it to wget.
+            #
+            Gridmap_Utils::Untaint $log;
             $log = Gridmap_Utils::Cache_File $log;
-            #
-            # Untaint the log file name so we can use system() to pass
-            # it to wget.
-            #
-            ($log) = ($log =~ /^(.*)$/);
         }
     }
 }
@@ -87,8 +86,8 @@ my %Force_Update = ();
 #
 # Untaint the output file names
 #
-foreach (@Output_Files) {  
-    ($_) = (/^(.*)$/);
+foreach my $file (@Output_Files) {  
+    Gridmap_Utils::Untaint $file;
 }
 
 if ($User_Opt->{permissions} !~ /^[0-7][0-7][0-7]$/) {
@@ -271,17 +270,17 @@ foreach my $output_file (@Output_Files) {
     # so?), preventing any processes from seeing a partially updated
     # grid-mapfile.
     #
-    # Check_Tainting '$output_file', $output_file;
+    # Gridmap_Utils::Check_Tainting '$output_file', $output_file;
     my $intermediate_file = "${output_file}-tmp-$$";
-    # Check_Tainting '$intermediate_file', $intermediate_file;
-    # Check_Tainting '$tmp_file', $tmp_file;
+    # Gridmap_Utils::Check_Tainting '$intermediate_file', $intermediate_file;
+    # Gridmap_Utils::Check_Tainting '$tmp_file', $tmp_file;
     system 'cp', '-f', $tmp_file, $intermediate_file;
     if (not -e $intermediate_file or
         -s $tmp_file != -s $intermediate_file)
     {
         die "$Prog_Name: copy to $intermediate_file failed\n";
     }
-    # Check_Tainting '$output_file', $output_file;
+    # Gridmap_Utils::Check_Tainting '$output_file', $output_file;
     rename $intermediate_file, $output_file
         or die "rename $intermediate_file, $output_file: $!\n";
     if (not chmod $User_Opt->{permissions}, $output_file) {
@@ -292,25 +291,6 @@ foreach my $output_file (@Output_Files) {
 unlink $tmp_file;
 
 ########################################################################
-
-# sub Is_Tainted($) {
-#     my($arg) = @_;
-#     my $nada = substr($arg, 0, 0);  # zero-length
-#     local $@;  # preserve caller's version
-#     eval { eval "# $nada" };
-#     return length($@) != 0;
-# } # Is_Tainted
-
-# ----------------------------------------------------------------------
-
-# sub Check_Tainting($$) {
-#     my($name, $value) = @_;
-#     if (Is_Tainted $value) {
-#         die ">>> $name = \"$value\" is tainted\n";
-#     }
-# } # Check_Tainting
-
-# ----------------------------------------------------------------------
 
 #
 # Given a list of file names, returns a list of names of files that need
