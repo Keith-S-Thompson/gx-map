@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.46 2004-10-14 03:23:54-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.47 2004-11-04 02:41:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -69,7 +69,7 @@ package Gridmap_Utils;
 BEGIN {
     require 5.006;
     use vars qw($VERSION $Debugging %Config);
-    $VERSION = "0.4-alpha";
+    $VERSION = '0.4.0';
     $Debugging = undef;
     %Config = ( PERL          => '%PERL%',
                 PATH          => '%PATH%',
