@@ -1,0 +1,44 @@
+#!/bin/sh
+
+# $Id: make-release,v 1.1 2004-11-22 18:07:55-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/make-release,v $
+
+try() {
+    echo "% $@"
+    eval "$@" || exit 1
+}
+
+if [ $# -ne 1 ] ; then
+    echo "Usage: $0 num" 1>&2
+    exit 1
+fi
+
+num=$1
+try mkdir release/gx-map-$num
+try cd release/gx-map-$num
+
+for file in \
+    '*.in' \
+    INSTALL \
+    Makefile \
+    README \
+    README.CA \
+    README.CA-SECURITY \
+    Relnotes \
+    cleanup-gx-map \
+    configure-gx-map \
+    gx-map.pdf \
+    gx-map.ppt \
+    sample.conf
+do
+    try cp -p ../../$file .
+done
+
+try mkdir ca
+try cd ca
+for file in *.cadesc ; do
+    try cp -p ../../../ca/$file .
+done
+
+try cd ../..
+try tar zcf gx-map-$num.tar.gz gx-map-$num
