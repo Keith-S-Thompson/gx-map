@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.12 2003-07-17 22:16:56-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.13 2003-07-23 20:20:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -431,11 +431,10 @@ sub Init_Cache_Info() {
 # If the specified file has already been cached, we attempt to update it;
 # if the update fails, we still return the name of the old cached file.
 #
-# The wget command sets the mtime of the local file to be the same as
-# the modification time of the remote file.  The "-N" option says not
-# to re-retrieve the file unless the remote file is newer than the
-# local copy.
-# 
+# The wget command, if invoked with the "-N" (or "--timestamping") option,
+# sets the mtime of the local file to be the same as the modification
+# time of the remote file.  The "-N" option also says not to re-retrieve
+# the file unless the remote file is newer than the local copy.
 #
 sub Cache_File($) {
     my($url) = @_;
@@ -448,6 +447,7 @@ sub Cache_File($) {
         mkdir $dir, 0777 or die "${dir}: $!\n";
         my $cache_file = "$dir/" . File::Basename::basename $url;
         my $result = system '%WGET%',
+                            '-N', '-nr',
                             '-o', '/dev/null',
                             '-O', $cache_file,
                             $url;
@@ -468,7 +468,7 @@ sub Cache_File($) {
         # Try to refresh the file.
         #
         my $result = system '%WGET%',
-                            '-N',
+                            '-N', '-nr',
                             '-o', '/dev/null',
                             '-O', $Cache_File{$url},
                             $url;
