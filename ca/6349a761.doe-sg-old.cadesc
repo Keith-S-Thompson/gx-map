@@ -1,4 +1,4 @@
-# $Id: 6349a761.doe-sg-old.cadesc,v 1.3 2004-09-24 20:58:53-07 kst Exp $
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.4 2004-09-30 15:50:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -13,3 +13,4 @@ SIGNING_POLICY_URL  ?
 CRL_URL             http://www.doegrids.org/OldDOEScienceGridRootCA/CRL/6349a761.r0
 CRL_WARNING         14 days
 INDEX               ?
+DISABLE             yes
