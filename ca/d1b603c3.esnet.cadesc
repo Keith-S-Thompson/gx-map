@@ -1,4 +1,4 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.8 2004-10-10 03:22:01-07 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.9 2004-10-13 17:45:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
@@ -12,6 +12,5 @@ CERTIFICATE_MD5     25:85:99:E6:D4:49:F6:F2:85:AB:B0:69:37:B9:47:B8
 CERTIFICATE_URL     http://www.es.net/CA/d1b603c3/d1b603c3.0
 SIGNING_POLICY_URL  http://www.es.net/CA/d1b603c3/d1b603c3.signing_policy
 CRL_URL             http://es.net/CA/d1b603c3/CRL/d1b603c3.r0
-CRL_WARNING         14 days
 
 # MD5 fingerprint from d1b603c3.0 downloaded 2004-10-10
