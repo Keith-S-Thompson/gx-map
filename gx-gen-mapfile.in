@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.7 2003-07-08 14:01:47-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.8 2003-07-08 15:01:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -20,6 +20,8 @@ sub Debugf(@);
 # Make warnings fatal.
 # 
 $SIG{__WARN__} = sub { die @_ };
+
+$ENV{PATH} = '/bin:/usr/bin';
 
 my $Install_Dir;
 BEGIN {
