@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.39 2004-10-18 10:01:33-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.40 2004-10-20 15:57:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1006,14 +1006,24 @@ sub Notify() {
                       "$error_ca_count/$total_ca_count CA(s)";
 
         my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+        #
+        # Find a mail program.
+        # Look in /usr/bin, /bin, /usr/sbin, and /sbin; prefer mailx to mail.
+        # (On some systems with both "mail" and "mailx", "mailx"
+        # recognizes the "-s" option but "mail" doesn't; on systems
+        # without "mailx", "mail" usually recoognizes "-s".)
+        # This isn't pretty, but it should work on most systems.
+        #
         my $mail_program = undef;
-        if (-x '/bin/mailx') {
-            $mail_program = '/bin/mailx';
+        TRY:
+        foreach my $prog (qw(mailx mail)) {
+            foreach my $dir(qw(/usr/bin /bin /usr/sbin)) {
+                if (-x "$dir/$prog") {
+                    $mail_program = "$dir/$prog";
+                    last TRY;
+                }
+            }
         }
-        elsif (-x '/bin/mail') {
-            $mail_program = '/bin/mail';
-        }
-
         if (defined $mail_program) {
             open PIPE, "| $mail_program -s '$subject' $recipient";
             print PIPE $message_body;
