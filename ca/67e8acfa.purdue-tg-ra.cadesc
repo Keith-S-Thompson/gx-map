@@ -1,10 +1,11 @@
-# $Id: 67e8acfa.purdue-tg-ra.cadesc,v 1.1 2004-10-04 15:03:18-07 kst Exp $
+# $Id: 67e8acfa.purdue-tg-ra.cadesc,v 1.2 2004-10-07 22:09:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/67e8acfa.purdue-tg-ra.cadesc,v $
 
 CA_NAME             Purdue TeraGrid Registration Authority
 HOMEPAGE            ?
 CONTACT             ?
 HASH                67e8acfa
+SIGNED_BY           /CN=PurdueCA/O=Purdue University/ST=Indiana/C=US
 SUBJECT             /CN=Purdue TeraGrid RA/OU=Purdue TeraGrid/O=Purdue University/ST=Indiana/C=US
 MAY_SIGN            /CN=*/OU=Purdue TeraGrid/O=Purdue University/ST=Indiana/C=US
 CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/67e8acfa.0
