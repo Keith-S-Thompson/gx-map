@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.ncsa-test,v 1.2 2003-07-20 20:37:18-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.ncsa-test,v 1.3 2003-07-20 20:55:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.ncsa-test,v $
 
 package Gridmap_Valid_Mappings;
@@ -141,8 +141,14 @@ sub Valid_Mappings($) {
                 Debug ">>> Invalid, bad OWNER_NAME\n";
                 return ();
             }
-            $request->{map_to_name}
-                = $SDSC_NCSA_User_Map{$request->{map_to_name}};
+            if (defined $SDSC_NCSA_User_Map{$request->{map_to_name}}) {
+                $request->{map_to_name}
+                    = $SDSC_NCSA_User_Map{$request->{map_to_name}};
+            }
+            else {
+                Debug ">>> Invalid no SDSC-to-NCSA user name mapping\n";
+                return ();
+            }
         }
     }
 
