@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.18 2004-09-13 12:28:04-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.19 2004-10-10 01:02:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -106,9 +106,9 @@ sub Valid_Mappings($);
 # so forth.
 #
 # A recent addition uses the Gridmap_Utils::DN_List function to generate
-# (possibly) multiple entries for a single DN, for compatibility with
-# both GT2 and GT3 (USERID vs. UID, Email vs. emailAddress); see Globus
-# Bugzilla # 575.
+# (possibly) multiple entries for a single DN, for compatibility
+# with both GT2 and GT3 (USERID vs. UID, Email vs. emailAddress); see
+# <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
 #
 sub Valid_Mappings($) {
     my($request) = @_;
