@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.45 2005-01-07 17:14:53-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.46 2005-03-27 15:37:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -75,7 +75,6 @@ sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
 sub Image($);
-sub Die_Handler($);
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
@@ -119,6 +118,9 @@ if ($User_Opt->{version}) {
     print "gx-gen-mapfile, part of gx-map version $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
 
 #
 # If the requests-log array is empty (i.e., the user didn't give the
@@ -375,6 +377,7 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
 }
 
 my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
+Gridmap_Utils::Register_Handler_Function sub { unlink $tmp_file };
 
 #
 # If we're creating output files, write to a single temp file and
@@ -387,8 +390,6 @@ if ($Write_To_Stdout) {
 else {
     open OUT, ">$tmp_file" or die "$tmp_file: $!\n";
 }
-
-$SIG{__DIE__} = \&Die_Handler;
 
 my $Now = Gridmap_Utils::Time_Image time;
 my $Hostname = Gridmap_Utils::Get_Hostname;
@@ -662,14 +663,6 @@ sub Image($) {
         return '?';
     }
 } # Image
-
-# ----------------------------------------------------------------------
-
-sub Die_Handler($) {
-    unlink $tmp_file;
-    #
-    # Perl will now print the message and terminate.
-} # Die_Handler
 
 # ----------------------------------------------------------------------
 
