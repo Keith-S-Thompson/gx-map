@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-requests.in,v 1.1 2003-05-27 18:45:51-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.2 2003-05-27 21:11:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -299,7 +299,7 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Prog_Name [options]
     -help, -usage : Display this message and exit
-    -site name    : Specify site name (e.g., "SDSC"); mandatory
+    -site name    : Specify site name (e.g., "%SITE%"); mandatory
     -debugging    : Enable debugging output
 EOF
     exit 1;
