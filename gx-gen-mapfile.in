@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.30 2004-08-17 22:06:20-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.31 2004-09-11 21:58:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -178,7 +178,7 @@ if (not $Write_To_Stdout) {
 
 my @requests;
 foreach my $log (@{$User_Opt->{'requests-log'}}) {
-    push @requests, Gridmap_Utils::Read_Records($log);
+    push @requests, Gridmap_Utils::Read_Records '-multiple', $log;
 }
 
 #
