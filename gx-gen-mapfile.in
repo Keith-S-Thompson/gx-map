@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.16 2003-07-17 22:18:30-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.17 2003-07-18 19:53:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -112,10 +112,6 @@ my @requests;
 foreach my $log (@{$User_Opt->{'requests-log'}}) {
     push @requests, Gridmap_Utils::Read_Records($log);
 }
-
-#
-# TODO: Validate records
-#
 
 #
 # Sort by timestamp
