@@ -1,4 +1,4 @@
-# $Id: 140817fc.sdg-testbed.cadesc,v 1.1 2004-10-17 22:39:26-07 kst Exp $
+# $Id: 140817fc.sdg-testbed.cadesc,v 1.2 2004-11-01 17:04:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/140817fc.sdg-testbed.cadesc,v $
 
 CA_NAME             SDC Testbed CA
@@ -11,8 +11,7 @@ CERTIFICATE_MD5     F8:0C:81:8C:7C:D7:48:1A:47:C9:49:50:AF:E6:74:67
 CERTIFICATE_URL     http://www.sdg.ac.cn/download/140817fc.0
 SIGNING_POLICY_URL  http://www.sdg.ac.cn/download/140817fc.signing_policy
 CRL_URL             ?
-INDEX               ?
-DISABLE             no
+CERT_EXPIRES        Jul  6 03:54:29 2008 GMT
 
 # There does not appear to be a CRL.
 
