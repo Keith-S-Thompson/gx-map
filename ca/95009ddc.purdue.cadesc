@@ -1,4 +1,4 @@
-# $Id: 95009ddc.purdue.cadesc,v 1.4 2004-10-10 03:21:58-07 kst Exp $
+# $Id: 95009ddc.purdue.cadesc,v 1.5 2004-10-13 17:45:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/95009ddc.purdue.cadesc,v $
 
 CA_NAME             Purdue CA
@@ -11,7 +11,6 @@ CERTIFICATE_MD5     CC:26:39:F3:63:37:60:21:51:2C:D0:C6:DF:73:71:46
 CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/95009ddc.0
 SIGNING_POLICY_URL  http://tg-ca.purdue.teragrid.org:8080/95009ddc.signing_policy
 CRL_URL             http://tg-ca.purdue.teragrid.org:8080/95009ddc.r0
-CRL_WARNING         6 hours
 DISABLE             no
 
 # MD5 fingerprint from 95009ddc.0 downloaded 2004-10-10
