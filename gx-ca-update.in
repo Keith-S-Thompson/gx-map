@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.38 2004-10-13 18:48:42-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.39 2004-10-18 10:01:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1060,8 +1060,8 @@ Usage: $Program_Name [options]
                        are left in place.
     -warn-crl time     Issue a warning message if the CRL will expire
                        within the specified time.  Regardless of this
-                       option, a warning will be issued if the CRL has
-                       used more than 90% of its lifetime.
+                       option, a warning will also be issued if the CRL
+                       has used more than 90% of its lifetime.
     -force             Force file updates (applies to certificate and
                        signing_policy files)
     -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
