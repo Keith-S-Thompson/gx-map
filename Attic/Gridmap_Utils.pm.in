@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.14 2003-07-23 20:27:45-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.15 2003-07-24 02:19:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -438,19 +438,29 @@ sub Init_Cache_Info() {
 #
 sub Cache_File($) {
     my($url) = @_;
+    my $is_ftp = $url =~ /^ftp/;
+    my $result;
+
     Init_Cache_Info();
     my $initial_download = not defined $Cache_File{$url};
 
     if ($initial_download) {
         my $dir = "$Download_Dir/" . time . "-$$-$Download_Index";
+        my $file = File::Basename::basename $url;
         $Download_Index ++;
         mkdir $dir, 0777 or die "${dir}: $!\n";
-        my $cache_file = "$dir/" . File::Basename::basename $url;
-        my $result = system '%WGET%',
-                            '-N',
-                            '-o', '/dev/null',
-                            '-O', $cache_file,
-                            $url;
+        my $cache_file = "$dir/$file";
+        chdir $dir or die "${dir}: $!\n";
+        if ($is_ftp) {
+            $result = system "ncftpget -V $file 2>/dev/null";
+        }
+        else {
+            $result = system '%WGET%',
+                             '-N',
+                             '-o', '/dev/null',
+                             '-O', $file,
+                             $url;
+        }
         if ($result == 0) {
             open URL, ">$dir/.url" or die "$dir/.url: $!\n";
             print URL "$url\n";
@@ -467,11 +477,17 @@ sub Cache_File($) {
         #
         # Try to refresh the file.
         #
-        my $result = system '%WGET%',
-                            '-N',
-                            '-o', '/dev/null',
-                            '-O', $Cache_File{$url},
-                            $url;
+        my $dir = File::Basename::dirname $Cache_File{$url};
+        if ($is_ftp) {
+            $result = system "ncftpget -V $file 2>/dev/null";
+        }
+        else {
+            $result = system '%WGET%',
+                             '-N',
+                             '-o', '/dev/null',
+                             '-O', $Cache_File{$url},
+                             $url;
+        }
         #
         # Ignore errors; we already have a copy of the file.
         #
