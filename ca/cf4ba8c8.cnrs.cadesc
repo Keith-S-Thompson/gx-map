@@ -1,0 +1,16 @@
+# $Id: cf4ba8c8.cnrs.cadesc,v 1.1 2004-10-07 21:37:40-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/cf4ba8c8.cnrs.cadesc,v $
+
+CA_NAME             CNRS CA
+HOMEPAGE            http://igc.services.cnrs.fr
+CONTACT             igc@services.cnrs.fr
+HASH                cf4ba8c8
+SUBJECT             /C=FR/O=CNRS/CN=CNRS
+MAY_SIGN            /C=FR/O=CNRS/CN=CNRS-Projets
+MAY_SIGN            /C=FR/O=CNRS/CN=CNRS
+CERTIFICATE_URL     http://crls.services.cnrs.fr/CNRS/getpem.crt
+SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/cf4ba8c8.signing_policy
+CRL_URL             http://crls.services.cnrs.fr/CNRS/getpem.crl
+CRL_WARNING         14 days
+INDEX               ?
+DISABLE             no
