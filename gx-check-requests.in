@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.28 2004-09-11 21:58:29-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.29 2004-09-12 13:36:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -67,7 +67,6 @@ use Gridmap_Utils ();
 
 sub Usage(@);
 sub Get_Request_Info($);
-sub Flatten_Errors($);
 sub Append_To_Log($@);
 sub Debug(@);
 sub Debugf(@);
@@ -151,7 +150,6 @@ my @bad_request_files = ();
 foreach my $file (@files) {
     my $request = Get_Request_Info "$new_request_dir/$file";
     if (defined $request->{ERRORS}) {
-        Flatten_Errors $request;
         push @bad_requests, $request;
         push @bad_request_files, $file;
     }
@@ -335,27 +333,6 @@ sub Get_Request_Info($) {
 
     return $result;
 } # Get_Request_Info
-
-# ----------------------------------------------------------------------
-
-#
-# The ERRORS field is a reference to an array, but the Read_Records and
-# Write_Records routines can only deal with simple scalar field values.
-# Flatten the ERRORS array into a series of fields named ERROR_00,
-# ERROR_01, etc.
-#
-sub Flatten_Errors($) {
-    my($ref) = @_;
-
-    if (defined $ref->{ERRORS}) {
-        my @errors = @{$ref->{ERRORS}};
-        for (my $i = 0; $i <= $#errors; $i ++) {
-            my $key = sprintf "ERROR_%02d", $i;
-            $ref->{$key} = $errors[$i];
-        }
-        delete $ref->{ERRORS};
-    }
-} # Flatten_Errors
 
 # ----------------------------------------------------------------------
 
