@@ -1,7 +1,7 @@
-# $Id: b89793e4.npaci.cadesc,v 1.2 2004-09-20 17:05:04-07 kst Exp $
+# $Id: b89793e4.npaci.cadesc,v 1.3 2004-09-23 18:11:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b89793e4.npaci.cadesc,v $
 
-CA_DESC         SDSC CA (CACL)
+CA_NAME         SDSC CA (CACL)
 HOMEPAGE        http://www.npaci.edu/CA/
 CONTACT		Bill Link <bill@sdsc.edu>
 HASH            b89793e4
