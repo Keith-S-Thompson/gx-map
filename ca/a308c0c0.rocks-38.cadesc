@@ -1,4 +1,4 @@
-# $Id: a308c0c0.rocks-38.cadesc,v 1.2 2004-11-01 17:04:24-08 kst Exp $
+# $Id: a308c0c0.rocks-38.cadesc,v 1.3 2005-03-29 19:27:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a308c0c0.rocks-38.cadesc,v $
 
 CA_NAME             rocks-38 Simple CA
@@ -8,6 +8,7 @@ HASH                a308c0c0
 SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=rocks-38.sdsc.edu/CN=Globus Simple CA
 MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=rocks-38.sdsc.edu/*
 CERTIFICATE_MD5     50:35:A0:5E:11:45:07:2F:63:EC:97:D2:7C:B3:0C:2A
+# CERTIFICATE_SHA1    34:3C:5A:87:D2:EA:53:3F:48:54:C4:71:BD:86:FD:CA:E1:52:55:04
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/a308c0c0.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/a308c0c0.signing_policy
 CRL_URL             ?
@@ -15,4 +16,4 @@ CERT_EXPIRES        Sep  2 03:19:38 2009 GMT
 
 # There is no CRL.
 
-# MD5 fingerprint from a308c0c0.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from a308c0c0.0 downloaded 2005-03-29
