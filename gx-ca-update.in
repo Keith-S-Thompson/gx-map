@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.42 2004-11-02 18:06:05-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.43 2004-11-03 15:46:15-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -732,6 +732,9 @@ sub Certificate_Info($) {
 sub Update_Certificate($) {
     my($ref) = @_;
 
+    Debug "Update_Certificate, CA_NAME = ",
+          (defined $ref->{CA_NAME} ? $ref->{CA_NAME} : '???'),
+          "\n";
     if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
         Vprint "Skipping existing $ref->{_CERT_FILE}\n";
     }
@@ -749,6 +752,7 @@ sub Update_Certificate($) {
         }
         elsif (defined $cache_file and -r $cache_file) {
             $ref->{_CACHED_CERT_FILE} = $cache_file;
+            # Debug "_CACHED_CERT_FILE = \"$cache_file\"\n";
             my $cert_info = Certificate_Info $cache_file;
             if (defined $cert_info->{enddate}) {
                 if ($cert_info->{enddate} < $now) {
@@ -811,6 +815,10 @@ sub Update_CRL($) {
 
     return if defined $ref->{_ERRORS};
 
+    Debug "Update_CRL, CA_NAME = ",
+          (defined $ref->{CA_NAME} ? $ref->{CA_NAME} : '???'),
+          "\n";
+
     #
     # _CACHED_CERT_FILE, if set, is the newly downloaded or cached
     # certificate.  Otherwise, _CERT_FILE is the installed certificate.
@@ -832,7 +840,21 @@ sub Update_CRL($) {
         return;
     }
 
+    # Debug "Checking $ref->{_CRL_FILE} against $cert_file\n";
+
     my $old_crl_info = CRL_Info $ref->{_CRL_FILE}, $cert_file;
+
+    # if ($User_Opt->{debugging}) {
+    #     if (defined $old_crl_info) {
+    #         Debug "old_crl_info:\n";
+    #         my @arr = ( $old_crl_info );
+    #         Gridmap_Utils::Write_Records '-multiple', '-', @arr;
+    #     }
+    #     else {
+    #         Debug "old_crl_info = undef\n";
+    #     }
+    # }
+
     my $install_new_crl = 0;
 
     my $have_crl_url = $ref->{CRL_URL} =~ m<(https?|ftp)://>;
@@ -857,15 +879,39 @@ sub Update_CRL($) {
     #
     # Verify signature against certificate.
     #
+
+    # Debug "Checking " .
+    #       (defined $new_crl_file ? $new_crl_file : 'undef') .
+    #       " against " .
+    #       (defined $cert_file ? $cert_file : 'undef') .
+    #       "\n";
+
     my $new_crl_info = CRL_Info $new_crl_file, $cert_file;
+
+    # if ($User_Opt->{debugging}) {
+    #     if (defined $new_crl_info) {
+    #         Debug "new_crl_info:\n";
+    #         my @arr = ( $new_crl_info );
+    #         Gridmap_Utils::Write_Records '-multiple', '-', @arr;
+    #     }
+    #     else {
+    #         Debug "new_crl_info = undef\n";
+    #     }
+    # }
 
     if (defined $new_crl_info) {
         #
         # We have a new CRL; decide whether to install it.
         #
         my $remaining = $new_crl_info->{next_update} - $now;
+        # Debug "remaining = $remaining\n";
         if ($remaining <= 0) {
-            Error $ref, "Newly downloaded CRL has expired\n";
+            if ($User_Opt->{'allow-missing-crl'}) {
+                Vprint "Newly downloaded CRL has expired\n";
+            }
+            else {
+                Error $ref, "Newly downloaded CRL has expired\n";
+            }
         }
         elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
             Error $ref, "Newly downloaded CRL expires in " .
@@ -911,6 +957,8 @@ sub Update_CRL($) {
         }
     }
 
+    # Debug "install_new_crl = $install_new_crl\n";
+
     if ($install_new_crl) {
         Vprint    "Installing $ref->{_CRL_FILE}\n";
         Log $ref, "Installing $ref->{_CRL_FILE}\n";
@@ -925,7 +973,7 @@ sub Update_CRL($) {
     # (which may or may not have just been updated).
     #
     if (-r $ref->{_CRL_FILE}) {
-        my $crl_info = CRL_Info $ref->{_CRL_FILE}, $ref->{_CERT_FILE};
+        my $crl_info = CRL_Info $ref->{_CRL_FILE}, $cert_file;
         my $remaining = $crl_info->{next_update} - $now;
         my $remove_crl = 0;
         if (defined $crl_info) {
@@ -989,25 +1037,23 @@ sub Update_CRL($) {
 sub Install_Certificate($) {
     my($ref) = @_;
 
-    return if defined $ref->{_ERRORS};
-
-    if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
-        Vprint "Certificate $ref->{hash}.0 is already installed\n";
-        return;
-    }
     #
     # Don't install the certificate file if there are any errors.
     # This includes a missing CRL if the "-allow-missing-crl" option
     # was not specified.
     #
-    if (not defined $ref->{_ERRORS}) {
-        Vprint    "Installing $ref->{_CERT_FILE}\n";
-        Log $ref, "Installing $ref->{_CERT_FILE}\n";
-        File::Copy::copy $ref->{_CACHED_CERT_FILE}, "$ref->{_CERT_FILE}.$$"
-            or Error $ref, "Failed to copy certificate: $!\n";
-        rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
-            or Error $ref, "Failed to rename certificate: $!\n";
+    return if defined $ref->{_ERRORS};
+
+    if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
+        Vprint "Certificate $ref->{HASH}.0 is already installed\n";
+        return;
     }
+    Vprint    "Installing $ref->{_CERT_FILE}\n";
+    Log $ref, "Installing $ref->{_CERT_FILE}\n";
+    File::Copy::copy $ref->{_CACHED_CERT_FILE}, "$ref->{_CERT_FILE}.$$"
+        or Error $ref, "Failed to copy certificate: $!\n";
+    rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
+        or Error $ref, "Failed to rename certificate: $!\n";
 } # Install_Certificate
 
 # ----------------------------------------------------------------------
