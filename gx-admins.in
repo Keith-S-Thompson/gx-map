@@ -1,0 +1,55 @@
+#!/usr/bin/perl -w
+
+# $Id: gx-admins.in,v 1.1 2004-11-16 17:01:06-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
+
+use strict;
+
+use File::Basename ();
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+my $Program_Name = File::Basename::basename $0;
+
+die "Usage: $0 filename\n"     if scalar @ARGV !=1;
+die "No file $ARGV[0]\n"       if not -e $ARGV[0];
+die "$ARGV[0] is not a file\n" if not -f $ARGV[0];
+die "Can't read $ARGV[0]\n"    if not -r $ARGV[0];
+
+my @requests = Gridmap_Utils::Read_Records '-multiple', $ARGV[0];
+print "Got ", scalar @requests, " records\n";
+
+my %admin_count = ();
+
+foreach my $request (@requests) {
+    if (defined $request->{OWNER_NAME} and
+        defined $request->{map_to_name} and
+        $request->{OWNER_NAME} ne $request->{map_to_name})
+    {
+        $admin_count{$request->{OWNER_NAME}} ++;
+#       if ($request->{OWNER_NAME} eq 'jgreen') {
+#           Gridmap_Utils::Write_Records '-multiple', '-', $request;
+#       }
+    }
+}
+
+foreach my $admin (sort keys %admin_count) {
+    printf "%6d  %s\n", $admin_count{$admin}, $admin;
+}
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name logfile
+The logfile should be a gx-map "requests.log" file.
+$Program_Name guesses which accounts are administrative accounts
+by looking for requests where the "OWNER_NAME" and "map_to_name"
+fields don't match.
+} # Usage
