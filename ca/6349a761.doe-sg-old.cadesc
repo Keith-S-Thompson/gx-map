@@ -1,4 +1,4 @@
-# $Id: 6349a761.doe-sg-old.cadesc,v 1.8 2004-10-10 03:21:57-07 kst Exp $
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.9 2004-10-13 17:44:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -12,7 +12,6 @@ CERTIFICATE_MD5     40:CF:41:7D:16:DF:38:BC:64:9B:F8:FB:60:23:81:12
 CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/6349a761.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.doegrids.org/OldDOEScienceGridRootCA/CRL/6349a761.r0
-CRL_WARNING         14 days
 DISABLE             yes
 
 # 
