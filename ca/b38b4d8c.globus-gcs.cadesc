@@ -1,31 +1,29 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.6 2004-10-13 17:45:04-07 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.7 2004-10-15 15:40:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
 HOMEPAGE            http://gcs.globus.org:8080/gcs/index.html
-CONTACT             ?
+CONTACT             discuss@globus.org
 HASH                b38b4d8c
 SUBJECT             /C=US/O=Globus Alliance/CN=Globus Certificate Service
 MAY_SIGN            /C=US/O=Globus Alliance/OU=Service/*
 MAY_SIGN            /C=US/O=Globus Alliance/OU=User/*
 CERTIFICATE_MD5     3E:58:EB:9E:C2:9E:21:4F:81:6F:96:24:93:B4:04:45
-CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/b38b4d8c.0
-SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/b38b4d8c.signing_policy
+CERTIFICATE_URL     http://gcs.globus.org:8080/gcs/cacert/b38b4d8c.0
+SIGNING_POLICY_URL  http://gcs.globus.org:8080/gcs/cacert/b38b4d8c.signing_policy
 CRL_URL             ?
-DISABLE             no
+DISABLE             yes
 
 #
 # The Globus Certificate Service issues low-quality certificates, to be
 # used only for testing purposes.  See the disclaimer.
+#
+# I've marked this CA as disabled by default.  Comment out the "DISABLE"
+# line above if you want to install the files at your own risk.
 # 
 # Questions may be posted to the discuss@globus.org mailing list.
 #
 # There is no CRL.
 #
-# The certificate and signing_policy file do not seem to be
-# available on the Globus web site; they're included in the
-# globus_gcs_b38b4d8c_setup-0.1.tar.gz GPT package.  I've copied
-# them to my own web page.
-#
 
-# MD5 fingerprint from b38b4d8c.0 downloaded 2004-10-10
+# MD5 fingerprint from b38b4d8c.0 downloaded 2004-10-15
