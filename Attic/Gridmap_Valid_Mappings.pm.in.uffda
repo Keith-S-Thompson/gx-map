@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.2 2003-07-18 19:56:42-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.3 2003-07-20 19:57:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.uffda,v $
 
 package Gridmap_Valid_Mappings;
@@ -69,8 +69,6 @@ sub Valid_Mappings($) {
           (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
           "\n";
 
-    my $original_map_to_name = $request->{map_to_name};
-
     if (not defined $request->{OWNER_NAME}) {
         Debug ">>> Invalid, no OWNER_NAME\n";
         return ();
@@ -81,23 +79,41 @@ sub Valid_Mappings($) {
         Debug ">>> Invalid, no such user\n";
         return ();
     }
+
     if (not defined $request->{NAMESPACE}) {
         Debug ">>> Invalid, no NAMESPACE\n";
         return ();
     }
-    if ($request->{NAMESPACE} eq '%NAMESPACE%') {
-        # ok
-    }
-    elsif ($request->{NAMESPACE} eq 'SDSC') {
+
+    elsif ($request->{NAMESPACE} eq 'UFFDA') {
         if (exists $request->{map_to_name} and
-            $request->{map_to_name} eq 'kst')
+            $request->{map_to_name} ne $request->{OWNER_NAME} and
+            not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
         {
-            $request->{map_to_name} = 'phred';
+            Debug ">>> Invalid, bad OWNER_NAME\n";
+            return ();
         }
     }
+
+    elsif ($request->{NAMESPACE} eq 'SDSC') {
+        if (exists $request->{map_to_name}) {
+            if ($request->{map_to_name} ne $request->{OWNER_NAME} and
+                $request->{OWNER_NAME} ne 'globus')
+            {
+                Debug ">>> Invalid, bad OWNER_NAME\n";
+                return ();
+            }
+            if ($request->{map_to_name} eq 'kst') {
+                $request->{map_to_name} = 'phred';
+            }
+        }
+    }
+
     else {
         Debug ">>> Invalid, bad NAMESPACE\n";
+        return ();
     }
+
     if (exists $request->{map_to_name}) {
         if ($request->{OWNER_NAME} ne $original_map_to_name and
             not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
