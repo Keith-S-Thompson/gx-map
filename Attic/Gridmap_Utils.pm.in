@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.29 2004-07-30 18:08:08-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.30 2004-08-17 20:02:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -107,6 +107,8 @@ sub Cache_File($);
 
 sub Read_User_Map($;$);
 sub Read_Admin_List($);
+
+sub DN_List($);
 
 sub Debug(@);
 sub Debugf(@);
@@ -859,6 +861,55 @@ sub Read_Admin_List($) {
     close MAP;
     return $Map;
 } # Read_Admin_List
+
+# ----------------------------------------------------------------------
+
+#
+# Given a single DN, returns a list of one or two DNs depending on the
+# setting of the DN_FORMAT configuration variable.
+# 
+sub DN_List($) {
+    my $dn = $_[0];
+
+    my $gt2_dn;
+    if ('%DN_FORMAT%' eq 'GT2' or '%DN_FORMAT%' eq 'BOTH') {
+        $gt2_dn = $dn;
+        $gt2_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=);
+        $gt2_dn =~ s(/UID=)(/USERID=);
+        $gt2_dn =~ s(/emailAddress=)(/Email=);
+    }
+
+    my $gt3_dn;
+    if ('%DN_FORMAT%' eq 'GT3' or '%DN_FORMAT%' eq 'BOTH') {
+        $gt3_dn = $dn;
+        $gt3_dn =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=);
+        $gt3_dn =~ s(/USERID=)(/UID=);
+        $gt3_dn =~ s(/Email=)(/emailAddress=);
+    }
+
+    my @result;
+    if ('%DN_FORMAT%' eq 'RAW') {
+        @result = ($dn);
+    }
+    elsif ('%DN_FORMAT%' eq 'GT2') {
+        @result = ($gt2_dn);
+    }
+    elsif ('%DN_FORMAT%' eq 'GT3') {
+        @result = ($gt3_dn);
+    }
+    elsif ('%DN_FORMAT%' eq 'BOTH') {
+        if ($gt2_dn eq $gt3_dn) {
+            @result = ($gt2_dn);
+        }
+        else {
+            @result = ($gt2_dn, $gt3_dn);
+        }
+    }
+    else {
+        die "Internal error, DN_FORMAT = %DN_FORMAT%";
+    }
+    return @result;
+} # DN_List
 
 # ----------------------------------------------------------------------
 
