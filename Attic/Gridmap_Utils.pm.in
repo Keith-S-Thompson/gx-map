@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.9 2003-07-14 18:01:49-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.10 2003-07-16 21:15:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -17,6 +17,28 @@ BEGIN {
 
 sub Debug(@);
 sub Debugf(@);
+
+# sub Is_Tainted($);
+# sub Check_Tainting($$);
+
+# ----------------------------------------------------------------------
+
+# sub Is_Tainted($) {
+#     my($arg) = @_;
+#     my $nada = substr($arg, 0, 0);  # zero-length
+#     local $@;  # preserve caller's version
+#     eval { eval "# $nada" };
+#     return length($@) != 0;
+# } # Is_Tainted
+
+# ----------------------------------------------------------------------
+
+# sub Check_Tainting($$) {
+#     my($name, $value) = @_;
+#     if (Is_Tainted $value) {
+#         die ">>> $name = \"$value\" is tainted\n";
+#     }
+# } # Check_Tainting
 
 # ----------------------------------------------------------------------
 
