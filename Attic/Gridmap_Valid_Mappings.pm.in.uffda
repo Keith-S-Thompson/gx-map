@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.3 2003-07-20 19:57:49-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.uffda,v 1.4 2003-07-20 20:12:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.uffda,v $
 
 package Gridmap_Valid_Mappings;
@@ -112,21 +112,6 @@ sub Valid_Mappings($) {
     else {
         Debug ">>> Invalid, bad NAMESPACE\n";
         return ();
-    }
-
-    if (exists $request->{map_to_name}) {
-        if ($request->{OWNER_NAME} ne $original_map_to_name and
-            not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
-        {
-            Debug ">>> Invalid, bad OWNER_NAME\n";
-            return ();
-        }
-    }
-    else {
-        if (not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME}) {
-            Debug ">>> Invalid, OWNER_NAME is not an admin\n";
-            return ();
-        }
     }
 
     my $mapping = {};
