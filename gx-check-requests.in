@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.35 2004-11-03 16:58:49-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.36 2004-11-03 17:42:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -321,8 +321,8 @@ sub Get_Request_Info($) {
     #
     # If "source" is not set, set "SOURCE" to "user" or "administrator",
     # depending on who ran gx-map.
-    # If "source" it is set (only by an administrator), set "SOURCE"
-    # to the same value.
+    # If "source" is set (only by an administrator), set "SOURCE" to
+    # the same value.
     #
     if (defined $result->{source}) {
         if ($owner_is_admin) {
