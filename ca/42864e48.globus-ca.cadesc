@@ -1,4 +1,4 @@
-# $Id: 42864e48.globus-ca.cadesc,v 1.4 2004-10-08 20:44:37-07 kst Exp $
+# $Id: 42864e48.globus-ca.cadesc,v 1.5 2004-10-10 03:21:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/42864e48.globus-ca.cadesc,v $
 
 CA_NAME             Globus CA (expired)
@@ -19,3 +19,5 @@ DISABLE             yes
 #
 # The CA certificate expired 2004-01-23 and will not be renewed.
 #
+
+# MD5 fingerprint from 42864e48.0 downloaded 2004-10-10
