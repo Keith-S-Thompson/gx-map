@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: convert,v 1.2 2003-06-05 19:44:08-07 kst Exp $
+# $Id: convert,v 1.3 2003-07-15 16:30:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/convert,v $
 
 use strict;
@@ -22,7 +22,7 @@ foreach my $log (@logs) {
     my @refs = Gridmap_Utils::Read_Records "$dir/$log";
     print "got ", scalar @refs, " record(s)\n";
     foreach my $ref (@refs) {
-	$ref->{file} = $log;
+        $ref->{file} = $log;
     }
     push @old_refs, @refs;
 }
@@ -36,21 +36,28 @@ foreach my $old_ref (@old_refs) {
     $new_ref->{REQUEST_FILE} = $old_ref->{file};
     $new_ref->{NAMESPACE}    = 'SDSC';
     if (defined $old_ref->{comment}) {
-	$new_ref->{comment} = "$old_ref->{comment} (copied from old gx-map system)";
+        $new_ref->{comment} = "$old_ref->{comment} (copied from old gx-map system)";
     }
     else {
-	$new_ref->{comment} = "(copied from old gx-map system)";
+        $new_ref->{comment} = "(copied from old gx-map system)";
     }
     $new_ref->{dn}          = $old_ref->{dn};
     $new_ref->{hostname}    = $old_ref->{hostname};
     $new_ref->{map_to_name} = $old_ref->{username};
     if (defined $old_ref->{uid} and $old_ref->{uid} ne 'UNKNOWN') {
-	$new_ref->{map_to_uid} = $old_ref->{uid};
+        $new_ref->{map_to_uid} = $old_ref->{uid};
     }
     $new_ref->{operation}         = $old_ref->{operation};
     $new_ref->{requested_by_name} = $old_ref->{requested_by};
     $new_ref->{requested_by_uid}  = $old_ref->{requested_by_uid};
     $new_ref->{timestamp} = Gridmap_Utils::Time_Image $old_ref->{timestamp};
+
+    if ($new_ref->{OWNER_NAME} eq 'kst' and
+        $new_ref->{map_to_name} ne 'kst')
+    {
+        $new_ref->{OWNER_NAME} = 'globus';
+        $new_ref->{comment} .= " (OWNER_NAME changed from \"kst\" to \"globus\")";
+    }
 
     push @new_refs, $new_ref;
 }
@@ -59,5 +66,6 @@ print "# Got ", scalar @new_refs, " records\n";
 print "# Sorting...\n";
 @new_refs = sort { $a->{timestamp} cmp $b->{timestamp} } @new_refs;
 print "# Writing records\n";
+print "\n";
 Gridmap_Utils::Write_Records '-', @new_refs;
 print "# Done.\n";
