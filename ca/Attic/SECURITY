@@ -1,4 +1,4 @@
-# $Id: SECURITY,v 1.4 2004-11-01 16:53:25-08 kst Exp $
+# $Id: SECURITY,v 1.5 2004-11-22 17:52:36-08 kst dead $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/SECURITY,v $
 
 The gx-ca-update program automatically installs signing certificates,
