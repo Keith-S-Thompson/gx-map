@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-requests.in,v 1.5 2003-05-27 22:06:33-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.6 2003-05-28 16:32:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 use strict;
@@ -237,25 +237,25 @@ sub Get_Request_Info($) {
     }
 
     if (defined $result->{SITE}) {
-	if (defined $result->{OWNER_NAME} and
-	    Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME})
-	{
-	    # ok, leave SITE as it is
-	}
-	else {
-	    my $user;
-	    if (defined $result->{OWNER_NAME}) {
-		$user = $result->{OWNER_NAME};
-	    }
-	    else {
-		$user = $result->{OWNER_UID};
-	    }
-	    push @{$result->{ERRORS}},
-		 "User $user tried to define SITE \"$result->{SITE}\"\n";
-	}
+        if (defined $result->{OWNER_NAME} and
+            Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME})
+        {
+            # ok, leave SITE as it is
+        }
+        else {
+            my $user;
+            if (defined $result->{OWNER_NAME}) {
+                $user = $result->{OWNER_NAME};
+            }
+            else {
+                $user = $result->{OWNER_UID};
+            }
+            push @{$result->{ERRORS}},
+                 "User $user tried to define SITE \"$result->{SITE}\"\n";
+        }
     }
     else {
-	$result->{SITE} = $Site;
+        $result->{SITE} = $Site;
     }
 
     return $result;
@@ -287,6 +287,14 @@ sub Flatten_Errors($) {
 sub Append_To_Log($@) {
     my($log_file, @requests) = @_;
     return if not @requests;
+
+    if (not -e $log_file) {
+        open LOG, ">$log_file" or die "$log_file: $!\n";
+        print LOG "# \$Id: gx-check-requests.in,v 1.6 2003-05-28 16:32:44-07 kst Exp $\n",
+                  "# \$Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $\n";
+                  "\n";
+        close LOG;
+    }
 
     #
     # The log file is normally read-only (mode 400).
