@@ -1,0 +1,24 @@
+# $Id: 3a0abe12.malaysia.cadesc,v 1.1 2004-10-17 22:39:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/3a0abe12.malaysia.cadesc,v $
+
+CA_NAME             Malaysia
+HOMEPAGE            ?
+CONTACT             gridadm@cs.usm.my
+HASH                3a0abe12
+SUBJECT             /C=MY/ST=PG/L=GELUGOR/O=USM/OU=GCORP/CN=GRID/emailAddress=gridadm@cs.usm.my
+MAY_SIGN            ?
+CERTIFICATE_MD5     18:72:16:6F:62:FB:BC:7C:9C:77:80:0C:1A:2B:0B:2B
+CERTIFICATE_URL     https://www.apgrid.org/CA/3a0abe12.0
+SIGNING_POLICY_URL  https://www.apgrid.org/CA/3a0abe12.signing_policy
+CRL_URL             http://www.example.org/CA/00000000.r0
+INDEX               ?
+DISABLE             yes
+
+# There does not appear to be a CRL.
+
+# The 3a0abe12.signing_policy file indicates that the CA may sign
+# certificates matching "/O=Grid/O=Globus/*".  This is the same
+# namespace as the old Globus CA.  Overlapping namespaces are
+# ill-advised.
+
+# MD5 fingerprint from 3a0abe12.0 downloaded 2004-10-15
