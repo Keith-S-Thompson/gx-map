@@ -1,0 +1,16 @@
+# $Id: a692434d.taiwan-ascg.cadesc,v 1.1 2004-10-07 21:37:40-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/a692434d.taiwan-ascg.cadesc,v $
+
+CA_NAME             Academia Sinica Grid Computing Certification Authority
+HOMEPAGE            http://ca.grid.sinica.edu.tw/
+CONTACT             asgcca@grid.sinica.edu.tw
+HASH                a692434d
+SUBJECT             /C=TW/O=AS/CN=Academia Sinica Grid Computing Certification Authority
+MAY_SIGN            /C=TW/*
+MAY_SIGN            /C=CN/O=IHEP/OU=CC/*
+CERTIFICATE_URL     http://ca.grid.sinica.edu.tw/ASGCCA.pem
+SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/a692434d.signing_policy
+CRL_URL             http://ca.grid.sinica.edu.tw/CRL/ASGCCA-crl.pem
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
