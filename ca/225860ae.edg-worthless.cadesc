@@ -1,0 +1,25 @@
+# $Id: 225860ae.edg-worthless.cadesc,v 1.1 2004-10-17 23:23:38-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/225860ae.edg-worthless.cadesc,v $
+
+CA_NAME             EDG Tutorial Worthless Certification Authority
+HOMEPAGE            ?
+CONTACT             ?
+HASH                225860ae
+SUBJECT             /O=dutchgrid/OU=Certificate Authorities/CN=EDG Tutorial Worthless Certification Authority
+MAY_SIGN            /O=dutchgrid/OU=Certificate Authorities/CN=EDG Tutorial Worthless Certification Authority
+MAY_SIGN            /O=edgtutorial/*
+CERTIFICATE_MD5     65:25:2C:D6:4E:0C:D3:AF:FB:EF:A2:2F:09:1D:23:6B
+CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.0
+SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             yes
+
+# <http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.crl_url>
+# points to 
+# <http://certificate.nikhef.nl/cgi-bin/tutorca-list?command=crl>
+# I'm currently unable to access that site.
+
+# As the name implies, this CA probably should be enabled at your own risk.
+
+# MD5 fingerprint from 225860ae.0 downloaded 2004-10-17
