@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.56 2005-01-07 17:14:03-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.57 2005-01-28 18:12:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -95,6 +95,8 @@ BEGIN {
 
 # ----------------------------------------------------------------------
 
+sub Get_Config($);
+
 sub Is_Tainted($);
 sub Check_Tainting($$);
 sub Untaint(\$);
@@ -131,6 +133,60 @@ sub Dup_Ref($);
 
 sub Debug(@);
 sub Debugf(@);
+
+########################################################################
+
+sub Get_Config($) {
+    my($config_file) = @_;
+    my $result = {};
+    my %valid_var_name = map { $_ => 1 }
+                             qw( PERL
+                                 PATH
+                                 NAMESPACE
+                                 INSTALL_DIR
+                                 DATA_DIR
+                                 REQUESTS_LOG_PERMISSIONS
+                                 GLOBUS_ADMINS
+                                 ADMIN_EMAIL
+                                 VALID_MAPPINGS_FILE );
+    my %optional_var = ( VALID_MAPPINGS_FILE => 1 );
+    open CONFIG, $config_file or die "$config_file: $!\n";
+    while (<CONFIG>) {
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+   
+        chomp;
+   
+        if (/^(\w+)\s+(.*)$/) {
+            my($name, $value) = ($1, $2);
+            eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
+            if ($@) {
+                chomp $@;
+                push @errors, "$@, $config_file line $.\n";
+            }
+            if ($valid_var_name{$name}) {
+                if (exists $Config{$name}) {
+                    push @errors,
+                         "Duplicate name \"$name\", $config_file line $.\n";
+                }
+                else {
+                    $result->{$name} = $value;
+                }
+            }
+            else {
+                push @errors, "Invalid name \"$name\", $config_file line $.\n";
+            }
+            if ($value eq 'UNDEF' and not $optional_var{$name}) {
+                push @errors,
+                     "Undefined value for \"$name\", $config_file line $.\n";
+            }
+        }
+    }
+    close CONFIG;
+    die @errors if @errors;
+} Get_Config
 
 # ----------------------------------------------------------------------
 
