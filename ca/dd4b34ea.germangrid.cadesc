@@ -1,0 +1,17 @@
+# $Id: dd4b34ea.germangrid.cadesc,v 1.1 2004-10-07 21:37:41-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/dd4b34ea.germangrid.cadesc,v $
+
+CA_NAME             GermanGrid GridKa CA
+HOMEPAGE            http://grid.fzk.de/cgi-bin/welcome_ca.pl
+CONTACT             gridka-ca@hik.fzk.de
+HASH                dd4b34ea
+SUBJECT             /C=DE/O=GermanGrid/CN=GridKa-CA
+MAY_SIGN            /C=DE/O=FZK-Grid/*
+MAY_SIGN            /C=DE/O=GermanGrid/*
+MAY_SIGN            /O=GermanGrid/OU=*
+CERTIFICATE_URL     http://grid.fzk.de/ca/dd4b34ea.0
+SIGNING_POLICY_URL  http://grid.fzk.de/ca/dd4b34ea.signing_policy
+CRL_URL             http://grid.fzk.de/ca/gridka-crl.pem
+CRL_WARNING         48 hours
+INDEX               ?
+DISABLE             no
