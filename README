@@ -1,0 +1,6 @@
+# $Id: README,v 1.1 2003-07-21 03:35:01-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/README,v $
+
+This is gx-map, a system for automated updates of Globus grid-mapfiles.
+
+This is an initial release; documentation will follow later.
