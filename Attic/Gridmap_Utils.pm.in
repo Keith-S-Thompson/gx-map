@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.23 2003-12-02 17:23:19-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.24 2003-12-03 22:15:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -46,6 +46,18 @@
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
 
+########################################################################
+# Configuration variables:
+#
+# PERL          %PERL%
+# PATH          %PATH%
+# NAMESPACE     %NAMESPACE%
+# INSTALL_DIR   %INSTALL_DIR%
+# DATA_DIR      %DATA_DIR%
+# GLOBUS_ADMINS %GLOBUS_ADMINS%
+# ADMIN_EMAIL   %ADMIN_EMAIL%
+########################################################################
+
 use strict;
 
 package Gridmap_Utils;
@@ -82,7 +94,7 @@ sub Get_Hostname();
 
 sub Is_Globus_Admin($);
 
-sub Ensure_RCS();
+sub Use_Commands(@);
 
 sub Time_Image($);
 
@@ -93,6 +105,7 @@ sub Init_Cache_Info();
 sub Cache_File($);
 
 sub Read_User_Map($;$);
+sub Read_Admin_List($);
 
 sub Debug(@);
 sub Debugf(@);
@@ -289,68 +302,55 @@ sub Get_Hostname() {
 
 # ----------------------------------------------------------------------
 
-my %is_globus_admin = (); # cache for Is_Globus_Admin function
+my %is_globus_admin = ();
 
 sub Is_Globus_Admin($) {
     my($user) = @_;
     my $admins = '%GLOBUS_ADMINS%';
 
-    Debug ">>> Is_Globus_Admin \"$user\"\n";
-    if (exists $is_globus_admin{$user}) {
-        Debug "    value is cached\n";
-    }
-    if (not exists $is_globus_admin{$user}) {
-        ENTRY:
+    if (scalar keys %is_globus_admin == 0) {
         foreach my $entry (split /\s+/, $admins) {
-            if ($entry =~ /^user:(.*)$/) {
-                if ($1 eq $user) {
-                    Debug "    Yes for user $user\n";
-                    return ($is_globus_admin{$user} = 1);
-                }
+            if ($entry =~ /:/) {
+                die "Syntax error in GLOBUS_ADMINS: $entry\n";
             }
-            elsif ($entry =~ /^group:(.*)$/) {
-                my $group = $1;
-                foreach my $gr (Get_Groups $user) {
-                    if ($gr eq $group) {
-                        Debug "    Yes for group $group\n";
-                        return ($is_globus_admin{$user} = 1);
-                        last ENTRY;
-                    }
-                }
+            else {
+                $is_globus_admin{$entry} = 1;
             }
         }
-        Debug "    No\n";
-        return ($is_globus_admin{$user} = 0);
     }
 
-    Debug "Returning $is_globus_admin{$user}\n";
     return $is_globus_admin{$user};
 } # Is_Globus_Admin
 
 # ----------------------------------------------------------------------
 
 #
-# Ensure that the RCS commands co, ci, and rcs are available in $PATH.
-# Assumes they're all in the same directory, either already in $PATH
-# or in /usr/local/bin.
+# Ensure that the specified command is available in the configured $PATH.
+# Call this before executing any external commands.
 #
-sub Ensure_RCS() {
+# Side effect: Sets $PATH environment variable.
+#
+sub Use_Commands(@) {
+    my(@commands) = @_;
+    my @unfound = ();
+    $ENV{PATH} = '%PATH%';
     my @path = split /:/, $ENV{PATH};
-    foreach my $dir (@path) {
-        if (-x "$dir/co" and -x "$dir/ci" and -x "$dir/rcs") {
-            return;
+    foreach my $command (@commands) {
+        my $foundit = 0;
+        DIR:
+        foreach my $dir (@path) {
+            if (-x "$dir/$command") {
+                $foundit = 1;
+                last DIR;
+            }
         }
+        push @unfound, $command if not $foundit;
     }
-    if (-x "/usr/local/bin/co" and
-        -x "/usr/local/bin/ci" and
-        -x "/usr/local/bin/rcs")
-    {
-        $ENV{PATH} = "/usr/local/bin:$ENV{PATH}";
+    if (@unfound) {
+        die "Can't find command(s) (@unfound)\n" .
+            "in configured \$PATH ($ENV{PATH})\n";
     }
-    else {
-        die "Can't find RCS commands\n";
-    }
-} # Ensure_RCS
+} # Use_Commands
 
 # ----------------------------------------------------------------------
 
@@ -502,6 +502,8 @@ sub Cache_File($) {
     my $is_ftp = $url =~ /^ftp/;
     my $result;
 
+    $ENV{PATH} = '%PATH%';
+
     Init_Cache_Info();
     my $initial_download = not defined $Cache_File{$url};
 
@@ -513,13 +515,12 @@ sub Cache_File($) {
         my $cache_file = "$dir/$file";
         chdir $dir or die "${dir}: $!\n";
         if ($is_ftp) {
-            $result = system "%NCFTPGET% -V $url 2>/dev/null";
+            Gridmap_Utils::Use_Commands 'ncftpget';
+            $result = system "ncftpget -V $url 2>/dev/null";
         }
         else {
-            $result = system '%WGET%',
-                             '-N',
-                             '-o', '/dev/null',
-                             $url;
+            Gridmap_Utils::Use_Commands 'wget';
+            $result = system 'wget', '-N', '-o', '/dev/null', $url;
         }
         if ($result == 0) {
             open URL, ">$dir/.url" or die "$dir/.url: $!\n";
@@ -541,13 +542,12 @@ sub Cache_File($) {
         my $dir = File::Basename::dirname $Cache_File{$url};
         chdir $dir or die "${dir}: $!\n";
         if ($is_ftp) {
-            $result = system "%NCFTPGET% -V $url 2>/dev/null";
+            Gridmap_Utils::Use_Commands 'ncftpget';
+            $result = system "ncftpget -V $url 2>/dev/null";
         }
         else {
-            $result = system '%WGET%',
-                             '-N',
-                             '-o', '/dev/null',
-                             $url;
+            Gridmap_Utils::Use_Commands 'wget';
+            $result = system 'wget', '-N', '-o', '/dev/null', $url;
         }
         #
         # Ignore errors; we already have a copy of the file.
@@ -801,6 +801,59 @@ sub Read_User_Map($;$) {
 
     return $Map;
 } # Read_User_Map
+
+# ----------------------------------------------------------------------
+
+# Given the name of an admin map file, reads it and returns a reference
+# to a data structure containing the information from the file.
+# This data structure can be used to determine whether a given user within
+# a specified namespace is an admin (i.e., is allowed to request mappings
+# on behalf of other users).
+#
+# Comments extend from a '#' character to the end of the line.
+# Leading and trailing whitespace and blank lines are ignored.
+# Each line consists of a single entry of the form "username@NAMESPACE"
+# (e.g., "globus@SDSC" or "root@NCSA").
+#
+# The list of admins for the current namespace should match the list
+# specified in the config file, but this is not currently enforced.
+# 
+# If an error occurs on the attempt to open the file, returns a
+# string containing the error message (e.g., "No such file or directory").
+# On a syntax error, returns a string with an error message.  Thus
+# the "ref" operator can be used to determine whether the call was
+# successful.
+#
+# The result is a reference to a hash.
+# The keys are of the form "username@NAMESPACE".
+# The values are 1 for valid administrators.
+#
+# (Future directions might include associating a range of timestamps with
+# an entry, so a given user is considered an admin only over a specified
+# range of time.)
+#
+sub Read_Admin_List($) {
+    my($filename) = @_;
+    my $Map = {};
+    open MAP, $filename or return $!;
+    while (<MAP>) {
+        chomp;
+        s/#.*$//;
+        s/^\s*//;
+        s/\s*$//;
+        next if /^$/;
+        if (/^\S+\@\S+$/) {
+            $Map->{$_} = 1;
+        }
+        else {
+	    my $line = $.;
+            close MAP;
+            return "Syntax error on line $line";
+        }
+    }
+    close MAP;
+    return $Map;
+} # Read_Admin_List
 
 # ----------------------------------------------------------------------
 
