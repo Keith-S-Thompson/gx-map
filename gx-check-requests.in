@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.38 2004-11-30 02:58:50-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.39 2005-01-04 18:56:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -226,7 +226,7 @@ unlink $lock_file;
 sub Get_Request_Info($) {
     my($filename) = @_;
     my $request_file = File::Basename::basename $filename,
-    my $processed    = Gridmap_Utils::Time_Image time;
+    my $processed    = Gridmap_Utils::Long_Time_Image time;
     my $result;
 
     Debug "Get_Request_Info $filename\n";
@@ -289,7 +289,7 @@ sub Get_Request_Info($) {
     }
 
     if ($result->{timestamp} =~ /^(\d+)/) {
-        $result->{timestamp} = Gridmap_Utils::Time_Image $1;
+        $result->{timestamp} = Gridmap_Utils::Long_Time_Image $1;
     }
     else {
         push @{$result->{ERRORS}}, "Invalid timestamp: $result->{timestamp}\n";
