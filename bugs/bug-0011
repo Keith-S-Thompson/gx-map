@@ -1,0 +1,21 @@
+# $Id: bug-0011,v 1.1 2005-03-27 15:32:23-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0011,v $
+
+gx-map bug 0011
+Date: Sun 2005-03-27
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: Refactor GLOBUS_ADMINS
+
+Summary:
+Currently, GLOBUS_ADMINS is a list of 1 or more user names.
+The account that owns the installation and runs gx-check-requests and
+gx-gen-mapfile is not distinguished.  This is fine if (as recommended)
+it's the single user "globus", but confusing otherwise.
+
+Suggested fix:
+Delete GLOBUS_ADMINS.
+Add GX_MAP_OWNER, the owner of the installation.
+Add an optional ADDITIONAL_ADMINS; GLOBUS_ADMINS is the union of
+GX_MAP_OWNER and ADDITIONAL_ADMINS.
