@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v 1.6 2004-07-29 20:08:08-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v 1.7 2004-07-30 18:17:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in.sdsc-tg-test,v $
 
 ########################################################################
@@ -121,7 +121,7 @@ sub Valid_Mappings($) {
     if (defined $request->{OWNER_UID} and not defined $request->{OWNER_NAME}) {
         my $pw = Gridmap_Utils::Get_PW($request->{OWNER_UID});
         if (defined $pw->{name}) {
-            $request->{OWNER_NAME}) = $pw->{name};
+            $request->{OWNER_NAME} = $pw->{name};
         }
     }
 
