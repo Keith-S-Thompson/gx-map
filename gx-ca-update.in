@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.9 2004-09-23 19:38:04-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.10 2004-09-23 19:38:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -484,6 +484,8 @@ Usage: $Prog_Name [options]
     -help            : Display this message and exit
     -version         : Display version information and exit
     -ca name         : Name of a CA (may be given multiple times)
+                       The argument is a substring of the *.cadesc file
+                       name; use the hash value to avoid ambiguity
     -ca ALL          : Use all available CAs
     -target-dir dir  : Target directory
     -force           : Force file updates
