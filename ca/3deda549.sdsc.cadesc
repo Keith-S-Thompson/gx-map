@@ -1,7 +1,7 @@
-# $Id: 3deda549.sdsc.cadesc,v 1.6 2004-10-02 14:40:09-07 kst Exp $
+# $Id: 3deda549.sdsc.cadesc,v 1.7 2004-10-06 19:58:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
 
-CA_NAME             SDSC CA (CACL, new version)
+CA_NAME             SDSC CA
 HOMEPAGE            http://www.sdsc.edu/CA/
 CONTACT             Bill Link <bill@sdsc.edu>
 HASH                3deda549
