@@ -1,10 +1,11 @@
-# $Id: 34a509c3.cnrs-projets.cadesc,v 1.1 2004-10-07 21:37:38-07 kst Exp $
+# $Id: 34a509c3.cnrs-projets.cadesc,v 1.2 2004-10-07 22:09:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a509c3.cnrs-projets.cadesc,v $
 
 CA_NAME             CNRS-Projets
 HOMEPAGE            ?
 CONTACT             ?
 HASH                34a509c3
+SIGNED_BY           /C=FR/O=CNRS/CN=CNRS
 SUBJECT             /C=FR/O=CNRS/CN=CNRS-Projets
 MAY_SIGN            /C=FR/O=CNRS/CN=Datagrid-fr
 MAY_SIGN            /C=FR/O=CNRS/CN=CNRS-Projets
