@@ -1,4 +1,4 @@
-# $Id: 34a5e0db.telescience.cadesc,v 1.1 2004-11-04 22:31:39-08 kst Exp $
+# $Id: 34a5e0db.telescience.cadesc,v 1.2 2004-11-16 17:41:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a5e0db.telescience.cadesc,v $
 
 CA_NAME             UCSD Telescience CA
@@ -12,4 +12,3 @@ CERTIFICATE_URL     https://telescience.ucsd.edu/CA/34a5e0db.0
 SIGNING_POLICY_URL  https://telescience.ucsd.edu/CA/34a5e0db.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Jan 26 17:23:17 2014 GMT
-DISABLE             no
