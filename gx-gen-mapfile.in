@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.38 2004-11-12 13:33:50-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.39 2004-11-12 15:04:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -74,6 +74,7 @@ use Getopt::Long ();
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
+sub Dup_Request($);
 sub Die_Handler($);
 sub Usage(@);
 sub Debug(@);
@@ -192,7 +193,7 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 #
 my %Mappings = (); # key = DN, value = hash ref
 
-foreach my $request (@requests) {
+foreach my $request (map Dup_Request $_, @requests) {
     #
     # By calling Valid_Mappings, we eliminate any requests for accounts
     # that don't exist on this system.  This should also eliminate any
@@ -590,6 +591,48 @@ sub User_Real_Name($) {
     $gcos =~ s/,.*$//;
     return $gcos;
 } # User_Real_Name
+
+# ----------------------------------------------------------------------
+
+#
+# Given a reference to a request record, returns either the same reference
+# or a list of two references, one GT2-compatible and one GT3-compatible.
+# If some of the keys are references to arrays (or to hashes), the two
+# returned references may share some data; this shouldn't be a problem.
+#
+sub Dup_Request($) {
+    my($ref) = @_;
+
+    Debug "Entering Dup_Request:\n";
+    if ($User_Opt->{debugging}) {
+	Gridmap_Utils::Write_Records '-multiple', '-', $ref;
+    }
+    if (not defined $ref->{dn}) {
+	return $ref;
+    }
+
+    my $gt2_dn = Gridmap_Utils::GT2_Subject $ref->{dn};
+    my $gt3_dn = Gridmap_Utils::GT3_Subject $ref->{dn};
+    if ($gt2_dn eq $gt3_dn) {
+	return $ref;
+    }
+
+    $ref->{dn} = $gt2_dn;
+    my $gt3_ref = {};
+    foreach my $key (keys %$ref) {
+        if ($key eq 'dn') {
+            $gt3_ref->{$key} = $gt3_dn;
+        }
+        else {
+            $gt3_ref->{$key} = $ref->{$key};
+        }
+    }
+    if ($User_Opt->{debugging}) {
+	Debug "Dup_Request returning pair of records:\n";
+	Gridmap_Utils::Write_Records '-multiple', '-', $ref, $gt3_ref;
+    }
+    return ( $ref, $gt3_ref );
+} # Dup_Request;
 
 # ----------------------------------------------------------------------
 
