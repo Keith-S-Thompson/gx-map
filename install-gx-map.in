@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.8 2003-07-19 18:59:39-07 kst Exp $
+# $Id: install-gx-map.in,v 1.9 2003-07-20 23:41:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 verbosely () {
@@ -34,6 +34,9 @@ do
         verbosely mkdir -m 755 $dir
     fi
 done
+
+verbosely touch $DATA_DIR/requests.log
+verbosely chmod 400 $DATA_DIR/requests.log
 
 verbosely cp -f $BIN_FILES  $BINDIR/.
 verbosely cp -f $SBIN_FILES $SBINDIR/.
