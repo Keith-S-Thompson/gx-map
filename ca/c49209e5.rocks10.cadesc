@@ -1,4 +1,4 @@
-# $Id: c49209e5.rocks10.cadesc,v 1.2 2004-11-01 17:04:26-08 kst Exp $
+# $Id: c49209e5.rocks10.cadesc,v 1.3 2005-03-29 19:27:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c49209e5.rocks10.cadesc,v $
 
 CA_NAME             rocks10.sdsc.edu Simple CA
@@ -8,6 +8,7 @@ HASH                c49209e5
 SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=rocks10.sdsc.edu/CN=Globus Simple CA
 MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=rocks10.sdsc.edu/*
 CERTIFICATE_MD5     02:9C:82:AB:F0:1E:68:C6:1A:FE:38:95:D6:D1:2D:18
+# CERTIFICATE_SHA1    49:EA:B9:CC:5B:3A:45:22:ED:A8:B0:6D:A7:F7:68:87:72:DE:AC:1C
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c49209e5.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c49209e5.signing_policy
 CRL_URL             ?
@@ -15,4 +16,4 @@ CERT_EXPIRES        Jun  1 00:46:11 2009 GMT
 
 # There is no CRL.
 
-# MD5 fingerprint from c49209e5.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from c49209e5.0 downloaded 2005-03-29
