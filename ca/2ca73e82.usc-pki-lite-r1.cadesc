@@ -1,4 +1,4 @@
-# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.1 2005-02-02 12:13:14-08 kst Exp $
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.2 2005-02-08 14:43:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -8,14 +8,12 @@ HASH                2ca73e82
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     32:2A:0F:13:54:D0:6E:4D:DC:8D:0A:CB:AD:7C:80:48
-CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/CAcert.pem
-SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/signing_policy
-CRL_URL             ?
+CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/2ca73e82.0
+SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2ca73e82.signing_policy
+CRL_URL             http://www.usc.edu/isd/services/authx/CA/2ca73e82.r0
 CERT_EXPIRES        Jan  1 22:06:57 2011 GMT
 
-# As of 2005-02-02, there is no CRL.
-
-# MD5 fingerprint from certificate downloaded 2005-02-02
+# MD5 fingerprint from certificate downloaded 2005-02-08
 
 # The certificate replaces two older deprecated certificates, still
 # available at <http://www.usc.edu/isd/services/authx/CA/deprecated.html>,
