@@ -1,4 +1,4 @@
-# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.7 2004-10-08 20:44:37-07 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.8 2004-10-10 03:21:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/2c7969d0.usc-pki-lite.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -16,3 +16,5 @@ CRL_WARNING         ?
 #
 # As of 2004-10-08, there is no CRL.
 #
+
+# MD5 fingerprint from 2c7969d0.0 downloaded 2004-10-10
