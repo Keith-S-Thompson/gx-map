@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.8 2004-09-23 17:04:51-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.9 2004-09-23 19:38:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -67,9 +67,10 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
-sub Seconds($);
+sub String_To_Seconds($);
+sub Seconds_To_String($);
 sub Signing_Policy($);
-sub Timestamp_To_Seconds($);
+sub Date_To_Seconds($);
 sub CRL_Info($);
 sub Usage(@);
 sub Debug(@);
@@ -117,27 +118,45 @@ if ($User_Opt->{debugging}) {
     }
 }
 
-my @ca_info = ();
 my $ca_conf_dir = "$Install_Dir/var/ca.conf";
+my @ca_list_all;
 
-my @ca_list = @{$User_Opt->{ca}};
-if (scalar @ca_list == 1 and $ca_list[0] eq 'ALL') {
-    opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
-    @ca_list = sort grep /\.cadesc$/, readdir CONF_DIR;
-    closedir CONF_DIR;
-    Debug "\@files = ( @ca_list )\n";
-    if (not @ca_list) {
-        die "No *.cadesc files in $ca_conf_dir\n";
-    }
-    map s/\.cadesc$//, @ca_list;
-    Debug "\@ca_list = ( @ca_list )\n";
+opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
+@ca_list_all = sort grep /\.cadesc$/, readdir CONF_DIR;
+closedir CONF_DIR;
+
+if (scalar @ca_list_all == 0) {
+    die "No *.cadesc files in $ca_conf_dir\n";
 }
 
-foreach my $ca (@ca_list) {
-    my $ca_desc_file = "$ca_conf_dir/$ca.cadesc";
-    my $ref = Gridmap_Utils::Read_Records '-single', $ca_desc_file;
+my %selected = map { $_ => 0 } @ca_list_all;
+
+foreach my $requested_ca (@{$User_Opt->{ca}}) {
+    if ($requested_ca eq 'ALL') {
+        %selected = map { $_ => 1 } @ca_list_all;
+    }
+    else {
+        foreach my $ca (@ca_list_all) {
+            if (index($ca, lc $requested_ca) != -1) {
+                $selected{$ca} = 1;
+            }
+        }
+    }
+}
+
+my @ca_list = grep $selected{$_}, @ca_list_all;
+
+if (scalar @ca_list == 0) {
+    die "No CAs selected\n";
+}
+
+my @ca_info = ();
+
+foreach my $ca_desc_file (@ca_list) {
+    my $ref = Gridmap_Utils::Read_Records
+                  '-single', "$ca_conf_dir/$ca_desc_file";
     if (defined $ref->{CRL_WARNING}) {
-        my $seconds = Seconds $ref->{CRL_WARNING};
+        my $seconds = String_To_Seconds $ref->{CRL_WARNING};
         $ref->{CRL_WARNING_SECONDS} = $seconds if defined $seconds;
     }
     push @ca_info, $ref;
@@ -151,7 +170,7 @@ if ($User_Opt->{debugging}) {
 Gridmap_Utils::Init_Cache_Info;
 
 foreach my $ref (@ca_info) {
-    print "Processing $ref->{HASH} $ref->{CA_DESC}\n";
+    print "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     my $target_dir = $User_Opt->{'target-dir'};
     # Gridmap_Utils::Untaint $target_dir;
 
@@ -243,36 +262,17 @@ foreach my $ref (@ca_info) {
     my $info = CRL_Info $target_crl_file;
     if (defined $info and defined $info->{next_update}) {
         my $remaining = $info->{next_update} - time;
-        my $delta = abs $remaining;
-        my $num;
-        my $unit;
-        if ($delta >= 86400) {
-            $num = sprintf "%.1f", $delta / 86400;
-            $unit = 'day';
-        }
-        elsif ($delta >= 3600) {
-            $num = sprintf "%.1f", $delta / 3600;
-            $unit = 'hour';
-        }
-        elsif ($delta >= 60) {
-            $num = sprintf "%.1f", $delta / 60;
-            $unit = 'minute';
-        }
-        else {
-            $num = $delta;
-            $unit = 'second';
-        }
-        $unit .= 's' if $num ne '1';
+        my $how_long = Seconds_To_String abs $remaining;
         if (defined $ref->{CRL_WARNING_SECONDS} and
             $remaining > $ref->{CRL_WARNING_SECONDS})
         {
             print ">>> ";
         }
         if ($remaining <= 0) {
-            print "$target_crl_file expired $num $unit ago\n";
+            print "$target_crl_file expired $how_long ago\n";
         }
         else {
-            print "$target_crl_file expires in $num $unit\n";
+            print "$target_crl_file expires in $how_long\n";
         }
         if (not $info->{verified}) {
             print ">>> CRL is not verified\n";
@@ -284,10 +284,11 @@ foreach my $ref (@ca_info) {
 ########################################################################
 
 #
-# Given a string such as "1 hour", "10 minutes", returns the number
-# of seconds.
+# Given a string such as "1 hour" or "10 minutes", returns the number
+# of seconds.  The numeric portion must be an integer (if you want 1.5
+# hours, specify "90 minutes").
 #
-sub Seconds($) {
+sub String_To_Seconds($) {
     my($timestamp) = lc @_;
     if ($timestamp =~ /^(\d+)\s+(seconds?)$/) {
         return $1;
@@ -304,7 +305,41 @@ sub Seconds($) {
     else {
         return undef;
     }
-} # Seconds
+} # String_To_Seconds
+
+# ----------------------------------------------------------------------
+
+#
+# Given a non-negative number of seconds, returns a string such as
+# "1.2 minutes" or "32.5 days" for display.  Some precision may be lost.
+#
+sub Seconds_To_String($) {
+    my($seconds) = @_;
+    my $format = '%.1f';
+    my $num;
+    my $unit;
+    if ($seconds >= 86400) {
+        $num = sprintf $format, $seconds / 86400;
+        $unit = 'day';
+    }
+    elsif ($seconds >= 3600) {
+        $num = sprintf $format, $seconds / 3600;
+        $unit = 'hour';
+    }
+    elsif ($seconds >= 60) {
+        $num = sprintf $format, $seconds / 60;
+        $unit = 'minute';
+    }
+    elsif ($seconds >= 1) {
+        $num = $seconds;
+        $unit = 'second';
+    }
+    else {
+        return "NOW";
+    }
+    $unit .= 's' if $num != 1;
+    return "$num $unit";
+} # Seconds_To_String
 
 # ----------------------------------------------------------------------
 
@@ -325,7 +360,7 @@ sub Signing_Policy($) {
         $cond_subjects = "'$ref->{MAY_SIGN}'";
     }
 
-    my $result = "# $ref->{CA_DESC} Signing Policy\n\n";
+    my $result = "# $ref->{CA_NAME} Signing Policy\n\n";
 
     my $body   = "access_id_CA   X509    '$ref->{SUBJECT}'\n" .
                  "pos_rights     globus  CA:sign\n" .
@@ -351,7 +386,11 @@ sub Signing_Policy($) {
 
 # ----------------------------------------------------------------------
 
-sub Timestamp_To_Seconds($) {
+#
+# Given a date string, returns a raw timestamp (seconds since the epoch).
+# The input string is assumed to be in the format printed by OpenSSL.
+#
+sub Date_To_Seconds($) {
     my($timestamp) = @_;
     my %month_num =
         ( Jan => 0, Feb => 1, Mar =>  2, Apr =>  3,
@@ -378,10 +417,19 @@ sub Timestamp_To_Seconds($) {
         }
     }
     return undef;
-} # Timestamp_To_Seconds
+} # Date_To_Seconds
 
 # ----------------------------------------------------------------------
 
+#
+# Give a reference to a CRL description record, returns a reference to
+# information about the CRL:
+#     hash
+#     issuer
+#     last_update
+#     next_update
+#     verified
+#
 sub CRL_Info($) {
     my($filename) = @_;
     my $result = {};
@@ -402,10 +450,10 @@ sub CRL_Info($) {
             $result->{issuer} = $1;
         }
         elsif (/^lastUpdate=\s*(.*)$/) {
-            $result->{last_update} = Timestamp_To_Seconds $1;
+            $result->{last_update} = Date_To_Seconds $1;
         }
         elsif (/^nextUpdate=\s*(.*)$/) {
-            $result->{next_update} = Timestamp_To_Seconds $1;
+            $result->{next_update} = Date_To_Seconds $1;
         }
     }
     close PIPE;
@@ -447,13 +495,5 @@ EOF
 # ----------------------------------------------------------------------
 
 sub Debug(@) {
-    if ($User_Opt->{debugging}) {
-        if (scalar @_ >= 1 and $_[0] eq '-f') {
-            shift @_;
-            printf @_;
-        }
-        else {
-            print @_;
-        }
-    }
+    print @_ if $User_Opt->{debugging};
 } # Debug
