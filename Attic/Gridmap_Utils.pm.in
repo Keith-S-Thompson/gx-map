@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.11 2003-07-17 03:14:40-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.12 2003-07-17 22:16:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 package Gridmap_Utils;
@@ -33,8 +33,6 @@ sub Time_Image($);
 
 sub Write_Records($@);
 sub Read_Records($);
-
-sub Valid_Mappings($);
 
 sub Init_Cache_Info();
 sub Cache_File($);
@@ -397,85 +395,6 @@ sub Read_Records($) {
     }
     return @result;
 } # Read_Records
-
-# ----------------------------------------------------------------------
-
-#
-# Given a reference to a request record, returns a list of references
-# to hashes specifying valid mappings, where each hash has keys "dn" and
-# "map_to_name".  Both keys are optional; at least one will always be set.
-# (For "add" and "remove" operations, both "dn" and "map_to_name" are set;
-# for "remove-dn" only "dn" is set; for "remove-user" only "map_to_name"
-# is set.)  If there are no valid mappings, an empty list is returned.
-#
-# This function is intended to be customized for each installation.
-# In particular, the check for the NAMESPACE field will almost certainly
-# need to be modified.
-#
-# The most basic implementation returns a single mapping if the
-# map_to_name field (if set) is a valid account on this system, the
-# OWNER_NAME field either matches map_to_name (if set) or is a Globus
-# administrator, and the NAMESPACE field is correct.  If the map_to_name
-# field is not set (for a remove-dn operation), the OWNER_NAME field
-# must be a Globus administrator.
-#
-# A more sophisticated implementation might refer to a user database,
-# map to a local user derived from a (possibly remote) user name in the
-# record, confirm that the dn corresponds to a recognized CA, return
-# multiple mappings (see Globus Bugzilla # 575) and so forth.
-#
-sub Valid_Mappings($) {
-    my($request) = @_;
-
-    Debug ">>> Entering Valid_Mappings\n";
-    Debug "    operation = $request->{operation}\n";
-    Debug "    dn = ", (exists $request->{dn} ? $request->{dn} : 'undef'), "\n";
-    Debug "    map_to_name = ",
-          (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
-          "\n";
-
-    if (not defined $request->{OWNER_NAME}) {
-        Debug ">>> Invalid, no OWNER_NAME\n";
-        return ();
-    }
-    if (defined $request->{map_to_name} and
-                not getpwnam $request->{map_to_name})
-    {
-        Debug ">>> Invalid, no such user\n";
-        return ();
-    }
-    if (not defined $request->{NAMESPACE}) {
-        Debug ">>> Invalid, no NAMESPACE\n";
-        return ();
-    }
-    if ($request->{NAMESPACE} ne '%NAMESPACE%') {
-        Debug ">>> Invalid, NAMESPACE ne '%NAMESPACE%'\n";
-        return ();
-    }
-    if (exists $request->{map_to_name}) {
-        if ($request->{OWNER_NAME} ne $request->{map_to_name} and
-            not Is_Globus_Admin $request->{OWNER_NAME})
-        {
-            Debug ">>> Invalid, bad OWNER_NAME\n";
-            return ();
-        }
-    }
-    else {
-        if (not Is_Globus_Admin $request->{OWNER_NAME}) {
-            Debug ">>> Invalid, OWNER_NAME is not an admin\n";
-            return ();
-        }
-    }
-
-    my $mapping = {};
-    if (defined $request->{dn}) {
-        $mapping->{dn} = $request->{dn}
-    }
-    if (defined $request->{map_to_name}) {
-        $mapping->{map_to_name} = $request->{map_to_name}
-    }
-    return ( $mapping );
-} # Valid_Mappings
 
 # ----------------------------------------------------------------------
 
