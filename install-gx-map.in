@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.20 2004-09-27 16:01:59-07 kst Exp $
+# $Id: install-gx-map.in,v 1.21 2004-09-27 16:03:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -55,10 +55,10 @@ verbosely () {
 }
 
 INSTALL_DIR=%INSTALL_DIR%
-BINDIR=$INSTALL_DIR/bin
-SBINDIR=$INSTALL_DIR/sbin
-LIBDIR=$INSTALL_DIR/lib
-ETCDIR=$INSTALL_DIR/etc
+BIN_DIR=$INSTALL_DIR/bin
+SBIN_DIR=$INSTALL_DIR/sbin
+LIB_DIR=$INSTALL_DIR/lib
+ETC_DIR=$INSTALL_DIR/etc
 DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-map"
@@ -68,10 +68,10 @@ DATA_FILES="ncsa-sdsc-user-map"
 CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
-           $BINDIR \
-           $SBINDIR \
-           $LIBDIR \
-           $ETCDIR \
+           $BIN_DIR \
+           $SBIN_DIR \
+           $LIB_DIR \
+           $ETC_DIR \
            $DATA_DIR \
            $DATA_DIR/RCS \
            $DATA_DIR/cache \
@@ -85,9 +85,9 @@ done
 verbosely touch $DATA_DIR/requests.log
 verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 
-verbosely cp -f $BIN_FILES  $BINDIR/.
-verbosely cp -f $SBIN_FILES $SBINDIR/.
-verbosely cp -f $LIB_FILES  $LIBDIR/.
+verbosely cp -f $BIN_FILES  $BIN_DIR/.
+verbosely cp -f $SBIN_FILES $SBIN_DIR/.
+verbosely cp -f $LIB_FILES  $LIB_DIR/.
 verbosely cp -f $DATA_FILES $DATA_DIR/.
 verbosely cp -f $CA_FILES   $ETC_DIR/ca.conf/.
 
