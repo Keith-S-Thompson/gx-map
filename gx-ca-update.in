@@ -1,0 +1,255 @@
+#!%PERL% -w
+# To do: Add '-T'
+
+# $Id: gx-ca-update.in,v 1.1 2004-09-11 21:53:09-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2004 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Grid and Cluster Computing Group
+# at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+
+# 
+# Make warnings fatal.
+# 
+$SIG{__WARN__} = sub { die @_ };
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Seconds($);
+sub Usage(@);
+sub Debug(@);
+
+my $Prog_Name = File::Basename::basename $0;
+my $now = time;
+
+my $User_Opt = {};
+my @Opts = ( $User_Opt,
+             qw( help! version! ca=s@ target-dir=s force! debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+
+if ($User_Opt->{version}) {
+    print "gx-ca-update, part of gx-map version $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+if (not defined $User_Opt->{ca}) {
+    Usage "No CA specified\n"
+}
+if (not defined $User_Opt->{'target-dir'}) {
+    Usage "No target directory specified\n"
+}
+
+if ($User_Opt->{debugging}) {
+    foreach my $opt (sort keys %$User_Opt) {
+        print "$opt => ";
+        if (defined $User_Opt->{$opt}) {
+            if (ref $User_Opt->{$opt} eq 'ARRAY') {
+                print "[\n";
+                foreach my $item (@{$User_Opt->{$opt}}) {
+                    print "    $item\n";
+                }
+                print "]\n";
+            }
+            else {
+                print "\"$User_Opt->{$opt}\"\n";
+            }
+        }
+        else {
+            print "undef\n";
+        }
+    }
+}
+
+my @ca_info = ();
+
+my $ca_conf_dir = "$Gridmap_Utils::Config{DATA_DIR}/ca.conf";
+foreach my $ca (@{$User_Opt->{ca}}) {
+    my $ca_desc_file = "$ca_conf_dir/$ca.cadesc";
+    my $ref = Gridmap_Utils::Read_Records '-single', $ca_desc_file;
+    if (defined $ref->{CRL_MAX_AGE}) {
+        my $seconds = Seconds $ref->{CRL_MAX_AGE};
+        if (defined $seconds) {
+            $ref->{CRL_MAX_AGE} = $seconds;
+        }
+    }
+    push @ca_info, $ref;
+}
+
+Debug "Got ", scalar @ca_info, " ca record(s):\n";
+if ($User_Opt->{debugging}) {
+    Gridmap_Utils::Write_Records '-multiple', '-', @ca_info;
+}
+
+Gridmap_Utils::Init_Cache_Info;
+
+foreach my $ref (@ca_info) {
+    my $target_dir = $User_Opt->{'target-dir'};
+    # Gridmap_Utils::Untaint $target_dir;
+
+    #
+    # Update CA certificate if necessary
+    #
+    my $target_cert_file = "$target_dir/$ref->{HASH}.0";
+    if (not $User_Opt->{force} and -e $target_cert_file) {
+        print "Skipping existing $target_cert_file\n";
+    }
+    else {
+	print "Installing $target_cert_file\n";
+        # Gridmap_Utils::Untaint $target_cert_file;
+        my $cache_file = Gridmap_Utils::Cache_File $ref->{CERTIFICATE};
+        system 'cp', '-p', $cache_file, "$target_cert_file.$$";
+        rename "$target_cert_file.$$", $target_cert_file;
+    }
+
+    #
+    # Update signing_policy file if necessary
+    #
+    my $policy_file
+        = "$User_Opt->{'target-dir'}/$ref->{HASH}.signing_policy";
+    if (-e $policy_file) {
+        print "Skipping existing $policy_file\n";
+    }
+    else {
+        # Gridmap_Untils::Untaint $policy_file;
+        print "Creating $policy_file\n";
+        open POLICY, ">$policy_file" or die "$policy_file: $!\n";
+        print POLICY <<"EOF";
+# $ref->{CA_DESC} Signing Policy
+
+access_id_CA   X509    '$ref->{SUBJECT}'
+pos_rights     globus  CA:sign
+cond_subjects  globus  '$ref->{MAY_SIGN}'
+EOF
+        close POLICY;
+    }
+
+    #
+    # Update CRL if necessary
+    #
+    my $target_crl_file = "$target_dir/$ref->{HASH}.r0";
+    my $needs_update = 0;
+    if (not -e $target_crl_file) {
+        $needs_update = 1;
+    }
+    else {
+        my $mtime = (stat $target_crl_file)[9];
+        my $age = $now - $mtime;
+        if ($age > $ref->{CRL_MAX_AGE}) {
+	    print "Stale file $target_crl_file\n";
+            $needs_update = 1;
+        }
+    }
+    if (not $needs_update) {
+        print "Skipping existing $target_crl_file\n";
+    }
+    else {
+	print "Installing $target_crl_file\n";
+        my $cache_file = Gridmap_Utils::Cache_File $ref->{CRL};
+        system 'cp', $cache_file, "$target_crl_file.$$";
+        rename "$target_crl_file.$$", $target_crl_file;
+    }
+}
+
+########################################################################
+
+sub Seconds($) {
+    my($timestamp) = @_;
+    if ($timestamp =~ /^(\d+)\s+(seconds?)$/) {
+        return $1;
+    }
+    elsif ($timestamp =~ /^(\d+)\s+(minutes?)$/) {
+        return $1 * 60;
+    }
+    elsif ($timestamp =~ /^(\d+)\s+(hours?)$/) {
+        return $1 * 3600;
+    }
+    elsif ($timestamp =~ /^(\d+)\s+(day?)$/) {
+        return $1 * 86400;
+    }
+    else {
+        return undef;
+    }
+} # Seconds
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Prog_Name [options]
+    -help            : Display this message and exit
+    -version         : Display version information and exit
+    -ca name         : Name of a CA (may be given multiple times)
+    -target-dir dir  : Target directory
+    -force           : Force file updates
+    -debugging       : Enable debugging output
+EOF
+    exit 1;
+} # Usage
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    if ($User_Opt->{debugging}) {
+        if (scalar @_ >= 1 and $_[0] eq '-f') {
+            shift @_;
+            printf @_;
+        }
+        else {
+            print @_;
+        }
+    }
+} # Debug
