@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.1 2004-11-24 16:52:35-08 kst Exp $
+# $Id: README.TeraGrid,v 1.2 2004-11-30 16:39:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here's a suggested set of cron jobs for SDSC's TeraGrid system,
@@ -14,9 +14,9 @@ As I write this, not everything required for these cron jobs has been
 installed yet.
 
 # minute hour mday month wday command
-4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/apps/gx-map-0.4.0/sbin/gx-check-requests -namespace SDSC
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.0/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.0/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/apps/gx-map-0.4.0/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
+4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/apps/gx-map-0.4.1/sbin/gx-check-requests -namespace SDSC
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.1/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.1/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/apps/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
 
 The gx-check-requests command checks for new requests every 5 minutes;
 the requests are validated and appended to the requests.log file.
@@ -44,9 +44,9 @@ the name incorporated into the name of the cadesc file:
 For NCSA, the cron jobs might look like this:
 
 # minute hour mday month wday command
-4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/gx-map-0.4.0/sbin/gx-check-requests -namespace NCSA
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.0/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/gx-map-0.4.0/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
+4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/gx-map-0.4.1/sbin/gx-check-requests -namespace NCSA
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.1/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
 
 By default, gx-ca-update will not install a certificate if there is
 no current corresponding CRL.  If a CRL expires and a new one is not
@@ -70,4 +70,4 @@ The gx-ca-update command writes log messages to the file
 var/gx-ca-update.log under the gx-map installation directory.  In a
 future release, it will optionally use the syslog facility as well.
 
-		-- Keith Thompson <kst@sdsc.edu> 2004-11-24
+		-- Keith Thompson <kst@sdsc.edu> 2004-11-30
