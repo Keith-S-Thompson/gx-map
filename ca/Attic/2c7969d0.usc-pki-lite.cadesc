@@ -1,4 +1,4 @@
-# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.9 2004-10-13 17:44:57-07 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite.cadesc,v 1.10 2004-11-01 17:04:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/2c7969d0.usc-pki-lite.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -11,6 +11,7 @@ CERTIFICATE_MD5     03:46:00:F5:77:3E:9E:89:B1:0A:53:04:E9:44:27:F6
 CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/2c7969d0.0
 SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2c7969d0.signing_policy
 CRL_URL             ?
+CERT_EXPIRES        Jan  9 01:45:20 2005 GMT
 
 #
 # As of 2004-10-08, there is no CRL.
