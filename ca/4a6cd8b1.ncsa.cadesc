@@ -1,0 +1,14 @@
+# $Id: 4a6cd8b1.ncsa.cadesc,v 1.1 2004-09-14 20:21:08-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/4a6cd8b1.ncsa.cadesc,v $
+
+CA_DESC         NCSA
+HOMEPAGE        ?
+CONTACT		?
+HASH            4a6cd8b1
+SUBJECT         /C=US/O=National Center for Supercomputing Applications/CN=Certification Authority
+MAY_SIGN        /C=US/O=National Center for Supercomputing Applications/*
+CERTIFICATE     http://ca.ncsa.uiuc.edu/4a6cd8b1.0
+SIGNING_POLICY  http://ca.ncsa.uiuc.edu/4a6cd8b1.signing_policy
+CRL             http://ca.ncsa.uiuc.edu/4a6cd8b1.r0
+CRL_MAX_AGE     12 hours
+INDEX           ?
