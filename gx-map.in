@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.4 2003-05-27 18:38:28-07 kst Exp $
+# $Id: gx-map.in,v 1.5 2003-05-27 21:48:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -83,7 +83,7 @@ my @Opts = ( $User_Opt,
                  remove remove-dn remove-user
                  update
                  quiet force no-admin
-                 dn=s certificate-file=s username=s email=s
+                 dn=s certificate-file=s username=s site=s email=s
                  force-dn no-email comment=s
                  debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -311,6 +311,7 @@ $request->{map_to_name} = $Options->{username} if defined $Options->{username};
 $request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
 $request->{email}       = $Options->{email}    if defined $Options->{email};
 $request->{comment}     = $Options->{comment}  if defined $Options->{comment};
+$request->{SITE}        = $User_Opt->{site}    if defined $User_Opt->{site};
 
 #
 # Be paranoid.  Create the file, close it, chmod it to 200,
@@ -758,6 +759,15 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
+    if (defined $User_Opt->{site}) {
+        if ($Globus_Admin) {
+            $Options->{SITE} = $User_Opt->{site};
+        }
+        else {
+            Usage "Only a Globus administrator may specify a site name\n"
+        }
+    }
+
     if (defined $User_Opt->{dn}) {
         if (defined $User_Opt->{'certificate-file'}) {
             Usage "Can't specify both DN and certificate file\n"
@@ -860,6 +870,9 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -username name          : Unix user name to map.
                               This option is for use by Globus
                               administrators only.
+    -site name              : Specify a site name.
+                              This option is for use by Globus administrators
+                              only, and is not available in interactive mode.
     -email addr             : Your contact e-mail address.
                               This may be used to contact you if there's
                               a problem with your certificate.  If you
