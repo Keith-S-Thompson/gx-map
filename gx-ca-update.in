@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.19 2004-09-27 15:54:00-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.20 2004-09-27 16:01:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -109,7 +109,7 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-my $ca_conf_dir = "$Install_Dir/var/ca.conf";
+my $ca_conf_dir = "$Install_Dir/etc/ca.conf";
 my @ca_list_all;
 
 opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
