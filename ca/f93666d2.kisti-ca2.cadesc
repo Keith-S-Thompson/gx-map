@@ -1,0 +1,24 @@
+# $Id: f93666d2.kisti-ca2.cadesc,v 1.1 2004-10-17 22:39:30-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/f93666d2.kisti-ca2.cadesc,v $
+
+CA_NAME             KISTI Supercomputing Center CA2
+HOMEPAGE            ?
+CONTACT             ?
+HASH                f93666d2
+SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA2
+MAY_SIGN            /C=KR/O=Globus/*
+# MAY_SIGN            /O=Grid/O=Globus/*
+CERTIFICATE_MD5     7E:1E:BC:FA:AB:9B:57:64:1C:32:99:C9:AC:86:09:0A
+CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/f93666d2.0
+SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/f93666d2.signing_policy
+CRL_URL             ?
+INDEX               ?
+DISABLE             no
+
+# There appears to be no CRL.
+
+# The 82da68f0.signing_policy says the CA may sign certificates matching
+# "/O=Grid/O=Globus/*", which overlaps the namespace for the old Globus CA;
+# I have not included that here.
+
+# MD5 fingerprint from f93666d2.0 downloaded 2004-10-17
