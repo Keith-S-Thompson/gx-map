@@ -1,4 +1,4 @@
-# $Id: 6349a761.doe-sg-old.cadesc,v 1.10 2004-11-01 17:04:20-08 kst Exp $
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.11 2005-03-29 19:27:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -9,6 +9,7 @@ SUBJECT             /O=DOE Science Grid/OU=Certificate Authorities/CN=Certificat
 MAY_SIGN            /O=DOE Science Grid/OU=Certificate Authorities/CN=Certificate Manager
 MAY_SIGN            /DC=net/DC=es/OU=Certificate Authorities/OU=DOE Science Grid/CN=pki1
 CERTIFICATE_MD5     40:CF:41:7D:16:DF:38:BC:64:9B:F8:FB:60:23:81:12
+# CERTIFICATE_SHA1    80:97:6E:4E:75:39:5E:6E:B5:89:55:98:C2:F4:00:70:9C:37:B9:C1
 CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/6349a761.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.doegrids.org/OldDOEScienceGridRootCA/CRL/6349a761.r0
@@ -19,4 +20,4 @@ DISABLE             yes
 # Superseded by DOEGrids CA
 #
 
-# MD5 fingerprint from 6349a761.0 downloaded 2004-10-10
+# MD5 and SHA1 fingerprints from 6349a761.0 downloaded 2005-03-29
