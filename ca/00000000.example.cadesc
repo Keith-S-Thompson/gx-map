@@ -1,4 +1,4 @@
-# $Id: 00000000.example.cadesc,v 1.4 2004-10-13 17:39:29-07 kst Exp $
+# $Id: 00000000.example.cadesc,v 1.5 2004-10-13 17:44:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/00000000.example.cadesc,v $
 
 CA_NAME             example.org CA
@@ -12,7 +12,6 @@ CERTIFICATE_MD5     00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 CERTIFICATE_URL     http://www.example.org/CA/00000000.0
 SIGNING_POLICY_URL  http://www.example.org/CA/00000000.signing_policy
 CRL_URL             http://www.example.org/CA/00000000.r0
-CRL_WARNING         12 hours
 INDEX               ?
 DISABLE             yes
 
@@ -97,8 +96,6 @@ DISABLE             yes
 # CRL_URL is a URL from which the certificate revocation list, in PEM
 # format, can be downloaded.
 # 
-# [CRL_WARNING] ...
-#
 # INDEX is a URL from which a ca.db.index file can be downloaded.
 # This is provided by CACL-based CAs.  This attribute is not currently
 # used by gx-ca-update.
