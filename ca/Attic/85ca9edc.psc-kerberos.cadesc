@@ -1,7 +1,7 @@
-# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.3 2004-09-20 17:05:03-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.4 2004-09-23 18:11:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85ca9edc.psc-kerberos.cadesc,v $
 
-CA_DESC         PSC Kerberos Certification Authority
+CA_NAME         PSC Kerberos Certification Authority
 HOMEPAGE        http://ocsp.psc.edu:8000/ca/
 CONTACT		?
 HASH            85ca9edc
