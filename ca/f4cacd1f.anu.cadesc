@@ -1,4 +1,4 @@
-# $Id: f4cacd1f.anu.cadesc,v 1.3 2004-11-01 17:04:32-08 kst Exp $
+# $Id: f4cacd1f.anu.cadesc,v 1.4 2005-03-29 19:27:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f4cacd1f.anu.cadesc,v $
 
 CA_NAME             Australian National University Simple CA (expired)
@@ -8,6 +8,7 @@ HASH                f4cacd1f
 SUBJECT             /O=Grid/OU=GlobusTest/OU=simpleCA-store.anu.edu.au/CN=Globus Simple CA
 MAY_SIGN            /O=Grid/OU=GlobusTest/OU=simpleCA-store.anu.edu.au/*
 CERTIFICATE_MD5     D7:27:42:35:FE:AB:3C:CD:14:97:7C:24:40:72:15:11
+# CERTIFICATE_SHA1    26:52:3E:51:89:FF:18:A2:24:38:05:A1:6A:62:2B:CA:A6:DF:B9:F3
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/f4cacd1f.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/f4cacd1f.signing_policy
 CRL_URL             ?
@@ -16,4 +17,4 @@ DISABLE             yes
 
 # There is no CRL.
 
-# MD5 fingerprint from f4cacd1f.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from f4cacd1f.0 downloaded 2005-03-29
