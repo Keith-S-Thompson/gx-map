@@ -1,0 +1,5 @@
+# $Id: _set-gx-map,v 1.1 2004-09-28 20:08:45-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/_set-gx-map,v $
+
+set gx = /tmp/kst/apps/gx-map-0.4-alpha
+set path = ( $gx/{bin,sbin} $path )
