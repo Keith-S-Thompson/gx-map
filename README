@@ -1,6 +1,14 @@
-# $Id: README,v 1.1 2003-07-21 03:35:01-07 kst Exp $
+# $Id: README,v 1.2 2003-07-21 04:06:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
 
-This is an initial release; documentation will follow later.
+This is an initial release; more documentation will follow later.
+
+The "gx-map" command is used to request the addition or deletion
+of an entry in the grid-mapfile.  Users should normally run
+"gx-map -interactive" and follow the instructions.
+
+A user may map an arbitrary DN (distinguished name) to his own
+Unix account.  An administrator (as specified in the config file)
+may map any DN to any Unix account.
