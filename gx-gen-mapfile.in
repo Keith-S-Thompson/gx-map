@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.44 2005-01-07 17:14:03-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.45 2005-01-07 17:14:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -116,7 +116,7 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "gx-map version $Gridmap_Utils::VERSION\n";
+    print "gx-gen-mapfile, part of gx-map version $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
