@@ -1,13 +1,12 @@
 #!%PERL% -w
 
-# $Id: gx-gen-mapfile.in,v 1.1 2003-05-27 18:46:55-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.2 2003-05-27 21:03:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
 
 use File::Basename ();
 use Getopt::Long ();
-use Gridmap_Utils ();
 
 sub Get_mtime($);
 sub Update_List(@);
@@ -17,13 +16,18 @@ sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
 
-
 # 
 # Make warnings fatal.
 # 
 $SIG{__WARN__} = sub { die @_ };
 
-my $Install_Dir          = '%INSTALL_DIR%';
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    push @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
 my $Data_Dir             = "$Install_Dir/var";
 my $Default_Requests_Log = "$Data_Dir/requests.log";
 my $Dot_Update           = "$Data_Dir/new-requests/.update";
