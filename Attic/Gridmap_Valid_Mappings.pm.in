@@ -1,10 +1,10 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.12 2004-07-30 18:06:10-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.13 2004-07-30 18:08:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2003 The Regents of the University of California. All
+# Copyright (c) 2004 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
