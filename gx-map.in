@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-map.in,v 1.12 2003-07-08 15:04:19-07 kst Exp $
+# $Id: gx-map.in,v 1.13 2003-07-10 14:52:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 use strict;
@@ -772,6 +772,18 @@ sub Get_Options_From_Command_Line() {
     $Options->{quiet}      = 1 if $User_Opt->{quiet};
     $Options->{force}      = 1 if $User_Opt->{quiet} or $User_Opt->{force};
 
+    if (defined $User_Opt->{directory}) {
+        if ($Globus_Admin) {
+            $Options->{directory} = $User_Opt->{directory};
+        }
+        else {
+            Usage "Only a Globus administrator may specify a data directory\n"
+        }
+    }
+    else {
+        $Options->{directory} = $Default_Data_Dir;
+    }
+
     if ($OP eq 'update') {
         return $Options;
     }
@@ -794,18 +806,6 @@ sub Get_Options_From_Command_Line() {
         if ($OP !~ /-dn$/) {
             $Options->{username} = $PW->{name};
         }
-    }
-
-    if (defined $User_Opt->{directory}) {
-        if ($Globus_Admin) {
-            $Options->{directory} = $User_Opt->{directory};
-        }
-        else {
-            Usage "Only a Globus administrator may specify a data directory\n"
-        }
-    }
-    else {
-        $Options->{directory} = $Default_Data_Dir;
     }
 
     if (defined $User_Opt->{dn}) {
