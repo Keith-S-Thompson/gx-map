@@ -1,4 +1,4 @@
-# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.1 2004-10-17 22:39:29-07 kst Exp $
+# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.2 2004-11-01 17:04:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/da36fc94.osaka-cybermedia-center.cadesc,v $
 
 CA_NAME             Osaka University Cybermedia Center CA
@@ -15,8 +15,7 @@ CERTIFICATE_MD5     89:EB:43:36:CC:CA:9A:EE:FF:C9:49:DD:F2:9B:47:7B
 CERTIFICATE_URL     https://www.apgrid.org/CA/da36fc94.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/da36fc94.signing_policy
 CRL_URL             ?
-INDEX               ?
-DISABLE             no
+CERT_EXPIRES        Feb  8 17:52:21 2013 GMT
 
 # There does not appear to be a CRL.
 
