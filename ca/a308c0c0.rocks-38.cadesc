@@ -1,4 +1,4 @@
-# $Id: a308c0c0.rocks-38.cadesc,v 1.1 2004-10-17 22:39:28-07 kst Exp $
+# $Id: a308c0c0.rocks-38.cadesc,v 1.2 2004-11-01 17:04:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a308c0c0.rocks-38.cadesc,v $
 
 CA_NAME             rocks-38 Simple CA
@@ -11,8 +11,7 @@ CERTIFICATE_MD5     50:35:A0:5E:11:45:07:2F:63:EC:97:D2:7C:B3:0C:2A
 CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/a308c0c0.0
 SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/a308c0c0.signing_policy
 CRL_URL             ?
-INDEX               ?
-DISABLE             no
+CERT_EXPIRES        Sep  2 03:19:38 2009 GMT
 
 # There is no CRL.
 
