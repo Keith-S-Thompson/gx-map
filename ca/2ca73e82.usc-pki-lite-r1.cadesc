@@ -1,9 +1,9 @@
-# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.3 2005-02-10 06:30:53-08 kst Exp $
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.4 2005-03-01 13:23:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
 HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/
-CONTACT             Shelley Henderson <shelley@usc.edu>
+CONTACT             authx@usc.edu
 HASH                2ca73e82
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
