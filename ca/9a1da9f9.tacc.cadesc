@@ -1,4 +1,4 @@
-# $Id: 9a1da9f9.tacc.cadesc,v 1.3 2004-10-08 13:59:31-07 kst Exp $
+# $Id: 9a1da9f9.tacc.cadesc,v 1.4 2004-10-08 20:44:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9a1da9f9.tacc.cadesc,v $
 
 CA_NAME             TACC Certification Authority
@@ -7,6 +7,7 @@ CONTACT             ?
 HASH                9a1da9f9
 SUBJECT             /C=US/O=UTAustin/OU=TACC/CN=TACC Certification Authority/UID=caman
 MAY_SIGN            /C=US/O=UTAustin/OU=TACC/*
+CERTIFICATE_MD5     96:BC:9D:0C:B8:23:F5:5B:DA:80:AE:FD:F0:E1:B7:78
 CERTIFICATE_URL     http://www.tacc.utexas.edu/CA/9a1da9f9.0
 SIGNING_POLICY_URL  http://www.tacc.utexas.edu/CA/9a1da9f9.signing_policy
 CRL_URL             http://www.tacc.utexas.edu/CA/CRL
