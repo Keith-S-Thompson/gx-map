@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T'
 
-# $Id: gx-ca-update.in,v 1.41 2004-11-02 16:38:49-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.42 2004-11-02 18:06:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -171,6 +171,10 @@ closedir CONF_DIR;
 
 if ($User_Opt->{'list-cas'}) {
     foreach my $ca (@ca_list_all) {
+        #
+        # This clobbers the contents of @ca_list all, but that's ok
+        # since we're going to exit.
+        #
         $ca =~ s/\.cadesc$//;
         $ca =~ s/\./ /g;
         print "$ca\n";
@@ -803,7 +807,32 @@ sub Update_Certificate($) {
 #
 sub Update_CRL($) {
     my($ref) = @_;
-    my $old_crl_info = CRL_Info $ref->{_CRL_FILE}, $ref->{_CERT_FILE};
+    my $cert_file;
+
+    return if defined $ref->{_ERRORS};
+
+    #
+    # _CACHED_CERT_FILE, if set, is the newly downloaded or cached
+    # certificate.  Otherwise, _CERT_FILE is the installed certificate.
+    #
+    if (defined $ref->{_CACHED_CERT_FILE} and -e $ref->{_CACHED_CERT_FILE}) {
+        $cert_file = $ref->{_CACHED_CERT_FILE};
+    }
+    elsif (-e $ref->{_CERT_FILE}) {
+        $cert_file = $ref->{_CERT_FILE};
+    }
+    else {
+        #
+        # We don't have a certificate, so we can't check the CRL (and
+        # there's no point in installing it).  We should have already
+        # flagged an error in Update_Certificate, so we should never
+        # get here, but check it anyway.
+        #
+        Error $ref, "No certificate, can't check CRL\n";
+        return;
+    }
+
+    my $old_crl_info = CRL_Info $ref->{_CRL_FILE}, $cert_file;
     my $install_new_crl = 0;
 
     my $have_crl_url = $ref->{CRL_URL} =~ m<(https?|ftp)://>;
@@ -826,17 +855,8 @@ sub Update_CRL($) {
         }
     }
     #
-    # Verify signature against cached certificate file if we've just
-    # downloaded it, otherwise validate against installed certificate
-    # file.
+    # Verify signature against certificate.
     #
-    my $cert_file;
-    if (defined $ref->{_CACHED_CERT_FILE}) {
-        $cert_file = $ref->{_CACHED_CERT_FILE};
-    }
-    else {
-        $cert_file = $ref->{_CERT_FILE};
-    }
     my $new_crl_info = CRL_Info $new_crl_file, $cert_file;
 
     if (defined $new_crl_info) {
@@ -968,6 +988,9 @@ sub Update_CRL($) {
 
 sub Install_Certificate($) {
     my($ref) = @_;
+
+    return if defined $ref->{_ERRORS};
+
     if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
         Vprint "Certificate $ref->{hash}.0 is already installed\n";
         return;
@@ -999,6 +1022,9 @@ sub Install_Certificate($) {
 #
 sub Update_Signing_Policy($) {
     my($ref) = @_;
+
+    return if defined $ref->{_ERRORS};
+
     if (not $User_Opt->{force} and -e $ref->{_SIGNING_POLICY_FILE}) {
         Vprint "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
     }
