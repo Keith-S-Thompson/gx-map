@@ -1,4 +1,4 @@
-# $Id: 225860ae.edg-worthless.cadesc,v 1.2 2004-11-01 17:04:16-08 kst Exp $
+# $Id: 225860ae.edg-worthless.cadesc,v 1.3 2005-03-29 19:27:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/225860ae.edg-worthless.cadesc,v $
 
 CA_NAME             EDG Tutorial Worthless Certification Authority
@@ -9,6 +9,7 @@ SUBJECT             /O=dutchgrid/OU=Certificate Authorities/CN=EDG Tutorial Wort
 MAY_SIGN            /O=dutchgrid/OU=Certificate Authorities/CN=EDG Tutorial Worthless Certification Authority
 MAY_SIGN            /O=edgtutorial/*
 CERTIFICATE_MD5     65:25:2C:D6:4E:0C:D3:AF:FB:EF:A2:2F:09:1D:23:6B
+# CERTIFICATE_SHA1    22:CB:AD:D8:18:B8:9E:F0:91:54:18:1C:38:26:75:F2:9E:5E:1B:13
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.signing_policy
 CRL_URL             ?
@@ -22,4 +23,4 @@ DISABLE             yes
 
 # As the name implies, this CA should be enabled only at your own risk.
 
-# MD5 fingerprint from 225860ae.0 downloaded 2004-10-17
+# MD5 and SHA1 fingerprints from 225860ae.0 downloaded 2005-03-29
