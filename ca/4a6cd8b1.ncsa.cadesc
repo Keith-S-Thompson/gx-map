@@ -1,4 +1,4 @@
-# $Id: 4a6cd8b1.ncsa.cadesc,v 1.4 2004-09-24 20:58:53-07 kst Exp $
+# $Id: 4a6cd8b1.ncsa.cadesc,v 1.5 2004-10-08 13:59:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4a6cd8b1.ncsa.cadesc,v $
 
 CA_NAME             NCSA CA
@@ -11,4 +11,3 @@ CERTIFICATE_URL     http://ca.ncsa.uiuc.edu/4a6cd8b1.0
 SIGNING_POLICY_URL  http://ca.ncsa.uiuc.edu/4a6cd8b1.signing_policy
 CRL_URL             http://ca.ncsa.uiuc.edu/4a6cd8b1.r0
 CRL_WARNING         48 hours
-INDEX               ?
