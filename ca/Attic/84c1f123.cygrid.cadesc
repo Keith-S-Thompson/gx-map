@@ -1,4 +1,4 @@
-# $Id: 84c1f123.cygrid.cadesc,v 1.1 2004-10-07 21:37:39-07 kst Exp $
+# $Id: 84c1f123.cygrid.cadesc,v 1.2 2004-10-08 13:59:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/84c1f123.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -11,5 +11,4 @@ CERTIFICATE_URL     http://www.cs.ucy.ac.cy/cygrid-ca/84c1f123.0
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/84c1f123.signing_policy
 CRL_URL             http://www.cs.ucy.ac.cy/Projects/crossgrid/cygrid/cygrid-ca/crl.pem
 CRL_WARNING         48 hours
-INDEX               ?
 DISABLE             no
