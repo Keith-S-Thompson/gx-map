@@ -1,8 +1,15 @@
-# $Id: gx-map.conf.in,v 1.2 2005-01-19 10:01:43-08 kst Exp $
+# $Id: gx-map.conf.in,v 1.3 2005-01-28 17:54:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
-# This file is processed by configure-gx-map.
+# configure-gx-map reads "gx-map.conf.in" and generates "gx-map.conf".
+# Variables may be set via command-line arguments to configure-gx-map,
+# or to some default value.
+# Each command reads gx-map.conf during initialization at run time.
+#
+# gx-map.conf may be edited after installation.
+# Variables set to UNDEF must be set to some valid value.
+#
 # Comments starting with '#' are ignored, as are empty lines.
 #
 
@@ -10,7 +17,7 @@
 # The full path to the Perl interpreter.
 # This must be set during configuration and installation.
 #
-PERL            /usr/bin/perl
+PERL            /usr/bin/perl  # Do not edit this line
 
 #
 # The value to be used for $PATH.
@@ -35,7 +42,7 @@ NAMESPACE       UNDEF
 # The installation directory for the gx-map package.
 # This must be set during configuration and installation.
 #
-INSTALL_DIR     UNDEF
+INSTALL_DIR     UNDEF  # Do not edit this line
 
 #
 # The default directory containing data for the gx-map system.
@@ -43,7 +50,7 @@ INSTALL_DIR     UNDEF
 # to this directory.
 # This must be set during configuration and installation.
 #
-DATA_DIR        UNDEF
+DATA_DIR        UNDEF  # Do not edit this line
 
 #
 # Permissions for the requests.log file.
@@ -82,4 +89,4 @@ ADMIN_EMAIL     UNDEF
 # This must be set (if it's set at all) during configuration and
 # installation.
 #
-VALID_MAPPINGS_FILE   UNDEF
+VALID_MAPPINGS_FILE   UNDEF  # Do not edit this line
