@@ -1,7 +1,75 @@
-# $Id: README,v 1.6 2003-07-27 17:30:10-07 kst Exp $
+# $Id: README,v 1.7 2003-08-28 18:51:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles.
+
+========================================================================
+NOTES: (not included in gx-map-0.3 release):
+
+1.  There's a bug in release 0.3 affecting the "gx-map -update"
+    command.  This command updates a file in the data directory,
+    causing "gx-gen-mapfile" to regenerate the grid-mapfile the next
+    time it runs.  The permissions on the updated file are not set
+    correctly; as a result, after a user has run "gx-map -update",
+    any other users who attempt to run it will get a "Permission
+    denied" error.
+
+    This will be corrected in release 0.4.  Until then, you can work
+    around it by doing the following after "make install":
+
+	cd DATA_DIR/new-requests   (DATA_DIR as specified in the config file)
+	touch .update
+	chmod 666 .update
+
+2.  The gx-map system depends critically on checking file ownership
+    to confirm that a request was made by an authorized user.  If the
+    operating system allows users to "give away" files, this check can
+    be subverted.  Specifically, if user "foo" can create a request
+    file requesting that a given DN be mapped to user "bar", then use
+    "chown" to change the ownership of the request file to user "bar",
+    this can fool gx-map into allowing "foo" to run arbitrary commands
+    under "bar"'s account.
+
+    On most Unix-like systems, only root can change file ownerships,
+    but there are exceptions:
+
+    Linux:
+	As far as I can tell, Linux systems do not allow non-root
+	users to use chown; this is not configurable.
+
+    AIX 5:
+	As on Linux, non-root users are not allowed to use chown.
+
+    HP-UX:
+	HP-UX systems allow non-root users to use chown, though this
+	can be disabled with setprivgrp.  Some brief experiments on
+	public-hp.ncsa.uiuc.edu indicate that this applies only on
+	locally mounted filesystems.
+
+    Solaris:
+	Non-root users are forbidden to use chown by default, but
+	this can be enabled by adding the line
+	    set rstchown = 0
+	to /etc/system.
+
+    Before deploying the gx-map system, make sure that users are not
+    able to chown files in the data directory.  If the data directory
+    is NFS-mounted, make sure users cannot use chown in that directory
+    from any system that mounts it.
+
+3.  A Globus grid-mapfile may have multiple user names associated
+    with a single DN:
+	"/O=Foo/OU=Bar/CN=John Q. Smith" user1,user2,user3
+    For most Globus tools, only the first listed user name is used.
+    For gsissh (and possibly some other tools), the first name listed
+    is the default, but other names may be specified.
+
+    gx-map does not currently support multiple user names for a
+    given DN.  (Even if you manually edit the grid-mapfile, the next
+    update will overwrite it.)
+
+    The next release, 0.4, will add this support.
+========================================================================
 
 This is release 0.3; more documentation will follow later.
 
