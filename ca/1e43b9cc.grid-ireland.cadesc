@@ -1,0 +1,15 @@
+# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.1 2004-10-02 14:40:26-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/1e43b9cc.grid-ireland.cadesc,v $
+
+CA_NAME             Grid-Ireland Certification Authority
+HOMEPAGE            http://www.cs.tcd.ie/Grid-Ireland/gi-ca/
+CONTACT             grid-ireland-ca@cs.tcd.ie
+HASH                1e43b9cc
+SUBJECT             /C=IE/O=Grid-Ireland/CN=Grid-Ireland Certification Authority
+MAY_SIGN            /C=IE/O=Grid-Ireland/*
+CERTIFICATE_URL     http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.r0
+CRL_WARNING         12 hours
+INDEX               ?
+DISABLE             no
