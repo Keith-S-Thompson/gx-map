@@ -1,4 +1,4 @@
-# $Id: 29021213.fermilab-top-level.cadesc,v 1.5 2004-10-10 03:21:56-07 kst Exp $
+# $Id: 29021213.fermilab-top-level.cadesc,v 1.6 2004-10-13 17:41:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/29021213.fermilab-top-level.cadesc,v $
 
 CA_NAME             Fermilab Top-Level CA
@@ -12,6 +12,12 @@ CERTIFICATE_URL     http://computing.fnal.gov/security/pki/29021213.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/29021213.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/29021213.base64
 CRL_WARNING         48 hours
-DISABLE             no
+DISABLE             yes
 
 # MD5 fingerprint from 29021213.0 downloaded 2004-10-10
+
+# A site running Globus typically does not need to recognize this CA.
+# The certificate for the Fermilab Kerberized CA (hash e1fce4e9) is
+# self-signed.  This CA is therefore disabled by default; if you want to
+# install it anyway, you can delete the "DISABLE yes" line, or use the
+# "-ignore-disable" option to gx-ca-update.
