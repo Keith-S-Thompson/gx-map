@@ -1,0 +1,20 @@
+# $Id: 13eab55e.datagrid-es.cadesc,v 1.1 2005-04-01 00:32:00-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/13eab55e.datagrid-es.cadesc,v $
+
+CA_NAME             Datagrid-ES CA
+HOMEPAGE            http://grid.ifca.unican.es/ca/datagrid-es/
+CONTACT             Rafael Marco de Lucas <rmarco@ifca.unican.es>
+HASH                13eab55e
+SUBJECT             /C=ES/O=DATAGRID-ES/CN=DATAGRID-ES CA
+MAY_SIGN            /C=ES/O=DATAGRID-ES/*
+CERTIFICATE_MD5     7B:4F:5A:E0:06:E8:00:CD:0F:A6:3A:37:EB:7C:67:4B
+# CERTIFICATE_SHA1    E2:A5:AA:5C:F2:0F:FD:36:DB:F8:2A:D2:ED:99:6F:94:A6:75:02:41
+CERTIFICATE_URL     http://grid.ifca.unican.es/ca/datagrid-es/13eab55e.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://grid.ifca.unican.es/ca/datagrid-es/13eab55e.r0
+CERT_EXPIRES        Oct 20 16:04:52 2007 GMT
+
+# Supersedes the expired certificate 90e2484f.0
+# (see 90e2484f.datagrid-es-old.cadesc).
+
+# MD5 and SHA1 fingerprints from 13eab55e.0 downloaded 2005-03-29
