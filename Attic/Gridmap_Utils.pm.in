@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.43 2004-10-11 17:44:11-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.44 2004-10-14 02:47:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -273,12 +273,14 @@ sub Get_Hostname() {
     my $hostname   = undef;
     my $domainname = undef;
 
+    Use_Commands 'hostname';
+
     {
         #
         # Localize $ENV{PATH} to avoid taint check
         #
         local($ENV{PATH}) = $Gridmap_Utils::Config{PATH};
-        chomp($hostname = `/bin/hostname 2>/dev/null`);
+        chomp($hostname = `hostname 2>/dev/null`);
     }
 
     if ($hostname =~ /\./) {
