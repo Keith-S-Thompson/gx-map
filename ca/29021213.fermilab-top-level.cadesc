@@ -1,4 +1,4 @@
-# $Id: 29021213.fermilab-top-level.cadesc,v 1.2 2004-10-03 23:50:06-07 kst Exp $
+# $Id: 29021213.fermilab-top-level.cadesc,v 1.3 2004-10-08 13:59:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/29021213.fermilab-top-level.cadesc,v $
 
 CA_NAME             Fermilab Top-Level CA
@@ -11,5 +11,4 @@ CERTIFICATE_URL     http://computing.fnal.gov/security/pki/29021213.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/29021213.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/29021213.base64
 CRL_WARNING         48 hours
-INDEX               ?
 DISABLE             no
