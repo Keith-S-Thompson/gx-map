@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.13 2003-07-17 00:43:15-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.14 2003-07-17 01:06:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 use strict;
@@ -65,7 +65,12 @@ if (@{$User_Opt->{'requests-log'}}) {
             $log = $Default_Requests_Log;
         }
         elsif ($log =~ m<^(http|ftp)://>) {
-            $log = Gridmap_Utils::Cache_File $_;
+            $log = Gridmap_Utils::Cache_File $log;
+            #
+            # Untaint the log file name so we can use system() to pass
+            # it to wget.
+            #
+            ($log) = ($log =~ /^(.*)$/);
         }
     }
 }
