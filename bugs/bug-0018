@@ -1,0 +1,13 @@
+# $Id: bug-0018,v 1.1 2005-04-17 16:02:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0018,v $
+
+gx-map bug 0018
+Date: Tue 2005-04-17
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: Use "-T" in gx-ca-update
+
+Summary:
+Use Perl's "-T" option (taint checking) in gx-ca-update for greater
+security.
