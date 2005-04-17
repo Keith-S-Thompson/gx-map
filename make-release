@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.5 2005-04-17 16:06:31-07 kst Exp $
+# $Id: make-release,v 1.6 2005-04-17 16:32:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -16,6 +16,7 @@ fi
 num=$1
 in_files=`echo *.in`
 cadesc_files=`cd ca ; echo *.cadesc`
+bug_files=`cd bugs ; echo bug-*`
 
 try mkdir release/gx-map-$num
 try cd release/gx-map-$num
