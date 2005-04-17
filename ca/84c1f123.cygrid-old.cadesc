@@ -1,4 +1,4 @@
-# $Id: 84c1f123.cygrid-old.cadesc,v 1.2 2005-03-29 19:58:08-08 kst Exp $
+# $Id: 84c1f123.cygrid-old.cadesc,v 1.3 2005-04-17 02:43:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/84c1f123.cygrid-old.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -8,7 +8,7 @@ HASH                84c1f123
 SUBJECT             /C=CY/O=CyGrid/CN=CyGrid CA
 MAY_SIGN            /C=CY/O=CyGrid/*
 CERTIFICATE_MD5     72:39:00:9A:27:11:61:E2:13:01:E9:F0:3D:D0:B1:18
-# CERTIFICATE_SHA1    46:A3:97:D9:47:00:F4:88:C4:22:2A:30:64:53:DD:7C:2F:A4:69:F6
+CERTIFICATE_SHA1    46:A3:97:D9:47:00:F4:88:C4:22:2A:30:64:53:DD:7C:2F:A4:69:F6
 CERTIFICATE_URL     http://grid.ucy.ac.cy/CyGridCA/84c1f123.0
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/84c1f123.signing_policy
 CRL_URL             http://grid.ucy.ac.cy/CyGridCA/crl.pem
