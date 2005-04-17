@@ -1,7 +1,7 @@
-# $Id: bug-0017,v 1.1 2005-04-17 16:00:27-07 kst Exp $
+# $Id: bug-0017,v 1.2 2005-04-17 16:05:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0017,v $
 
-gx-ma7 bug 0016
+gx-map bug 0016
 Date: Tue 2005-04-17
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
