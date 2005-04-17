@@ -1,0 +1,15 @@
+# $Id: bug-0016,v 1.1 2005-04-17 16:00:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0016,v $
+
+gx-map bug 0016
+Date: Tue 2005-04-17
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: Check grid-mapfile into RCS
+
+Summary:
+In gx-gen-mapfile, if the grid-mapfile is updated, check it into
+an RCS directory.
+Add a "-norcs" option to disable this.
+(Don't try to do this if writing to stdout.)
