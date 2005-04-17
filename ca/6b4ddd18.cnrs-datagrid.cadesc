@@ -1,4 +1,4 @@
-# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.9 2005-03-29 19:27:34-08 kst Exp $
+# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.10 2005-04-17 02:43:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6b4ddd18.cnrs-datagrid.cadesc,v $
 
 CA_NAME             CNRS-DataGrid
@@ -8,7 +8,7 @@ HASH                6b4ddd18
 SUBJECT             /C=FR/O=CNRS/CN=Datagrid-fr
 MAY_SIGN            ?
 CERTIFICATE_MD5     A4:1C:C2:BB:43:34:AB:F1:C5:BD:D6:A8:50:9E:E7:2A
-# CERTIFICATE_SHA1    B9:70:D8:2C:CF:AA:DD:FC:75:07:3A:FC:8C:24:75:74:63:C3:3B:84
+CERTIFICATE_SHA1    B9:70:D8:2C:CF:AA:DD:FC:75:07:3A:FC:8C:24:75:74:63:C3:3B:84
 CERTIFICATE_URL     http://crls.services.cnrs.fr/Datagrid-fr/getpem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/6b4ddd18.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/Datagrid-fr/getpem.crl
