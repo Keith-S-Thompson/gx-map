@@ -1,4 +1,4 @@
-# $Id: 4a6cd8b1.ncsa.cadesc,v 1.10 2005-03-29 19:27:33-08 kst Exp $
+# $Id: 4a6cd8b1.ncsa.cadesc,v 1.11 2005-04-17 02:43:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4a6cd8b1.ncsa.cadesc,v $
 
 CA_NAME             NCSA CA
@@ -8,7 +8,7 @@ HASH                4a6cd8b1
 SUBJECT             /C=US/O=National Center for Supercomputing Applications/CN=Certification Authority
 MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/*
 CERTIFICATE_MD5     8E:9D:6D:F9:CD:7D:34:3E:24:17:00:CB:7F:F5:B0:A5
-# CERTIFICATE_SHA1    61:10:49:77:86:CD:C4:8A:73:D7:A6:4B:F8:0F:31:8E:E4:D4:46:55
+CERTIFICATE_SHA1    61:10:49:77:86:CD:C4:8A:73:D7:A6:4B:F8:0F:31:8E:E4:D4:46:55
 CERTIFICATE_URL     http://ca.ncsa.uiuc.edu/4a6cd8b1.0
 SIGNING_POLICY_URL  http://ca.ncsa.uiuc.edu/4a6cd8b1.signing_policy
 CRL_URL             http://ca.ncsa.uiuc.edu/4a6cd8b1.r0
