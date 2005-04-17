@@ -1,4 +1,4 @@
-# $Id: README.CA,v 1.8 2004-11-24 16:52:05-08 kst Exp $
+# $Id: README.CA,v 1.9 2005-04-17 16:25:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
 
 ************************************************************************
@@ -88,6 +88,13 @@ This can be determined by
 This is checked against the actual fingerprint of the downloaded
 certificate.
 
+* CERTIFICATE_SHA1 is the SHA1 fingerprint of the signing certificate.
+This can be determined by 
+    openssl x509 -sha1 -fingerprint -in FILENAME.0 -noout
+This is checked against the actual fingerprint of the downloaded
+certificate.  This was added in gx-map 0.4.2 because of a possible
+weakness in MD5 message digest function.
+
 * CERTIFICATE_URL is a URL from which the signing certificate (in PEM
 format) can be downloaded.
 
@@ -100,6 +107,12 @@ policy, but that's seldom a good idea).
 
 CRL_URL is a URL from which the certificate revocation list, in PEM
 format, can be downloaded.
+
+ALLOW_MISSING_CRL is similar to the "-allow-missing-crl" command
+line option, but it applies only to a single CA, generally one like
+the PSC or USC Kerberos CA that only issues short-term certificates.
+If this attribute is set to "yes", an unspecified, missing, or expired
+CRL is not a fatal error.
 
 INDEX is a URL from which a ca.db.index file can be downloaded.
 This is provided by CACL-based CAs.  This attribute is not currently
@@ -131,4 +144,4 @@ All URLs may be specified with a prefix of either "http://",
 wget (an ssl-enabled version of wget is required for https URLs).
 ftp URLs are downloaded using ncftpget.
 
-                --- Keith Thompson <kst@sdsc.edu> 2004-11-24
+                --- Keith Thompson <kst@sdsc.edu> 2005-04-17
