@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.41 2005-03-27 15:37:21-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.42 2005-04-17 15:46:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -354,6 +354,11 @@ sub Append_To_Log($@) {
     my($log_file, @requests) = @_;
     return if not @requests;
 
+    my $log_file_dirname  = File::Basename::dirname  $log_file;
+    my $log_file_basename = File::Basename::basename $log_file;
+    my $RCS_dir  = "$log_file_dirname/RCS";
+    my $RCS_file = "$RCS_dir/$log_file_basename,v";
+
     if (not -e $log_file) {
         open LOG, ">$log_file" or die "$log_file: $!\n";
         print LOG "# \$", "Id:\$\n",
@@ -366,6 +371,7 @@ sub Append_To_Log($@) {
     # The log file is normally read-only.
     # Temporarily make it writable, append the new
     # records to it, then change it back to read-only.
+    # Watch out for the permissions on the RCS file (bug-0003).
     #
     my $readonly = oct $Gridmap_Utils::Config{REQUESTS_LOG_PERMISSIONS};
     my $writable = $readonly | 0200;
@@ -383,9 +389,18 @@ sub Append_To_Log($@) {
     # The RCS file is normally kept locked.
     # Unlock it temporarily to check in the file.
     #
+    if (not -d $RCS_dir) {
+        #
+        # It should already exist, but let's make sure.
+        #
+        mkdir $RCS_dir, 0777 or die "mkdir $RCS_dir: $!\n";
+    }
     Gridmap_Utils::Use_Commands 'rcs', 'ci';
     system "rcs -l $log_file >/dev/null 2>/dev/null";
     system "ci -u -f $log_file </dev/null >/dev/null 2>/dev/null";
+
+    chmod $readonly, $log_file or die "chmod $log_file: $!\n";
+    chmod $readonly, $RCS_file or die "chmod $RCS_file: $!\n";
 } # Append_To_Log
 
 # ----------------------------------------------------------------------
