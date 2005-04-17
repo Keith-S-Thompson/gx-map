@@ -1,4 +1,4 @@
-# $Id: 47183fda.kisti-root.cadesc,v 1.8 2005-03-29 19:27:33-08 kst Exp $
+# $Id: 47183fda.kisti-root.cadesc,v 1.9 2005-04-17 02:43:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
 
 CA_NAME             KISTI Grid Root CA
@@ -8,7 +8,7 @@ HASH                47183fda
 SUBJECT             /C=KR/O=KISTI/CN=KISTI GRID ROOT CA
 MAY_SIGN            /C=KR/O=KISTI/*
 CERTIFICATE_MD5     9C:E7:72:DF:AE:D8:73:4E:2B:60:D1:CF:27:5A:2A:A5
-# CERTIFICATE_SHA1    70:F3:BB:F0:1D:B8:50:7E:3A:6F:D8:DD:13:85:60:D4:EA:52:50:FD
+CERTIFICATE_SHA1    70:F3:BB:F0:1D:B8:50:7E:3A:6F:D8:DD:13:85:60:D4:EA:52:50:FD
 CERTIFICATE_URL     https://ca.gridcenter.or.kr/certificates/47183fda.0
 SIGNING_POLICY_URL  https://ca.gridcenter.or.kr/certificates/47183fda.signing_policy
 CRL_URL             https://ca.gridcenter.or.kr/CRL/47183fda.crl
