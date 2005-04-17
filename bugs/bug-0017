@@ -1,0 +1,20 @@
+# $Id: bug-0017,v 1.1 2005-04-17 16:00:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0017,v $
+
+gx-ma7 bug 0016
+Date: Tue 2005-04-17
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: Don't fail if one grid-mapfile can't be written
+
+Summary:
+gx-gen-mapfile allows multiple output files to be written.  Currently,
+it dies if it can't write one of them.  Instead, it should write as
+many as it can (but collect the errors and print a warning).
+
+This was motivated by an issue on Blue Horizon (writing to a local
+filesystem and to /projects/globus, which wasn't always mounted).
+Blue Horizon has since been shut down.  Even there, the problem
+could be worked around by re-ordering the output files, specifying
+/projects/globus last.
