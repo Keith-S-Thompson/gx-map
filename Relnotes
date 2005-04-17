@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.4 2005-04-17 16:07:38-07 kst Exp $
+# $Id: Relnotes,v 1.5 2005-04-17 16:57:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -11,6 +11,15 @@ Release 0.4.2, 2005-04-17
 
     This release also includes a "bugs" directory containing several
     bug reports.
+
+    Bugs fix in this release:
+    bug-0001 Removing a secondary mapping crashes gx-gen-mapfile
+    bug-0002 Double usernames for primary+secondary mappings
+    bug-0003 "ci" command can change requests.log permissions
+    bug-0005 New feature: MISSING_CRL_OK attribute in cadesc files.
+	(changed attribute name to ALLOW_MISSING_CRL)
+    bug-0006 Use SHA1 fingerprints in gx-ca-update
+    bug-0009 Better tracebacks on errors
 
 Release 0.4.1, 2004-11-30
 
