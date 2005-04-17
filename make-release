@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.4 2004-11-26 12:14:01-08 kst Exp $
+# $Id: make-release,v 1.5 2005-04-17 16:06:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -45,7 +45,15 @@ try cd ca
 for file in $cadesc_files ; do
     try cp -p ../../../ca/$file .
 done
+try cd ..
 
-try cd ../..
+try mkdir bugs
+try cd bugs
+for file in $bug_files ; do
+    try cp -p ../../../bugs/$file .
+done
+try cd ..
+
+try cd ..
 try tar zcf gx-map-$num.tar.gz gx-map-$num
 
