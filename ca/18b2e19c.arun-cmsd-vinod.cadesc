@@ -1,4 +1,4 @@
-# $Id: 18b2e19c.arun-cmsd-vinod.cadesc,v 1.3 2005-03-29 19:27:31-08 kst Exp $
+# $Id: 18b2e19c.arun-cmsd-vinod.cadesc,v 1.4 2005-04-17 02:43:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/18b2e19c.arun-cmsd-vinod.cadesc,v $
 
 CA_NAME             arun-cmsd-vinod
@@ -8,7 +8,7 @@ HASH                18b2e19c
 SUBJECT             /O=in/OU=cmsd. ou/CN=arun-cmsd-vinod
 MAY_SIGN            /O=in/OU=cmsd. ou/*
 CERTIFICATE_MD5     4D:2B:8A:BC:0F:AD:A8:DD:15:14:6D:14:C1:59:8F:84
-# CERTIFICATE_SHA1    44:D8:17:E0:79:D5:66:31:4C:39:9C:03:A8:25:11:21:22:FC:46:AA
+CERTIFICATE_SHA1    44:D8:17:E0:79:D5:66:31:4C:39:9C:03:A8:25:11:21:22:FC:46:AA
 CERTIFICATE_URL     https://www.apgrid.org/CA/18b2e19c.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/18b2e19c.signing_policy
 CRL_URL             ?
