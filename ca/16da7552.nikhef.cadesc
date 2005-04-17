@@ -1,4 +1,4 @@
-# $Id: 16da7552.nikhef.cadesc,v 1.7 2005-03-29 18:22:37-08 kst Exp $
+# $Id: 16da7552.nikhef.cadesc,v 1.8 2005-04-17 02:43:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/16da7552.nikhef.cadesc,v $
 
 CA_NAME             DutchGrid Medium-Security Certification Authority
@@ -10,7 +10,7 @@ MAY_SIGN            /C=NL/O=NIKHEF/CN=NIKHEF medium-security certification auth
 MAY_SIGN            /O=dutchgrid/O=users/*
 MAY_SIGN            /O=dutchgrid/O=hosts/*
 CERTIFICATE_MD5     62:ED:76:7D:78:B9:E6:6B:0D:1B:07:38:AC:E6:60:F9
-# CERTIFICATE_SHA1    E5:FA:C3:3B:44:8F:26:1B:3D:D1:DE:BA:5F:EC:ED:35:A9:3F:23:21
+CERTIFICATE_SHA1    E5:FA:C3:3B:44:8F:26:1B:3D:D1:DE:BA:5F:EC:ED:35:A9:3F:23:21
 CERTIFICATE_URL     http://certificate.nikhef.nl/medium/cacert.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/16da7552.signing_policy
 CRL_URL             http://certificate.nikhef.nl/medium/cacrl.pem
