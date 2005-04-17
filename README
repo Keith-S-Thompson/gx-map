@@ -1,4 +1,4 @@
-# $Id: README,v 1.21 2004-11-30 16:39:01-08 kst Exp $
+# $Id: README,v 1.22 2005-04-17 02:35:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
@@ -40,7 +40,7 @@ for information:
     README.CA-SECURITY  Security-specific information about gx-ca-update .
     README.TeraGrid     TeraGrid-specific information (which may also
                         be of interest for non-TeraGrid sites).
-    README.Upgrade      Upgrading from gx-map 0.3 to 0.4.1.
+    README.Upgrade      Upgrading from gx-map 0.3 to 0.4.2.
     README.Cross-Site   Using gx-map across multiple sites.
 
 I gave a brief presentation on gx-map at GlobusWorld 2004.  An expanded
@@ -53,4 +53,4 @@ installed in the etc subdirectory when you install gx-map.
 
 Future releases will include man pages.
 
-                -- Keith Thompson <kst@sdsc.edu> 2004-11-30
+                -- Keith Thompson <kst@sdsc.edu> 2004-11-30, 2005-04-17
