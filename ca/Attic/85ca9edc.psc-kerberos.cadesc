@@ -1,4 +1,4 @@
-# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.13 2005-03-29 19:27:35-08 kst Exp $
+# $Id: 85ca9edc.psc-kerberos.cadesc,v 1.14 2005-04-17 02:43:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85ca9edc.psc-kerberos.cadesc,v $
 
 CA_NAME             PSC Kerberos Certification Authority
@@ -9,7 +9,7 @@ SIGNED_BY           /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Root Certifi
 SUBJECT             /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Kerberos Certification Authority
 MAY_SIGN            /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/*
 CERTIFICATE_MD5     39:7B:15:4D:4D:DB:53:15:D8:63:06:FB:FC:EE:A5:F5
-# CERTIFICATE_SHA1    1E:A5:E6:24:3F:D3:AE:79:D2:85:6D:18:B4:AA:F2:9C:CB:FC:32:FD
+CERTIFICATE_SHA1    1E:A5:E6:24:3F:D3:AE:79:D2:85:6D:18:B4:AA:F2:9C:CB:FC:32:FD
 CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/85ca9edc.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/85ca9edc.signing_policy
 CERT_EXPIRES        Aug 20 04:00:00 2006 GMT
