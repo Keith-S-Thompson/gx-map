@@ -1,7 +1,13 @@
-# $Id: Relnotes,v 1.2 2004-11-30 16:39:24-08 kst Exp $
+# $Id: Relnotes,v 1.3 2005-04-17 02:51:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.4.2, 2005-04-17
+
+    This is primarily a bug fix release, intended to be included
+    in NMI release 7.  It also includes some updated *.cadesc files
+    (including a new CERTIFICATE_SHA1 attribute).
 
 Release 0.4.1, 2004-11-30
 
