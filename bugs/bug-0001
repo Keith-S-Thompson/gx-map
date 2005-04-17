@@ -1,4 +1,4 @@
-# $Id: bug-0001,v 1.4 2005-04-17 03:23:02-07 kst Exp $
+# $Id: bug-0001,v 1.5 2005-04-17 03:28:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0001,v $
 
 gx-map bug 0001
@@ -19,5 +19,5 @@ To reproduce:
 % gx-gen-mapfile /usr/local/apps/grid-security/grid-mapfile
 Use of uninitialized value in string eq at /usr/local/apps/gx-map-0.4.1/sbin/gx-gen-mapfile line 298, <FILE> line 251.
 
-Tentatively fixed:
+Fixed:
 gx-gen-mapfile.in 1.47, gx-map-0.4.2
