@@ -1,4 +1,4 @@
-# $Id: ed99a497.cesnet.cadesc,v 1.7 2005-03-29 19:27:38-08 kst Exp $
+# $Id: ed99a497.cesnet.cadesc,v 1.8 2005-04-17 02:43:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/ed99a497.cesnet.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -9,7 +9,7 @@ SUBJECT             /C=CZ/O=CESNET/CN=CESNET CA
 MAY_SIGN            /C=CZ/O=CESNET/*
 MAY_SIGN            /O=CESNET/*
 CERTIFICATE_MD5     7F:93:95:FE:9D:76:F5:98:80:9E:5F:4B:93:1F:A8:51
-# CERTIFICATE_SHA1    C9:00:88:24:CA:2F:99:BA:C8:CF:FB:8E:06:29:8A:38:FA:AC:AD:75
+CERTIFICATE_SHA1    C9:00:88:24:CA:2F:99:BA:C8:CF:FB:8E:06:29:8A:38:FA:AC:AD:75
 CERTIFICATE_URL     http://www.cesnet.cz/pki/certs/cca.pem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ed99a497.signing_policy
 CRL_URL             ?
