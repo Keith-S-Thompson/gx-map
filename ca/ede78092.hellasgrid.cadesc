@@ -1,4 +1,4 @@
-# $Id: ede78092.hellasgrid.cadesc,v 1.7 2005-03-29 19:27:38-08 kst Exp $
+# $Id: ede78092.hellasgrid.cadesc,v 1.8 2005-04-17 02:43:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ede78092.hellasgrid.cadesc,v $
 
 CA_NAME             HellasGrid CA
@@ -8,7 +8,7 @@ HASH                ede78092
 SUBJECT             /C=GR/O=HellasGrid/CN=HellasGrid CA
 MAY_SIGN            /C=GR/O=HellasGrid/*
 CERTIFICATE_MD5     67:B9:5A:B5:B2:50:01:20:2C:F5:AD:D1:57:88:0D:3B
-# CERTIFICATE_SHA1    36:12:69:64:31:35:FD:E1:FA:9B:6B:9C:4F:31:32:B5:B3:20:13:B5
+CERTIFICATE_SHA1    36:12:69:64:31:35:FD:E1:FA:9B:6B:9C:4F:31:32:B5:B3:20:13:B5
 CERTIFICATE_URL     http://pki.physics.auth.gr/hellasgrid-ca/CA/ede78092.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ede78092.signing_policy
 CRL_URL             http://pki.physics.auth.gr/hellasgrid-ca/CRL/ede78092.r0
