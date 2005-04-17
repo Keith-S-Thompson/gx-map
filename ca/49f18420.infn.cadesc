@@ -1,4 +1,4 @@
-# $Id: 49f18420.infn.cadesc,v 1.8 2005-03-29 19:27:33-08 kst Exp $
+# $Id: 49f18420.infn.cadesc,v 1.9 2005-04-17 02:43:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
 
 CA_NAME             INFN Certification Authority
@@ -9,7 +9,7 @@ SUBJECT             /C=IT/O=INFN/CN=INFN Certification Authority
 MAY_SIGN            /C=it/O=INFN/*
 MAY_SIGN            /C=IT/O=INFN/*
 CERTIFICATE_MD5     9C:3E:F4:3B:18:44:12:55:10:F3:89:C0:D5:D8:49:16
-# CERTIFICATE_SHA1    AB:6D:CE:77:D3:5D:F0:A2:02:C8:87:4D:AE:AF:60:A8:D4:99:5C:D5
+CERTIFICATE_SHA1    AB:6D:CE:77:D3:5D:F0:A2:02:C8:87:4D:AE:AF:60:A8:D4:99:5C:D5
 CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.signing_policy
 CRL_URL             ?
