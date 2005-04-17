@@ -1,4 +1,4 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.9 2005-03-29 19:27:36-08 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.10 2005-04-17 02:43:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
@@ -9,7 +9,7 @@ SUBJECT             /C=US/O=Globus Alliance/CN=Globus Certificate Service
 MAY_SIGN            /C=US/O=Globus Alliance/OU=Service/*
 MAY_SIGN            /C=US/O=Globus Alliance/OU=User/*
 CERTIFICATE_MD5     3E:58:EB:9E:C2:9E:21:4F:81:6F:96:24:93:B4:04:45
-# CERTIFICATE_SHA1    CC:FE:99:1E:63:0B:C5:84:55:82:5F:F5:78:F3:16:CE:77:16:23:9C
+CERTIFICATE_SHA1    CC:FE:99:1E:63:0B:C5:84:55:82:5F:F5:78:F3:16:CE:77:16:23:9C
 CERTIFICATE_URL     http://gcs.globus.org:8080/gcs/cacert/b38b4d8c.0
 SIGNING_POLICY_URL  http://gcs.globus.org:8080/gcs/cacert/b38b4d8c.signing_policy
 CRL_URL             ?
