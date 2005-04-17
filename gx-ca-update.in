@@ -1,7 +1,7 @@
 #!%PERL% -w
-# To do: Add '-T'
+# To do: Add '-T' (bug-0018)
 
-# $Id: gx-ca-update.in,v 1.53 2005-04-17 03:06:39-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.54 2005-04-17 16:06:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -48,13 +48,6 @@
 ########################################################################
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
-
-#
-# TO DO:
-#
-#      If the SIGNED_BY field is set, verify that the corresponding
-#      CA certificate has been installed.
-#
 
 use strict;
 
