@@ -1,4 +1,4 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.12 2005-03-29 19:27:37-08 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.13 2005-04-17 02:43:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
@@ -9,7 +9,7 @@ SUBJECT             /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Ro
 MAY_SIGN            /DC=org/DC=DOEGrids/OU=Certificate Authorities/*
 MAY_SIGN            /DC=net/DC=ES/*
 CERTIFICATE_MD5     25:85:99:E6:D4:49:F6:F2:85:AB:B0:69:37:B9:47:B8
-# CERTIFICATE_SHA1    B4:B8:24:59:3C:7A:CF:B2:D4:39:64:0F:C5:51:22:24:D2:E0:CE:3F
+CERTIFICATE_SHA1    B4:B8:24:59:3C:7A:CF:B2:D4:39:64:0F:C5:51:22:24:D2:E0:CE:3F
 CERTIFICATE_URL     http://www.es.net/CA/d1b603c3/d1b603c3.0
 SIGNING_POLICY_URL  http://www.es.net/CA/d1b603c3/d1b603c3.signing_policy
 CRL_URL             http://www.es.net/CA/d1b603c3/d1b603c3.r0
