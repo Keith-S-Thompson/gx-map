@@ -1,4 +1,4 @@
-# $Id: 2c7969d0.usc-pki-lite-old.cadesc,v 1.16 2005-04-01 18:03:13-08 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite-old.cadesc,v 1.17 2005-04-17 02:43:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2c7969d0.usc-pki-lite-old.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -8,7 +8,7 @@ HASH                2c7969d0
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E
-# CERTIFICATE_SHA1    5F:7F:79:1D:22:6E:88:41:7E:E2:9F:73:83:1F:2E:7D:B1:8F:D9:0C
+CERTIFICATE_SHA1    5F:7F:79:1D:22:6E:88:41:7E:E2:9F:73:83:1F:2E:7D:B1:8F:D9:0C
 CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/CAcert.pem
 SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2c7969d0.signing_policy
 CRL_URL             ?
