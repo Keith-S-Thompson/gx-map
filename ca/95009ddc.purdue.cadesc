@@ -1,4 +1,4 @@
-# $Id: 95009ddc.purdue.cadesc,v 1.7 2005-03-29 19:27:35-08 kst Exp $
+# $Id: 95009ddc.purdue.cadesc,v 1.8 2005-04-17 02:43:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/95009ddc.purdue.cadesc,v $
 
 CA_NAME             Purdue CA
@@ -8,7 +8,7 @@ HASH                95009ddc
 SUBJECT             /CN=PurdueCA/O=Purdue University/ST=Indiana/C=US
 MAY_SIGN            /CN=Purdue TeraGrid RA/OU=Purdue TeraGrid/O=Purdue University/ST=Indiana/C=US
 CERTIFICATE_MD5     CC:26:39:F3:63:37:60:21:51:2C:D0:C6:DF:73:71:46
-# CERTIFICATE_SHA1    F0:FB:04:5D:45:89:60:F4:97:8E:A8:40:02:B6:22:5B:2E:22:BA:97
+CERTIFICATE_SHA1    F0:FB:04:5D:45:89:60:F4:97:8E:A8:40:02:B6:22:5B:2E:22:BA:97
 CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/95009ddc.0
 SIGNING_POLICY_URL  http://tg-ca.purdue.teragrid.org:8080/95009ddc.signing_policy
 CRL_URL             http://tg-ca.purdue.teragrid.org:8080/95009ddc.r0
