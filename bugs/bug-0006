@@ -1,4 +1,4 @@
-# $Id: bug-0006,v 1.4 2005-04-17 03:28:22-07 kst Exp $
+# $Id: bug-0006,v 1.5 2005-04-17 16:45:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0006,v $
 
 gx-map bug 0006
@@ -34,7 +34,10 @@ Most *.cadesc files have been updated with SHA1_FINGERPRINT attributes
 (commented out for now).
 
 Fix:
-gx-ca-update.in 1.52 requires and processes the SHA1_FINGERPRINT
-attribute (and 1.53 fixes a stupid typo).  All *.cadesc files have
-been updated.
+gx-ca-update now requires and processes the SHA1_FINGERPRINT attribute.
+All *.cadesc files have been updated.  Unlike the description above,
+the SHA1_FINGERPRINT attribute is mandatory; both the MD5_FINGERPRINT
+and the SHA1_FINGERPRINT are always checked, and the certificate is
+rejected if either fails to match.
+gx-ca-update.in 1.53
 gx-map-0.4.2
