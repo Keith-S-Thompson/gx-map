@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.48 2005-03-28 00:28:34-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.49 2005-04-17 16:06:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -47,23 +47,6 @@
 ########################################################################
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
-
-#
-# TO DO:
-#
-# Check the new grid-mapfile into an RCS directory.
-# Add a "-norcs" option to disable this.
-# Obviously don't do an RCS checkin if writing to stdout.
-# If multiple output files are specified, check the last one into RCS
-# (or provide some way to specify it?).
-#
-# If multiple output files are specified, keep going if one of the writes
-# fails (but collect the errors and print a warning).  Motivation: On Blue
-# Horizon we (probably) want to write the grid-mapfile both to a local
-# filesystem and to /projects/globus.  If /projects/globus is dismounted,
-# we still want to update the local grid-mapfile.  (Workaround for now:
-# specify /projects/globus last.)
-#
 
 use strict;
 
