@@ -1,4 +1,4 @@
-# $Id: bug-0002,v 1.3 2005-03-28 00:34:57-08 kst Exp $
+# $Id: bug-0002,v 1.4 2005-04-17 03:28:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0002,v $
 
 gx-map bug 0002
@@ -21,5 +21,5 @@ To reproduce:
 % grep phred /usr/local/apps/grid-security/grid-mapfile
 "/O=FOO/CN=Phred Pharkle" phred,phred
 
-Tentatively fixed:
-gx-gen-mapfile.in 1.48
+Fixed:
+gx-gen-mapfile.in 1.48, gx-map-0.4.2
