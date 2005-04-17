@@ -1,4 +1,4 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.1 2005-03-29 20:04:42-08 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.2 2005-04-17 02:43:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -8,7 +8,7 @@ HASH                afe55e66
 SUBJECT             /C=CY/O=CyGrid/O=HPCL/CN=CyGridCA
 MAY_SIGN            /C=CY/O=CyGrid/*
 CERTIFICATE_MD5     A6:80:8B:03:33:FB:15:A4:0D:B9:9E:AC:CA:06:F5:DC
-# CERTIFICATE_SHA1    BC:35:88:D5:0E:DC:B8:7F:C6:9F:F2:F2:DE:6A:78:55:4D:6B:53:C5
+CERTIFICATE_SHA1    BC:35:88:D5:0E:DC:B8:7F:C6:9F:F2:F2:DE:6A:78:55:4D:6B:53:C5
 CERTIFICATE_URL     http://grid.ucy.ac.cy/CyGridCA/afe55e66.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://grid.ucy.ac.cy/CyGridCA/CyGridCA-CRL.pem
