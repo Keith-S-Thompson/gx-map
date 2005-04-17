@@ -1,4 +1,4 @@
-# $Id: 6df70cb1.germangrid-old.cadesc,v 1.7 2005-03-29 19:27:34-08 kst Exp $
+# $Id: 6df70cb1.germangrid-old.cadesc,v 1.8 2005-04-17 02:43:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6df70cb1.germangrid-old.cadesc,v $
 
 CA_NAME             GermanGrid CA (old)
@@ -9,7 +9,7 @@ SUBJECT             /C=DE/O=FZK-Grid/CN=FZK-Grid-CA
 MAY_SIGN            /C=DE/O=FZK-Grid/*
 MAY_SIGN            /O=GermanGrid/OU=*
 CERTIFICATE_MD5     1E:49:6A:74:C5:64:5C:D8:EB:3E:1A:56:6D:F5:44:2D
-# CERTIFICATE_SHA1    BD:C2:59:92:E2:B9:6F:B6:D0:1B:A0:41:68:2D:43:BE:71:53:9A:66
+CERTIFICATE_SHA1    BD:C2:59:92:E2:B9:6F:B6:D0:1B:A0:41:68:2D:43:BE:71:53:9A:66
 CERTIFICATE_URL     http://grid.fzk.de/ca/6df70cb1.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/6df70cb1.signing_policy
 CRL_URL             http://grid.fzk.de/ca/fzk-crl.pem
