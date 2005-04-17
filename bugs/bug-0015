@@ -1,0 +1,13 @@
+# $Id: bug-0015,v 1.1 2005-04-17 15:54:30-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0015,v $
+
+gx-map bug 0015
+Date: Tue 2005-04-17
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.1
+Title: CA dependency checking
+
+Summary:
+In gx-ca-update, if the SIGNED_BY field is set for a CA, verify that
+the signer's CA certificate has been installed.
