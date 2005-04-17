@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T' (bug-0018)
 
-# $Id: gx-ca-update.in,v 1.54 2005-04-17 16:06:15-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.55 2005-04-17 16:26:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -75,6 +75,7 @@ sub Signing_Policy($);
 sub Date_To_Seconds($);
 sub Get_CA_Ref($);
 sub Disabled($);
+sub Allow_Missing_CRL($);
 sub CRL_Info($$);
 sub Certificate_Info($);
 sub Update_Certificate($);
@@ -528,8 +529,8 @@ sub Get_CA_Ref($) {
                                     SIGNED_BY SUBJECT MAY_SIGN
                                     CERTIFICATE_MD5 CERTIFICATE_SHA1
                                     CERTIFICATE_URL SIGNING_POLICY_URL
-                                    CRL_URL INDEX CERT_EXPIRES DISABLE
-                                    _FILENAME );
+                                    CRL_URL ALLOW_MISSING_CRL INDEX
+                                    CERT_EXPIRES DISABLE _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
     my %remap = ( SIGNED_BY => 1,
@@ -591,6 +592,18 @@ sub Disabled($) {
     my($ref) = @_;
     return (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes');
 } # Disabled
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the ALLOW_MISSING_CRL field in the *.cadesc file exists
+# and is set to "yes", false otherwise.
+#
+sub Allow_Missing_CRL($) {
+    my($ref) = @_;
+    return (defined $ref->{ALLOW_MISSING_CRL} and
+           lc $ref->{ALLOW_MISSING_CRL} eq 'yes');
+} # Allow_Missing_CRL
 
 # ----------------------------------------------------------------------
 
@@ -891,7 +904,15 @@ sub Update_CRL($) {
         }
     }
     else {
-        if (not $User_Opt->{'allow-missing-crl'}) {
+        #
+        # If not CRL is specified, it's considered an error unless either
+        # the "-allow-missing-crl" (with "-UNSAFE") option is specified
+        # on the command line *or* the ALLOW_MISSING_CRL attribute is
+        # set to "yes" in the cadesc file.
+        #
+        if (not $User_Opt->{'allow-missing-crl'} and
+            not Allow_Missing_CRL $ref)
+        {
             Error $ref, "No CRL specified\n";
         }
     }
@@ -925,7 +946,9 @@ sub Update_CRL($) {
         my $remaining = $new_crl_info->{next_update} - $now;
         # Debug "remaining = $remaining\n";
         if ($remaining <= 0) {
-            if ($User_Opt->{'allow-missing-crl'}) {
+            if ($User_Opt->{'allow-missing-crl'} or
+                 Allow_Missing_CRL $ref)
+            {
                 Vprint "Newly downloaded CRL has expired\n";
             }
             else {
@@ -1060,7 +1083,7 @@ sub Install_Certificate($) {
     #
     # Don't install the certificate file if there are any errors.
     # This includes a missing CRL if the "-allow-missing-crl" option
-    # was not specified.
+    # was not specified and the ALLOW_MISSING_CRL attribute is not set.
     #
     return if defined $ref->{_ERRORS};
 
