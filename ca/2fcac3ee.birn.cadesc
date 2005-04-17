@@ -1,4 +1,4 @@
-# $Id: 2fcac3ee.birn.cadesc,v 1.3 2005-03-29 19:27:32-08 kst Exp $
+# $Id: 2fcac3ee.birn.cadesc,v 1.4 2005-04-17 02:43:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2fcac3ee.birn.cadesc,v $
 
 CA_NAME             BIRN CA
@@ -8,7 +8,7 @@ HASH                2fcac3ee
 SUBJECT             /C=US/O=BIRN/OU=BIRN-CC/CN=certman/UID=1
 MAY_SIGN            ?
 CERTIFICATE_MD5     9A:3C:00:B0:06:29:4E:9E:00:24:71:06:96:54:4B:3A
-# CERTIFICATE_SHA1    7C:F9:45:12:75:58:0A:15:C3:6E:21:0A:3A:A3:09:7D:AF:CA:84:AF
+CERTIFICATE_SHA1    7C:F9:45:12:75:58:0A:15:C3:6E:21:0A:3A:A3:09:7D:AF:CA:84:AF
 CERTIFICATE_URL     https://portal.nbirn.net/BIRN/CA/2fcac3ee.0
 SIGNING_POLICY_URL  https://portal.nbirn.net/BIRN/CA/2fcac3ee.signing_policy
 CRL_URL             ?
