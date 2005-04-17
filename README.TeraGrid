@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.2 2004-11-30 16:39:39-08 kst Exp $
+# $Id: README.TeraGrid,v 1.3 2005-04-17 02:35:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here's a suggested set of cron jobs for SDSC's TeraGrid system,
@@ -71,3 +71,9 @@ var/gx-ca-update.log under the gx-map installation directory.  In a
 future release, it will optionally use the syslog facility as well.
 
 		-- Keith Thompson <kst@sdsc.edu> 2004-11-30
+
+Update: gx-map-0.4.1 is installed and has been running at SDSC for
+some time.  I am currently putting together a 0.4.2 release with
+updated cadesc files and a few bug fixes.
+
+		-- Keith Thompson <kst@sdsc.edu> 2005-04-17
