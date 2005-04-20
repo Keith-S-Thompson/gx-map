@@ -1,0 +1,17 @@
+# $Id: bug-0019,v 1.1 2005-04-19 18:00:35-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0019,v $
+
+gx-map bug 0019
+Date: Tue 2005-04-19
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.2
+Title: Change name of gx-map client to gx-request
+
+Summary:
+The name "gx-map" refers both to the package as a while and to the
+client program.  This is confusing.  Change the name of the client
+program from "gx-map" to "gx-request".  For compatibility, make
+"gx-map" a symlink to "gx-request", but deemphasize it.  For any
+tools that invoke gx-map (including gx-ingest), check for "gx-request"
+and fall back to "gx-map" only if it exists and "gx-request" doesn't.
