@@ -1,0 +1,40 @@
+# $Id: bug-0020,v 1.1 2005-04-21 01:22:02-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0020,v $
+
+gx-map bug 0020
+Date: Thu 2005-04-21
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.2
+Title: Work around web server problem for DOEGrids CA CRL
+
+Summary:
+The CRL for the DOEGrids CA is available at
+<http://pki1.doegrids.org/CRL/1c3f2ca8.r0>.  The web server doesn't
+seem to support the http "HEAD" command, which is used by "wget
+--timestamping"; this interferes with the caching mechanism used by the
+gx-map system (particularly, in this case, the gx-ca-update command).
+The file is successfully downloaded the first time, but further
+attempts to download it will fail, leaving the old copy in place.
+The CRL is updated regularly, but gx-ca-update doesn't grab the
+new version.
+
+I sent e-mail about this problem to <trouble@es.net> on Tue 2004-12-28.
+They opened ESnet ticket TTS#12790.  They told me on Thu 2005-02-03
+that it would take at least 3 months to fix the problem.
+
+The workaround is to periodically delete the 1c3f2ca8.r0 file from
+the gx-map cache.
+
+Suggested fix: Add an attribute to 1c3f2ca8.doegrids.cadesc indicating
+that the cached CRL needs to be deleted before grabbing a new copy.
+
+Suggested fix: Rather than using "wget --timestamping", use some
+other magic to invoke the http "HEAD" command (ick).
+
+Suggested fix: Add an argument to Cache_File indicating that the
+file is expected to be small.  Use this argument for certificates
+and CRLs.  If this is set, don't cache (or nuke the cached copy
+before downloading).
+
+Suggested fix: Just wait for the ESnet folks to fix their server.
