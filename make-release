@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.6 2005-04-17 16:32:49-07 kst Exp $
+# $Id: make-release,v 1.7 2005-04-25 17:51:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -14,7 +14,7 @@ if [ $# -ne 1 ] ; then
 fi
 
 num=$1
-in_files=`echo *.in`
+in_files=`ls *.in | grep -v gx-map.conf.in`
 cadesc_files=`cd ca ; echo *.cadesc`
 bug_files=`cd bugs ; echo bug-*`
 
