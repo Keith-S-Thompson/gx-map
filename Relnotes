@@ -1,7 +1,21 @@
-# $Id: Relnotes,v 1.5 2005-04-17 16:57:10-07 kst Exp $
+# $Id: Relnotes,v 1.6 2005-04-26 18:08:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.4.3, 2005-04-26
+
+    This release fixes a minor (and mostly harmless) oversight
+    in release 0.4.2.  The file gx-map.conf.in is part of the
+    new configuration system, which is not yet complete.  It was
+    inadvertently included in release 0.4.2, which could cause some
+    confusion.  Release 0.4.3 omits this file (and updates a few
+    bug reports).
+
+    There is no functional difference between releases 0.4.2 and 0.4.3.
+
+    Bugs fix in this release:
+    bug-0021 gx-map.conf.in mistakenly included in 0.4.2 release
 
 Release 0.4.2, 2005-04-17
 
@@ -12,7 +26,7 @@ Release 0.4.2, 2005-04-17
     This release also includes a "bugs" directory containing several
     bug reports.
 
-    Bugs fix in this release:
+    Bugs fixed in this release:
     bug-0001 Removing a secondary mapping crashes gx-gen-mapfile
     bug-0002 Double usernames for primary+secondary mappings
     bug-0003 "ci" command can change requests.log permissions
