@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-personal-gx-map,v 1.2 2005-04-27 20:05:54-07 kst Exp $
+# $Id: install-personal-gx-map,v 1.3 2005-04-27 20:26:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-personal-gx-map,v $
 
 #
@@ -17,22 +17,61 @@ die() {
     exit 1
 }
 
-for arg in "$@" ; do
-    case "$arg" in
-        *.tar.gz)
-            tarball=$arg
-            if [ ! -f $tarball ] ; then
-                die "No file $tarball"
+usage() {
+    cat <<EOF
+Usage: $0 [options] tarball
+    -help      Display this message and exit
+    -perl arg  Full path to Perl executable
+               Default is \$default_perl
+    -path arg  Value for $PATH
+               Default is \$default_path
+"tarball" is a source tarball (*.tar.gz) for gx-map
+EOF
+    exit 1
+}
+
+########################################################################
+
+default_perl=/usr/bin/perl
+default_path=/bin:/usr/bin
+
+perl=$default_perl
+path=$default_path
+
+while [ $# -gt 0 ] ; do
+    case "$1" in
+        -help)
+            usage
+            ;;
+        -perl)
+            shift
+            if [ $# -eq 0 ] ; then
+                die "-perl requires an argument (-help for usage)"
             fi
+            perl=$1
+            ;;
+        -path)
+            shift
+            if [ $# -eq 0 ] ; then
+                die "-path requires an argument (-help for usage)"
+            fi
+            path=$1
+            ;;
+        -*)
+            die "Unrecognized option $1 (-help for usage)"
+            ;;
+        *.tar.gz)
+            tarball=$1
             ;;
         *)
-            die "Unrecognized argument $arg"
+            die "Unrecognized argument $1 (-help for usage)"
             ;;
     esac
+    shift
 done
 
-if [ X"$tarball" = "X" ] ; then
-    die "Usage: $0 tarfile"
+if [ "X$tarball" = "X" ] ; then
+    die "No tarball specified (-help for usage)"
 fi
 
 case "$tarball" in
@@ -62,8 +101,8 @@ install_dir=$base_dir/gx-map-$namespace-install
 data_dir=$base_dir/gx-map-$namespace-data
 
 cat <<EOF > $namespace.conf
-PERL                     /usr/bin/perl
-PATH                     /bin:/usr/bin
+PERL                     $perl
+PATH                     $path
 NAMESPACE                $namespace
 INSTALL_DIR              $install_dir
 DATA_DIR                 $data_dir
