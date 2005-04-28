@@ -1,0 +1,63 @@
+# $Id: bug-0022,v 1.1 2005-04-28 16:58:30-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0022,v $
+
+gx-map bug 0022
+Date: Thu 2005-04-28
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.3
+Title: Improve cache mechanism
+
+Summary:
+Caching of downloaded files is implemented in the Init_Cache_Info
+and Cache_File subroutines in Gridmap_Utils.pm.
+
+Currently, the cache is a directory tree under the data directory.
+Each cached file has its own subdirectory (uniquely named
+<timestamp>-<pid>-<serial>) containing a ".url" file (containing the
+full URL of the downloaded file) and a copy of the downloaded file.
+Init_Cache_Info() scans all the cache/*/.url files to initialize
+an internal data structure that keeps track of what's where.
+"wget --timestamping" is used to download files as needed.
+
+One problem is that though the scheme works (mostly) it's too complex
+for comfort.  The directory names arbitrarily depend on the time when
+the file was first downloaded, and the directory tree is difficult
+to follow.  The scheme also depends on "wget --timestamping" not to
+misbehave.  The web server for the DOEGrids CA CRL causes a problem
+for "wget --timestamping" see bug-0020.  (Any redesign should fix
+bug-0020.)
+
+Suggested solution:
+Put all downloaded files directly under the cache directory and
+eliminate the ".url" files.  The name of each downloaded file is
+a quoted-printable translation of the URL, suitable for use as a
+file name.  For example, <http://www.sdsc.edu/CA/3deda549.r0> would
+be stored as "cache/http=3A=2F=2Fwww.sdsc.edu=2FCA=2F3deda549.r0".
+(See ~kst/bin/quoted-printable for a prototype).
+
+When actually downloading a file, don't depend on "wget --timestamping".
+Instead, use the "curl --head" command (this is a new dependency) to
+determine the last-modified timestamp, and compare this to the mtime of
+the most recently cached copy.  This should work for http, https, and
+ftp URLS, but be sure to test all the cases.  If the timestamp reported
+by curl is newer than the cached copy, do a "wget --timestamping" in
+a unique temporary directory; if the download is successful, remove
+the cached copy and rename the new copy into the cache directory.
+
+Note that "wget --timestamping" doesn't work properly with the
+-O/--output-document option, so download the file in to a new empty
+directory and use the basename of the URL.  Using a new empty directory
+should work around the problem with the DOEGrids web server, and should
+also avoid potential problems with partially successful wget downloads.
+
+This should eliminate the need for the Init_Cache_Info() subroutine.
+
+In addition to all this, have Cache_File() return more information.
+It currently just returns the name of the cached file.  It should also
+return status information, indicating at least which of the following
+happened:
+    Using the existing cached copy, which is up-to-date.
+    Using the existing cached copy because the download failed.
+    Successfully downloaded a new file for the first time.
+    Successfully downloaded a new file, replacing the existing cached copy.
