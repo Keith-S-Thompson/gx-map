@@ -1,0 +1,92 @@
+#!/bin/sh
+
+# $Id: install-personal-gx-map,v 1.1 2005-04-27 18:35:49-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/install-personal-gx-map,v $
+
+#
+# Set up a gx-map test installation under the user's home directory.
+#
+
+try() {
+    echo "% $@"
+    eval "$@" || exit 1
+}
+
+die() {
+    echo "$@" 1>&2
+    exit 1
+}
+
+for arg in "$@" ; do
+    case "$arg" in
+        *.tar.gz)
+            tarball=$arg
+            if [ ! -f $tarball ] ; then
+                die "No file $tarball"
+            fi
+            ;;
+        *)
+            die "Unrecognized argument $arg"
+            ;;
+    esac
+done
+
+if [ X"$tarball" = "X" ] ; then
+    die "Usage: $0 tarfile"
+fi
+
+case "$tarball" in
+    /*)
+        ;;
+    *)
+        tarball=`pwd`/$tarball
+        ;;
+esac
+
+namespace=`echo $USER | tr a-z A-Z`_TEST
+base_dir=$HOME/gx-map-$namespace
+if [ -d $base_dir ] ; then
+    die "Directory $base_dir already exists"
+fi
+try mkdir $base_dir
+try cd $base_dir
+
+source_dir=`basename $tarball .tar.gz`
+if [ -d $source_dir ] ; then
+    die "Directory $source_dir already exists"
+fi
+try tar zxf $tarball
+try cd $source_dir
+
+install_dir=$base_dir/gx-map-$namespace-install
+data_dir=$base_dir/gx-map-$namespace-data
+
+cat <<EOF > $namespace.conf
+PERL                     /usr/bin/perl
+PATH                     /bin:/usr/bin
+NAMESPACE                $namespace
+INSTALL_DIR              $install_dir
+DATA_DIR                 $data_dir
+REQUESTS_LOG_PERMISSIONS 444
+GLOBUS_ADMINS            $USER
+ADMIN_EMAIL              $USER@sdsc.edu
+EOF
+
+try ./configure-gx-map $namespace.conf
+try make install
+try cd ..
+try rm -rf $source_dir
+
+try mkdir $base_dir/grid-security
+try mkdir $base_dir/grid-security/certificates
+
+cat <<EOF
+# ======================================================================
+# Add the following cron commands (adjust frequency to taste).
+#
+# minute hour mday month wday command
+#
+* * * * * $install_dir/sbin/gx-check-requests -namespace $namespace ; $install_dir/sbin/gx-gen-mapfile $base_dir/grid-security/grid-mapfile
+* * * * * $install_dir/sbin/gx-ca-update -target-dir $base_dir/grid-security/certificates -ca ... -ca ...
+# ======================================================================
+EOF
