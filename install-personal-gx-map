@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-personal-gx-map,v 1.1 2005-04-27 18:35:49-07 kst Exp $
+# $Id: install-personal-gx-map,v 1.2 2005-04-27 20:05:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-personal-gx-map,v $
 
 #
@@ -86,7 +86,7 @@ cat <<EOF
 #
 # minute hour mday month wday command
 #
-* * * * * $install_dir/sbin/gx-check-requests -namespace $namespace ; $install_dir/sbin/gx-gen-mapfile $base_dir/grid-security/grid-mapfile
+* * * * * $install_dir/sbin/gx-check-requests -namespace $namespace ; $install_dir/sbin/gx-gen-mapfile $base_dir/grid-security/grid-mapfile ; $install_dir/sbin/gx-gen-mapfile -dump -all $base_dir/grid-security/gx-map-dump
 * * * * * $install_dir/sbin/gx-ca-update -target-dir $base_dir/grid-security/certificates -ca ... -ca ...
 # ======================================================================
 EOF
