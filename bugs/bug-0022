@@ -1,4 +1,4 @@
-# $Id: bug-0022,v 1.1 2005-04-28 16:58:30-07 kst Exp $
+# $Id: bug-0022,v 1.2 2005-04-29 18:37:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0022,v $
 
 gx-map bug 0022
@@ -24,9 +24,9 @@ One problem is that though the scheme works (mostly) it's too complex
 for comfort.  The directory names arbitrarily depend on the time when
 the file was first downloaded, and the directory tree is difficult
 to follow.  The scheme also depends on "wget --timestamping" not to
-misbehave.  The web server for the DOEGrids CA CRL causes a problem
-for "wget --timestamping" see bug-0020.  (Any redesign should fix
-bug-0020.)
+misbehave (for example, if the file system is full).  The web server
+for the DOEGrids CA CRL causes a problem for "wget --timestamping";
+see bug-0020.  (Any redesign should fix bug-0020.)
 
 Suggested solution:
 Put all downloaded files directly under the cache directory and
@@ -40,18 +40,21 @@ When actually downloading a file, don't depend on "wget --timestamping".
 Instead, use the "curl --head" command (this is a new dependency) to
 determine the last-modified timestamp, and compare this to the mtime of
 the most recently cached copy.  This should work for http, https, and
-ftp URLS, but be sure to test all the cases.  If the timestamp reported
+ftp URLs, but be sure to test all the cases.  If the timestamp reported
 by curl is newer than the cached copy, do a "wget --timestamping" in
 a unique temporary directory; if the download is successful, remove
 the cached copy and rename the new copy into the cache directory.
 
 Note that "wget --timestamping" doesn't work properly with the
--O/--output-document option, so download the file in to a new empty
+-O/--output-document option, so download the file into a new empty
 directory and use the basename of the URL.  Using a new empty directory
-should work around the problem with the DOEGrids web server, and should
-also avoid potential problems with partially successful wget downloads.
+should work around the problem with the DOEGrids web server (it
+even sets the timestamp correctly, somehow), and should also avoid
+potential problems with partially successful wget downloads.
 
-This should eliminate the need for the Init_Cache_Info() subroutine.
+This should eliminate the need for the Init_Cache_Info() subroutine,
+since all the necessary information is implicit in the names and
+timestamps of the files in the cache directory.
 
 In addition to all this, have Cache_File() return more information.
 It currently just returns the name of the cached file.  It should also
