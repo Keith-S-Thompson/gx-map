@@ -1,0 +1,26 @@
+# $Id: bug-0023,v 1.1 2005-04-29 21:03:10-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0023,v $
+
+gx-map bug 0023
+Date: Fri 2005-04-29
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.3
+Title: Allow version param in config file
+
+Summary:
+The distributed sample.conf file has the following lines:
+
+INSTALL_DIR     /INSTALL/DIR/gx-map-0.4.3
+DATA_DIR        /DATA/DIR/gx-map-0.4.3-data
+
+These have to be updated for each release.
+
+Provide a mechanism (syntax TBD) to include the current version
+number in the INSTALL_DIR or DATA_DIR, and use this in sample.conf.
+(Update later for the new configuration mechanism.)
+
+Perhaps something like:
+
+INSTALL_DIR     /INSTALL/DIR/gx-map-$(VERSION)
+DATA_DIR        /DATA/DIR/gx-map-$(VERSION)-data
