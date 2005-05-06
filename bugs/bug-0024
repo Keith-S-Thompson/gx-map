@@ -1,0 +1,27 @@
+# $Id: bug-0024,v 1.1 2005-05-06 03:23:37-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0024,v $
+
+gx-map bug 0024
+Date: Fri 2005-05-06
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.3
+Title: Don't assume Perl's getpw* functions return 9 elements
+
+Summary:
+The Gridmap_Utils::Get_PW function returns undef if getpwuid or
+getpwnam doesn't return a list of exactly 9 items.  On some systems,
+for some versions of Perl, these functions can return a 10-item list;
+the optional 10th item is called $expire.  This shows up on MacOS X
+with Perl 5.8.1-RC3.  The symptom (in release 0.4.3) is:
+
+Use of uninitialized value in numeric ne (!=) at /Users/kst/apps/gx-map-0.4.3/bin/gx-map line 156.
+Traceback:
+    /Users/kst/apps/gx-map-0.4.3/bin/gx-map:156
+
+Suggested fix:
+Require getpw* to return at least 9 elements, not exactly 9 elements.
+If a 10th elements is present, assign it to the result under the key
+"expire".  Similarly, allow more than 4 elements for getgrnam and
+getgrgid; it never returns more than 4 as far as I know, but it won't
+hurt to loosen the check a little.
