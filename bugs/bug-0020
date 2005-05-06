@@ -1,4 +1,4 @@
-# $Id: bug-0020,v 1.1 2005-04-21 01:22:02-07 kst Exp $
+# $Id: bug-0020,v 1.2 2005-05-06 04:26:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0020,v $
 
 gx-map bug 0020
@@ -38,3 +38,12 @@ and CRLs.  If this is set, don't cache (or nuke the cached copy
 before downloading).
 
 Suggested fix: Just wait for the ESnet folks to fix their server.
+
+Tentative fix:
+Gridmap_Utils.pm.in 1.64
+gx-ca-update.in 1.56
+ca/1c3f2ca8.doegrids.cadesc 1.14
+Add a new CRL_DOWNLOAD_GLITCH attribute.
+If set, rename the existing cached file before attempting to download
+a new one.
+The eventual fix for bug-0022 should supersede this workaround.
