@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.62 2005-04-26 18:08:00-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.63 2005-05-06 03:30:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -260,13 +260,14 @@ sub Get_PW(;$) {
     else {
         @pw = getpwnam($_[0]);
     }
-    if (scalar @pw != 9) {
+    if (scalar @pw < 9) {
         return undef;
     }
     else {
         my $result;
-        my @fields = qw(name passwd uid gid quota comment gcos dir shell);
-        for (my $i = 0; $i <= $#fields; $i ++) {
+        my @fields = qw(name passwd uid gid quota comment gcos dir shell expire);
+        my $last_field = ($#pw < $#fields ? $#pw : $#fields);
+        for (my $i = 0; $i <= $last_field; $i ++) {
             $result->{$fields[$i]} = $pw[$i];
         }
         return $result;
@@ -295,7 +296,7 @@ sub Get_GR(;$) {
     else {
         @gr = getgrnam($group);
     }
-    if (scalar @gr != 4) {
+    if (scalar @gr < 4) {
         return undef;
     }
     else {
