@@ -1,0 +1,29 @@
+# $Id: bug-0025,v 1.1 2005-05-06 06:35:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0025,v $
+
+gx-map bug 0025
+Date: Fri 2005-05-06
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.3
+Title: Get information on AusGrid CA
+
+Summary:
+The AusGrid CA (along with several other CAs in Australia) no longer
+provides its CA files individually.  Instead, it provides them in
+*.tar.gz files, which gx-ca-update can't handle.  The AusGrid CA
+is marked as disabled for now.
+
+Suggested fix:
+Bug the AusGrid CA people to provide their files individually.
+(I've already sent e-mail to someone who turned out not to be the
+right person, but forwarded it to someone who was.)
+
+Suggested fix:
+Grab the tarballs, unpack them, and make them available myself.
+Probably not worth the effort.
+
+Suggested fix:
+Update gx-ca-update to support grabbing tarballs and extracting
+specified files from them.  Define a new syntax for the argument
+to Cache_File.  Almost certainly not worth the effort.
