@@ -1,4 +1,4 @@
-# $Id: bug-0024,v 1.1 2005-05-06 03:23:37-07 kst Exp $
+# $Id: bug-0024,v 1.2 2005-05-06 03:31:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0024,v $
 
 gx-map bug 0024
@@ -25,3 +25,6 @@ If a 10th elements is present, assign it to the result under the key
 "expire".  Similarly, allow more than 4 elements for getgrnam and
 getgrgid; it never returns more than 4 as far as I know, but it won't
 hurt to loosen the check a little.
+
+Fixed:
+Gridmap_Utils.pm.in 1.63
