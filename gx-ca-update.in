@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T' (bug-0018)
 
-# $Id: gx-ca-update.in,v 1.55 2005-04-17 16:26:25-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.56 2005-05-06 04:23:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -529,8 +529,9 @@ sub Get_CA_Ref($) {
                                     SIGNED_BY SUBJECT MAY_SIGN
                                     CERTIFICATE_MD5 CERTIFICATE_SHA1
                                     CERTIFICATE_URL SIGNING_POLICY_URL
-                                    CRL_URL ALLOW_MISSING_CRL INDEX
-                                    CERT_EXPIRES DISABLE _FILENAME );
+                                    CRL_URL ALLOW_MISSING_CRL
+                                    INDEX CERT_EXPIRES DISABLE
+                                    CRL_DOWNLOAD_GLITCH _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
     my %remap = ( SIGNED_BY => 1,
@@ -895,7 +896,21 @@ sub Update_CRL($) {
         #
         # Attempt to download a new CRL (or use a cached copy)
         #
-        eval { $new_crl_file = Gridmap_Utils::Cache_File $ref->{CRL_URL} };
+        my $CRL_Download_Glitch =
+            ( defined $ref->{CRL_DOWNLOAD_GLITCH} and
+              lc $ref->{CRL_DOWNLOAD_GLITCH} eq 'yes' );
+
+        if ($CRL_Download_Glitch) {
+            #
+            # See bug-0020
+            #
+            eval { $new_crl_file
+                       = Gridmap_Utils::Cache_File $ref->{CRL_URL}, 1 };
+        }
+        else {
+            eval { $new_crl_file
+                       = Gridmap_Utils::Cache_File $ref->{CRL_URL} };
+        }
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
