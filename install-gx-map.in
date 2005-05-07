@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.35 2005-01-07 17:14:04-08 kst Exp $
+# $Id: install-gx-map.in,v 1.36 2005-05-07 03:39:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -61,7 +61,7 @@ LIB_DIR=$INSTALL_DIR/lib
 ETC_DIR=$INSTALL_DIR/etc
 DATA_DIR=%DATA_DIR%
 
-BIN_FILES="gx-map"
+BIN_FILES="gx-request"
 SBIN_FILES="gx-check-requests gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 ETC_FILES="README README.CA README.CA-Security README.Cross-Site README.TeraGrid README.Upgrade Relnotes gx-map.ppt gx-map.pdf"
@@ -116,3 +116,6 @@ fi
 if [ ! -h $INSTALL_DIR/var ] ; then
     verbosely ln -s $DATA_DIR $INSTALL_DIR/var
 fi
+
+verbosely cd $BIN_DIR
+verbosely ln -s gx-request gx-map
