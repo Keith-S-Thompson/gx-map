@@ -1,4 +1,4 @@
-# $Id: README.Cross-Site,v 1.1 2004-11-24 16:52:34-08 kst Exp $
+# $Id: README.Cross-Site,v 1.2 2005-05-07 03:52:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Cross-Site,v $
 
 gx-map has some limited support for automatically propagating
@@ -26,7 +26,7 @@ Datastar and Teragrid systems (but not vice versa).
 For systems with distinct namespaces, where "jsmith" on one system
 may not be the same user as "jsmith" on another system, there's
 currently no good mechanism for automatically propagating information.
-This requires users (or administrators) to run the "gx-map" command
+This requires users (or administrators) to run the "gx-request" command
 separately on each system.  There are some hooks in place to customize
 the Gridmap_Valid_Mappings.pm Perl module, allowing translations from
 one namespace to another, but this hasn't been widely used.
