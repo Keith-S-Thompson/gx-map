@@ -1,12 +1,14 @@
-# $Id: README,v 1.23 2005-05-07 02:21:12-07 kst Exp $
+# $Id: README,v 1.24 2005-05-07 03:52:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
 and CA files.
 
-The "gx-map" command is used to request the addition or deletion
-of an entry in the grid-mapfile.  Users should normally run
-"gx-map -interactive" and follow the instructions.
+The "gx-request" command is used to request the addition or
+deletion of an entry in the grid-mapfile.  Users should normally run
+"gx-request -interactive" and follow the instructions.  (Prior to
+release 0.4.5, the "gx-request" command was called "gx-map"; it can
+still be invoked by that name.)
 
 A user may map an arbitrary DN (distinguished name) to his own
 Unix account.  An administrator (as specified in the config file)
@@ -16,13 +18,13 @@ Some DNs may be mapped automatically without user intervention; in
 particular, certificates issued by the NPACI and SDSC certificate
 authorities (cacl) are automatically mapped to the corresponding
 user account.  This is handled by a separate tool (not included here)
-that watches for updates in the cacl index file and invokes gx-map.
+that watches for updates in the cacl index file and invokes gx-request.
 (This applies only to systems within the SDSC namespace.)
 
-All commands accept a "-help" option to print a brief usage message
-and a "-version" option to display the current version.  The gx-map
-command also accepts a "-long-help" option with information on
-non-interactive use.
+All commands accept a "-help" option to print a brief usage
+message and a "-version" option to display the current version.
+The gx-gx-request command also accepts a "-long-help" option with
+information on non-interactive use.
 
 Support for propagation of information across sites is still
 incomplete.  (The new SOURCE attribute is intended to enable tracking
@@ -53,4 +55,4 @@ installed in the etc subdirectory when you install gx-map.
 
 Future releases will include man pages.
 
-                -- Keith Thompson <kst@sdsc.edu> 2004-11-30, 2005-04-17
+                -- Keith Thompson <kst@sdsc.edu> 2005-05-07
