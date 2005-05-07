@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.65 2005-05-07 02:21:12-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.66 2005-05-07 03:52:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -77,7 +77,7 @@ my $Have_Net_Domain_Module;
 BEGIN {
     require 5.006;
     use vars qw($VERSION $Debugging %Config $Registered_Handler_Function);
-    $VERSION = '0.4.4';
+    $VERSION = '0.4.5';
     $Debugging = undef;
     %Config = ( PERL                     => '%PERL%',
                 PATH                     => '%PATH%',
