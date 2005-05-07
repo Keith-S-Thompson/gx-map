@@ -1,4 +1,4 @@
-# $Id: bug-0019,v 1.1 2005-04-19 18:00:35-07 kst Exp $
+# $Id: bug-0019,v 1.2 2005-05-07 03:50:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0019,v $
 
 gx-map bug 0019
@@ -15,3 +15,10 @@ program from "gx-map" to "gx-request".  For compatibility, make
 "gx-map" a symlink to "gx-request", but deemphasize it.  For any
 tools that invoke gx-map (including gx-ingest), check for "gx-request"
 and fall back to "gx-map" only if it exists and "gx-request" doesn't.
+
+Fixed:
+gx-request.in 1.1
+gx-ingest.in 1.10
+install-gx-map 1.36
+gx-map.in (removed)
+gx-map-0.4.5
