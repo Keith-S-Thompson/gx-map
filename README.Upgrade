@@ -1,17 +1,17 @@
-# $Id: README.Upgrade,v 1.4 2005-04-17 02:38:57-07 kst Exp $
+# $Id: README.Upgrade,v 1.5 2005-05-07 02:21:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.Upgrade,v $
 
-Upgrading from gx-map 0.4.1 to 0.4.2.
+Upgrading from gx-map 0.4.X to 0.4.4.
 
-The data files for 0.4.1 and 0.4.2 are compatible, but the installation
-procedure assumes that you want to create a new data directory.
-You should be able to install gx-map 0.4.2 and then copy your 0.4.1
-data directory, replacing the 0.4.2 data directory, but this has
-not yet been tested.  You might want to consider waiting for a new
-gx-map release, which should have a more sophisticated configuration
-and installation procedure.
+The data files for all 0.4.* releases are compatible, but the
+installation procedure assumes that you want to create a new data
+directory.  For example, you should be able to install gx-map 0.4.4
+and then copy your 0.4.1 data directory, replacing the 0.4.4 data
+directory, but this has not yet been tested.  You might want to
+consider waiting for a new gx-map release, which should have a more
+sophisticated configuration and installation procedure.
 
-Upgrading from gx-map 0.3 to 0.4.2.
+Upgrading from gx-map 0.3 to 0.4.4.
 
 If you've been using gx-map 0.3, you'll have an existing gx-map
 data directory from which your current grid-mapfile is generated.
@@ -46,11 +46,11 @@ The files you should have in your var directory are:
         into RCS.  The RCS directory isn't used by the gx-map system,
         but you can examine it to check the history.
 
-To upgrade from gx-map 0.3 to 0.4.2:
+To upgrade from gx-map 0.3 to 0.4.4:
 
-1.  Create a new configuration file for your gx-map-0.4.2 installation.
+1.  Create a new configuration file for your gx-map-0.4.4 installation.
     Use "sample.conf" as a template.  The INSTALL_DIR and DATA_DIR
-    should be new directories; do not attempt to install gx-map-0.4.2
+    should be new directories; do not attempt to install gx-map-0.4.4
     on top of your existing gx-map-0.3 installation.
 
     When you create your configuration file, carefully consider
@@ -66,11 +66,11 @@ To upgrade from gx-map 0.3 to 0.4.2:
     generic account like "globus", you can control access by giving
     your administrators access to that account.
 
-    Remember that access to an administrative account allows creating
+    Remember that access to an administrative account allows creation
     of a grid-mapfile entry for any user, enabling access to that
     account.  Guard it as closely as you guard your "root" account.
 
-    Install gx-map-0.4.2 in a new directory (not on top of your
+    Install gx-map-0.4.3 in a new directory (not on top of your
     existing gx-map-0.3 directory); see INSTALL for details.
 
 2.  Shut down the gx-check-requests and gx-gen-mapfile cron jobs.
@@ -79,7 +79,7 @@ To upgrade from gx-map 0.3 to 0.4.2:
     in case you need to refer to it later.
 
 4.  Use the gx-convert-log command to translate your old requests.log
-    file for use with gx-map 0.4.2.  The format is upward-compatible,
+    file for use with gx-map 0.4.4.  The format is upward-compatible,
     but gx-convert-log will add some new fields.
 
     The gx-admins command scans a requests.log file and determines which
@@ -96,11 +96,11 @@ To upgrade from gx-map 0.3 to 0.4.2:
     the var directory.  Once you've translated your old requests.log
     file, install it in the var directory and set its permissions.
 
-5.  Modify your cron jobs to invoke the gx-map 0.4.2 commands
-    and re-enable them.  You should initially write the
-    generated grid-mapfile to a temporary directory and check it
-    against your existing one.  Note that gx-map-0.4.2 generates
-    GT2-style and GT3-style grid-mapfile entries.  If you're using
+5.  Modify your cron jobs to invoke the gx-map 0.4.4 commands
+    and re-enable them.  You should initially write the generated
+    grid-mapfile to a temporary directory and check it against your
+    existing one.  Note that gx-map-0.4.4 generates both GT2-style
+    and GT3/GT4-style grid-mapfile entries.  If you're using
     expand-grid-mapfile along with gx-map-0.3, you can compare your
     new grid-mapfile to a sorted copy of your existing one.  If not,
     something like this should work:
@@ -115,4 +115,4 @@ To upgrade from gx-map 0.3 to 0.4.2:
 
 If you have any questions, please feel free to contact me.
 
-                -- Keith Thompson <kst@sdsc.edu> 2005-04-17
+                -- Keith Thompson <kst@sdsc.edu> 2005-05-07
