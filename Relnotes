@@ -1,7 +1,17 @@
-# $Id: Relnotes,v 1.7 2005-05-07 02:19:29-07 kst Exp $
+# $Id: Relnotes,v 1.8 2005-05-07 03:52:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.4.5, 2005-05-07
+
+    This release changes the name of the "gx-map" client program to
+    "gx-request".  For backward compatibility, it's still available
+    as "gx-map".  The idea is to avoid confusion between the name of
+    the client program and the name of the package as a whole.
+
+    Bugs fixed in this release:
+    bug-0019 Change name of gx-map client to gx-request
 
 Release 0.4.4, 2005-05-07
 
