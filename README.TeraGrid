@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.4 2005-05-07 02:21:14-07 kst Exp $
+# $Id: README.TeraGrid,v 1.5 2005-05-07 03:52:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here's a suggested set of cron jobs for SDSC's TeraGrid system,
@@ -10,12 +10,12 @@ but can use this as a template.
 Sorry about the long lines, but crontab doesn't seem to allow commands
 to be split.
 
-TeraGrid is currently using gx-map-0.4.1; gx-map-0.4.4 has not yet
+TeraGrid is currently using gx-map-0.4.1; gx-map-0.4.5 has not yet
 been installed, but the cron jobs presented here assume that it has.
 
 # minute hour mday month wday command
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.4/sbin/gx-check-requests -namespace SDSC ; /usr/local/apps/gx-map-0.4.4/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.4/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/apps/gx-map-0.4.4/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/apps/grid-security/certificates
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.5/sbin/gx-check-requests -namespace SDSC ; /usr/local/apps/gx-map-0.4.5/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.5/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/apps/gx-map-0.4.5/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/apps/grid-security/certificates
 
 The gx-check-requests command checks for new requests every 5 minutes;
 the requests are validated and appended to the requests.log file.
@@ -42,7 +42,7 @@ the list of CA certificates to be installed.
 For NCSA, the cron jobs might look like this:
 
 # minute hour mday month wday command
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.4/sbin/gx-check-requests -namespace NCSA ; /usr/local/gx-map-0.4.4/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.5/sbin/gx-check-requests -namespace NCSA ; /usr/local/gx-map-0.4.5/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
 15,45 * * * *    /usr/local/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/grid-security/certificates
 
 By default, gx-ca-update will not install a certificate if there is
@@ -75,6 +75,6 @@ future release, it may optionally use the syslog facility as well.
 
 Update: gx-map-0.4.1 is installed and has been running at SDSC and
 several other TeraGrid sites for some time.  The current release
-is gx-map-0.4.4.
+is gx-map-0.4.5.
 
 		-- Keith Thompson <kst@sdsc.edu> 2005-05-07
