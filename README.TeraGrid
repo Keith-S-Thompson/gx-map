@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.3 2005-04-17 02:35:45-07 kst Exp $
+# $Id: README.TeraGrid,v 1.4 2005-05-07 02:21:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here's a suggested set of cron jobs for SDSC's TeraGrid system,
@@ -10,43 +10,40 @@ but can use this as a template.
 Sorry about the long lines, but crontab doesn't seem to allow commands
 to be split.
 
-As I write this, not everything required for these cron jobs has been
-installed yet.
+TeraGrid is currently using gx-map-0.4.1; gx-map-0.4.4 has not yet
+been installed, but the cron jobs presented here assume that it has.
 
 # minute hour mday month wday command
-4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/apps/gx-map-0.4.1/sbin/gx-check-requests -namespace SDSC
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.1/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.1/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/apps/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.4/sbin/gx-check-requests -namespace SDSC ; /usr/local/apps/gx-map-0.4.4/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.4/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/apps/gx-map-0.4.4/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/apps/grid-security/certificates
 
 The gx-check-requests command checks for new requests every 5 minutes;
 the requests are validated and appended to the requests.log file.
 
-The gx-gen-mapfile command runs every 5 minutes, and generates
-(when necessary) a new grid-mapfile.  I assume here that it's
-written to the /usr/local/apps/grid-security directory; the file
-/etc/grid-security/grid-mapfile then needs to be a symlink to
-/usr/local/apps/grid-security/grid-mapfile.  The "-req" arguments are
-specific to SDSC; non-SDSC sites should omit them and use only the
-local requests.log file.  (The "ncsa-sdsc-user-map" file from gx-map
-0.3 is no longer included in the release.  NCSA will need to add a
-number of entries to their local gx-map database; I'll help with that.)
+The gx-gen-mapfile command runs after gx-check-requests, and
+generates (when necessary) a new grid-mapfile.  I assume here that
+it's written to the /usr/local/apps/grid-security directory; the
+file /etc/grid-security/grid-mapfile then needs to be a symlink to
+/usr/local/apps/grid-security/grid-mapfile.  The "-req" arguments
+are specific to SDSC; non-SDSC sites should omit them and use only
+the local requests.log file.  (The requests.log on ftp.sdsc.edu does
+not currently exist at the specified URL; contact me for support.)
+(The "ncsa-sdsc-user-map" file from gx-map 0.3 is no longer included
+in the release.  NCSA will need to add a number of entries to their
+local gx-map database; I can help with that.)
 
 Finally, the gx-ca-update command runs every 30 minutes and checks
 for CRL (Certificate Revocation List) updates.  I recommend running
 gx-ca-update once manually, with the "-verbose" option, to populate
 the certificates directory and see what messages are produced, before
-enabling the cron job.  The argument to the "-ca" option is the list
-of CA certificates to be installed.  They can also be specified by
-the name incorporated into the name of the cadesc file:
-
-    -ca uk-escience,doegrids,sdsc,ncsa,purdue-tg-ra,psc-kerberos,purdue,tacc,psc-root,npaci,esnet
+enabling the cron job.  The arguments to the "-ca" option specify
+the list of CA certificates to be installed.
 
 For NCSA, the cron jobs might look like this:
 
 # minute hour mday month wday command
-4,9,14,19,24,29,34,39,44,49,54,59 * * * *       /usr/local/gx-map-0.4.1/sbin/gx-check-requests -namespace NCSA
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.1/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954,1c3f2ca8,3deda549,4a6cd8b1,67e8acfa,85ca9edc,95009ddc,9a1da9f9,aa99c057,b89793e4,d1b603c3 -target-dir /usr/local/apps/grid-security/certificates
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.4/sbin/gx-check-requests -namespace NCSA ; /usr/local/gx-map-0.4.4/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
+15,45 * * * *    /usr/local/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/grid-security/certificates
 
 By default, gx-ca-update will not install a certificate if there is
 no current corresponding CRL.  If a CRL expires and a new one is not
@@ -66,14 +63,18 @@ The additional arguments to the gx-ca-update command might then be:
 
     -UNSAFE -allow-missing-crl -expire-crl 45m
 
+(The PSC and USC Kerberos CAs issue only short-term certificates and
+don't have CRLs.  Their description files instruct gx-ca-update to
+permit this.)
+
 The gx-ca-update command writes log messages to the file
 var/gx-ca-update.log under the gx-map installation directory.  In a
-future release, it will optionally use the syslog facility as well.
+future release, it may optionally use the syslog facility as well.
 
 		-- Keith Thompson <kst@sdsc.edu> 2004-11-30
 
-Update: gx-map-0.4.1 is installed and has been running at SDSC for
-some time.  I am currently putting together a 0.4.2 release with
-updated cadesc files and a few bug fixes.
+Update: gx-map-0.4.1 is installed and has been running at SDSC and
+several other TeraGrid sites for some time.  The current release
+is gx-map-0.4.4.
 
-		-- Keith Thompson <kst@sdsc.edu> 2005-04-17
+		-- Keith Thompson <kst@sdsc.edu> 2005-05-07
