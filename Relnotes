@@ -1,7 +1,23 @@
-# $Id: Relnotes,v 1.6 2005-04-26 18:08:00-07 kst Exp $
+# $Id: Relnotes,v 1.7 2005-05-07 02:19:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.4.4, 2005-05-07
+
+    This is a bug fix release.
+
+    The web server for the DOEGrids CA's CRL has a bug that affects the
+    cache mechanism.  This release includes a workaround for that bug.
+
+    The Perl getpwuid function on MacOS X behaves differently than
+    on other platforms (the result includes an extra element),
+    which caused the gx-map command to fail.  This release allows
+    for the difference.
+
+    Bugs fixed in this release:
+    bug-0020 Work around web server problem for DOEGrids CA CRL
+    bug-0024 Don't assume Perl's getpw* functions return 9 elements
 
 Release 0.4.3, 2005-04-26
 
@@ -31,7 +47,7 @@ Release 0.4.2, 2005-04-17
     bug-0002 Double usernames for primary+secondary mappings
     bug-0003 "ci" command can change requests.log permissions
     bug-0005 New feature: MISSING_CRL_OK attribute in cadesc files.
-	(changed attribute name to ALLOW_MISSING_CRL)
+        (changed attribute name to ALLOW_MISSING_CRL)
     bug-0006 Use SHA1 fingerprints in gx-ca-update
     bug-0009 Better tracebacks on errors
 
@@ -58,23 +74,23 @@ Release 0.4.0, 2004-11-26
 
     This release includes several new tools:
 
-	gx-ingest reads an existing grid-mapfile and generates a
-	script that invokes gx-map to incorporate the entries into
-	the database.
+        gx-ingest reads an existing grid-mapfile and generates a
+        script that invokes gx-map to incorporate the entries into
+        the database.
 
-	gx-ca-update downloads and installs certificates, CRLs, and
-	signing_policy files.  See README.CA and README.CA-SECURITY
-	in this distribution for more information.  Note that this
-	can be used independently of the gx-map command; even if you
-	don't use gx-map to maintain your grid-mapfile, you can still
-	use gx-ca-update to maintain your CA files.
+        gx-ca-update downloads and installs certificates, CRLs, and
+        signing_policy files.  See README.CA and README.CA-SECURITY
+        in this distribution for more information.  Note that this
+        can be used independently of the gx-map command; even if you
+        don't use gx-map to maintain your grid-mapfile, you can still
+        use gx-ca-update to maintain your CA files.
 
-	gx-convert-log converts data from a previous gx-map
-	installation for use with gx-map 0.4.
+        gx-convert-log converts data from a previous gx-map
+        installation for use with gx-map 0.4.
 
-	gx-admins reads an existing requests.log file and guesss which
-	users are treated as administrators (useful when upgrading
-	from gx-map 0.3).
+        gx-admins reads an existing requests.log file and guesss which
+        users are treated as administrators (useful when upgrading
+        from gx-map 0.3).
 
     Multiple user names can be supported for a grid-mapfile entry by
     treating some mappings as "secondary".
@@ -114,9 +130,9 @@ Release 0.4.0, 2004-11-26
 
 Release 0.3, 2003-07-28
 
-    This should probably be considered beta release.  It included
-    fixes for some fairly nasty bugs.  It's been in use at SDSC and
-    on several TeraGrid sites since July 2003.
+    This should probably be considered a beta release.  It included
+    fixes for some fairly nasty bugs.  It was in use at SDSC and on
+    several TeraGrid sites starting in July 2003.
 
 Release 0.2, 2003-07-23
 
