@@ -1,4 +1,4 @@
-# $Id: bug-0019,v 1.2 2005-05-07 03:50:53-07 kst Exp $
+# $Id: bug-0019,v 1.3 2005-05-10 14:57:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0019,v $
 
 gx-map bug 0019
@@ -22,3 +22,9 @@ gx-ingest.in 1.10
 install-gx-map 1.36
 gx-map.in (removed)
 gx-map-0.4.5
+
+Suggested further fix:
+Make the "gx-map" command obsolescent.
+Make gx-request print a warning message if it's invoked as "gx-map".
+In release 0.5.0, delete the "gx-map" command altogether (or make it
+a separate command that just prints an error message).
