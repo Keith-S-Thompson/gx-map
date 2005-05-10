@@ -1,0 +1,29 @@
+# $Id: bug-0026,v 1.1 2005-05-10 14:57:56-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0026,v $
+
+gx-map bug 0026
+Date: Tue 2005-05-10
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Title: Allow proxy DNs in gx-request
+
+Summary:
+An old-style proxy certificate has a DN ending in "/CN=proxy".
+This may occur multiple times for delegated proxies.
+
+If a user running the gx-request command (formerly gx-map) tries to
+use the DN from a proxy certificate, that (invalid) DN will appear
+in the grid-mapfile.
+
+Suggested fix:
+A new-style proxy certificate will have a DN ending in something
+like "/CN=24583326" (consult the appropriate draft RFC for the exact
+syntax); again, this may appear multiple times.
+
+When specifying a DN for the gx-request command (formerly gx-map),
+strip zero or more occurrences of "/CN=proxy" or "/CN=[0-9]+" from
+the end of the string.
+
+Add an option to allow the DN to be extracted from the current proxy.
+(Perhaps this should be the default.)
