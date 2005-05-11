@@ -1,4 +1,4 @@
-# $Id: bug-0001,v 1.5 2005-04-17 03:28:21-07 kst Exp $
+# $Id: bug-0001,v 1.6 2005-05-10 18:22:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0001,v $
 
 gx-map bug 0001
@@ -6,6 +6,7 @@ Date: Mon 2005-03-21
 Severity: High
 Reported by: Mark Bartelt <mark@cacr.caltech.edu>
 Version: 0.4.1
+Status: Fixed 0.4.2
 Title: Removing a secondary mapping crashes gx-gen-mapfile
 
 Summary:
