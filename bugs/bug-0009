@@ -1,4 +1,4 @@
-# $Id: bug-0009,v 1.4 2005-04-17 03:30:58-07 kst Exp $
+# $Id: bug-0009,v 1.5 2005-05-10 18:22:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0009,v $
 
 gx-map bug 0009
@@ -6,6 +6,7 @@ Date: Sat 2005-03-26
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Status: Fixed 0.4.2
 Title: Better tracebacks on errors
 
 Summary:
