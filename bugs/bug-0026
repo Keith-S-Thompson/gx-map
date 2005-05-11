@@ -1,4 +1,4 @@
-# $Id: bug-0026,v 1.1 2005-05-10 14:57:56-07 kst Exp $
+# $Id: bug-0026,v 1.2 2005-05-10 18:22:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0026,v $
 
 gx-map bug 0026
@@ -6,6 +6,7 @@ Date: Tue 2005-05-10
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
+Status: Open
 Title: Allow proxy DNs in gx-request
 
 Summary:
