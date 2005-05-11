@@ -1,4 +1,4 @@
-# $Id: bug-0017,v 1.3 2005-04-19 17:57:47-07 kst Exp $
+# $Id: bug-0017,v 1.4 2005-05-10 18:22:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0017,v $
 
 gx-map bug 0016
@@ -6,6 +6,7 @@ Date: Sun 2005-04-17
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Status: Open
 Title: Don't fail if one grid-mapfile can't be written
 
 Summary:
