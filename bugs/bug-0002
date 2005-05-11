@@ -1,4 +1,4 @@
-# $Id: bug-0002,v 1.4 2005-04-17 03:28:22-07 kst Exp $
+# $Id: bug-0002,v 1.5 2005-05-10 18:22:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0002,v $
 
 gx-map bug 0002
@@ -6,6 +6,7 @@ Date: Wed 2005-03-23
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Status: Fixed 0.4.2
 Title: Double usernames for primary+secondary mappings
 
 Summary:
