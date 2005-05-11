@@ -1,4 +1,4 @@
-# $Id: bug-0013,v 1.1 2005-03-29 19:21:00-08 kst Exp $
+# $Id: bug-0013,v 1.2 2005-05-10 18:22:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0013,v $
 
 gx-map bug 0013
@@ -6,6 +6,7 @@ Date: Tue 2005-03-29
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Status: Open
 Title: gx-ca-update should allow DER and NET format certificates
 
 Summary:
