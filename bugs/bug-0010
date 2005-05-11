@@ -1,4 +1,4 @@
-# $Id: bug-0010,v 1.1 2005-03-27 15:26:29-08 kst Exp $
+# $Id: bug-0010,v 1.2 2005-05-10 18:22:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0010,v $
 
 gx-map bug 0010
@@ -6,6 +6,7 @@ Date: Sun 2005-03-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
+Status: Open
 Title: New command: gx-check-grid-security
 
 Summary:
