@@ -1,4 +1,4 @@
-# $Id: bug-0019,v 1.3 2005-05-10 14:57:56-07 kst Exp $
+# $Id: bug-0019,v 1.4 2005-05-10 18:22:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0019,v $
 
 gx-map bug 0019
@@ -6,6 +6,7 @@ Date: Tue 2005-04-19
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.2
+Status: Fixed 0.4.5
 Title: Change name of gx-map client to gx-request
 
 Summary:
