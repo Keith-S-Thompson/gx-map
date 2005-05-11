@@ -1,4 +1,4 @@
-# $Id: bug-0021,v 1.1 2005-04-26 17:57:43-07 kst Exp $
+# $Id: bug-0021,v 1.2 2005-05-10 18:22:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0021,v $
 
 gx-map bug 0021
@@ -6,6 +6,7 @@ Date: Tue 2005-04-26
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.2
+Status: Fixed 0.4.3
 Title: gx-map.conf.in mistakenly included in 0.4.2 release
 
 Summary:
