@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.1 2005-05-07 03:17:22-07 kst Exp $
+# $Id: gx-request.in,v 1.2 2005-05-12 17:08:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -74,7 +74,7 @@ sub Gen_Request_File_Name();
 sub Debug(@);
 sub Debugf(@);
 
-my $Prog_Name = File::Basename::basename $0;
+my $Program_Name = File::Basename::basename $0;
 my $hostname;
 my $Now = time;
 
@@ -131,7 +131,7 @@ Usage if @ARGV;
 Long_Usage if $User_Opt->{'long-help'};
 
 if ($User_Opt->{version}) {
-    print "gx-map version $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
@@ -466,7 +466,7 @@ sub Get_Options_Interactively() {
     $Options->{interactive} = 1;
 
     print Strip <<"EOF";
-    > The $Prog_Name command lets you submit a request to modify the
+    > The $Program_Name command lets you submit a request to modify the
     > Globus grid-mapfiles on several machines.  Once the request is
     > submitted, the updates should occur within a few minutes.
     > 
@@ -476,7 +476,7 @@ sub Get_Options_Interactively() {
     > allows a user holding a Globus certificate with the specified
     > DN to run Globus jobs under the Unix account "jdoe".
     > 
-    > $Prog_Name can be run interactively or with command-line arguments.
+    > $Program_Name can be run interactively or with command-line arguments.
     > 
     > In this interactive mode, you will be asked a series of questions.
     > Enter your responses followed by <return>.
@@ -964,7 +964,7 @@ sub Get_Options_From_Command_Line() {
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Prog_Name [options]
+Usage: $Program_Name [options]
 Option names may be abbreviated.
     -help         : Show this message and exit.
     -long-help    : Show long usage message (recommended only for
@@ -980,7 +980,7 @@ EOF
 sub Long_Usage() {
     my $pager = defined $ENV{PAGER} ? $ENV{PAGER} : 'more';
     print <<"EOF";
-Usage: $Prog_Name [options]
+Usage: $Program_Name [options]
 Option names may be abbreviated.
     -help                   : Show a brief usage message and exit.
     -version                : Show version information and exit.
@@ -1041,7 +1041,7 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               only.
     -debugging              : Enable debugging output.
 Note: If this help message has scrolled off the top of your screen, try
-    $Prog_Name -long-help | $pager
+    $Program_Name -long-help | $pager
 EOF
     exit 1;
 } # Long_Usage
