@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.49 2005-04-17 16:06:15-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.50 2005-05-12 17:08:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -81,7 +81,7 @@ my $Data_Dir             = "$Install_Dir/var";
 my $Default_Requests_Log = "$Data_Dir/requests.log";
 my $Dot_Update           = "$Data_Dir/new-requests/.update";
 
-my $Prog_Name = File::Basename::basename $0;
+my $Program_Name = File::Basename::basename $0;
 
 my $User_Opt = { 'requests-log' => [],
                  'permissions'  => '444' };
@@ -98,7 +98,7 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "gx-gen-mapfile, part of gx-map version $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
@@ -456,7 +456,7 @@ if (-z $tmp_file) {
     #
     # Something went wrong.
     #
-    die "$Prog_Name generated an empty output file\n";
+    die "$Program_Name generated an empty output file\n";
 }
 OUTPUT_FILE:
 foreach my $output_file (@Output_Files) {
@@ -480,7 +480,7 @@ foreach my $output_file (@Output_Files) {
     # Gridmap_Utils::Check_Tainting '$intermediate_file', $intermediate_file;
     # Gridmap_Utils::Check_Tainting '$tmp_file', $tmp_file;
     File::Copy::copy $tmp_file, $intermediate_file
-        or die "$Prog_Name: copy to $intermediate_file failed\n";
+        or die "$Program_Name: copy to $intermediate_file failed\n";
     # Gridmap_Utils::Check_Tainting '$output_file', $output_file;
     rename $intermediate_file, $output_file
         or die "rename $intermediate_file, $output_file: $!\n";
@@ -658,7 +658,7 @@ sub Image($) {
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Prog_Name [options] [files]
+Usage: $Program_Name [options] [files]
 Option names may be abbreviated.
     -help              : Display this message and exit.
     -version           : Display version information and exit.
