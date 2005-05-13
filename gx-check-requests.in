@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.42 2005-04-17 15:46:28-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.43 2005-05-12 17:08:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -67,7 +67,7 @@ sub Append_To_Log($@);
 sub Debug(@);
 sub Debugf(@);
 
-my $Prog_Name = File::Basename::basename $0;
+my $Program_Name = File::Basename::basename $0;
 
 my $Hostname = Gridmap_Utils::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/var";
@@ -81,7 +81,7 @@ Usage if $User_Opt->{help};
 Usage if @ARGV;
 
 if ($User_Opt->{version}) {
-    print "gx-check-requests, part of gx-map version $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
@@ -408,7 +408,7 @@ sub Append_To_Log($@) {
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Prog_Name [options]
+Usage: $Program_Name [options]
     -help           : Display this message and exit
     -version        : Display version information and exit
     -namespace name : Specify namespace (e.g., "$Gridmap_Utils::Config{NAMESPACE}"); mandatory
