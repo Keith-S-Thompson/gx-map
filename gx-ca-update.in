@@ -1,7 +1,7 @@
 #!%PERL% -w
 # To do: Add '-T' (bug-0018)
 
-# $Id: gx-ca-update.in,v 1.56 2005-05-06 04:23:40-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.57 2005-05-12 17:08:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -118,7 +118,7 @@ Usage if $User_Opt->{help};
 Usage if @ARGV;
 
 if ($User_Opt->{version}) {
-    print "gx-ca-update, part of gx-map version $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
@@ -1194,7 +1194,7 @@ sub Notify() {
     my $log_file = "$Install_Dir/var/$Program_Name.log";
     open LOG, ">>$log_file";
     print LOG Gridmap_Utils::Time_Image $now,
-              " $Program_Name (gx-map $Gridmap_Utils::VERSION)\n";
+              " $Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
 
     foreach my $ref (@ca_info) {
         if (defined $ref->{_ERRORS}) {
