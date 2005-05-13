@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-ingest.in,v 1.10 2005-05-07 03:38:57-07 kst Exp $
+# $Id: gx-ingest.in,v 1.11 2005-05-12 17:08:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -73,7 +73,7 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "gx-ingest, part of gx-map version $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
