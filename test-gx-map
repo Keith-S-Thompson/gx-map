@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.4 2005-05-27 02:47:23-07 kst Exp $
+# $Id: test-gx-map,v 1.5 2005-05-27 11:51:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -12,6 +12,8 @@ use Cwd ();
 sub Usage(@);
 sub Unpack($);
 sub Try(@);
+sub Version_String($);
+sub Cleanup();
 
 $| = 1;
 
@@ -45,6 +47,8 @@ Usage "No file $Tarball\n" if not -e $Tarball;
 my $tarball_basename = File::Basename::basename $Tarball;
 my($version) = ($tarball_basename =~ /^gx-map-(.*)\.tar\.gz$/);
 Usage if not defined $version;
+
+$SIG{__DIE__} = \&Cleanup;
 
 if (not $Opt{verbose}) {
     print "Creating directory $Opt{tmpdir}\n";
@@ -89,13 +93,19 @@ else {
     Try 'make install >/dev/null 2>&1';
 }
 
+my @commands = ();
+if (Version_String $version ge Version_String '0.4.5') {
+    push @commands, 'bin/gx-request';
+}
+else {
+    push @commands, 'bin/gx-map';
+}
+push @commands, qw( sbin/gx-ca-update
+                    sbin/gx-check-requests
+                    sbin/gx-gen-mapfile
+                    sbin/gx-ingest );
 
-foreach my $command ( qw( bin/gx-request
-                          sbin/gx-ca-update
-                          sbin/gx-check-requests
-                          sbin/gx-gen-mapfile
-                          sbin/gx-ingest ) )
-{
+foreach my $command (@commands) {
     Try "$install_dir/$command", "-version";
 }
 
@@ -154,6 +164,25 @@ sub Try(@) {
         die "system() returned $result\n";
     }
 } # Try
+
+# ----------------------------------------------------------------------
+
+#
+# Reformat a version string to a form that can be compared with gt/lt,
+# so, for example, 0.4.10 is greater than 0.4.9.
+#
+sub Version_String($) {
+    return join('.', map sprintf("%05s", $_), split /\./, $_[0]);
+} # Version_String
+
+# ----------------------------------------------------------------------
+
+sub Cleanup() {
+    if ($Opt{cleanup} and -d $Opt{tmpdir}) {
+        chdir $ENV{HOME};
+        Try 'rm', '-rf', $Opt{tmpdir};
+    }
+} # Cleanup
 
 # ----------------------------------------------------------------------
 
