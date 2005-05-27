@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.5 2005-05-27 11:51:59-07 kst Exp $
+# $Id: test-gx-map,v 1.6 2005-05-27 12:00:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -94,16 +94,25 @@ else {
 }
 
 my @commands = ();
+#
+# gx-map was renamed to gx-request in release 0.4.5 (but gx-map
+# still exists as a symlink).
+#
+# gx-ingest was added in release 0.4.0, but didn't have a "-version"
+# option until release 0.4.2.
+#
 if (Version_String $version ge Version_String '0.4.5') {
     push @commands, 'bin/gx-request';
 }
-else {
-    push @commands, 'bin/gx-map';
+push @commands, 'bin/gx-map';
+push @commands, 'sbin/gx-check-requests';
+push @commands, 'sbin/gx-ca-update';
+if (Version_String $version gt Version_String '0.4.0') {
+    push @commands, 'sbin/gx-ca-update';
 }
-push @commands, qw( sbin/gx-ca-update
-                    sbin/gx-check-requests
-                    sbin/gx-gen-mapfile
-                    sbin/gx-ingest );
+if (Version_String $version ge Version_String '0.4.2') {
+    push @commands, 'sbin/gx-ingest';
+}
 
 foreach my $command (@commands) {
     Try "$install_dir/$command", "-version";
