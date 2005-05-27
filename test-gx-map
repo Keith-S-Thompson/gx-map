@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.1 2005-05-26 18:38:33-07 kst Exp $
+# $Id: test-gx-map,v 1.2 2005-05-27 02:26:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -28,6 +28,7 @@ my %Opt = ( perl   => $default_perl,
 my @Opts = ( \%Opt, qw( perl=s
                         path=s
                         tmpdir=s
+                        verbose!
                         help ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $Opt{help};
@@ -43,12 +44,15 @@ my $tarball_basename = File::Basename::basename $Tarball;
 my($version) = ($tarball_basename =~ /^gx-map-(.*)\.tar\.gz$/);
 Usage if not defined $version;
 
+if (not $Opt{verbose}) {
+    print "Creating directory $Opt{tmpdir}\n";
+}
 foreach my $dir ( $Opt{tmpdir},
                   "$Opt{tmpdir}/src", 
                   "$Opt{tmpdir}/grid-security",
                   "$Opt{tmpdir}/grid-security/certificates" )
 {
-    print "Creating directory $dir\n";
+    print "Creating directory $dir\n" if $Opt{verbose};
     mkdir $dir, 0777 or die "${dir} $!\n";
 }
 
@@ -74,11 +78,24 @@ chdir "$Opt{tmpdir}/src" or die "$Opt{tmpdir}/src: $!\n";
 Unpack $Tarball;
 chdir "gx-map-$version" or die "gx-map-${version}: $!\n";
 
-Try './configure-gx-map', $config_file;
-Try 'make', 'install';
+if ($Opt{verbose}) {
+    Try './configure-gx-map', $config_file;
+    Try 'make', 'install';
+}
+else {
+    Try "./configure-gx-map $config_file >/dev/null 2>&1";
+    Try 'make install >/dev/null 2>&1';
+}
 
 
-Try "$install_dir/bin/gx-request", "-version";
+foreach my $command ( qw( bin/gx-request
+                          sbin/gx-ca-update
+                          sbin/gx-check-requests
+                          sbin/gx-gen-mapfile
+                          sbin/gx-ingest ) )
+{
+    Try "$install_dir/$command", "-version";
+}
 
 ########################################################################
 
@@ -93,6 +110,7 @@ sub File_Count($) {
 
 sub Unpack($) {
     my($tarball) = @_;
+    print "Unpacking $tarball\n";
     my $count = File_Count '.';
 
     foreach my $command ( "tar zxf $tarball",
@@ -145,6 +163,7 @@ Installs and tests a gx-map release.
                 wget ncftpget rcs ci openssl hostname
     -tmpdir ... Temporary directory (will be created)
                 Default is $default_tmpdir (may vary)
+    -verbose    Produce verbose output
     -help       Display this message and exit
 EOF
     exit 1;
