@@ -1,0 +1,151 @@
+#!/usr/bin/perl -w
+
+# $Id: test-gx-map,v 1.1 2005-05-26 18:38:33-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/test-gx-map,v $
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+use Cwd ();
+
+sub Usage(@);
+sub Unpack($);
+sub Try(@);
+
+$| = 1;
+
+my $Program_Name = File::Basename::basename $0;
+my $cwd = Cwd::getcwd;
+
+my $default_perl = '/usr/bin/perl';
+my $default_path = '/bin:/usr/bin';
+my $default_tmpdir = "$ENV{HOME}/gx-map-test-$$";
+
+my %Opt = ( perl   => $default_perl,
+            path   => $default_path,
+            tmpdir => $default_tmpdir );
+my @Opts = ( \%Opt, qw( perl=s
+                        path=s
+                        tmpdir=s
+                        help ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $Opt{help};
+Usage if scalar @ARGV != 1;
+
+my $Tarball = $ARGV[0];
+if ($Tarball !~ /^\//) {
+    $Tarball = "$cwd/$Tarball";
+}
+Usage "No file $Tarball\n" if not -e $Tarball;
+
+my $tarball_basename = File::Basename::basename $Tarball;
+my($version) = ($tarball_basename =~ /^gx-map-(.*)\.tar\.gz$/);
+Usage if not defined $version;
+
+foreach my $dir ( $Opt{tmpdir},
+                  "$Opt{tmpdir}/src", 
+                  "$Opt{tmpdir}/grid-security",
+                  "$Opt{tmpdir}/grid-security/certificates" )
+{
+    print "Creating directory $dir\n";
+    mkdir $dir, 0777 or die "${dir} $!\n";
+}
+
+my $namespace = uc $ENV{USER} . '_TEST';
+my $config_file = "$Opt{tmpdir}/$namespace.conf";
+my $install_dir = "$Opt{tmpdir}/gx-map-$version-$namespace-install";
+my $data_dir    = "$Opt{tmpdir}/gx-map-$version-$namespace-data";
+
+open CONF, ">$config_file" or die "$config_file: $!\n";
+print CONF <<"EOF";
+PERL                     $Opt{perl}
+PATH                     $Opt{path}
+NAMESPACE                $namespace
+INSTALL_DIR              $install_dir
+DATA_DIR                 $data_dir
+REQUESTS_LOG_PERMISSIONS 444
+GLOBUS_ADMINS            $ENV{USER}
+ADMIN_EMAIL              $ENV{USER}\@example.org
+EOF
+close CONF;
+
+chdir "$Opt{tmpdir}/src" or die "$Opt{tmpdir}/src: $!\n";
+Unpack $Tarball;
+chdir "gx-map-$version" or die "gx-map-${version}: $!\n";
+
+Try './configure-gx-map', $config_file;
+Try 'make', 'install';
+
+
+Try "$install_dir/bin/gx-request", "-version";
+
+########################################################################
+
+sub File_Count($) {
+    opendir DIR, $_[0] or die "$_[0]: $!\n";
+    my @files = grep { $_ ne '.' and $_ ne '..' } readdir DIR;
+    closedir DIR;
+    return scalar @files;
+} # File_Count
+
+# ----------------------------------------------------------------------
+
+sub Unpack($) {
+    my($tarball) = @_;
+    my $count = File_Count '.';
+
+    foreach my $command ( "tar zxf $tarball",
+                          "zcat $tarball | tar xf -",
+                          "gzcat $tarball | tar xf -" )
+    {
+        my $result = system "$command >/dev/null 2>&1";
+        my $new_count = File_Count '.';
+        if ($new_count > $count) {
+            if ($result == 0) {
+                return;
+            }
+            else {
+                die "Problem unpacking $tarball\n";
+            }
+        }
+    }
+
+} # Unpack
+
+# ----------------------------------------------------------------------
+
+sub Try(@) {
+    print "% @_\n";
+    my $result = system @_;
+    if ($result == 0) {
+        return;
+    }
+    elsif ($result % 256 == 0) {
+        $result /= 256;
+        die "exit $result\n";
+    }
+    else {
+        die "system() returned $result\n";
+    }
+} # Try
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_;
+    print <<"EOF";
+Usage: $Program_Name [options] gx-map-<VERSION>.tar.gz
+Installs and tests a gx-map release.
+    -perl ...   Specify full path to Perl interpreter
+                Default is $default_perl
+    -path ...   Value for \$PATH to be used by the installation
+                Default is $default_path
+                Should provide access to the following commands:
+                wget ncftpget rcs ci openssl hostname
+    -tmpdir ... Temporary directory (will be created)
+                Default is $default_tmpdir (may vary)
+    -help       Display this message and exit
+EOF
+    exit 1;
+} # Usage
