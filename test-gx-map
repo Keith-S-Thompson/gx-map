@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.2 2005-05-27 02:26:47-07 kst Exp $
+# $Id: test-gx-map,v 1.3 2005-05-27 02:44:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -22,13 +22,15 @@ my $default_perl = '/usr/bin/perl';
 my $default_path = '/bin:/usr/bin';
 my $default_tmpdir = "$ENV{HOME}/gx-map-test-$$";
 
-my %Opt = ( perl   => $default_perl,
-            path   => $default_path,
-            tmpdir => $default_tmpdir );
+my %Opt = ( perl    => $default_perl,
+            path    => $default_path,
+            tmpdir  => $default_tmpdir,
+            cleanup => 1 );
 my @Opts = ( \%Opt, qw( perl=s
                         path=s
                         tmpdir=s
                         verbose!
+                        cleanup!
                         help ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $Opt{help};
@@ -95,6 +97,11 @@ foreach my $command ( qw( bin/gx-request
                           sbin/gx-ingest ) )
 {
     Try "$install_dir/$command", "-version";
+}
+
+if ($Opt{cleanup}) {
+    chdir '/tmp';
+    Try 'rm', '-rf', $Opt{tmpdir};
 }
 
 ########################################################################
