@@ -1,0 +1,21 @@
+# $Id: bug-0027,v 1.1 2005-06-16 15:20:53-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0027,v $
+
+gx-map bug 0027
+Date: Thu 2005-06-16
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Add -ca-list option to gx-ca-update
+
+Summary:
+The list of CAs to be accepted has to be passed explicitly to
+gx-ca-update.  This requires updating the cron job whenever this list
+needs to be updated.  Cron jobs are often maintained manually, so this
+could be error-prone.  It also makes a "crontab -l" listing very long.
+
+Suggested fix:
+Add a -ca-list option.  The argument is a file containing a list of
+CAs, one per line, specified in the same form as the argument to the
+existing -ca option.  Allow comments in the file.
