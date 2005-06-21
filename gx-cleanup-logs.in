@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.2 2005-06-20 17:25:45-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.3 2005-06-20 19:40:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -54,11 +54,8 @@ use File::Basename ();
 use File::Copy ();
 use Getopt::Long ();
 
-sub Update_List(@);
-sub Identical_Files($$);
-sub User_Real_Name($);
-sub Image($);
 sub Usage(@);
+sub Is_Secondary($);
 sub Debug(@);
 sub Debugf(@);
 
@@ -113,40 +110,73 @@ foreach my $log (@input_logs) {
 @requests = sort { $a->{timestamp} cmp $b->{timestamp} } @requests;
 
 #
-# Delete redundant records
+# Delete redundant records:
+#
+# Start at the most recent and go backwards in time.
+#
+# For a remove, delete it and all previous adds and removes for the same
+# user/DN pair.
+#
+# For a remove-user, delete it and all previous adds, removes, and
+# remove-users for the same user.
+# 
+# For a remove-dn, delete it and all previous adds and removes for the same
+# DN.
+#
+# For an add, leave it in place but delete all previous adds and removes
+# for the same user/DN pair -- *unless* it's marked secondary, then leave
+# it alone.
+#
+# This won't delete all redundant requests, but it should catch most
+# of them.
 #
 NEW:
-for (my $i = 0; $i <= $#requests; $i ++) {
+for (my $i = $#requests; $i >= 0; $i --) {
     my $new = $requests[$i];
+    my $new_op = $new->{operation};
+    if ($new_op =~ /^remove/) {
+        $new->{__DELETED__} = 1;
+    }
     OLD:
-    for (my $j = 0; $j < $i; $j ++) {
+    for (my $j = $i - 1; $j > 0; $j --) {
         my $old = $requests[$j];
         next if exists $old->{__DELETED__};
         next if $new->{NAMESPACE} ne $old->{NAMESPACE};
         my $old_op = $old->{operation};
-        my $new_op = $new->{operation};
-        if ( $old->{operation} eq 'add' and
-             ( $new->{operation} eq 'add' or
-               $new->{operation} eq 'remove' ) and
+
+        if ( $new_op eq 'remove' and
+             ( $old_op eq 'add' or $old_op eq 'remove' ) and
              $old->{map_to_name} eq $new->{map_to_name} and
              $old->{dn} eq $new->{dn} )
         {
             $old->{__DELETED__} = 1;
-            next OLD;
         }
-        if ( $old->{operation} eq 'add' and
-             $new->{operation} eq 'remove_user' and
-             $old->{map_to_name} eq $new->{map_to_name} )
+
+        elsif ( $new_op eq 'remove-user' and
+                ( $old_op eq 'add' or
+                  $old_op eq 'remove' or
+                  $old_op eq 'remove-user' ) and
+                $old->{map_to_name} eq $new->{map_to_name} )
         {
             $old->{__DELETED__} = 1;
-            next OLD;
         }
-        if ( $old->{operation} eq 'add' and
-             $new->{operation} eq 'remove_dn' and
-             $old->{dn} eq $new->{dn} )
+
+        elsif ( $new_op eq 'remove-dn' and
+                ( $old_op eq 'add' or
+                  $old_op eq 'remove' or
+                  $old_op eq 'remove-dn' ) and
+                $old->{dn} eq $new->{dn} )
         {
             $old->{__DELETED__} = 1;
-            next OLD;
+        }
+
+        elsif ( $new_op eq 'add' and
+                not Is_Secondary $old and
+                ( $old_op eq 'add' or $old_op eq 'remove' ) and
+                $old->{map_to_name} eq $new->{map_to_name} and
+                $old->{dn} eq $new->{dn} )
+        {
+            $old->{__DELETED__} = 1;
         }
     }
 }
@@ -171,6 +201,13 @@ requests commented out or deleted.
 EOF
     exit 1;
 } # Usage
+
+# ----------------------------------------------------------------------
+
+sub Is_Secondary($) {
+    my($ref) = @_;
+    return ( defined $ref->{secondary} and $ref->{secondary} eq 'yes' );
+} # Is_Secondary
 
 # ----------------------------------------------------------------------
 
