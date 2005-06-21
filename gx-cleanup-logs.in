@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.1 2005-06-18 01:58:07-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.2 2005-06-20 17:25:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -82,7 +82,7 @@ my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( help
                  version
-		 delete!
+                 delete!
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -112,7 +112,46 @@ foreach my $log (@input_logs) {
 #
 @requests = sort { $a->{timestamp} cmp $b->{timestamp} } @requests;
 
-Gridmap_Utils::Write_Records '-multiple', @requests;
+#
+# Delete redundant records
+#
+NEW:
+for (my $i = 0; $i <= $#requests; $i ++) {
+    my $new = $requests[$i];
+    OLD:
+    for (my $j = 0; $j < $i; $j ++) {
+        my $old = $requests[$j];
+        next if exists $old->{__DELETED__};
+        next if $new->{NAMESPACE} ne $old->{NAMESPACE};
+        my $old_op = $old->{operation};
+        my $new_op = $new->{operation};
+        if ( $old->{operation} eq 'add' and
+             ( $new->{operation} eq 'add' or
+               $new->{operation} eq 'remove' ) and
+             $old->{map_to_name} eq $new->{map_to_name} and
+             $old->{dn} eq $new->{dn} )
+        {
+            $old->{__DELETED__} = 1;
+            next OLD;
+        }
+        if ( $old->{operation} eq 'add' and
+             $new->{operation} eq 'remove_user' and
+             $old->{map_to_name} eq $new->{map_to_name} )
+        {
+            $old->{__DELETED__} = 1;
+            next OLD;
+        }
+        if ( $old->{operation} eq 'add' and
+             $new->{operation} eq 'remove_dn' and
+             $old->{dn} eq $new->{dn} )
+        {
+            $old->{__DELETED__} = 1;
+            next OLD;
+        }
+    }
+}
+
+Gridmap_Utils::Write_Records '-multiple', '-', @requests;
 
 ########################################################################
 
@@ -123,7 +162,7 @@ Usage: $Program_Name [options] [files]
 Option names may be abbreviated.
     -help        Display this message and exit.
     -version     Display version information and exit.
-    -delete	 Delete redundant requests (default is to comment them out).
+    -delete      Delete redundant requests (default is to comment them out).
     -debugging   Enable debugging output.
 
 Read gx-map requests log(s) from specified files or from stdin.
