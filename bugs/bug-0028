@@ -1,0 +1,22 @@
+# $Id: bug-0028,v 1.1 2005-06-20 17:53:06-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0028,v $
+
+gx-map bug 0028
+Date: Mon 2005-06-20
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: In interactive mode, warn about secondary mappings
+
+Summary:
+There are several secondary mappings in the requests.log files for
+SDSC and Caltech's TG clusters.  As far as i can tell, they're all
+errors (they should be primary mappings).  In general, the feature
+seems to be used more often by accident than deliberately.
+
+Suggested fix:
+In "gx-map -interactive", try to explain more clearly what a secondary
+mapping is (that's going to be difficult to do briefly).  Warn the
+user not to attempt to do this unless he knows what he's doing,
+and add an "Are you sure?" prompt.
