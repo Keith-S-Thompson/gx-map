@@ -1,0 +1,34 @@
+# $Id: bug-0029,v 1.1 2005-06-20 18:02:36-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0029,v $
+
+gx-map bug 0028
+Date: Mon 2005-06-20
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Re-think secondary mappings
+
+Summary:
+Secondary mappings are an indirect kludge to support mapping multiple
+user names.  The division of mappings into primary and secondary,
+with primary mappings overriding previous primary mappings but
+secondary mappings accumulating, is arbitrary.  As far as I can tell,
+the feature has never been used deliberately (though it has caused
+problems when users use it incorrectly).
+
+Suggested fix:
+Re-think ways to support mapping a DN to multiple user names.
+Possibilities:
+
+1. Make it a single request.  Only an administrator can add or remove
+a multi-user mapping (since it gives access to both accounts).
+An administrator can request a DN to be mapped to "foo,bar"; this
+overrides any previous mappings for the same DN.
+
+2. Drop the concept of secondary mappings.  All mappings are primary,
+and they accumulate; if a DN is mapped to "foo" and then to "bar",
+then it will appear in the grid-mapfile as "foo,bar".  Ordering is
+determined by the order in which the requests are made; the most
+recent mapping is first.  (To swap the order, remove and re-add the
+older mapping.)
