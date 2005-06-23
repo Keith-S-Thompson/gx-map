@@ -1,4 +1,4 @@
-# $Id: bug-0007,v 1.3 2005-05-10 18:22:43-07 kst Exp $
+# $Id: bug-0007,v 1.4 2005-06-23 12:03:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0007,v $
 
 gx-map bug 0007
@@ -27,6 +27,15 @@ to read the configuration file will cause the command to die with a
 message indicating that it needs to be updated.  Consider providing
 a gx-config command that displays and/or updates the current
 configuration (and tracks changes in RCS, perhaps).
+
+As part of this work, we need to be able to install gx-map into an
+existing directory tree.  gx-map 0.4.5 is included in the NMI 7.0
+release, but is not integrated into the build system; the tarball
+is included in the tools directory.  Probably most of the files in
+gx-map's etc subdirectory should be installed in etc/gx-map (we don't
+want to install the gx-map README file as $GLOBUS_LOCATION/etc/README).
+Consider moving the stuff in lib into lib/gx-map as well.
+The executable scripts in bin and sbin should be ok.
 
 Motivation: Simplify installation and make it work better with a
 future NMI release.
