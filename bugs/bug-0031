@@ -1,0 +1,25 @@
+# $Id: bug-0031,v 1.1 2005-06-23 15:25:16-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0031,v $
+
+gx-map bug 0031
+Date: Thu 2005-06-23
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Clean up requests.log file
+
+Summary:
+The requests.log file grows every time a request is made.
+gx-gen-mapfile traverses and processes the entire log whenever
+it needs to update the grid-mapfile.  Over time, this can become
+slower and slower, especially if there are any "remove-user" requests
+(but the fix for bug-0030 should mitigate this).  Caltech's log is
+currently nearly 4 megabytes, with 6426 requests; it's likely that
+many of these are redundant.
+
+Proposed solution:
+I've already written a preliminary version of a tool, gx-cleanup-logs,
+that comments out (or deletes) redundant requests.  It will need
+to be updated to handle the new "replace" request (see bug-0030).
+I also want to modify it so it retains comments.
