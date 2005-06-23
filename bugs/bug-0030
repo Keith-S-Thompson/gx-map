@@ -1,0 +1,58 @@
+# $Id: bug-0030,v 1.1 2005-06-23 15:13:48-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0030,v $
+
+gx-map bug 0030
+Date: Thu 2005-06-23
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Cross-site propagation
+
+Summary:
+gx-map currently has only weak support for cross-site information
+propagation.  On TeraGrid, for example, a user needs to run the gx-map
+client on each system; this is unwieldy, particularly, if the user
+can't login to the system until the grid-mapfile entry is in place.
+
+Proposed solution:
+This is somewhat TeraGrid-specific, but I'll try to keep it fairly
+generic.
+
+In gx-request (formerly gx-map):
+    Add a new request type, "replace".
+    It's similar to "add", with the following differences:
+
+	It removes all previous mappings for the same user.
+	It accepts zero or more "-dn" arguments, each of which is added.
+
+    This is equivalent to a "remove-user" followed by zero or
+    more "add"s.  This corresponds to the information in an AMIE
+    "request_user_modify" packet.
+
+    Note that the request is not actually split into a "remove-user"
+    and multiple "add"s; it remains in the requests.log file as a
+    single "replace" request.  (I think.)
+
+    NOTE: I need to figure out whether this should remove all mappings
+    for the user, or just mappings with the same SOURCE attribute.
+    I *think* it should remove all of them -- but this risks clobbering
+    information from the local gx-map requests.log that hasn't yet
+    been propagated to the TGCDB.
+
+    Currently, a "remove-user" is potentially inefficient, since
+    it has to do a full scan of the %Mappings data structure in
+    gx-gen-mapfile.  If there are a large number of "remove-user"
+    entries in the requests.log, gx-gen-mapfile could approach O(N**2)
+    complexity.  Create an internal hash, indexed by user names,
+    to make searching for mappings for a given user more efficient.
+
+In gx-check-requests:
+    Optionally invoke sbin/gx-propagate-dn.  This is not installed
+    by default.  Provide a TG-specific implementation that talks
+    to the TGCDB, and an install-time parameter to install it as
+    sbin/gx-propagate-dn.  This is basically a plug-in.
+
+    This will be invoked by gx-check-requests for each new request
+    it sees.  It will *not* be invoked for requests with source=AMIE
+    (or whatever I decide to call it).
