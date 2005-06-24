@@ -1,4 +1,4 @@
-# $Id: bug-0030,v 1.1 2005-06-23 15:13:48-07 kst Exp $
+# $Id: bug-0030,v 1.2 2005-06-24 10:04:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0030,v $
 
 gx-map bug 0030
@@ -56,3 +56,25 @@ In gx-check-requests:
     This will be invoked by gx-check-requests for each new request
     it sees.  It will *not* be invoked for requests with source=AMIE
     (or whatever I decide to call it).
+
+More thoughts:
+
+I've been assuming that the TGCDB will know about all the mappings for
+all TG sites.  This implies that a "replace" request can delete *all*
+the mappings for the specified user before adding the listed ones.
+(This all takes place within the %Mappings data structure as
+gx-gen-mapfile is running.)
+
+This implies that, before a site starts processing AMIE packets using
+"gx-request -replace", it needs to make sure that all its existing
+mappings are added to the TGCDB.
+
+Another possible model is to distinguish between local mappings
+(not to be propagated) and global mappings (to be propagated).
+"gx-request -replace" will delete only the global mappings for a
+given user, and will add the specified mappings as global mappings.
+The user will then need to be able to specify, when running gx-request,
+whether the mapping is intended to be local or global; what should
+the default be?
+
+Does the local vs. global attribute apply to a mapping or to a request?
