@@ -1,4 +1,4 @@
-# $Id: bug-0029,v 1.1 2005-06-20 18:02:36-07 kst Exp $
+# $Id: bug-0029,v 1.2 2005-06-24 08:49:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0029,v $
 
 gx-map bug 0028
@@ -32,3 +32,8 @@ then it will appear in the grid-mapfile as "foo,bar".  Ordering is
 determined by the order in which the requests are made; the most
 recent mapping is first.  (To swap the order, remove and re-add the
 older mapping.)
+
+This may involve the "secondary" attribute going away.  We can either
+allow and ignore it, or eliminate it altogether.  In the latter case,
+we should update the release version to 0.5.X, since it requires a
+requests.log conversion.
