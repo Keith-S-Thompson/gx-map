@@ -1,4 +1,4 @@
-# $Id: bug-0030,v 1.2 2005-06-24 10:04:49-07 kst Exp $
+# $Id: bug-0030,v 1.3 2005-06-24 12:19:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0030,v $
 
 gx-map bug 0030
@@ -67,7 +67,8 @@ gx-gen-mapfile is running.)
 
 This implies that, before a site starts processing AMIE packets using
 "gx-request -replace", it needs to make sure that all its existing
-mappings are added to the TGCDB.
+mappings are added to the TGCDB.  This would result in a flurry of
+AMIE packets as the existing mappings are propagated.
 
 Another possible model is to distinguish between local mappings
 (not to be propagated) and global mappings (to be propagated).
@@ -78,3 +79,29 @@ whether the mapping is intended to be local or global; what should
 the default be?
 
 Does the local vs. global attribute apply to a mapping or to a request?
+
+In the requests.log file, should this be folded into the SOURCE
+attribute or should it be a separate attribute?  (Probably the latter.)
+
+For extensibility, I might want to consider different kinds of
+"global": propagating to TeraGrid sites, propagating to FooGrid
+sites, etc.  I don't think this is worth doing until there's a demand
+for FooGrid interaction; most likely some changes will be necessary
+anyway.  I should make things easy to change, but guaranteeing *no*
+changes is unrealistic.
+
+On yet another hand, it's not clear that the local vs. global
+distinction is going to be sufficiently useful.  Requests that
+shouldn't be propagated, for the most part, won't be, because the
+user doesn't have an account on the other systems.  (In TGCDB terms,
+there's no person_id associated with the user, so it's not even
+possible to generate an AMIE packet).  And propagating a mapping that
+doesn't need to be is mostly harmless.  It can only propagate to a
+system where the user has an account; I see no real disadvantage in
+enabling a user to use his own certificate for his own account.
+
+Note that all this stuff is likely to increase the frequency of
+requests, making the requests.log files grow more quickly than
+they have so far and generally slowing things down (see Caltech's
+requests.log).  This makes the ability to clean up the requests.log
+file more important; see bug-0031.
