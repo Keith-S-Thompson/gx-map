@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.4 2005-06-20 19:46:31-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.5 2005-06-24 08:46:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -81,6 +81,7 @@ my @Opts = ( $User_Opt,
                  version
                  merge-only!
                  delete!
+                 index!
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -110,6 +111,12 @@ foreach my $log (@input_logs) {
 #
 @requests = sort { $a->{timestamp} cmp $b->{timestamp} } @requests;
 
+if ($User_Opt->{index}) {
+    for (my $i = 0; $i <= $#requests; $i ++) {
+	$requests[$i]->{INDEX} = $i;
+    }
+}
+
 if (not $User_Opt->{'merge-only'}) {
     #
     # Delete redundant records:
@@ -134,14 +141,16 @@ if (not $User_Opt->{'merge-only'}) {
     #
     NEW:
     for (my $i = $#requests; $i >= 0; $i --) {
+	Debug "Outer loop, \$i = $i\n";
         my $new = $requests[$i];
         my $new_op = $new->{operation};
         if ($new_op =~ /^remove/) {
             $new->{__DELETED__} = 1;
         }
         OLD:
-        for (my $j = $i - 1; $j > 0; $j --) {
+        for (my $j = $i - 1; $j >= 0; $j --) {
             my $old = $requests[$j];
+	    Debug "Checking $j ($old->{operation}) vs. $i ($new->{operation})\n";
             next if exists $old->{__DELETED__};
             next if $new->{NAMESPACE} ne $old->{NAMESPACE};
             my $old_op = $old->{operation};
@@ -151,7 +160,11 @@ if (not $User_Opt->{'merge-only'}) {
                  $old->{map_to_name} eq $new->{map_to_name} and
                  $old->{dn} eq $new->{dn} )
             {
+		Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
+		if ($User_Opt->{index}) {
+		    $old->{INDEX} .= " ($new->{INDEX})";
+		}
             }
 
             elsif ( $new_op eq 'remove-user' and
@@ -160,7 +173,11 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-user' ) and
                     $old->{map_to_name} eq $new->{map_to_name} )
             {
+		Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
+		if ($User_Opt->{index}) {
+		    $old->{INDEX} .= " ($new->{INDEX})";
+		}
             }
 
             elsif ( $new_op eq 'remove-dn' and
@@ -169,7 +186,11 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-dn' ) and
                     $old->{dn} eq $new->{dn} )
             {
+		Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
+		if ($User_Opt->{index}) {
+		    $old->{INDEX} .= " ($new->{INDEX})";
+		}
             }
 
             elsif ( $new_op eq 'add' and
@@ -178,7 +199,11 @@ if (not $User_Opt->{'merge-only'}) {
                     $old->{map_to_name} eq $new->{map_to_name} and
                     $old->{dn} eq $new->{dn} )
             {
+		Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
+		if ($User_Opt->{index}) {
+		    $old->{INDEX} .= " ($new->{INDEX})";
+		}
             }
         }
     }
@@ -201,6 +226,7 @@ Option names may be abbreviated.
     -version     Display version information and exit.
     -merge-only  Merge and sort input records; don't delete anything.
     -delete      Delete redundant requests (default is to comment them out).
+    -index       Add an INDEX field to each record (for debugging only).
     -debugging   Enable debugging output.
 
 Read gx-map requests log(s) from specified files or from stdin.
