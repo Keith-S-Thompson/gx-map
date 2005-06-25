@@ -1,4 +1,4 @@
-# $Id: bug-0031,v 1.1 2005-06-23 15:25:16-07 kst Exp $
+# $Id: bug-0031,v 1.2 2005-06-25 16:51:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0031,v $
 
 gx-map bug 0031
@@ -22,4 +22,6 @@ Proposed solution:
 I've already written a preliminary version of a tool, gx-cleanup-logs,
 that comments out (or deletes) redundant requests.  It will need
 to be updated to handle the new "replace" request (see bug-0030).
-I also want to modify it so it retains comments.
+I also want to modify it so it retains comments.  This means adding an
+option to Read_Records so it treats a comment block as a pseudo-record,
+probably a reference to an array of lines.
