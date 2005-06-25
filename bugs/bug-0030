@@ -1,4 +1,4 @@
-# $Id: bug-0030,v 1.3 2005-06-24 12:19:03-07 kst Exp $
+# $Id: bug-0030,v 1.4 2005-06-25 16:51:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0030,v $
 
 gx-map bug 0030
@@ -99,6 +99,10 @@ possible to generate an AMIE packet).  And propagating a mapping that
 doesn't need to be is mostly harmless.  It can only propagate to a
 system where the user has an account; I see no real disadvantage in
 enabling a user to use his own certificate for his own account.
+
+At the moment, it looks like an "everything-is-global" model will be
+sufficient for the TeraGrid.  A distinction between different scopes
+might be useful later; see bug-0033.
 
 Note that all this stuff is likely to increase the frequency of
 requests, making the requests.log files grow more quickly than
