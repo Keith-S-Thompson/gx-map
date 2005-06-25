@@ -1,0 +1,50 @@
+# $Id: bug-0033,v 1.1 2005-06-25 16:51:52-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0033,v $
+
+gx-map bug 0033
+Date: Sat 2005-06-25
+Severity: low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Distinguish between local and global mappings
+
+Summary:
+A fix for bug-0030, "Cross-site propagation", is a prerequesite
+for this.
+
+The initial implementation of cross-site propagation (specifically
+for the TGCDB) will probably use an "everything-is-global" model.
+This has the advantage of relative simplicity, but it means that
+all mappings for a site have to be fed into the cross-site database.
+It might be desirable to distinguish between local mappings and global
+mappings.  The difference is that local mappings are not propagated
+to the cross-site database, and are not affected by updates from the
+cross-site database.
+
+In some cases, it might also be useful to distinguish among multiple
+cross-site databases (for a site that's a member of two or more
+virtual organizations).
+
+Proposed solution:
+Add a "scope" attribute to each request.  Permitted values are
+"local" and "global", or possibly "local" and any of an arbitrary
+set of identifiers.
+
+The core gx-map code would ignore this attribute.  The cross-site
+plugin code would use it to determine how to treat the request;
+a "local" request is not propagated to the database, and is not
+overridden by incoming updates.
+
+This change would add a degree of complexity for what may be
+a minimal benefit.  It would avoid propagating some mappings,
+but most such mappings probably wouldn't be propagated anyway,
+since the user wouldn't be in the database and/or wouldn't have an
+account on the remote machine.  If the user does have an account on
+the remote machine, propagating the mapping should be harmless and
+possibly useful.
+
+A disadvantage of *not* distinguishing between local and global
+mappings is that sites would have to inject their existing mappings
+into the database before they start accepting updates from the
+database.
