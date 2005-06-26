@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.6 2005-06-26 00:07:55-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.7 2005-06-26 15:40:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -100,10 +100,10 @@ if ($User_Opt->{debugging}) {
 
 my @input_logs = ( @ARGV ? @ARGV : '-' );
 
-
 my @requests;
 foreach my $log (@input_logs) {
-    push @requests, Gridmap_Utils::Read_Records '-multiple', $log;
+    push @requests,
+         Gridmap_Utils::Read_Records '-multiple', '-keep-comments', $log;
 }
 
 #
@@ -143,6 +143,7 @@ if (not $User_Opt->{'merge-only'}) {
     for (my $i = $#requests; $i >= 0; $i --) {
         Debug "Outer loop, \$i = $i\n";
         my $new = $requests[$i];
+        next NEW if ref $new eq 'ARRAY';
         my $new_op = $new->{operation};
         if ($new_op =~ /^remove/) {
             $new->{__DELETED__} = 1;
@@ -150,7 +151,9 @@ if (not $User_Opt->{'merge-only'}) {
         OLD:
         for (my $j = $i - 1; $j >= 0; $j --) {
             my $old = $requests[$j];
-            Debug "Checking $j ($old->{operation}) vs. $i ($new->{operation})\n";
+            next OLD if ref $old eq 'ARRAY';
+            Debug "Checking $j ($old->{operation}) vs. " .
+                  "$i ($new->{operation})\n";
             next if exists $old->{__DELETED__};
             next if $new->{NAMESPACE} ne $old->{NAMESPACE};
             my $old_op = $old->{operation};
