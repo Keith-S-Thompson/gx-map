@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.7 2005-04-25 17:51:13-07 kst Exp $
+# $Id: make-release,v 1.8 2005-06-26 15:36:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -24,6 +24,7 @@ try cd release/gx-map-$num
 for file in \
     $in_files \
     INSTALL \
+    LICENSE \
     Makefile \
     README \
     README.CA \
