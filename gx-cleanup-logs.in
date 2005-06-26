@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.5 2005-06-24 08:46:10-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.6 2005-06-26 00:07:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -113,7 +113,7 @@ foreach my $log (@input_logs) {
 
 if ($User_Opt->{index}) {
     for (my $i = 0; $i <= $#requests; $i ++) {
-	$requests[$i]->{INDEX} = $i;
+        $requests[$i]->{INDEX} = $i;
     }
 }
 
@@ -141,7 +141,7 @@ if (not $User_Opt->{'merge-only'}) {
     #
     NEW:
     for (my $i = $#requests; $i >= 0; $i --) {
-	Debug "Outer loop, \$i = $i\n";
+        Debug "Outer loop, \$i = $i\n";
         my $new = $requests[$i];
         my $new_op = $new->{operation};
         if ($new_op =~ /^remove/) {
@@ -150,7 +150,7 @@ if (not $User_Opt->{'merge-only'}) {
         OLD:
         for (my $j = $i - 1; $j >= 0; $j --) {
             my $old = $requests[$j];
-	    Debug "Checking $j ($old->{operation}) vs. $i ($new->{operation})\n";
+            Debug "Checking $j ($old->{operation}) vs. $i ($new->{operation})\n";
             next if exists $old->{__DELETED__};
             next if $new->{NAMESPACE} ne $old->{NAMESPACE};
             my $old_op = $old->{operation};
@@ -160,11 +160,11 @@ if (not $User_Opt->{'merge-only'}) {
                  $old->{map_to_name} eq $new->{map_to_name} and
                  $old->{dn} eq $new->{dn} )
             {
-		Debug "Deleting $j\n";
+                Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
-		if ($User_Opt->{index}) {
-		    $old->{INDEX} .= " ($new->{INDEX})";
-		}
+                if ($User_Opt->{index}) {
+                    $old->{INDEX} .= " ($new->{INDEX})";
+                }
             }
 
             elsif ( $new_op eq 'remove-user' and
@@ -173,11 +173,11 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-user' ) and
                     $old->{map_to_name} eq $new->{map_to_name} )
             {
-		Debug "Deleting $j\n";
+                Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
-		if ($User_Opt->{index}) {
-		    $old->{INDEX} .= " ($new->{INDEX})";
-		}
+                if ($User_Opt->{index}) {
+                    $old->{INDEX} .= " ($new->{INDEX})";
+                }
             }
 
             elsif ( $new_op eq 'remove-dn' and
@@ -186,11 +186,11 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-dn' ) and
                     $old->{dn} eq $new->{dn} )
             {
-		Debug "Deleting $j\n";
+                Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
-		if ($User_Opt->{index}) {
-		    $old->{INDEX} .= " ($new->{INDEX})";
-		}
+                if ($User_Opt->{index}) {
+                    $old->{INDEX} .= " ($new->{INDEX})";
+                }
             }
 
             elsif ( $new_op eq 'add' and
@@ -199,11 +199,11 @@ if (not $User_Opt->{'merge-only'}) {
                     $old->{map_to_name} eq $new->{map_to_name} and
                     $old->{dn} eq $new->{dn} )
             {
-		Debug "Deleting $j\n";
+                Debug "Deleting $j\n";
                 $old->{__DELETED__} = 1;
-		if ($User_Opt->{index}) {
-		    $old->{INDEX} .= " ($new->{INDEX})";
-		}
+                if ($User_Opt->{index}) {
+                    $old->{INDEX} .= " ($new->{INDEX})";
+                }
             }
         }
     }
