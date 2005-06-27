@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.67 2005-06-26 15:41:57-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.68 2005-06-27 12:23:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -544,10 +544,15 @@ sub Write_Records($$@) {
 
     REF:
     foreach my $ref (@refs) {
-        if (ref $ref eq 'ARRAY') {
-            my @lines = @$ref;
-            foreach my $line (@lines) {
-                $line =~ s/^/# / if $line !~ /^#/;
+        if (defined $ref->{comment_lines}) {
+            print "# $ref->{timestamp}\n"; ###
+            foreach my $line (@{$ref->{comment_lines}}) {
+                if ($line !~ /^#/) {
+                    $line = "# $line";
+                }
+                elsif ($line =~ /^#\S/) {
+                    $line =~ s/^#/# /;
+                }
                 print "$line\n";
             }
             print "\n";
@@ -590,13 +595,22 @@ sub Write_Records($$@) {
 #
 # The first zero or more arguments are option names starting with a
 # '-' character.  Recognized options, which may not be abbreviated, are:
-#     '-single'         Read a single record.
+#     '-single'         Read a single record without '{' and '}'
+#                       delimiters.
 #     '-multiple'       Read zero or more records delimited by '{' and '}'.
 #                       This is the default.
-#     '-keep-comments'  Treat comment blocks as pseudo-records.
-#                       A contiguous sequence of comment lines is
-#                       stored as a reference to an array of strings.
-#                       This may not be specified with '-single'.
+#     '-keep-comments'  Treat comment blocks as pseudo-records A
+#                       contiguous sequence of comment lines is stored
+#                       as a record with two fields: 'timestamp', an
+#                       artificial timestamp derived by incrementing the
+#                       previous record, and 'comment_lines', a reference
+#                       to an array of lines.  The 'timestamp' field
+#                       makes it possible to sort an array of records by
+#                       timestamp even if some of them are comment blocks.
+#                       (If a comment block appears between two record
+#                       with the same timestamp, it may be de-sorted;
+#                       oh, well.)
+#                       This option may not be specified with '-single'.
 #                       Comments are ignored by default.
 #
 # The last argument is the name of the file from which to read the
@@ -605,14 +619,14 @@ sub Write_Records($$@) {
 # Leading and trailing whitespace are ignored.
 #
 # Comments start with a '#' character, and are either ignored or stored as
-# array references, depending on whether '-keep-comments' is specified.
+# comment records, depending on whether '-keep-comments' is specified.
 # A comment must be on a line by itself; end-of-line comments are not
 # supported on lines containing other data (so '#' characters can be
 # used in field values).  Comments are not allowed within records (i.e.,
 # between a '{' line and a '}' line).  Comments are not alowed if '-single'
 # is specified.
 #
-# An empty lines terminates a comment block but is otherwise ignored.
+# An empty line terminates a comment block but is otherwise ignored.
 # 
 # For '-single', the record read from the file is returned as a hash
 # reference.
@@ -654,9 +668,9 @@ sub Read_Records(@) {
     my $ref = ( $multiple ? undef : {} );
     #
     # $context indicates where we are.  Values are:
-    #     'record' (indicating # that we're between a '{' and a '}'),
-    #     'comment' (indicating that # we're in a comment), and
-    #     'none'.
+    #     'record' (indicating that we're between a '{' and a '}'),
+    #     'comment' (indicating that we're in a comment), and
+    #     'none' (otherwise).
     #
     my $context = $multiple ? 'none' : 'record';
     LINE:
@@ -665,7 +679,6 @@ sub Read_Records(@) {
         s/^\s+//;
         s/\s+$//;
 
-        next LINE if $_ eq '';
         if (/^#/) {
             if (not $multiple) {
                 die "Comment not allowed in single-record mode " .
@@ -673,13 +686,22 @@ sub Read_Records(@) {
             }
             elsif ($context eq 'none') {
                 $context = 'comment';
-                $ref = [];
+                $ref = { timestamp => 0, comment_lines => [] };
+                if (@result) {
+                    my $previous = $result[$#result];
+                    if (defined $previous->{timestamp}) {
+                        my $timestamp = $previous->{timestamp};
+                        $timestamp =~ s/ .*$//;
+                        $ref->{timestamp} =
+                            Gridmap_Utils::Long_Time_Image($timestamp + 0.25);
+                    }
+                }
             }
             elsif ($context eq 'record') {
                 die "Comment not allowed within record " .
                     "at line $. of $filename\n";
             }
-            push @$ref, $_;
+            push @{$ref->{comment_lines}}, $_;
         }
         elsif ($_ eq '') {
             if ($context eq 'comment') {
@@ -689,6 +711,9 @@ sub Read_Records(@) {
             }
         }
         elsif ($multiple and $context ne 'record' and $_ eq '{') {
+            if ($context eq 'comment') {
+                push @result, $ref;
+            }
             $context = 'record';
             $ref = {};
         }
