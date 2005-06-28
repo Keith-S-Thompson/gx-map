@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.7 2005-06-28 02:50:06-07 kst Exp $
+# $Id: gx-request.in,v 1.8 2005-06-28 14:27:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -133,7 +133,7 @@ my @Opts = ( $User_Opt,
                  remove remove-dn remove-user
                  update
                  quiet force no-admin
-                 dn=s certificate-file=s username=s
+                 dn=s certificate-file=s proxy username=s
                  secondary
                  directory=s
                  email=s
