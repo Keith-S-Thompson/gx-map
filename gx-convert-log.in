@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.14 2005-06-28 02:30:40-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.15 2005-06-28 02:34:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -81,13 +81,12 @@ my @Opts = ( $User_Opt,
                  version! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
-Usage if scalar @ARGV != 1;
-my $Input_Log = $ARGV[0];
-
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+Usage if scalar @ARGV != 1;
+my $Input_Log = $ARGV[0];
 
 my @missing_accounts = ();
 
@@ -125,7 +124,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.14 $';
+my $Rev = '$Revision: 1.15 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
