@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.6 2005-06-28 02:07:57-07 kst Exp $
+# $Id: gx-request.in,v 1.7 2005-06-28 02:50:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -756,6 +756,7 @@ EOF
                     > (p) Proxy, extract from your current proxy certificate
 EOF
                 }
+                print Strip <<"EOF";
                 > (i) Input the DN directly
                 > (x) Exit
 EOF
