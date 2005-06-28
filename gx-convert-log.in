@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.9 2005-01-07 17:14:03-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.10 2005-06-28 01:13:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -119,13 +119,14 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.9 $';
+my $Rev = '$Revision: 1.10 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
 Usage "Can't read file $Input_Log\n" if not -r $Input_Log;
 
-my @refs = Gridmap_Utils::Read_Records '-multiple', $Input_Log;
+my @refs = Gridmap_Utils::Read_Records
+               '-multiple', '-keep-comments', $Input_Log;
 
 my $timestamp = Gridmap_Utils::Time_Image $now;
 
@@ -137,12 +138,17 @@ print "# Converting ", scalar @refs, " records\n";
 print "\n";
 
 foreach my $ref (@refs) {
+    next if defined $ref->{comment_lines};
     my $owner_is_admin = Owned_By_Admin $ref;
 
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
     my $new_comment = undef;
 
     if ($owner_is_admin) {
+        if (defined $ref->{dn}) {
+            $ref->{dn} = Gridmap_Utils::GT3_Subject $ref->{dn};
+        }
+            
         if (not defined $ref->{SOURCE}) {
             if ($comment =~ /^cacl certificate/) {
                 $ref->{SOURCE} = 'NPACI-CA';
