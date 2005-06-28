@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.4 2005-06-27 21:11:26-07 kst Exp $
+# $Id: gx-request.in,v 1.5 2005-06-27 23:24:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -319,8 +319,8 @@ if (not $Options->{quiet}) {
               "user \"$Options->{username}\"\n";
     }
     if ($dn_was_translated) {
-        print "(The distinguished name was translated to a form compatible\n";
-        print "with GT3 and GT4.)\n";
+        print "The distinguished name was translated to " .
+              "a form compatible with GT3 and GT4.\n";
     }
 }
 if (not $Options->{force}) {
