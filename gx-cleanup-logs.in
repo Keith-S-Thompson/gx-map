@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.9 2005-06-27 12:56:15-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.10 2005-06-28 00:27:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -108,21 +108,29 @@ foreach my $log (@input_logs) {
 
 #
 # Index each record so we can do a stable sort.
-# (Perl 5.6 and earlier uses an unstable quicksort.
-# Later Perls use a stable mergesort by default.)
+# Perl 5.6 and earlier uses an unstable quicksort.
+# Later Perls use a stable mergesort by default.
 #
-{
-    my $index = 0;
-    foreach my $request (@requests) {
-        $request->{__INDEX__} = $index++;
-    }
+# This field will be deleted after sorting unless
+# the "-index" option has been specified.
+#
+for (my $i = 0; $i <= $#requests; $i ++) {
+    $requests[$i]->{__INDEX__} = $i;
 }
 
-Debug "Before sorting:\n";
-foreach my $request (@requests) {
-    Debugf "%6d  %s %s\n", $request->{__INDEX__},
-                           $request,
-                           $request->{timestamp};
+if ($User_Opt->{debugging}) {
+    Debug "Before sorting:\n";
+    foreach my $request (@requests) {
+        Debugf "%6d  %s %s", $request->{__INDEX__},
+                             $request,
+                             $request->{timestamp};
+        if (defined $request->{comment_lines}) {
+            Debug " comment\n";
+        }
+        elsif (defined $request->{operation}) {
+            Debug " $request->{operation}\n";
+        }
+    }
 }
 
 #
@@ -132,19 +140,24 @@ foreach my $request (@requests) {
                    $a->{__INDEX__} <=> $b->{__INDEX__}
                  } @requests;
 
-foreach my $request (@requests) {
-    delete $request->{__INDEX__};
+if ($User_Opt->{debugging}) { 
+    Debug "After sorting:\n";
+    foreach my $request (@requests) {
+        Debugf "%6d  %s %s", $request->{__INDEX__},
+                             $request,
+                             $request->{timestamp};
+        if (defined $request->{comment_lines}) {
+            Debug " comment\n";
+        }
+        elsif (defined $request->{operation}) {
+            Debug " $request->{operation}\n";
+        }
+    }
 }
 
-Debug "After sorting:\n";
-foreach my $request (@requests) {
-    Debug "$request $request->{timestamp}\n";
-}
-
-
-if ($User_Opt->{index}) {
-    for (my $i = 0; $i <= $#requests; $i ++) {
-        $requests[$i]->{INDEX} = $i;
+if (not $User_Opt->{index}) {
+    foreach my $request (@requests) {
+        delete $request->{__INDEX__};
     }
 }
 
@@ -243,6 +256,21 @@ if (not $User_Opt->{'merge-only'}) {
     }
 }
 
+if ($User_Opt->{debugging}) {
+    Debug "After filtering:\n";
+    foreach my $request (@requests) {
+        Debugf "%6d  %s %s", $request->{__INDEX__},
+                             $request,
+                             $request->{timestamp};
+        if (defined $request->{comment_lines}) {
+            Debug " comment\n";
+        }
+        elsif (defined $request->{operation}) {
+            Debug " $request->{operation}\n";
+        }
+    }
+}
+
 if ($User_Opt->{delete}) {
     @requests = grep { not exists $_->{__DELETED__} } @requests;
 }
@@ -260,7 +288,7 @@ Option names may be abbreviated.
     -version     Display version information and exit.
     -merge-only  Merge and sort input records; don't delete anything.
     -delete      Delete redundant requests (default is to comment them out).
-    -index       Add an INDEX field to each record (for debugging only).
+    -index       Add an __INDEX__ field to each record (for debugging only).
     -debugging   Enable debugging output.
 
 Read gx-map requests log(s) from specified files or from stdin.
