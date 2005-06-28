@@ -1,0 +1,28 @@
+# $Id: bug-0035,v 1.1 2005-06-27 20:46:01-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0035,v $
+
+gx-map bug 0035
+Date: Mon 2005-06-27
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Store all DNs in new (GT3+) form
+
+Summary:
+Requests are stored with the DN in the form given by the user, which
+could be either the GT2 form (/USERID=...) or the GT3 form (/UID=...),
+or even the OpenSSL 0.9.6 form (/0.9.2342.19200300.100.1.1=...).
+
+Instead, store all DNs in the new (GT3+, OpenSSL 0.9.7+) form, doing
+the conversion in gx-check-requests, and perhaps also in gx-request.
+(If gx-request does the conversion in a way that's visible to the user,
+print a brief message explaining what's going on.)
+
+Modify gx-convert-log to do this conversion.
+
+gx-gen-mapfile and any other tools that read the requests.log file can
+then assume that all DNs are in the new form, which should simplify
+things a bit.  It would also make log file analysis a bit easier.
+
+This change should be made in conjunction with allowing proxy DNs (bug-0026).
