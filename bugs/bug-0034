@@ -1,0 +1,31 @@
+# $Id: bug-0034,v 1.1 2005-06-27 20:37:49-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0034,v $
+
+gx-map bug 0034
+Date: Sun 2005-06-26
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Be smarter about reporting errors by e-mail
+
+Summary:
+The gx-ca-update command reports an error (in var/gx-ca-update.log and
+by e-mail) when there's an error with a CA.  Most of these errors are
+about a CRL that is about to expire, or has expired, or is unavailable.
+The problem: it reports the same error every time it runs, causing
+a flurry of e-mail messages (mostly to me).  gx-ca-update maintains
+no memory between executions of what errors it has already reported.
+
+Suggested solution:
+Maintain a file in the var directory with a list of errors that have
+already been reported.  For example, record that a given CRL expires
+at a specified time, and don't re-send a message for the same failure.
+Each entry would contain something like:
+    The name of the file (as installed).
+    The nature of the failure: about to expire, expired, unavailable.
+    The expiration time.
+When an error condition goes away or changes, remove the corresponding
+entry.  This is specific to CRL errors; think about what's needed for
+other kind of errors (though since certificates and signing_policy
+files are generally only installed once, that probably doesn't matter).
