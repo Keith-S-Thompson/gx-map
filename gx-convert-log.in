@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.15 2005-06-28 02:34:55-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.16 2005-06-28 02:50:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -124,7 +124,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.15 $';
+my $Rev = '$Revision: 1.16 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -148,11 +148,11 @@ my $timestamp = Gridmap_Utils::Time_Image $now;
 
 my @header_comment_lines = ();
 if (defined $refs[0]->{comment_lines}) {
-    @header_comment_lines = $refs[0]->{comment_lines};
+    @header_comment_lines = @{$refs[0]->{comment_lines}};
 }
 
 if (not (defined $header_comment_lines[0] and
-         $header_comment_lines[0] =~ /\$.*:\$/))
+         $header_comment_lines[0] =~ /\$\w+:.*\$/))
 {
     #
     # We don't already have RCS header lines; add them.
@@ -179,11 +179,11 @@ foreach my $ref (@refs) {
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
     my $new_comment = undef;
 
-    if ($owner_is_admin) {
-        if (defined $ref->{dn}) {
-            $ref->{dn} = Gridmap_Utils::GT3_Subject $ref->{dn};
-        }
+    if (defined $ref->{dn}) {
+        $ref->{dn} = Gridmap_Utils::GT3_Subject $ref->{dn};
+    }
             
+    if ($owner_is_admin) {
         if (not defined $ref->{SOURCE}) {
             if ($comment =~ /^cacl certificate/) {
                 $ref->{SOURCE} = 'NPACI-CA';
