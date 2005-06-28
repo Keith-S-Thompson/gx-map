@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.68 2005-06-27 12:23:45-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.69 2005-06-27 23:27:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -131,6 +131,7 @@ sub Read_Admin_List($);
 
 sub GT2_Subject($);
 sub GT3_Subject($);
+sub Strip_Proxy_Info($);
 
 sub DN_List($);
 sub Dup_Ref($);
@@ -491,7 +492,7 @@ sub Long_Time_Image($) {
     my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
         = gmtime $time;
 
-    return sprintf "%10d %s %04d-%02d-%02d %02d:%02d:%02d UTC",
+    return sprintf "%010d %s %04d-%02d-%02d %02d:%02d:%02d UTC",
                    $time,
                    (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
                    1900+$year, 1+$mon, $mday, $hour, $min, $sec;
@@ -545,7 +546,6 @@ sub Write_Records($$@) {
     REF:
     foreach my $ref (@refs) {
         if (defined $ref->{comment_lines}) {
-            print "# $ref->{timestamp}\n"; ###
             foreach my $line (@{$ref->{comment_lines}}) {
                 if ($line !~ /^#/) {
                     $line = "# $line";
@@ -553,9 +553,9 @@ sub Write_Records($$@) {
                 elsif ($line =~ /^#\S/) {
                     $line =~ s/^#/# /;
                 }
-                print "$line\n";
+                $output .= "$line\n";
             }
-            print "\n";
+            $output .= "\n";
         }
         else {
             my $deleted = exists $ref->{__DELETED__};
@@ -684,33 +684,33 @@ sub Read_Records(@) {
                 die "Comment not allowed in single-record mode " .
                     "at line $. of $filename\n";
             }
-            elsif ($context eq 'none') {
+            elsif ($keep_comments and $context eq 'none') {
                 $context = 'comment';
-                $ref = { timestamp => 0, comment_lines => [] };
+                $ref = { comment_lines => [] };
                 if (@result) {
                     my $previous = $result[$#result];
                     if (defined $previous->{timestamp}) {
-                        my $timestamp = $previous->{timestamp};
-                        $timestamp =~ s/ .*$//;
-                        $ref->{timestamp} =
-                            Gridmap_Utils::Long_Time_Image($timestamp + 0.25);
+                        $ref->{timestamp} = $previous->{timestamp};
                     }
+                }
+                if (not defined $ref->{timestamp}) {
+                    $ref->{timestamp} = Gridmap_Utils::Long_Time_Image 0;
                 }
             }
             elsif ($context eq 'record') {
                 die "Comment not allowed within record " .
                     "at line $. of $filename\n";
             }
-            push @{$ref->{comment_lines}}, $_;
+            push @{$ref->{comment_lines}}, $_ if $keep_comments
         }
         elsif ($_ eq '') {
-            if ($context eq 'comment') {
+            if ($keep_comments and $context eq 'comment') {
                 $context = 'none';
                 push @result, $ref;
                 undef $ref;
             }
         }
-        elsif ($multiple and $context ne 'record' and $_ eq '{') {
+        elsif ($multiple and $context ne 'record' and $_ eq '{') { # '}'
             if ($context eq 'comment') {
                 push @result, $ref;
             }
@@ -718,6 +718,7 @@ sub Read_Records(@) {
             $ref = {};
         }
         elsif ($context eq 'record') {
+            # '{'
             if ($multiple and $_ eq '}') {
                 push @result, $ref;
                 undef $ref;
@@ -741,16 +742,20 @@ sub Read_Records(@) {
         }
         else {
             if ($multiple) {
-                if ($_ eq '{') {
+                if ($_ eq '{') { # '}'
                     $ref = {};
                     $context = 'record';
                 }
                 else {
-                    die "Syntax error (expected '{' or EOF) " .
+                    die "Syntax error (expected '{' or EOF) " . # '}'
                         "at line $. of $filename\n";
                 }
             }
         }
+    }
+    if ($keep_comments and $context eq 'comment') {
+        push @result, $ref;
+        $context = 'none';
     }
     if ($multiple) {
         return @result;
@@ -1209,9 +1214,9 @@ sub GT2_Subject($) {
 
 #
 # Given a string, possibly containing one or more certificate subject
-# names, translates certain fields to be compatible with GT3 and
-# OpenSSL 0.9.7.  The input string may consist of multiple lines.
-# See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
+# names, translates certain fields to be compatible with GT3 (and newer)
+# and OpenSSL 0.9.7 (and newer).  The input string may consist of multiple
+# lines.  See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
 # 
 sub GT3_Subject($) {
     my($string) = @_;
@@ -1220,6 +1225,21 @@ sub GT3_Subject($) {
     $string =~ s(/Email=)(/emailAddress=)g;
     return $string;
 } # GT3_Subject
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, delete all trailing occurrences of "/CN=proxy" or
+# "/CN=[0-9]+", converting a DN for a proxy certificate to the DN for
+# the corresponding user certificate.
+# 
+sub Strip_Proxy_Info($) {
+    my($string) = @_;
+    while ($string =~ m</CN=proxy$> or $string =~ m</CN=[0-9]+$>) {
+        $string =~ s</[^/]*$><>;
+    }
+    return $string;
+} # Strip_Proxy_Info
 
 # ----------------------------------------------------------------------
 
