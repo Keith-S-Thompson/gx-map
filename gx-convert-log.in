@@ -1,6 +1,6 @@
-!%PERL% -w
+#!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.13 2005-06-28 02:29:40-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.14 2005-06-28 02:30:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 use strict;
@@ -125,7 +125,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.13 $';
+my $Rev = '$Revision: 1.14 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
