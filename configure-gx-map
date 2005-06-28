@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.26 2005-04-17 02:50:03-07 kst Exp $
+# $Id: configure-gx-map,v 1.27 2005-06-28 13:14:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -58,6 +58,7 @@ use File::Basename;
 
 sub Home_Dir($);
 sub Command_Exists($$);
+sub Get_Version();
 sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
@@ -77,6 +78,8 @@ if (scalar @ARGV == 1 and -e $ARGV[0]) {
 else {
     Usage;
 }
+
+my $version = Get_Version;
 
 my @errors = ();
 my @warnings = ();
@@ -104,6 +107,7 @@ while (<CONFIG>) {
             chomp $@;
             push @errors, "$@, $Config_File line $.\n";
         }
+        $value =~ s/%VERSION%/$version/g;
         if ($Valid_Var_Name{$name}) {
             if (exists $Config{$name}) {
                 push @errors,
@@ -274,6 +278,23 @@ sub Command_Exists($$) {
     }
     return 0;
 } # Command_Exists
+
+# ----------------------------------------------------------------------
+
+sub Get_Version() {
+    my $result = undef;
+    my $module = 'Gridmap_Utils.pm.in';
+    open MODULE, $module or die "${module}: $!\n";
+    while (<MODULE>) {
+        if (/\$VERSION\s*=\s*'(.*)'/) {
+            $result = $1;
+            last;
+        }
+    }
+    close MODULE;
+    die "Can't get version number from $module\n" if not defined $result;
+    return $result;
+} # Get_Version
 
 # ----------------------------------------------------------------------
 
