@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.5 2005-06-27 23:24:35-07 kst Exp $
+# $Id: gx-request.in,v 1.6 2005-06-28 02:07:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -70,6 +70,7 @@ sub Get_Options_From_Command_Line();
 sub Is_Valid_DN($);
 sub Request_Update();
 sub Get_DN_From_File($);
+sub Proxy_File_Name();
 sub Gen_Request_File_Name();
 sub Debug(@);
 sub Debugf(@);
@@ -77,6 +78,7 @@ sub Debugf(@);
 my $Program_Name = File::Basename::basename $0;
 my $hostname;
 my $Now = time;
+my $proxy_file = Proxy_File_Name;
 
 if ($Program_Name eq 'gx-request') {
     # ok
@@ -420,6 +422,20 @@ sub Get_DN_From_File($) {
 
 # ----------------------------------------------------------------------
 
+sub Proxy_File_Name() {
+    if (defined $ENV{X509_USER_PROXY} and -r $ENV{X509_USER_PROXY}) {
+        return $ENV{X509_USER_PROXY};
+    }
+    elsif (-r "/tmp/x509up_u$>") {
+        return "/tmp/x509up_u$>";
+    }
+    else {
+        return undef;
+    }
+} # Proxy_File_Name
+
+# ----------------------------------------------------------------------
+
 sub Gen_Request_File_Name() {
     my $result = "$Requests_Dir/";
     $result .= sprintf "%010s", $Now;
@@ -726,17 +742,24 @@ EOF
             $Options->{'dn-method'} = 'none';
         }
         else {
+            my $choices = defined $proxy_file ? 'cfpix' : 'cfix';
             while (not defined $Options->{'dn-method'}) {
                 print Strip <<"EOF";
                 > 
-                > You can specify the DN in one of three ways:
+                > You can specify the DN in one of several ways:
                 > (c) Certificate, extract from
-                >         \$HOME/.globus/usercert.pem
                 > (f) File, extract from a specified certificate file
+                >         \$HOME/.globus/usercert.pem
+EOF
+                if (defined $proxy_file) {
+                    print Strip <<"EOF";
+                    > (p) Proxy, extract from your current proxy certificate
+EOF
+                }
                 > (i) Input the DN directly
                 > (x) Exit
 EOF
-                print "How do you want to specify the DN? [cfix] ";
+                print "How do you want to specify the DN? [$choices] ";
                 chomp($response = lc scalar <STDIN>);
 
                 if ($response =~ /^c/) {
@@ -746,6 +769,9 @@ EOF
                 }
                 elsif ($response =~ /^f/) {
                     $Options->{'dn-method'} = 'file';
+                }
+                elsif (defined $proxy_file and $response =~ /^p/) {
+                    $Options->{'dn-method'} = 'proxy';
                 }
                 elsif ($response =~ /^i/) {
                     $Options->{'dn-method'} = 'dn';
@@ -919,7 +945,7 @@ sub Get_Options_From_Command_Line() {
     }
     #
     # Leave "source" undefined if it's not specified (no default).
-    # It will be set to "USER" by gx-check-requests.
+    # It will be set to "user" or "admin" by gx-check-requests.
     #
 
     if ($OP eq 'update') {
@@ -946,6 +972,14 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
+    my $count = 0;
+    $count ++ if defined $User_Opt->{dn};
+    $count ++ if defined $User_Opt->{proxy};
+    $count ++ if defined $User_Opt->{'certificate-file'};
+    if ($count > 1) {
+        Usage "Specify only one of -dn, -proxy, -certificate-file\n";
+    }
+
     if (defined $User_Opt->{dn}) {
         if (defined $User_Opt->{'certificate-file'}) {
             Usage "Can't specify both DN and certificate file\n"
@@ -955,20 +989,22 @@ sub Get_Options_From_Command_Line() {
             $Options->{dn} = $User_Opt->{dn};
         }
     }
+    elsif (defined $User_Opt->{proxy}) {
+        $Options->{'dn-method'} = 'file';
+        $Options->{'certificate-file'} = $proxy_file;
+    }
+    elsif (defined $User_Opt->{'certificate-file'}) {
+        $Options->{'dn-method'} = 'file';
+        $Options->{'certificate-file'} = $User_Opt->{'certificate-file'};
+    }
     else {
-        if (defined $User_Opt->{'certificate-file'}) {
-            $Options->{'dn-method'} = 'file';
-            $Options->{'certificate-file'} = $User_Opt->{'certificate-file'};
+        if ($OP =~ /-user$/) {
+            $Options->{'dn-method'} = 'none';
         }
         else {
-            if ($OP =~ /-user$/) {
-                $Options->{'dn-method'} = 'none';
-            }
-            else {
-                $Options->{'dn-method'} = 'file';
-                $Options->{'certificate-file'}
-                    = "$ENV{HOME}/.globus/usercert.pem";
-            }
+            $Options->{'dn-method'} = 'file';
+            $Options->{'certificate-file'}
+                = "$ENV{HOME}/.globus/usercert.pem";
         }
     }
 
@@ -1045,10 +1081,11 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               you're not already a Globus administrator.
     -dn "string"            : Distinguished name.
                               Default is extracted from ~/.globus/usercert.pem
+    -proxy                  : Extract DN from proxy certificate.
     -certificate-file file  : Name of file from which to extract DN.
-                              If neither "-dn" nor "-certificate-file" is
-                              specified, extract DN from
-                              \$HOME/.globus/usercert.pem
+                              If neither "-dn", "-proxy", nor
+                              "-certificate-file" is specified, extract
+                              DN from \$HOME/.globus/usercert.pem .
     -force-dn               : Normally, gx-map (minimally) checks the DN for
                               proper syntax; this option overrides that check.
     -username name          : Unix user name to map.
