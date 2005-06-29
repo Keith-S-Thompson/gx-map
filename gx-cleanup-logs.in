@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.10 2005-06-28 00:27:55-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.11 2005-06-29 00:27:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -111,7 +111,7 @@ foreach my $log (@input_logs) {
 # Perl 5.6 and earlier uses an unstable quicksort.
 # Later Perls use a stable mergesort by default.
 #
-# This field will be deleted after sorting unless
+# This field will be deleted before writing unless
 # the "-index" option has been specified.
 #
 for (my $i = 0; $i <= $#requests; $i ++) {
@@ -121,15 +121,10 @@ for (my $i = 0; $i <= $#requests; $i ++) {
 if ($User_Opt->{debugging}) {
     Debug "Before sorting:\n";
     foreach my $request (@requests) {
-        Debugf "%6d  %s %s", $request->{__INDEX__},
-                             $request,
-                             $request->{timestamp};
-        if (defined $request->{comment_lines}) {
-            Debug " comment\n";
-        }
-        elsif (defined $request->{operation}) {
-            Debug " $request->{operation}\n";
-        }
+        Debugf "%6d  %s %s %s\n", $request->{__INDEX__},
+                                  $request,
+                                  $request->{timestamp},
+                                  $request->{operation};
     }
 }
 
@@ -143,21 +138,27 @@ if ($User_Opt->{debugging}) {
 if ($User_Opt->{debugging}) { 
     Debug "After sorting:\n";
     foreach my $request (@requests) {
-        Debugf "%6d  %s %s", $request->{__INDEX__},
-                             $request,
-                             $request->{timestamp};
-        if (defined $request->{comment_lines}) {
-            Debug " comment\n";
-        }
-        elsif (defined $request->{operation}) {
-            Debug " $request->{operation}\n";
-        }
+        Debugf "%6d  %s %s %s\n", $request->{__INDEX__},
+                                  $request,
+                                  $request->{timestamp},
+                                  $request->{operation};
     }
 }
 
-if (not $User_Opt->{index}) {
-    foreach my $request (@requests) {
-        delete $request->{__INDEX__};
+#
+# Create indexing hashes to allow quick searches for a given DN or
+# user name.  For %by_dn, keys are DNs and values are references to
+# arrays of request records.  Similarly, for %by_name, keys are user
+# names and values are references to arrays of request records.
+#
+my %by_dn = ();
+my %by_name = ();
+foreach my $request (@requests) {
+    if (defined $request->{dn}) {
+      push @{$by_dn{$request->{dn}}}, $request;
+    }
+    if (defined $request->{map_to_name}) {
+      push @{$by_name{$request->{map_to_name}}}, $request;
     }
 }
 
@@ -184,30 +185,51 @@ if (not $User_Opt->{'merge-only'}) {
     # of them.
     #
     NEW:
-    for (my $i = $#requests; $i >= 0; $i --) {
-        Debug "Outer loop, \$i = $i\n";
-        my $new = $requests[$i];
-        next NEW if defined $new->{comment_lines};
+    foreach my $new (reverse @requests) {
+        next NEW if $new->{operation} eq 'comment';
         my $new_op = $new->{operation};
+        my $new_index = $new->{__INDEX__};
+        Debug "Outer loop, $new_index, $new_op\n";
         if ($new_op =~ /^remove/) {
             $new->{__DELETED__} = 1;
         }
+
+        #
+        # Collect references for all records older than $new that refer
+        # to the same DN and/or user name.
+        #
+        my %match = ();
+        if (defined $new->{dn}) {
+            foreach my $ref (@{$by_dn{$new->{dn}}}) {
+                next if $ref->{__INDEX__} >= $new_index;
+                $match{$ref->{__INDEX__}} = 1;
+            }
+        }
+        if (defined $new->{map_to_name}) {
+            foreach my $ref (@{$by_name{$new->{map_to_name}}}) {
+                next if $ref->{__INDEX__} >= $new_index;
+                $match{$ref->{__INDEX__}} = 1;
+            }
+        }
+        my @old = ();
+        foreach my $index ( sort { $a <=> $b } keys %match ) {
+            push @old, $requests[$index];
+        }
+
         OLD:
-        for (my $j = $i - 1; $j >= 0; $j --) {
-            my $old = $requests[$j];
-            next OLD if defined $old->{comment_lines};
-            Debug "Checking $j ($old->{operation}) vs. " .
-                  "$i ($new->{operation})\n";
-            next if exists $old->{__DELETED__};
-            next if $new->{NAMESPACE} ne $old->{NAMESPACE};
+        foreach my $old (@old) {
             my $old_op = $old->{operation};
+            next OLD if $old_op eq 'comment';
+            next OLD if exists $old->{__DELETED__};
+            Debug "Inner loop, $old->{__INDEX__}, $old_op\n";
+            next if $new->{NAMESPACE} ne $old->{NAMESPACE};
 
             if ( $new_op eq 'remove' and
                  ( $old_op eq 'add' or $old_op eq 'remove' ) and
                  $old->{map_to_name} eq $new->{map_to_name} and
                  $old->{dn} eq $new->{dn} )
             {
-                Debug "Deleting $j\n";
+                Debug "Deleting $old->{__INDEX__}, $old_op\n";
                 $old->{__DELETED__} = 1;
                 if ($User_Opt->{index}) {
                     $old->{INDEX} .= " ($new->{INDEX})";
@@ -220,7 +242,7 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-user' ) and
                     $old->{map_to_name} eq $new->{map_to_name} )
             {
-                Debug "Deleting $j\n";
+                Debug "Deleting $old->{__INDEX__}, $old_op\n";
                 $old->{__DELETED__} = 1;
                 if ($User_Opt->{index}) {
                     $old->{INDEX} .= " ($new->{INDEX})";
@@ -233,7 +255,7 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-dn' ) and
                     $old->{dn} eq $new->{dn} )
             {
-                Debug "Deleting $j\n";
+                Debug "Deleting $old->{__INDEX__}, $old_op\n";
                 $old->{__DELETED__} = 1;
                 if ($User_Opt->{index}) {
                     $old->{INDEX} .= " ($new->{INDEX})";
@@ -246,7 +268,7 @@ if (not $User_Opt->{'merge-only'}) {
                     $old->{map_to_name} eq $new->{map_to_name} and
                     $old->{dn} eq $new->{dn} )
             {
-                Debug "Deleting $j\n";
+                Debug "Deleting $old->{__INDEX__}, $old_op\n";
                 $old->{__DELETED__} = 1;
                 if ($User_Opt->{index}) {
                     $old->{INDEX} .= " ($new->{INDEX})";
@@ -259,15 +281,16 @@ if (not $User_Opt->{'merge-only'}) {
 if ($User_Opt->{debugging}) {
     Debug "After filtering:\n";
     foreach my $request (@requests) {
-        Debugf "%6d  %s %s", $request->{__INDEX__},
-                             $request,
-                             $request->{timestamp};
-        if (defined $request->{comment_lines}) {
-            Debug " comment\n";
-        }
-        elsif (defined $request->{operation}) {
-            Debug " $request->{operation}\n";
-        }
+        Debugf "%6d  %s %s %s\n", $request->{__INDEX__},
+                                  $request,
+                                  $request->{timestamp},
+                                  $request->{operation};
+    }
+}
+
+if (not $User_Opt->{index}) {
+    foreach my $request (@requests) {
+        delete $request->{__INDEX__};
     }
 }
 
