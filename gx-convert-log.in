@@ -1,9 +1,7 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.16 2005-06-28 02:50:51-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.17 2005-06-29 00:57:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
-
-use strict;
 
 ########################################################################
 # @Copyright@
@@ -49,6 +47,8 @@ use strict;
 ########################################################################
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
+
+use strict;
 
 use File::Basename ();
 use Getopt::Long ();
@@ -124,7 +124,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.16 $';
+my $Rev = '$Revision: 1.17 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -147,8 +147,8 @@ foreach my $ref (@refs) {
 my $timestamp = Gridmap_Utils::Time_Image $now;
 
 my @header_comment_lines = ();
-if (defined $refs[0]->{comment_lines}) {
-    @header_comment_lines = @{$refs[0]->{comment_lines}};
+if ($refs[0]->{operation} eq 'comment') {
+    @header_comment_lines = @{$refs[0]->{lines}};
 }
 
 if (not (defined $header_comment_lines[0] and
@@ -167,13 +167,13 @@ push @header_comment_lines,
      "Converted $timestamp by $Program_Name (gx-map $Gridmap_Utils::VERSION)",
      "Converting $record_count records";
 
-if (not defined $refs[0]->{comment_lines}) {
+if ($refs[0]->{operation} ne 'comment') {
     unshift @refs, {};
 }
-$refs[0]->{comment_lines} = \@header_comment_lines;
+$refs[0]->{lines} = \@header_comment_lines;
 
 foreach my $ref (@refs) {
-    next if defined $ref->{comment_lines};
+    next if $ref->{operation} eq 'comment';
     my $owner_is_admin = Owned_By_Admin $ref;
 
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
