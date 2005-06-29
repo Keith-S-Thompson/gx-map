@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.70 2005-06-28 13:13:17-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.71 2005-06-29 00:22:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -550,8 +550,8 @@ sub Write_Records($$@) {
 
     REF:
     foreach my $ref (@refs) {
-        if (defined $ref->{comment_lines}) {
-            foreach my $line (@{$ref->{comment_lines}}) {
+        if ($ref->{operation} eq 'comment') {
+            foreach my $line (@{$ref->{lines}}) {
                 if ($line !~ /^#/) {
                     $line = "# $line";
                 }
@@ -600,23 +600,34 @@ sub Write_Records($$@) {
 #
 # The first zero or more arguments are option names starting with a
 # '-' character.  Recognized options, which may not be abbreviated, are:
-#     '-single'         Read a single record without '{' and '}'
-#                       delimiters.
-#     '-multiple'       Read zero or more records delimited by '{' and '}'.
-#                       This is the default.
-#     '-keep-comments'  Treat comment blocks as pseudo-records A
-#                       contiguous sequence of comment lines is stored
-#                       as a record with two fields: 'timestamp', an
-#                       artificial timestamp derived by incrementing the
-#                       previous record, and 'comment_lines', a reference
-#                       to an array of lines.  The 'timestamp' field
-#                       makes it possible to sort an array of records by
-#                       timestamp even if some of them are comment blocks.
-#                       (If a comment block appears between two record
-#                       with the same timestamp, it may be de-sorted;
-#                       oh, well.)
-#                       This option may not be specified with '-single'.
-#                       Comments are ignored by default.
+#
+#   '-single'
+#           Read a single record without '{' and '}' delimiters.
+#
+#   '-multiple'
+#           Read zero or more records delimited by '{' and '}'.
+#           This is the default.
+#
+#   '-keep-comments'
+#           Treat comment blocks as pseudo-records.  A contiguous
+#           sequence of comment lines is stored as a record with
+#           three fields:
+#               'operation':
+#                   Set to 'comment'.
+#               'timestamp':
+#                   An artificial timestamp set to the timestamp of the
+#                   previous record (or 0 for a header comment).
+#               'lines':
+#                   a reference to an array of lines.
+#
+#           The 'timestamp' field makes it possible to sort an array
+#           of records by timestamp even if some of them are comment
+#           blocks.
+#
+#           The '-keep-comments' option may not be specified with
+#           '-single'.
+#
+#           Comments are ignored by default.
 #
 # The last argument is the name of the file from which to read the
 # record or records.  '-' denotes stdin.
@@ -691,7 +702,7 @@ sub Read_Records(@) {
             }
             elsif ($keep_comments and $context eq 'none') {
                 $context = 'comment';
-                $ref = { comment_lines => [] };
+                $ref = { operation => 'comment', lines => [] };
                 if (@result) {
                     my $previous = $result[$#result];
                     if (defined $previous->{timestamp}) {
@@ -706,7 +717,7 @@ sub Read_Records(@) {
                 die "Comment not allowed within record " .
                     "at line $. of $filename\n";
             }
-            push @{$ref->{comment_lines}}, $_ if $keep_comments
+            push @{$ref->{lines}}, $_ if $keep_comments
         }
         elsif ($_ eq '') {
             if ($keep_comments and $context eq 'comment') {
