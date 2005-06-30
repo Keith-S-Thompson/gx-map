@@ -1,0 +1,29 @@
+# $Id: bug-0038,v 1.1 2005-06-29 22:18:24-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0038,v $
+
+gx-map bug 0038
+Date: Wed 2005-06-29
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Simplify GT2/GT3+ compatibility in gx-gen-mapfile
+
+Summary:
+The current code for generating a grid-mapfile that's compatible with
+both GT2 and GT3+ is more complex than it needs to be.  It involves
+duplicating records and partially treating the DNs as separate
+entities; see the DN_List and Dup_Ref functions in Gridmap_Utils.pm.in.
+
+Proposed solution:
+We already store all DNs in GT3+ form only (see bug-0035).  Postpone
+handling the GT2 form until we're actually writing the grid-mapfile
+entries.  This will make the code much simpler and will make it more
+feasible to add an option to gx-gen-mapfile to generate *only* the
+new form.  (At this point, it probably doesn't make sense to provide
+the option of generating only the old form.)  Or make new-form-only
+the default and add a "-compatible" option to generate both.
+
+A minor side effect is that a corresponding old and new DN will appear
+next to each other in the grid-mapfile rather than being sorted along
+with all the other DNs.  This is not significant.
