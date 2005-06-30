@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.50 2005-05-12 17:08:48-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.51 2005-06-29 21:22:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -204,6 +204,7 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
     push @options, '-all' if $User_Opt->{all};
     my @request_mappings
         = Gridmap_Valid_Mappings::Valid_Mappings @options, $request;
+
     my $operation = $request->{operation};
     foreach my $mapping (@request_mappings) {
         if ($User_Opt->{dump}) {
@@ -214,28 +215,13 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             my $op        = Image $request->{operation};
             my $user      = Image $mapping->{map_to_name};
             my $dn        = Image $mapping->{dn};
-            my $priority;
-            if ($op eq 'add') {
-                if (defined $request->{secondary} and
-                    $request->{secondary} eq 'yes')
-                {
-                    $priority = 'S';
-                }
-                else {
-                    $priority = 'P';
-                }
-            }
-            else {
-                $priority = '?';
-            }
             push @dump_lines,
-                 sprintf "%-10s %-8s %-8s %-11s %-8s %s %s\n",
+                 sprintf "%-10s %-8s %-8s %-11s %-8s %s\n",
                          $timestamp,
                          $source,
                          $namespace,
                          $op,
                          $user,
-                         $priority,
                          $dn;
             next REQUEST;
         }
@@ -251,8 +237,6 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
                           : undef;
         my $timestamp = $request->{timestamp};
         $timestamp =~ s/ .*$//;
-        my $is_primary = ( not defined $request->{secondary} or
-                           $request->{secondary} ne 'yes' );
 
         Debug ">>> Processing mapping, operation = $operation, dn = ",
               (defined $dn ? $dn : "undef"),
@@ -263,39 +247,18 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             #
             # Add a mapping; we have a DN and a user name.
             #
-            # If it's primary, set the primary mapping (overriding any
-            # previous primary mapping; There Can Be Only One).
+            # The key is the user name; the value is the timestamp.
             #
-            # If it's secondary, set a secondary mapping (which may coexist
-            # with other secondary mappings).
-            #
-            if ($is_primary) {
-                Debug ">>> Add $dn --> $map_to_name (primary)\n";
-                $Mappings{$dn}->{primary} = $map_to_name;
-            }
-            else {
-                Debug ">>> Add $dn --> $map_to_name (secondary)\n";
-                $Mappings{$dn}->{secondary}->{$map_to_name} = $timestamp;
-            }
+            Debug ">>> Add $dn --> $map_to_name\n";
+            $Mappings{$dn}->{$map_to_name} = $timestamp;
         }
         elsif ($operation eq 'remove') {
             if (exists $Mappings{$dn}) {
-                if (exists $Mappings{$dn}->{primary} and
-                    $Mappings{$dn}->{primary} eq $map_to_name) {
-                    Debug ">>> Delete $dn --> $map_to_name (primary)\n";
-                    delete $Mappings{$dn}->{primary};
-                }
-                if (exists $Mappings{$dn}->{secondary} and
-                    exists $Mappings{$dn}->{secondary}->{$map_to_name})
-                {
-                    Debug ">>> Delete $dn --> $Mappings{$dn} (secondary)\n";
-                    delete $Mappings{$dn}->{secondary}->{$map_to_name};
-                    if (scalar keys %{$Mappings{$dn}->{secondary}} == 0) {
-                        delete $Mappings{$dn}->{secondary}; # cleanup
+                if (exists $Mappings{$dn}->{$map_to_name}) {
+                    delete $Mappings{$dn}->{$map_to_name};
+                    if (scalar keys %{$Mappings{$dn}} == 0) {
+                        delete $Mappings{$dn};
                     }
-                }
-                if (scalar keys %{$Mappings{$dn}} == 0) {
-                    delete $Mappings{$dn}; # cleanup
                 }
             }
         }
@@ -310,22 +273,12 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             # Don't waste time sorting the keys.
             #
             foreach my $dn (keys %Mappings) {
-                if (exists $Mappings{$dn}->{primary} and
-                    $Mappings{$dn}->{primary} eq $map_to_name)
-                {
-                    Debug ">>> Delete $dn --> $map_to_name (primary)\n";
-                    delete $Mappings{$dn}->{primary};
-                }
-                if (exists $Mappings{$dn}->{secondary} and
-                    exists $Mappings{$dn}->{secondary}->{$map_to_name}) {
-                    Debug ">>> Delete $dn --> $map_to_name (secondary)\n";
-                    delete $Mappings{$dn}->{secondary}->{$map_to_name};
-                    if (scalar keys %{$Mappings{$dn}->{secondary}} == 0) {
-                        delete $Mappings{$dn}->{secondary}; # cleanup
+                if (exists $Mappings{$dn}->{$map_to_name}) {
+                    Debug ">>> Delete $dn --> $map_to_name\n";
+                    delete $Mappings{$dn}->{$map_to_name};
+                    if (scalar keys %{$Mappings{$dn}} == 0) {
+                        delete $Mappings{$dn};
                     }
-                }
-                if (scalar keys %{$Mappings{$dn}} == 0) {
-                    delete $Mappings{$dn}; # cleanup
                 }
             }
         }
@@ -337,22 +290,14 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             Debug ">>> Current grid-mapfile entries:\n";
             foreach my $dn (sort keys %Mappings) {
                 Debug "* $dn\n";
-                Debug "    Primary: ";
-                if (defined $Mappings{$dn}->{primary}) {
-                    Debug "$Mappings{$dn}->{primary}\n";
+                my @items = ();
+                my $by_name = $Mappings{$dn}; # name --> timestamp
+                foreach my $name (sort { $by_name{$a} <=> $by_name{$b}
+                                     keys %$by_name)
+                {
+                    push @items, "$name\@$by_name{$name}";
                 }
-                else {
-                    Debug "undef\n";
-                }
-                Debug "    Secondary: ";
-                my @secondaries = ();
-                if (exists $Mappings{$dn}->{secondary}) {
-                    foreach my $name (keys %{$Mappings{$dn}->{secondary}}) {
-                        my $ref = $Mappings{$dn}->{secondary}->{$name};
-                        push @secondaries, "$name:$ref->{$name}";
-                    }
-                }
-                Debug "( @secondaries )\n";
+                Debug "    @items\n";
             }
             Debug "<<< END\n";
 
@@ -389,8 +334,7 @@ if ($User_Opt->{dump}) {
     print OUT <<'EOF';
 # This is a log dump, not a grid-mapfile
 # Fields are:
-#     timestamp source namespace operation user priority dn
-# (priority is 'P' for a primary mapping, 'S' for a secondary mapping)
+#     timestamp source namespace operation user dn
 
 EOF
     print OUT @dump_lines;
@@ -400,27 +344,16 @@ else {
     # Now traverse the %Mappings hash, sorted by DN, and generate a mapfile
     #
     foreach my $dn (sort keys %Mappings) {
-        my @names = ();
-        my $primary_name = undef;
-
+        my $mapping = $Mappings{$dn};
         #
-        # First the primary name, if any.
+        # $mapping is a reference to a hash:
+        #     keys are user names
+        #     values are timestamps
         #
-        if (defined $Mappings{$dn}->{primary}) {
-            push @names, $Mappings{$dn}->{primary};
-            $primary_name = $Mappings{$dn}->{primary};
-        }
-
+        # Sort names in reverse by timestamp, so the most recent
+        # mapping appears first (and is the default).
         #
-        # Then the secondary names, if any, sorted by timestamp.
-        #
-        if (defined $Mappings{$dn}->{secondary}) {
-            my $ref = $Mappings{$dn}->{secondary};
-            foreach my $name (sort { $ref->{$a} <=> $ref->{$b} } keys %$ref) {
-                next if defined $primary_name and $name eq $primary_name;
-                push @names, $name;
-            }
-        }
+        my @names = sort { $mapping{$b} <=> $mapping{$a} }, keys %$mapping;
 
         if (@names) {
             if ($User_Opt->{'real-name'}) {
