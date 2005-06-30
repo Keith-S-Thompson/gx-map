@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.11 2005-06-29 00:27:40-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.12 2005-06-29 21:22:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -55,7 +55,6 @@ use File::Copy ();
 use Getopt::Long ();
 
 sub Usage(@);
-sub Is_Secondary($);
 sub Debug(@);
 sub Debugf(@);
 
@@ -263,7 +262,6 @@ if (not $User_Opt->{'merge-only'}) {
             }
 
             elsif ( $new_op eq 'add' and
-                    not Is_Secondary $old and
                     ( $old_op eq 'add' or $old_op eq 'remove' ) and
                     $old->{map_to_name} eq $new->{map_to_name} and
                     $old->{dn} eq $new->{dn} )
@@ -320,13 +318,6 @@ requests commented out or deleted.
 EOF
     exit 1;
 } # Usage
-
-# ----------------------------------------------------------------------
-
-sub Is_Secondary($) {
-    my($ref) = @_;
-    return ( defined $ref->{secondary} and $ref->{secondary} eq 'yes' );
-} # Is_Secondary
 
 # ----------------------------------------------------------------------
 
