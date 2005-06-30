@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.18 2005-06-29 20:57:27-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.19 2005-06-29 22:02:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -124,7 +124,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.18 $';
+my $Rev = '$Revision: 1.19 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -183,7 +183,15 @@ foreach my $ref (@refs) {
         $ref->{dn} = Gridmap_Utils::GT3_Subject $ref->{dn};
     }
     if (defined $ref->{secondary}) {
-	delete $ref->{secondary};
+        delete $ref->{secondary};
+    }
+    if (defined $ref->{map_to_name}) {
+        $ref->{username} = $ref->{map_to_name};
+        delete $ref->{map_to_name};
+    }
+    if (defined $ref->{map_to_uid}) {
+        $ref->{user_uid} = $ref->{map_to_uid};
+        delete $ref->{map_to_uid};
     }
 
     if ($owner_is_admin) {
