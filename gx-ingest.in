@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-ingest.in,v 1.13 2005-06-29 21:23:01-07 kst Exp $
+# $Id: gx-ingest.in,v 1.14 2005-06-29 21:31:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -108,8 +108,8 @@ while (<>) {
         #
         # Normally, only one user is specified, but it's also possible
         # to have a list of user name separated by commas.  In this case,
-	# add them in reverse order; the most recently added is treated
-	# as the default.
+        # add them in reverse order; the most recently added is treated
+        # as the default.
         #
         my @users = reverse split /,/, $users;
         foreach my $user (@users) {
@@ -119,7 +119,6 @@ while (<>) {
             $command .= sprintf "-username %-8s ", $user;
             $command .= "-dn $DN";
             print "$command\n";
-            $is_secondary = 1;
         }
     }
 }
