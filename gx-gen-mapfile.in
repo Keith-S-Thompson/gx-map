@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.54 2005-06-29 22:02:55-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.55 2005-06-29 22:27:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -91,6 +91,7 @@ my @Opts = ( $User_Opt,
                  debugging!
                  requests-log=s@
                  permissions=s
+                 compatible!
                  all!
                  dump!
                  real-name! ) );
@@ -182,7 +183,7 @@ my %Mappings = (); # key = DN, value = hash ref
 my @dump_lines = ();
 
 REQUEST:
-foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
+foreach my $request (@requests) {
     #
     # By calling Valid_Mappings, we eliminate any requests for accounts
     # that don't exist on this system (unless the "-all" option was
@@ -344,6 +345,10 @@ else {
     # Now traverse the %Mappings hash, sorted by DN, and generate a mapfile
     #
     foreach my $dn (sort keys %Mappings) {
+        my @dn_list = ( $dn );
+        if ($User_Opt->{compatible}) {
+            @dn_list = Gridmap_Utils::DN_List $dn;
+        }
         my $mapping = $Mappings{$dn};
         #
         # $mapping is a reference to a hash:
@@ -362,14 +367,18 @@ else {
                     my $real_name = User_Real_Name $name;
                     push @real_names, ( defined $real_name ? $real_name : '?' );
                 }
-                print OUT "$dn ",
-                          join(',', @names),
-                          " # ",
-                          join(',', @real_names),
-                          "\n";
+                foreach my $listed_dn (@dn_list) {
+                    print OUT "$listed_dn ",
+                              join(',', @names),
+                              " # ",
+                              join(',', @real_names),
+                              "\n";
+                }
             }
             else {
-                print OUT "$dn ", join(',', @names), "\n";
+                foreach my $listed_dn (@dn_list) {
+                    print OUT "$listed_dn ", join(',', @names), "\n";
+                }
             }
         }
     }
@@ -604,6 +613,10 @@ Option names may be abbreviated.
                          name "default" (which may not be abbreviated.)
     -debugging         : Enable debugging output.
     -permissions perm  : Specify permissions (in octal); default is 444
+    -compatible        : Generate a grid-mapfile compatible with both
+                         GT2 and GT3/GT4.  By default, the generated
+                         grid-mapfile is *not* compatible with GT2 for
+                         certain DNs.
     -all               : Include entries for nonexistent accounts
                          (not normally recommended)
     -dump              : Instead of generating a grid-mapfile, generate
