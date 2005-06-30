@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.10 2005-06-29 21:20:00-07 kst Exp $
+# $Id: gx-request.in,v 1.11 2005-06-29 22:02:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -365,12 +365,12 @@ my $request = {
     requested_by_name => $PW->{name},
     hostname          => $hostname
 };
-$request->{dn}          = "\"$Options->{dn}\"" if defined $Options->{dn};
-$request->{map_to_name} = $Options->{username} if defined $Options->{username};
-$request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
-$request->{email}       = $Options->{email}    if defined $Options->{email};
-$request->{comment}     = $Options->{comment}  if defined $Options->{comment};
-$request->{source}      = $Options->{source}   if defined $Options->{source};
+$request->{dn}         = "\"$Options->{dn}\"" if defined $Options->{dn};
+$request->{username}   = $Options->{username} if defined $Options->{username};
+$request->{user_uid}   = $requested_uid       if defined $requested_uid;
+$request->{email}      = $Options->{email}    if defined $Options->{email};
+$request->{comment}    = $Options->{comment}  if defined $Options->{comment};
+$request->{source}     = $Options->{source}   if defined $Options->{source};
 
 #
 # If gx-check-requests sees a partial request file, it will reject it
