@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-admins.in,v 1.4 2005-01-07 17:14:03-08 kst Exp $
+# $Id: gx-admins.in,v 1.5 2005-06-29 22:02:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
 
 use strict;
@@ -75,8 +75,8 @@ my %admin_count = ();
 
 foreach my $request (@requests) {
     if (defined $request->{OWNER_NAME} and
-        defined $request->{map_to_name} and
-        $request->{OWNER_NAME} ne $request->{map_to_name})
+        defined $request->{username} and
+        $request->{OWNER_NAME} ne $request->{username})
     {
         $admin_count{$request->{OWNER_NAME}} ++;
     }
@@ -94,7 +94,7 @@ sub Usage(@) {
 Usage: $Program_Name logfile
 The logfile should be a gx-map "requests.log" file.
 $Program_Name guesses which accounts are administrative accounts
-by looking for requests where the "OWNER_NAME" and "map_to_name"
+by looking for requests where the "OWNER_NAME" and "username"
 fields don't match.
 EOF
     exit 1;
