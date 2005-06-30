@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.23 2005-01-07 17:14:03-08 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.24 2005-06-29 22:02:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -81,10 +81,10 @@ sub Valid_Mappings(@);
 #
 # Given a reference to a request record, the Valid_Mappings function
 # returns a list of references to hashes specifying valid mappings, where
-# each hash has keys "dn" and "map_to_name".  Both keys are optional;
+# each hash has keys "dn" and "username".  Both keys are optional;
 # at least one will always be set.  (For "add" and "remove" operations,
-# both "dn" and "map_to_name" are set; for "remove-dn" only "dn" is set;
-# for "remove-user" only "map_to_name" is set.)  If there are no valid
+# both "dn" and "username" are set; for "remove-dn" only "dn" is set;
+# for "remove-user" only "username" is set.)  If there are no valid
 # mappings, an empty list is returned.
 #
 # This function may be customized for each installation.
@@ -98,10 +98,10 @@ sub Valid_Mappings(@);
 # implementation will be used.
 #
 # The most basic implementation returns a single mapping if the
-# map_to_name field (if set) is a valid account on this system (unless
-# "-all" is specified), the OWNER_NAME field either matches map_to_name
+# username field (if set) is a valid account on this system (unless
+# "-all" is specified), the OWNER_NAME field either matches username
 # (if set) or is a Globus administrator, and the NAMESPACE field
-# is correct.  If the map_to_name field is not set (for a remove-dn
+# is correct.  If the username field is not set (for a remove-dn
 # operation), the OWNER_NAME field must be a Globus administrator.
 # (If OWNER_NAME is not set but OWNER_UID is, the OWNER_NAME is set
 # by a passwd lookup on the OWNER_UID; this should apply only to the
@@ -132,8 +132,8 @@ sub Valid_Mappings(@) {
     Debug "    \$all = $all\n";
     Debug "    operation = $request->{operation}\n";
     Debug "    dn = ", (exists $request->{dn} ? $request->{dn} : 'undef'), "\n";
-    Debug "    map_to_name = ",
-          (exists $request->{map_to_name} ? $request->{map_to_name} : 'undef'),
+    Debug "    username = ",
+          (exists $request->{username} ? $request->{username} : 'undef'),
           "\n";
 
     if (defined $request->{OWNER_UID} and not defined $request->{OWNER_NAME}) {
@@ -147,13 +147,13 @@ sub Valid_Mappings(@) {
         Debug ">>> Invalid, no OWNER_NAME\n";
         return ();
     }
-    if (defined $request->{map_to_name}) {
-        my @pw = getpwnam $request->{map_to_name};
+    if (defined $request->{username}) {
+        my @pw = getpwnam $request->{username};
         if (not @pw and not $all) {
             Debug ">>> Invalid, no such user\n";
             return ();
         }
-        if ($request->{map_to_name} eq 'root') {
+        if ($request->{username} eq 'root') {
             Debug ">>> Invalid, cannot map to root\n";
             return ();
         }
@@ -170,8 +170,8 @@ sub Valid_Mappings(@) {
         Debug ">>> Invalid, NAMESPACE ne $Gridmap_Utils::Config{NAMESPACE}\n";
         return ();
     }
-    if (exists $request->{map_to_name}) {
-        if ($request->{OWNER_NAME} ne $request->{map_to_name} and
+    if (exists $request->{username}) {
+        if ($request->{OWNER_NAME} ne $request->{username} and
             not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
         {
             Debug ">>> Invalid, bad OWNER_NAME\n";
@@ -194,8 +194,8 @@ sub Valid_Mappings(@) {
     if (defined $request->{dn}) {
         $entry->{dn} = $request->{dn};
     }
-    if (defined $request->{map_to_name}) {
-        $entry->{map_to_name} = $request->{map_to_name};
+    if (defined $request->{username}) {
+        $entry->{username} = $request->{username};
     }
 
     push @result, $entry;
