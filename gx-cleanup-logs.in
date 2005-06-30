@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.12 2005-06-29 21:22:37-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.13 2005-06-29 21:27:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -173,14 +173,13 @@ if (not $User_Opt->{'merge-only'}) {
     # For a remove-user, delete it and all previous adds, removes, and
     # remove-users for the same user.
     # 
-    # For a remove-dn, delete it and all previous adds and removes for the same
-    # DN.
+    # For a remove-dn, delete it and all previous adds and removes for
+    # the same DN.
     #
-    # For an add, leave it in place but delete all previous adds and removes
-    # for the same user/DN pair -- *unless* it's marked secondary, then leave
-    # it alone.
+    # For an add, leave it in place but delete all previous adds and
+    # removes for the same user/DN pair.
     #
-    # This won't delete all redundant requests, but it should catch most
+    # This may not delete all redundant requests, but it should catch most
     # of them.
     #
     NEW:
