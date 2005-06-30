@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.9 2005-06-28 17:23:48-07 kst Exp $
+# $Id: gx-request.in,v 1.10 2005-06-29 21:20:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -115,7 +115,6 @@ else {
 #    dn-method (one of dn, file, none)
 #    certificate-file (set only if dn-method is 'file')
 #    dn
-#    secondary (optional, value 'yes' or 'no'; applies only to 'add' op)
 #    email (optional)
 #    comment (optional)
 # Plus the following flags:
@@ -134,7 +133,6 @@ my @Opts = ( $User_Opt,
                  update
                  quiet force no-admin
                  dn=s certificate-file=s proxy username=s
-                 secondary
                  directory=s
                  email=s
                  force-dn no-email comment=s
@@ -373,9 +371,6 @@ $request->{map_to_uid}  = $requested_uid       if defined $requested_uid;
 $request->{email}       = $Options->{email}    if defined $Options->{email};
 $request->{comment}     = $Options->{comment}  if defined $Options->{comment};
 $request->{source}      = $Options->{source}   if defined $Options->{source};
-if (defined $Options->{secondary} and $Options->{secondary} eq 'yes') {
-    $request->{secondary} = 'yes';
-}
 
 #
 # If gx-check-requests sees a partial request file, it will reject it
@@ -802,48 +797,6 @@ EOF
         }
 
         #
-        # Is this a secondary mapping?
-        #
-        if ($OP eq 'add') {
-            while (not defined $Options->{secondary}) {
-                print "Is this a secondary mapping ('h' for help)? [nyxh] ";
-                chomp($response = lc scalar <STDIN>);
-
-                if ($response =~ /^y/) {
-                    $Options->{secondary} = 'yes';
-                }
-                elsif ($response =~ /^n/ or $response eq '') {
-                    $Options->{secondary} = 'no';
-                }
-                elsif ($response =~ /^h/) {
-                    print Strip <<"EOF";
-                    >
-                    > A DN may be mapped to more than one user name.
-                    > Most Globus applications don't make use of this;
-                    > they map the DN to the first listed user name.
-                    >
-                    > A primary mapping (the default) will be listed first,
-                    > and will override any previous primary mappings.
-                    >
-                    > A secondary mapping may or may not not be listed first;
-                    > multiple secondary mappings may be requested for a given
-                    > DN.
-                    >
-                    > If you're confused, just type <return>.
-                    >
-EOF
-                }
-                elsif ($response =~ /^x/) {
-                    exit 0;
-                }
-                else {
-                    print ">>> Unrecognized input\n";
-                }
-            }
-        }
-
-
-        #
         # Get e-mail address
         #
         print Strip <<"EOF";
@@ -1011,16 +964,6 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
-    if (defined $User_Opt->{secondary}) {
-        if ($OP eq 'add') {
-            $Options->{secondary} = 'yes';
-        }
-        else {
-            Usage "The \"-secondary\" option may only be used with " .
-                  "an \"add\" request\n";
-        }
-    }
-
     if (defined $User_Opt->{email}) {
         $Options->{email} = $User_Opt->{email};
     }
@@ -1094,9 +1037,6 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -username name          : Unix user name to map.
                               This option is for use by Globus
                               administrators only.
-    -secondary              : Request a secondary mapping.
-                              See the documentation (not yet written) for
-                              details.
     -directory dir          : Specify an alternate data directory.
                               This option is for use by Globus administrators
                               only.
