@@ -1,0 +1,25 @@
+# $Id: bug-0036,v 1.1 2005-06-29 20:55:21-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0036,v $
+
+gx-map bug 0036
+Date: Wed 2005-06-29
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Rename field "map_to_name" to "username"
+
+Summary:
+The field name "map_to_name" is inconsistent with the gx-request
+option name "-username".  It's also a bit clumsy.  Two of the
+most important fields in a request are the DN and the user name.
+Calling them "dn" and "username" is cleaner.
+
+Proposed solution:
+Rename the "map_to_name" field to "username".
+Rename the "map_to_uid" field to "user_uid".
+
+Modify gx-convert-logs to change any "map_to_name" and "map_to_uid"
+fields to "username" and "user_uid", respectively.
+
+Fix all occurences of "map_to_name" and "map_to_uid" in all files.
