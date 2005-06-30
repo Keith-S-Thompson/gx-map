@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.53 2005-06-29 21:48:13-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.54 2005-06-29 22:02:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -195,7 +195,7 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
     # The Valid_Mappings function may return multiple mappings for a
     # single request.
     #
-    # Note that each mapping contains only the "dn" and/or "map_to_name"
+    # Note that each mapping contains only the "dn" and/or "username"
     # fields; other information, such as the operation and the timestamp,
     # come from the original request, and thus may not be modified by
     # the Valid_Mappings function.
@@ -213,7 +213,7 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             my $source    = Image $request->{SOURCE};
             my $namespace = Image $request->{NAMESPACE};
             my $op        = Image $request->{operation};
-            my $user      = Image $mapping->{map_to_name};
+            my $user      = Image $mapping->{username};
             my $dn        = Image $mapping->{dn};
             push @dump_lines,
                  sprintf "%-10s %-8s %-8s %-11s %-8s %s\n",
@@ -227,21 +227,21 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
         }
         #
         # $mapping is a reference to a hash with keys "dn" and
-        # "map_to_name", both optional.
+        # "username", both optional.
         #
         my $dn          = exists $mapping->{dn}
                           ? $mapping->{dn}
                           : undef;
-        my $map_to_name = exists $mapping->{map_to_name}
-                          ? $mapping->{map_to_name}
+        my $username = exists $mapping->{username}
+                          ? $mapping->{username}
                           : undef;
         my $timestamp = $request->{timestamp};
         $timestamp =~ s/ .*$//;
 
         Debug ">>> Processing mapping, operation = $operation, dn = ",
               (defined $dn ? $dn : "undef"),
-              ", map_to_name = ",
-              (defined $map_to_name ? "\"$map_to_name\"" : "undef"),
+              ", username = ",
+              (defined $username ? "\"$username\"" : "undef"),
               "\n";
         if ($operation eq 'add') {
             #
@@ -249,13 +249,13 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             #
             # The key is the user name; the value is the timestamp.
             #
-            Debug ">>> Add $dn --> $map_to_name\n";
-            $Mappings{$dn}->{$map_to_name} = $timestamp;
+            Debug ">>> Add $dn --> $username\n";
+            $Mappings{$dn}->{$username} = $timestamp;
         }
         elsif ($operation eq 'remove') {
             if (exists $Mappings{$dn}) {
-                if (exists $Mappings{$dn}->{$map_to_name}) {
-                    delete $Mappings{$dn}->{$map_to_name};
+                if (exists $Mappings{$dn}->{$username}) {
+                    delete $Mappings{$dn}->{$username};
                     if (scalar keys %{$Mappings{$dn}} == 0) {
                         delete $Mappings{$dn};
                     }
@@ -273,9 +273,9 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
             # Don't waste time sorting the keys.
             #
             foreach my $dn (keys %Mappings) {
-                if (exists $Mappings{$dn}->{$map_to_name}) {
-                    Debug ">>> Delete $dn --> $map_to_name\n";
-                    delete $Mappings{$dn}->{$map_to_name};
+                if (exists $Mappings{$dn}->{$username}) {
+                    Debug ">>> Delete $dn --> $username\n";
+                    delete $Mappings{$dn}->{$username};
                     if (scalar keys %{$Mappings{$dn}} == 0) {
                         delete $Mappings{$dn};
                     }
