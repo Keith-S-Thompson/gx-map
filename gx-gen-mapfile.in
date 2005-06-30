@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.51 2005-06-29 21:22:08-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.52 2005-06-29 21:40:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -292,7 +292,7 @@ foreach my $request (map Gridmap_Utils::Dup_Ref $_, @requests) {
                 Debug "* $dn\n";
                 my @items = ();
                 my $by_name = $Mappings{$dn}; # name --> timestamp
-                foreach my $name (sort { $by_name{$a} <=> $by_name{$b}
+                foreach my $name (sort { $by_name->{$a} <=> $by_name->{$b} }
                                      keys %$by_name)
                 {
                     push @items, "$name\@$by_name{$name}";
