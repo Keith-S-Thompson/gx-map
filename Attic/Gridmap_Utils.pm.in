@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.72 2005-06-29 19:50:59-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.73 2005-06-29 20:40:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -526,7 +526,7 @@ sub Time_Value($) {
           Sep => 8, Oct => 9, Nov => 10, Dec => 11 );
     my $month_pat = join('|', keys %month_num);
 
-    my $year, $month, $mday, $hour, $minute, $second, $TZ;
+    my($year, $month, $mday, $hour, $minute, $second, $TZ);
     my $ok = 0;
 
     #
@@ -545,27 +545,20 @@ sub Time_Value($) {
         ($hour, $minute, $second) = ($3, $4, $5);
         $year = $6;
         $TZ = uc $7;
-        if (defined $month_num{$month_name} and
-            ($TZ eq 'GMT' or $TZ eq 'UTC') and
-            $year < 2038) 
-        {
-            return Time::Local::timegm
-                      $second, $minute, $hour,
-                      $mday, $month_num{$month_name}, $year;
-        }
     }
 
     #
     # Check for curl format
     #
     elsif ($timestamp =~
-               /^[a-z][a-z][a-z] \s+    # Don't capture day of week
+               /^[a-z][a-z][a-z], \s+    # Don't capture day of week
                 (\d+) \s+
                 ($month_pat) \s+
                 (\d\d\d\d) \s+
                 (\d+\d+):(\d+\d+):(\d+\d+) \s+
                 (\w+) $/ix )
     {
+        $ok = 1;
         $mday = $1;
         $month = $month_num{$2};
         $year = $3;
