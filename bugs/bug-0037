@@ -1,0 +1,15 @@
+# $Id: bug-0037,v 1.1 2005-06-29 22:04:23-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0037,v $
+
+gx-map bug 0037
+Date: Wed 2005-06-29
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Check for admin accounts in gx-check-requests
+
+Summary:
+The gx-check-requests command needs to check whether a request file
+is owned by an admin.  It should refuse to run if any admin account
+doesn't exist on the machine where it runs.
