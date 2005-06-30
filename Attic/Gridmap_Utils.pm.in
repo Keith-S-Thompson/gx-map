@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.71 2005-06-29 00:22:03-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.72 2005-06-29 19:50:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -124,6 +124,7 @@ sub Ensure_RCS();   # Provided only for compatibility with gx-map 0.3
 
 sub Time_Image($);
 sub Long_Time_Image($);
+sub Time_Value($);
 
 sub Write_Records($$@);
 sub Read_Records(@);
@@ -502,6 +503,91 @@ sub Long_Time_Image($) {
                    (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
                    1900+$year, 1+$mon, $mday, $hour, $min, $sec;
 } # Long_Time_Image
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string representing a time, returns the corresponding
+# raw Unix timestamp (seconds since the epoch).
+# This currently handles the formats printed by OpenSSL:
+#     "Jan  1 01:23:45 2001 GMT"
+# and by curl:
+#     "Mon, 01 Jan 2001 01:23:45 GMT"
+#
+# There is some flexibility in the input formats accepted.
+# The emphasis is on properly converting valid strings,
+# not on diagnosing incorrect ones.
+#
+sub Time_Value($) {
+    my($timestamp) = @_;
+    my %month_num =
+        ( Jan => 0, Feb => 1, Mar =>  2, Apr =>  3,
+          May => 4, Jun => 5, Jul =>  6, Aug =>  7,
+          Sep => 8, Oct => 9, Nov => 10, Dec => 11 );
+    my $month_pat = join('|', keys %month_num);
+
+    my $year, $month, $mday, $hour, $minute, $second, $TZ;
+    my $ok = 0;
+
+    #
+    # Check for OpenSSL format
+    #
+    if ($timestamp =~
+            /^($month_pat) \s+
+              (\d+) \s+ 
+              (\d+\d+):(\d+\d+):(\d+\d+) \s+
+              (\d+) \s+
+              (\w+) $/ix )
+    {            
+        $ok = 1;
+        $month = $month_num{$1};
+        $mday = $2;
+        ($hour, $minute, $second) = ($3, $4, $5);
+        $year = $6;
+        $TZ = uc $7;
+        if (defined $month_num{$month_name} and
+            ($TZ eq 'GMT' or $TZ eq 'UTC') and
+            $year < 2038) 
+        {
+            return Time::Local::timegm
+                      $second, $minute, $hour,
+                      $mday, $month_num{$month_name}, $year;
+        }
+    }
+
+    #
+    # Check for curl format
+    #
+    elsif ($timestamp =~
+               /^[a-z][a-z][a-z] \s+    # Don't capture day of week
+                (\d+) \s+
+                ($month_pat) \s+
+                (\d\d\d\d) \s+
+                (\d+\d+):(\d+\d+):(\d+\d+) \s+
+                (\w+) $/ix )
+    {
+        $mday = $1;
+        $month = $month_num{$2};
+        $year = $3;
+        ($hour, $minute, $second) = ($4, $5, $6);
+        $TZ = uc $7;
+    }
+    if ($ok) {
+        if ($TZ ne 'GMT' and $TZ ne 'UTC') {
+            $ok = 0;
+        }
+        elsif ($year >= 2038) {
+            $ok = 0;
+        }
+    }
+    if ($ok) {
+        return Time::Local::timegm
+                  $second, $minute, $hour, $mday, $month, $year;
+    }
+    else {
+        return undef;
+    }
+} # Time_Value
 
 # ----------------------------------------------------------------------
 
