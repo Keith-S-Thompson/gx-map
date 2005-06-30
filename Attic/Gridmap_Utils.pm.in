@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.73 2005-06-29 20:40:32-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.74 2005-06-29 22:25:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -137,10 +137,8 @@ sub Read_Admin_List($);
 
 sub GT2_Subject($);
 sub GT3_Subject($);
-sub Strip_Proxy_Info($);
-
 sub DN_List($);
-sub Dup_Ref($);
+sub Strip_Proxy_Info($);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
@@ -1349,33 +1347,12 @@ sub DN_List($) {
     my $gt3_dn = GT3_Subject $dn;
 
     if ($gt2_dn eq $gt3_dn) {
-        return ($gt2_dn);
+        return ($gt3_dn);
     }
     else {
         return ($gt2_dn, $gt3_dn);
     }
 } # DN_List
-
-# ----------------------------------------------------------------------
-
-#
-# Given a hash reference, returns a list of one or two hash references
-# based on applying DN_List to the 'dn' attribute (if any).  Note that
-# if some fields are references, some of the referenced data may be
-# shared between the two resulting references.
-#
-sub Dup_Ref($) {
-    my ($ref) = @_;
-    return $ref if not defined $ref->{dn};
-    my @dn_list = DN_List $ref->{dn};
-    return $ref if scalar @dn_list == 1;
-
-    my %copy_of_hash = %$ref;
-    my $new_ref = \%copy_of_hash;
-    $ref->{dn}     = $dn_list[0];
-    $new_ref->{dn} = $dn_list[1];
-    return ( $ref, $new_ref );
-} # Dup_Ref
 
 # ----------------------------------------------------------------------
 
