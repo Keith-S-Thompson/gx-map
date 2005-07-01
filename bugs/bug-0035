@@ -1,4 +1,4 @@
-# $Id: bug-0035,v 1.1 2005-06-27 20:46:01-07 kst Exp $
+# $Id: bug-0035,v 1.2 2005-06-30 21:04:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0035,v $
 
 gx-map bug 0035
@@ -26,3 +26,8 @@ then assume that all DNs are in the new form, which should simplify
 things a bit.  It would also make log file analysis a bit easier.
 
 This change should be made in conjunction with allowing proxy DNs (bug-0026).
+
+Fixed:
+gx-convert-log.in 1.10
+gx-request.in 1.4
+gx-map ?
