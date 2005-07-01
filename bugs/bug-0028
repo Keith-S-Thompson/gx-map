@@ -1,4 +1,4 @@
-# $Id: bug-0028,v 1.1 2005-06-20 17:53:06-07 kst Exp $
+# $Id: bug-0028,v 1.2 2005-06-30 21:04:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0028,v $
 
 gx-map bug 0028
@@ -6,7 +6,7 @@ Date: Mon 2005-06-20
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed ?
 Title: In interactive mode, warn about secondary mappings
 
 Summary:
@@ -20,3 +20,11 @@ In "gx-map -interactive", try to explain more clearly what a secondary
 mapping is (that's going to be difficult to do briefly).  Warn the
 user not to attempt to do this unless he knows what he's doing,
 and add an "Are you sure?" prompt.
+
+Fix:
+Secondary mappings have been eliminated altogether, so no warning
+is necessary.
+
+Fixed:
+Multiple files.
+gx-map ?
