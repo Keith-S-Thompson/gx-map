@@ -1,0 +1,21 @@
+# $Id: bug-0040,v 1.1 2005-07-01 13:45:42-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0040,v $
+
+gx-map bug 0040
+Date: Fri 2005-07-01
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Add "-merge" option to gx-gen-mapfile
+
+Summary:
+Add a "-merge" option to gx-gen-mapfile.  The argument is an externally
+generaged grid-mapfile whose contents are merged into the generated
+grid-mapfile.  (To do: decide how to determine the order of user names
+if the same DN appears in requests.log and the external grid-mapfile;
+there will be no timestamp information.)
+
+This could be useful for dynamic or pool accounts, where the
+association with DNs can change rapidly.  Using gx-request for each
+update could cause the requests.log file to grow.
