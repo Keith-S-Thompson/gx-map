@@ -1,4 +1,4 @@
-# $Id: bug-0029,v 1.2 2005-06-24 08:49:34-07 kst Exp $
+# $Id: bug-0029,v 1.3 2005-06-30 21:04:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0029,v $
 
 gx-map bug 0028
@@ -6,7 +6,7 @@ Date: Mon 2005-06-20
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed ?
 Title: Re-think secondary mappings
 
 Summary:
@@ -37,3 +37,11 @@ This may involve the "secondary" attribute going away.  We can either
 allow and ignore it, or eliminate it altogether.  In the latter case,
 we should update the release version to 0.5.X, since it requires a
 requests.log conversion.
+
+Fix:
+The "secondary" attribute has been removed and is no longer recognized
+(except by gx-convert-log).
+
+Fixed:
+Multiple files.
+gx-map ?
