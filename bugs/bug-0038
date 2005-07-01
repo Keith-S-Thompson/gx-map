@@ -1,4 +1,4 @@
-# $Id: bug-0038,v 1.1 2005-06-29 22:18:24-07 kst Exp $
+# $Id: bug-0038,v 1.2 2005-06-30 21:04:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0038,v $
 
 gx-map bug 0038
@@ -27,3 +27,10 @@ the default and add a "-compatible" option to generate both.
 A minor side effect is that a corresponding old and new DN will appear
 next to each other in the grid-mapfile rather than being sorted along
 with all the other DNs.  This is not significant.
+
+Fix:
+As described, with a "-compatible" option.
+
+Fixed:
+gx-gen-mapfile 1.55
+gx-map ?
