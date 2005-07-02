@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.14 2005-06-29 22:02:55-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.15 2005-07-01 21:53:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -185,8 +185,10 @@ if (not $User_Opt->{'merge-only'}) {
     NEW:
     foreach my $new (reverse @requests) {
         next NEW if $new->{operation} eq 'comment';
+        next NEW if exists $new->{__DELETED__};
         my $new_op = $new->{operation};
         my $new_index = $new->{__INDEX__};
+        my $new_timestamp = $new->{timestamp};
         Debug "Outer loop, $new_index, $new_op\n";
         if ($new_op =~ /^remove/) {
             $new->{__DELETED__} = 1;
@@ -196,22 +198,31 @@ if (not $User_Opt->{'merge-only'}) {
         # Collect references for all records older than $new that refer
         # to the same DN and/or user name.
         #
-        my %match = ();
+        # Use %seen to track which records we've seen (so a record that
+        # matches by both DN and use name is not added twice).  Note that
+        # the keys of %seen are hash references, so the actual stored
+        # keys are strings; they can be used for comparison, but they
+        # are no longer usable as refereneces.
+        #
+        my %seen = ();
+        my @old = ();
         if (defined $new->{dn}) {
             foreach my $ref (@{$by_dn{$new->{dn}}}) {
-                next if $ref->{__INDEX__} >= $new_index;
-                $match{$ref->{__INDEX__}} = 1;
+                next if $ref->{timestamp} ge $new_timestamp;
+                if (not $seen{$ref}) {
+                    push @old, $ref;
+                    $seen{$ref} = 1;
+                }
             }
         }
         if (defined $new->{username}) {
             foreach my $ref (@{$by_name{$new->{username}}}) {
-                next if $ref->{__INDEX__} >= $new_index;
-                $match{$ref->{__INDEX__}} = 1;
+                next if $ref->{timestamp} ge $new_timestamp;
+                if (not $seen{$ref}) {
+                    push @old, $ref;
+                    $seen{$ref} = 1;
+                }
             }
-        }
-        my @old = ();
-        foreach my $index ( sort { $a <=> $b } keys %match ) {
-            push @old, $requests[$index];
         }
 
         OLD:
