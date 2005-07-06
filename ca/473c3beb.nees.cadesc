@@ -1,0 +1,24 @@
+# $Id: 473c3beb.nees.cadesc,v 1.1 2005-07-06 14:26:28-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/473c3beb.nees.cadesc,v $
+
+CA_NAME             NEES CA
+HOMEPAGE            http://www.nees.org
+CONTACT             ?
+HASH                473c3beb
+SIGNED_BY           /O=NEES/OU=NEESit/CN=NEES CA
+SUBJECT             /O=NEES/OU=NEESit/CN=NEES CA
+MAY_SIGN            ?
+CERTIFICATE_MD5     68:80:C9:4B:70:0C:41:4D:AC:58:81:3F:28:80:8A:E9
+CERTIFICATE_SHA1    33:E3:05:EB:68:D5:ED:34:7F:E5:EB:98:7A:EA:D5:99:BD:FA:B0:70
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
+INDEX               ?
+CERT_EXPIRES        Mar  4 07:29:08 2010 GMT
+DISABLE             yes
+
+# This information is extracted from
+# <ftp://ftp.nees.org/pub/site-software/3.4/neespop/neesgrid-3.4-neespop.bin>,
+# downloaded Wed 2005-07-06 As far as I can tell, the CA files
+# themselves are not available other than as part of the neespop software
+# distribution.
