@@ -1,23 +1,29 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.15 2005-04-17 02:43:19-07 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.16 2005-07-05 17:38:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
-HOMEPAGE            http://ca.grid-support.ac.uk/
+HOMEPAGE            https://ca.grid-support.ac.uk/
 CONTACT             support@grid-support.ac.uk
 HASH                01621954
 SUBJECT             /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
 MAY_SIGN            /C=UK/O=eScience/*
 CERTIFICATE_MD5     F7:65:A8:5E:67:2B:7C:F4:90:20:38:14:BC:05:04:F6
 CERTIFICATE_SHA1    0C:B4:61:99:63:6C:A3:CB:E1:58:CE:F3:66:D2:C4:D3:34:BF:A7:40
-CERTIFICATE_URL     http://ca.grid-support.ac.uk/cacert.pem
+CERTIFICATE_URL     http://ca.grid-support.ac.uk/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  http://www.grid-support.ac.uk/ca/user-documentation/01621954.signing_policy
-CRL_URL             http://ca.grid-support.ac.uk/cgi-bin/importCRL.pem
+CRL_URL             http://ca.grid-support.ac.uk/pub/crl/cacrl.pem
 CERT_EXPIRES        Aug  4 10:36:41 2007 GMT
 
-# MD5 and SHA1 fingerprints from cacert.pem (01621954.0) downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from cacert.pem (01621954.0) downloaded 2005-07-05
 
 # An older version of this certificate has an MD5 fingerprint of
 # 32:2C:26:C7:54:47:94:51:68:4A:92:C9:0F:9F:95:E6
 # Either version should be acceptable, though the newer one may be
 # more secure because it uses an SHA1-with-RSA signature algorithm
 # rather than an MD5-with-RSA signature algorithm.
+
+# The previous CERTIFICATE_URL was <http://ca.grid-support.ac.uk/cacert.pem>.
+# The certificate is no longer available at this URL, though the old
+# CRL_URL, <http://ca.grid-support.ac.uk/cgi-bin/importCRL.pem>, still
+# appears to be valid.  The old invalid CERTIFICATE_URL appeared in this
+# file in gx-map releases up to and including 0.4.5.
