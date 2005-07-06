@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.55 2005-06-29 22:27:51-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.56 2005-07-06 00:46:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -171,10 +171,7 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
     push @requests, Gridmap_Utils::Read_Records '-multiple', $log;
 }
 
-#
-# Sort by timestamp
-#
-@requests = sort { $a->{timestamp} cmp $b->{timestamp} } @requests;
+@requests = Gridmap_Utils::Sort_By_Timestamp @requests;
 
 #
 # Process removals
