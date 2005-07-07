@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.16 2005-07-06 00:46:57-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.17 2005-07-06 19:05:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -104,18 +104,6 @@ foreach my $log (@input_logs) {
          Gridmap_Utils::Read_Records '-multiple', '-keep-comments', $log;
 }
 
-# #
-# # Index each record so we can do a stable sort.
-# # Perl 5.6 and earlier uses an unstable quicksort.
-# # Later Perls use a stable mergesort by default.
-# #
-# # This field will be deleted before writing unless
-# # the "-index" option has been specified.
-# #
-# for (my $i = 0; $i <= $#requests; $i ++) {
-#     $requests[$i]->{__INDEX__} = $i;
-# }
-
 if ($User_Opt->{debugging}) {
     Debug "Before sorting:\n";
     foreach my $request (@requests) {
@@ -124,7 +112,7 @@ if ($User_Opt->{debugging}) {
 }
 
 #
-# Sort by timestamp and index
+# Sort by timestamp
 #
 @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
 
@@ -270,12 +258,6 @@ if ($User_Opt->{debugging}) {
         Debug "$request $request->{timestamp} $request->{operation}\n";
     }
 }
-
-# if (not $User_Opt->{index}) {
-#     foreach my $request (@requests) {
-#         delete $request->{__INDEX__};
-#     }
-# }
 
 if ($User_Opt->{delete}) {
     @requests = grep { not exists $_->{__DELETED__} } @requests;
