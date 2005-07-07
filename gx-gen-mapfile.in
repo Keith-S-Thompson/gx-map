@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.56 2005-07-06 00:46:15-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.57 2005-07-07 00:48:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -176,7 +176,8 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 #
 # Process removals
 #
-my %Mappings = (); # key = DN, value = hash ref
+my %Mappings = (); # key = DN, value = hash ref { username => timestamp }
+my %By_User = ();  # key = username, value = hash ref { DN => 1 }
 my @dump_lines = ();
 
 REQUEST:
@@ -249,6 +250,7 @@ foreach my $request (@requests) {
             #
             Debug ">>> Add $dn --> $username\n";
             $Mappings{$dn}->{$username} = $timestamp;
+            $By_User{$username}->{$dn} = 1;
         }
         elsif ($operation eq 'remove') {
             if (exists $Mappings{$dn}) {
@@ -257,20 +259,27 @@ foreach my $request (@requests) {
                     if (scalar keys %{$Mappings{$dn}} == 0) {
                         delete $Mappings{$dn};
                     }
+                    delete $By_User{$username}->{$dn};
+                    if (scalar keys %{$By_User{$username}} == 0) {
+                        delete $By_User{$username};
+                    }
                 }
             }
         }
         elsif ($operation eq 'remove-dn') {
             if (exists $Mappings{$dn}) {
                 Debug ">>> Delete $dn\n";
+                foreach my $user (keys %{$Mappings{$dn}}) {
+                    delete $By_User{$user}->{$dn};
+                    if (scalar keys %{$By_User{$user}} == 0) {
+                        delete $By_User{$user};
+                    }
+                }
                 delete $Mappings{$dn};
             }
         }
         elsif ($operation eq 'remove-user') {
-            #
-            # Don't waste time sorting the keys.
-            #
-            foreach my $dn (keys %Mappings) {
+            foreach my $dn (keys %{$By_User{$username}}) {
                 if (exists $Mappings{$dn}->{$username}) {
                     Debug ">>> Delete $dn --> $username\n";
                     delete $Mappings{$dn}->{$username};
@@ -279,6 +288,7 @@ foreach my $request (@requests) {
                     }
                 }
             }
+            delete $By_User{$username};
         }
         else {
             die "Internal error, operation = \"$operation\"\n";
