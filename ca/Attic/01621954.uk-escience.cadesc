@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.16 2005-07-05 17:38:46-07 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.17 2005-07-07 02:14:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
@@ -22,8 +22,8 @@ CERT_EXPIRES        Aug  4 10:36:41 2007 GMT
 # more secure because it uses an SHA1-with-RSA signature algorithm
 # rather than an MD5-with-RSA signature algorithm.
 
-# The previous CERTIFICATE_URL was <http://ca.grid-support.ac.uk/cacert.pem>.
-# The certificate is no longer available at this URL, though the old
-# CRL_URL, <http://ca.grid-support.ac.uk/cgi-bin/importCRL.pem>, still
-# appears to be valid.  The old invalid CERTIFICATE_URL appeared in this
-# file in gx-map releases up to and including 0.4.5.
+# The web site was recently reorganized (before July 2005).  The URLs for
+# the certificate and CRL were changed, but they're still available at
+# the old CRLs (though the old certificate URL was invalid for a while).
+# The web page does not currently link to the signing_policy, but
+# the old URL still works.
