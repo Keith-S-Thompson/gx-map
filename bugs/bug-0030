@@ -1,4 +1,4 @@
-# $Id: bug-0030,v 1.4 2005-06-25 16:51:52-07 kst Exp $
+# $Id: bug-0030,v 1.5 2005-07-07 01:11:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0030,v $
 
 gx-map bug 0030
@@ -109,3 +109,8 @@ requests, making the requests.log files grow more quickly than
 they have so far and generally slowing things down (see Caltech's
 requests.log).  This makes the ability to clean up the requests.log
 file more important; see bug-0031.
+
+The name "replace" for the new request type won't work well for
+"gx-request -interactive", since it starts with the same letter as
+"remove".  Instead, I'm going to call it "set" (which is probably
+more descriptive, since there may not be any mappings to replace).
