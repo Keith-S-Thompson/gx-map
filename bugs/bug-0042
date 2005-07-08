@@ -1,0 +1,23 @@
+# $Id: bug-0042,v 1.1 2005-07-07 19:14:27-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0042,v $
+
+gx-map bug 0042
+Date: Thu 2005-07-07
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: gx-request allows malformed DNs
+
+Summary:
+The gx-request command (formerly gx-map) allows malformed DNs,
+particularly DNs containing newline characters.  This could create a
+malformed request file, and could conceivably corrupt the requests.log
+file, though it's more likely to cause the request file to be rejected
+by gx-check-requests.
+
+It's possible that this could be a security hole, though I haven't
+thought of a way to exploit it.
+
+Fixed:
+gx-request.in 1.12
