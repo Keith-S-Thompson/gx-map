@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.12 2005-07-07 19:00:33-07 kst Exp $
+# $Id: gx-request.in,v 1.13 2005-07-07 19:59:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -72,6 +72,7 @@ sub Request_Update();
 sub Get_DN_From_File($);
 sub Proxy_File_Name();
 sub Gen_Request_File_Name();
+sub Die_Quietly(@);
 sub Debug(@);
 sub Debugf(@);
 
@@ -194,9 +195,13 @@ foreach my $key (sort keys %$Options) {
 
 my $Requests_Dir = "$Options->{directory}/new-requests";
 
-die "No directory $Options->{directory}\n" if not -d $Options->{directory};
-die "No directory $Requests_Dir\n" if not -d $Requests_Dir;
-die "Directory $Requests_Dir is not writable\n" if not -w $Requests_Dir;
+Die_Quietly "No directory $Options->{directory}\n"
+    if not -d $Options->{directory};
+
+Die_Quietly "No directory $Requests_Dir\n" if not -d $Requests_Dir;
+
+Die_Quietly "Directory $Requests_Dir is not writable\n"
+    if not -w $Requests_Dir;
 
 if ($Options->{operation} eq 'update') {
     Request_Update();
@@ -207,7 +212,7 @@ if ($Options->{'dn-method'} eq 'dn') {
     # nothing, dn is already set
 }
 elsif ($Options->{'dn-method'} eq 'file') {
-    $Options->{dn} = Get_DN_From_File $Options->{'certificate-file'};
+    $Options->{dn} = [ Get_DN_From_File $Options->{'certificate-file'} ];
 }
 
 if (( $Options->{operation} eq 'add' or
@@ -365,7 +370,7 @@ if (not $Options->{force}) {
             last PROMPT;
         }
         elsif ($response =~ /^n/) {
-            die "Request cancelled\n";
+            Die_Quietly "Request cancelled\n";
         }
         else {
             print "Unrecognized input\n";
@@ -386,7 +391,7 @@ if ((defined $Options->{username} and $Options->{username} eq 'root')
     or
     (defined $requested_uid and $requested_uid == 0))
 {
-    die "Mapping to root or uid 0 is not allowed\n";
+    Die_Quietly "Mapping to root or uid 0 is not allowed\n";
 }
 
 my $request = {
@@ -434,7 +439,8 @@ unless ($Options->{force} and $Options->{quiet}) {
 #
 sub Get_DN_From_File($) {
     my($file) = @_;
-    return undef if not -r $file;
+    Die_Quietly "No file $file\n" if not -e $file;
+    Die_Quietly "Cannot read $file\n" if not -r $file;
 
     Gridmap_Utils::Use_Commands 'openssl';
 
@@ -442,11 +448,12 @@ sub Get_DN_From_File($) {
     my @output = <PIPE>;
     close PIPE;
 
-    return undef if scalar @output != 1;
+    Die_Quietly "No or bad output from openssl for $file\n"
+        if scalar @output != 1;
     my $line = $output[0];
     chomp $line;
     $line =~ s/^subject=\s*//;
-    return undef if $line !~ /^\//;
+    Die_Quietly "Unrecognized output from openssl for $file\n" if $line !~ /^\//;
     return $line;
 } # Get_DN_From_File
 
@@ -947,6 +954,10 @@ sub Get_Options_From_Command_Line() {
         $Options->{directory} = $Default_Data_Dir;
     }
 
+    if ($OP eq 'update') {
+        return $Options;
+    }
+
     if (defined $User_Opt->{source}) {
         if ($Globus_Admin) {
             if ($User_Opt->{source} !~ /^[A-Za-z0-9._-]+$/) {
@@ -962,10 +973,6 @@ sub Get_Options_From_Command_Line() {
     # Leave "source" undefined if it's not specified (no default).
     # It will be set to "user" or "admin" by gx-check-requests.
     #
-
-    if ($OP eq 'update') {
-        return $Options;
-    }
 
     if ($OP eq 'remove-dn' and not $Globus_Admin) {
         Usage "Only a Globus administrator may use the \"-remove-dn\" option\n";
@@ -983,7 +990,7 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
-    if (defined $User_Opt->{dn}) {
+    if (@dn_list) {
         $Options->{'dn-method'} = 'dn';
         $Options->{dn} = $User_Opt->{dn};
     }
@@ -1016,6 +1023,16 @@ sub Get_Options_From_Command_Line() {
     
     return $Options;
 } # Get_Options_From_Command_Line
+
+# ----------------------------------------------------------------------
+
+#
+# Die without invoking handler.
+#
+sub Die_Quietly(@) {
+    delete $SIG{__DIE__};
+    die @_;
+} # Die_Quietly
 
 # ----------------------------------------------------------------------
 
