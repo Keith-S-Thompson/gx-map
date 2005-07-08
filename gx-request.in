@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.11 2005-06-29 22:02:55-07 kst Exp $
+# $Id: gx-request.in,v 1.12 2005-07-07 19:00:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -99,7 +99,7 @@ else {
 # @Opts is an array that is passed to Getopt::Long::GetOptions;
 # it defines what command-line options are recognized.
 #
-# $User_Opt is a hash reference; the hash is is filled in by
+# $User_Opt is a hash reference; the hash is filled in by
 # Getopt::Long::GetOptions, and contains information about any
 # command-line arguments that were actually given.  The field names are
 # simply the names of the command-line options.  Multi-word field names
@@ -110,11 +110,11 @@ else {
 # from command-line options or interactively.
 #
 # Fields are:
-#    operation (one of add, remove, remove-dn, remove-user, update)
+#    operation (one of add, remove, remove-dn, remove-user, set, update)
 #    username
 #    dn-method (one of dn, file, none)
 #    certificate-file (set only if dn-method is 'file')
-#    dn
+#    dn (an array)
 #    email (optional)
 #    comment (optional)
 # Plus the following flags:
@@ -123,16 +123,17 @@ else {
 #    force
 #
 
-my $User_Opt = {};
-my $Options = {};
+my $User_Opt = { dn => [] };
 my @Opts = ( $User_Opt,
              qw( help long-help version
                  interactive
                  add
                  remove remove-dn remove-user
+                 set
                  update
                  quiet force no-admin
-                 dn=s certificate-file=s proxy username=s
+                 dn=s@ certificate-file=s proxy
+                 username=s
                  directory=s
                  email=s
                  force-dn no-email comment=s
@@ -177,6 +178,7 @@ if ($PW->{uid} != $<) {
 #
 my $Globus_Admin = (not $User_Opt->{'no-admin'} and
                     Gridmap_Utils::Is_Globus_Admin $PW->{name});
+my $Options  = {};
 
 if ($User_Opt->{interactive}) {
     $Options = Get_Options_Interactively();
@@ -210,7 +212,8 @@ elsif ($Options->{'dn-method'} eq 'file') {
 
 if (( $Options->{operation} eq 'add' or
       $Options->{operation} eq 'remove' or
-      $Options->{operation} eq 'remove-user' )
+      $Options->{operation} eq 'remove-user' or
+      $Options->{operation} eq 'set' )
     and not defined $Options->{username})
 {
     if ($Globus_Admin) {
@@ -221,19 +224,26 @@ if (( $Options->{operation} eq 'add' or
     }
 }
 
-if (( $Options->{operation} eq 'add' or
-      $Options->{operation} eq 'remove' or
-      $Options->{operation} eq 'remove-dn' )
-    and not defined $Options->{dn})
+if ( $Options->{operation} eq 'add' or
+     $Options->{operation} eq 'remove' or
+     $Options->{operation} eq 'remove-dn' )
 {
-    Usage "No DN specified\n";
+    if (scalar @{$Options->{dn}} == 0) {
+        Usage "No DN specified\n";
+    }
+    elsif (scalar @{$Options->{dn}} > 1) {
+        Usage "Cannot specify multiple DNs\n";
+    }
 }
 
-if (defined $Options->{dn} and
-    not defined $Options->{'force-dn'} and
-    not Is_Valid_DN $Options->{dn})
 {
-    Usage "Invalid DN \"$Options->{dn}\"\n";
+    my @errors = ();
+    foreach my $dn (@{$Options->{dn}}) {
+        if (not Is_Valid_DN $dn) {
+            push @errors, "Invalid DN \"$dn\"\n"
+        }
+    }
+    Usage @errors if @errors;
 }
 
 #
@@ -252,7 +262,8 @@ foreach my $key (sort keys %$Options) {
 }
 
 #
-# The operation is either 'add', 'remove', 'remove-dn', or 'remove-user'.
+# The operation is either 'add', 'remove', 'remove-dn', 'remove-user',
+# or 'set'.
 #
 
 my $requested_pw;
@@ -278,50 +289,70 @@ if ($Options->{operation} ne 'remove-dn') {
 }
 
 #
-# Translate the DN to the proper form.
+# Translate the DN(s) to the proper form.
 # Strip trailing components from a proxy DN.
 # Translate to the newer GT3/GT4 form.
 # If we've done the latter transformation, notify the user.
 # Don't bother to notify about stripping proxy components.
 #
 my $dn_was_translated = 0;
-if (defined $Options->{dn}) {
-    my $new_dn = Gridmap_Utils::GT3_Subject $Options->{dn};
-    if ($new_dn ne $Options->{dn}) {
+my @new_dns = ();
+foreach my $dn (@{$Options->{dn}}) {
+    my $new_dn = Gridmap_Utils::GT3_Subject $dn;
+    if ($new_dn ne $dn) {
         $dn_was_translated = 1;
     }
     $new_dn = Gridmap_Utils::Strip_Proxy_Info $new_dn;
-    $Options->{dn} = $new_dn;
+    push @new_dns, $new_dn;
 }
+if ($dn_was_translated) {
+    $Options->{dn} = \@new_dns;
+}
+
+my @dn_list = @{$Options->{dn}};
 
 if (not $Options->{quiet}) {
     $| = 1;
     my $Mapping  = ( $Options->{force} ? 'Mapping'  : 'About to map' );
     my $Removing = ( $Options->{force} ? 'Removing' : 'About to remove' );
-    if ($Options->{operation} eq 'add') {
+    my $Setting  = ( $Options->{force} ? 'Setting'  : 'About to set' );
+    if ($Options->{operation} eq 'set') {
+        print "$Setting DN(s) for user\n",
+              "    $Options->{username}\n",
+              "to\n";
+        if (scalar @{$Options->{dn}} == 0) {
+            print "    empty list\n";
+        }
+        else {
+            foreach my $dn (@dn_list) {
+                print "    $dn\n";
+            }
+        }
+    }
+    elsif ($Options->{operation} eq 'add') {
         print "$Mapping distinguished name\n",
-              "    \"$Options->{dn}\"\n",
+              "    \"$dn_list[0]\"\n",
               "to user\n",
               "    $Options->{username}\n";
     }
     elsif ($Options->{operation} eq 'remove') {
         print "$Removing mapping for distinguished name\n",
-              "    \"$Options->{dn}\"\n",
+              "    \"$dn_list[0]\"\n",
               "to user\n",
               "    $Options->{username}\n";
     }
     elsif ($Options->{operation} eq 'remove-dn') {
         print "$Removing all mappings for distinguished name\n",
-              "    \"$Options->{dn}\"\n";
+              "    \"$dn_list[0]\"\n";
     }
     elsif ($Options->{operation} eq 'remove-user') {
-        print "$Removing all mappings for ",
-              "user \"$Options->{username}\"\n";
+        print "$Removing all mappings for user ",
+              "    \"$Options->{username}\"\n";
     }
     if ($dn_was_translated) {
         print "The distinguished name was translated to " .
               "a form compatible with GT3 and GT4.\n";
-        print "The older GT2-compatible form will also be used.\n";
+        print "The older GT2-compatible form may also be used.\n";
     }
 }
 if (not $Options->{force}) {
@@ -365,12 +396,15 @@ my $request = {
     requested_by_name => $PW->{name},
     hostname          => $hostname
 };
-$request->{dn}         = "\"$Options->{dn}\"" if defined $Options->{dn};
-$request->{username}   = $Options->{username} if defined $Options->{username};
-$request->{user_uid}   = $requested_uid       if defined $requested_uid;
-$request->{email}      = $Options->{email}    if defined $Options->{email};
-$request->{comment}    = $Options->{comment}  if defined $Options->{comment};
-$request->{source}     = $Options->{source}   if defined $Options->{source};
+if (defined $Options->{dn}) {
+    $request->{dn} = $Options->{dn};
+    map { $_ = "\"$_\"" } @{$request->{dn}};
+}
+$request->{username} = $Options->{username} if defined $Options->{username};
+$request->{user_uid} = $requested_uid       if defined $requested_uid;
+$request->{email}    = $Options->{email}    if defined $Options->{email};
+$request->{comment}  = $Options->{comment}  if defined $Options->{comment};
+$request->{source}   = $Options->{source}   if defined $Options->{source};
 
 #
 # If gx-check-requests sees a partial request file, it will reject it
@@ -447,9 +481,18 @@ sub Gen_Request_File_Name() {
 
 # ----------------------------------------------------------------------
 
+#
+# Always reject non-printable characters and '"' character.
+# If "-force-dn" option was not specified, do a minimal syntax check.
+#
 sub Is_Valid_DN($) {
     my($DN) = @_;
-    return $DN =~ m<^(/[^/=]+=[^=]+)+$>;
+
+    return 0 if $DN !~ /^[ -~]*$/;
+    return 0 if $DN =~ /"/;
+    return 0 if defined $Options->{'force-dn'} and
+                $DN !~ m<^(/[^/=]+=[^=]+)+$>;
+    return 1;
 } # Is_Valid_DN
 
 # ----------------------------------------------------------------------
@@ -842,7 +885,7 @@ sub Get_Options_From_Command_Line() {
     my $Options = {};
 
     my @operations = ();
-    foreach my $op (qw(add remove remove-dn remove-user update))
+    foreach my $op (qw(add remove remove-dn remove-user set update))
     {
         push @operations, $op if $User_Opt->{$op};
     }
@@ -857,19 +900,35 @@ sub Get_Options_From_Command_Line() {
         Usage "Specify only one of:\n",
               "    -add,\n",
               "    -remove, -remove-dn, -remove-user,\n",
+              "    -set\n",
               "    -update\n";
     }
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
+    my @dn_list = @{$User_Opt->{dn}};
+    my $dn_count = scalar @dn_list +
+                   (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
+                   (defined $User_Opt->{proxy} ? 1 : 0);
 
-    if ($OP =~ /-dn$/ and defined $User_Opt->{username}) {
-        Usage "Do not specify a user name with \"-$Options->{operation}\"\n";
-    }
-    elsif ($OP =~ /-user$/ and
-           ( defined $User_Opt->{dn} or
-             defined $User_Opt->{'certificate-file'} ))
+    if ($OP eq 'set' and
+        ( defined $User_Opt->{'certificate-file'} or
+          defined $User_Opt->{proxy} ))
     {
+        Usage "Do not use \"-certificate-file\" or \"-proxy\" with \"-set\"\n";
+    }
+    elsif ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
+        Usage "Do not specify a user name with \"-$OP\"\n";
+    }
+    elsif ($OP eq 'remove-user' and $dn_count > 0) {
         Usage "Do not specify a DN or certificate file with \"$OP\"\n";
+    }
+    elsif ($OP eq 'add' or $OP eq 'remove' or $OP eq 'remove-dn') {
+        if ($dn_count == 0) {
+            Usage "No DN specified\n";
+        }
+        elsif ($dn_count > 1) {
+            Usage "Multiple DNs may be specified only with \"-set\"\n";
+        }
     }
 
     $Options->{'force-dn'} = 1 if $User_Opt->{'force-dn'};
@@ -913,37 +972,20 @@ sub Get_Options_From_Command_Line() {
     }
 
     if (defined $User_Opt->{username}) {
-        if ($OP =~ /-dn$/) {
-            Usage "Do not specify a user name ",
-                  "with \"-$OP\"\n";
-        }
-        elsif (not $Globus_Admin and $User_Opt->{username} ne $PW->{name}) {
+        if (not $Globus_Admin and $User_Opt->{username} ne $PW->{name}) {
             Usage "You may not specify a user name other than your own\n";
         }
         $Options->{username} = $User_Opt->{username};
     }
     else {
-        if ($OP !~ /-dn$/) {
+        if ($OP ne 'remove-dn') {
             $Options->{username} = $PW->{name};
         }
     }
 
-    my $count = 0;
-    $count ++ if defined $User_Opt->{dn};
-    $count ++ if defined $User_Opt->{proxy};
-    $count ++ if defined $User_Opt->{'certificate-file'};
-    if ($count > 1) {
-        Usage "Specify only one of -dn, -proxy, -certificate-file\n";
-    }
-
     if (defined $User_Opt->{dn}) {
-        if (defined $User_Opt->{'certificate-file'}) {
-            Usage "Can't specify both DN and certificate file\n"
-        }
-        else {
-            $Options->{'dn-method'} = 'dn';
-            $Options->{dn} = $User_Opt->{dn};
-        }
+        $Options->{'dn-method'} = 'dn';
+        $Options->{dn} = $User_Opt->{dn};
     }
     elsif (defined $User_Opt->{proxy}) {
         $Options->{'dn-method'} = 'file';
@@ -954,7 +996,7 @@ sub Get_Options_From_Command_Line() {
         $Options->{'certificate-file'} = $User_Opt->{'certificate-file'};
     }
     else {
-        if ($OP =~ /-user$/) {
+        if ($OP eq 'remove-user') {
             $Options->{'dn-method'} = 'none';
         }
         else {
@@ -1009,6 +1051,14 @@ Option names may be abbreviated.
                               distinguished name.  For use only by Globus
                               administrators.
     -remove-user            : Remove all mappings for the specified user.
+    -set                    : Set mappings for the specified user,
+                              overriding any existing mappings.  Zero or
+                              more DNs may be specified.  This is
+                              equivalent to a "remove-user" request
+                              All DNs must be specified explicitly; the
+                              "-proxy" and "-certificate-file" options
+                              cannot be used with "-set".
+                              followed by zero or more "add" requests.
     -update                 : Request an update of all grid-mapfiles.
                               This normally isn't necessary, but it can be
                               useful if you already have a certificate and
