@@ -1,0 +1,26 @@
+# $Id: bug-0044,v 1.1 2005-07-08 21:15:17-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0044,v $
+
+gx-map bug 0044
+Date: Fri 2005-07-08
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: gx-request: Mid-ordered lines in interactive mode
+
+Summary:
+One of the prompts in "gx-request -interactive" is:
+
+    You can specify the DN in one of several ways:
+    (c) Certificate, extract from
+    (f) File, extract from a specified certificate file
+	    $HOME/.globus/usercert.pem
+    (i) Input the DN directly
+    (x) Exit
+    How do you want to specify the DN? [cfix] 
+
+The line following (f) should follow (c).
+
+This bug occurs in 0.4.5, but not in 0.4.1 (need to find out which
+release it first appeared in).
