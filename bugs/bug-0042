@@ -1,4 +1,4 @@
-# $Id: bug-0042,v 1.1 2005-07-07 19:14:27-07 kst Exp $
+# $Id: bug-0042,v 1.2 2005-07-08 18:46:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0042,v $
 
 gx-map bug 0042
@@ -18,6 +18,10 @@ by gx-check-requests.
 
 It's possible that this could be a security hole, though I haven't
 thought of a way to exploit it.
+
+(If this were a security hole, it would be the fault of
+gx-check-requests, which must behave safely even if the request file
+is forged.)
 
 Fixed:
 gx-request.in 1.12
