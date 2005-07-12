@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.13 2005-07-07 19:59:56-07 kst Exp $
+# $Id: gx-request.in,v 1.14 2005-07-11 23:29:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -70,6 +70,7 @@ sub Get_Options_From_Command_Line();
 sub Is_Valid_DN($);
 sub Request_Update();
 sub Get_DN_From_File($);
+sub User_Cert_File_Name();
 sub Proxy_File_Name();
 sub Gen_Request_File_Name();
 sub Die_Quietly(@);
@@ -80,6 +81,7 @@ my $Program_Name = File::Basename::basename $0;
 my $hostname;
 my $Now = time;
 my $proxy_file = Proxy_File_Name;
+my $user_cert_file = User_Cert_File_Name;
 
 if ($Program_Name eq 'gx-request') {
     # ok
@@ -113,8 +115,6 @@ else {
 # Fields are:
 #    operation (one of add, remove, remove-dn, remove-user, set, update)
 #    username
-#    dn-method (one of dn, file, none)
-#    certificate-file (set only if dn-method is 'file')
 #    dn (an array)
 #    email (optional)
 #    comment (optional)
@@ -206,13 +206,6 @@ Die_Quietly "Directory $Requests_Dir is not writable\n"
 if ($Options->{operation} eq 'update') {
     Request_Update();
     exit 0;
-}
-
-if ($Options->{'dn-method'} eq 'dn') {
-    # nothing, dn is already set
-}
-elsif ($Options->{'dn-method'} eq 'file') {
-    $Options->{dn} = [ Get_DN_From_File $Options->{'certificate-file'} ];
 }
 
 if (( $Options->{operation} eq 'add' or
@@ -434,26 +427,31 @@ unless ($Options->{force} and $Options->{quiet}) {
 # Given a filename, invokes openssl to determine the subject name and
 # returns the resulting DN.
 # 
-# The output must be a single line starting with '/'; otherwise,
-# returns undef.
+# The output must be a single line starting with '/'.
+#
+# If an error occurs, return a brief description of the error.  This can
+# be distinguished from a valid DN by the absence of a leading '/'.
+# (Not pretty, but it works.)
 #
 sub Get_DN_From_File($) {
     my($file) = @_;
-    Die_Quietly "No file $file\n" if not -e $file;
-    Die_Quietly "Cannot read $file\n" if not -r $file;
+    return "No file $file"     if not -e $file;
+    return "Cannot read $file" if not -r $file;
 
     Gridmap_Utils::Use_Commands 'openssl';
 
-    open PIPE, "openssl x509 -in '$file' -noout -subject |";
+    open PIPE, "openssl x509 -in '$file' -noout -subject 2>/dev/null |";
     my @output = <PIPE>;
     close PIPE;
 
-    Die_Quietly "No or bad output from openssl for $file\n"
+    return "Missing or bad output from openssl for $file"
         if scalar @output != 1;
     my $line = $output[0];
     chomp $line;
+    return "Unrecognized output from openssl for $file"
+        if $line !~ /^subject=/;
     $line =~ s/^subject=\s*//;
-    Die_Quietly "Unrecognized output from openssl for $file\n" if $line !~ /^\//;
+    return "Bad DN from openssl for $file" if $line !~ /^\//;
     return $line;
 } # Get_DN_From_File
 
@@ -470,6 +468,17 @@ sub Proxy_File_Name() {
         return undef;
     }
 } # Proxy_File_Name
+
+# ----------------------------------------------------------------------
+
+sub User_Cert_File_Name() {
+    if (defined $ENV{X509_USER_CERT} and -r $ENV{X509_USER_CERT}) {
+        return $ENV{X509_USER_CERT};
+    }
+    else {
+        return "$ENV{HOME}/.globus/usercert.pem";
+    }
+} # User_Cert_File_Name
 
 # ----------------------------------------------------------------------
 
@@ -563,12 +572,12 @@ sub Get_Options_Interactively() {
 
     print Strip <<"EOF";
     > The $Program_Name command lets you submit a request to modify the
-    > Globus grid-mapfiles on several machines.  Once the request is
-    > submitted, the updates should occur within a few minutes.
+    > Globus grid-mapfile(s )on one or more machines.  Once the request
+    > is submitted, the updates should occur within a few minutes.
     > 
     > A grid-mapfile entry maps a DN (Distinguished Name) to a Unix
     > user name.  For example, an entry like
-    >     "/O=Grid/O=Big University/OU=Small Department/CN=John Doe" jdoe
+    >     "/O=Big University/OU=Small Department/CN=John Doe" jdoe
     > allows a user holding a Globus certificate with the specified
     > DN to run Globus jobs under the Unix account "jdoe".
     > 
@@ -594,6 +603,7 @@ EOF
         > (r) Remove a grid-mapfile entry
         > (u) Request an update of the grid-mapfiles
         > (x) Exit
+        > (The "set" operation is not currently available in interactive mode.)
 EOF
         print "What do you want to do? [arux] ";
         chomp($response = lc scalar <STDIN>);
@@ -715,9 +725,7 @@ EOF
         > 
         > This will request an immediate update of all grid-mapfiles.
         > Normally updates are handled automatically, so this is not
-        > usually necessary.  The only case where this is necessary
-        > is when you get a new Unix account when you already have a
-        > grid-mapfile entry.
+        > usually necessary.
         > 
 EOF
         while (1) {
@@ -747,7 +755,7 @@ EOF
         #
         # Get user name if needed
         #
-        my $need_user_name = undef;
+        my $need_user_name = 0;
         if ($Globus_Admin and $OP ne 'remove-dn') {
             $need_user_name = 1;
         }
@@ -782,47 +790,58 @@ EOF
         }
 
         #
-        # Get DN or certificate file name
+        # Get DN
         #
-        if ($OP =~ /-user$/) {
-            $Options->{'dn-method'} = 'none';
-        }
-        else {
-            my $choices = defined $proxy_file ? 'cfpix' : 'cfix';
-            while (not defined $Options->{'dn-method'}) {
+        if ($OP ne 'remove-user') {
+            my $choices = '';
+            $choices .= 'c' if defined $user_cert_file;
+            $choices .= 'p' if defined $proxy_file;
+            $choices .= 'fix';
+            my $dn = undef;
+            my $cert_file = undef;
+            while (not defined $dn) {
+
                 print Strip <<"EOF";
                 > 
-                > You can specify the DN in one of several ways:
-                > (c) Certificate, extract from
+                > You can specify the DN in one of the following ways:
+EOF
+
+                print Strip <<"EOF" if defined $user_cert_file;
+                > (c) Certificate, extract from $user_cert_file
+EOF
+
+                print Strip <<"EOF" if defined $proxy_file;
+                > (p) Proxy, extract from your current proxy certificate,
+                >     $proxy_file
+EOF
+
+                print Strip <<"EOF";
                 > (f) File, extract from a specified certificate file
-                >         \$HOME/.globus/usercert.pem
 EOF
-                if (defined $proxy_file) {
-                    print Strip <<"EOF";
-                    > (p) Proxy, extract from your current proxy certificate
-EOF
-                }
+
                 print Strip <<"EOF";
                 > (i) Input the DN directly
                 > (x) Exit
 EOF
+
                 print "How do you want to specify the DN? [$choices] ";
                 chomp($response = lc scalar <STDIN>);
 
-                if ($response =~ /^c/) {
-                    $Options->{'dn-method'} = 'file';
-                    $Options->{'certificate-file'}
-                        = "$ENV{HOME}/.globus/usercert.pem";
-                }
-                elsif ($response =~ /^f/) {
-                    $Options->{'dn-method'} = 'file';
+                if (defined $user_cert_file and $response =~ /^c/) {
+                    $cert_file = $user_cert_file;
                 }
                 elsif (defined $proxy_file and $response =~ /^p/) {
-                    $Options->{'dn-method'} = 'file';
-                    $Options->{'certificate-file'} = $proxy_file;
+                    $cert_file = $proxy_file;
+                }
+                elsif ($response =~ /^f/) {
+                    print "Enter certificate file name: ";
+                    chomp($cert_file = scalar <STDIN>);
                 }
                 elsif ($response =~ /^i/) {
-                    $Options->{'dn-method'} = 'dn';
+                    print "Enter distinguished name: ";
+                    chomp($dn = scalar <STDIN>);
+                    $dn =~ s/^"//;
+                    $dn =~ s/"$//;
                 }
                 elsif ($response =~ /^x/) {
                     exit 0;
@@ -830,20 +849,23 @@ EOF
                 else {
                     print ">>> Unrecognized input\n";
                 }
-            }
 
-            if ($Options->{'dn-method'} eq 'file') {
-                if (not defined $Options->{'certificate-file'}) {
-                    print "Enter certificate file name: ";
-                    chomp($Options->{'certificate-file'} = scalar <STDIN>);
+                if (defined $cert_file) {
+                    $dn = Get_DN_From_File $cert_file;
+                    if ($dn =~ /^\//) {
+                        print "DN is \"$dn\"\n";
+                    }
+                    else {
+                        #
+                        # Get_DN_From_File returned an error message.
+                        #
+                        print "$dn\n";
+                        undef $dn;
+                    }
                 }
             }
-            else {
-                print "Enter distinguished name: ";
-                chomp($Options->{dn} = scalar <STDIN>);
-                $Options->{dn} =~ s/^"//;
-                $Options->{dn} =~ s/"$//;
-            }
+
+            $Options->{dn} = [ $dn ];
         }
 
         #
@@ -934,7 +956,7 @@ sub Get_Options_From_Command_Line() {
             Usage "No DN specified\n";
         }
         elsif ($dn_count > 1) {
-            Usage "Multiple DNs may be specified only with \"-set\"\n";
+            Usage "Multiple DNs may not be specified with \"-$OP\"\n";
         }
     }
 
@@ -990,26 +1012,44 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
-    if (@dn_list) {
-        $Options->{'dn-method'} = 'dn';
-        $Options->{dn} = $User_Opt->{dn};
-    }
-    elsif (defined $User_Opt->{proxy}) {
-        $Options->{'dn-method'} = 'file';
-        $Options->{'certificate-file'} = $proxy_file;
-    }
-    elsif (defined $User_Opt->{'certificate-file'}) {
-        $Options->{'dn-method'} = 'file';
-        $Options->{'certificate-file'} = $User_Opt->{'certificate-file'};
-    }
-    else {
-        if ($OP eq 'remove-user') {
-            $Options->{'dn-method'} = 'none';
+    if ($OP ne 'remove-user') {
+        if (@dn_list or $OP eq 'set') {
+            $Options->{dn} = \@dn_list;
         }
         else {
-            $Options->{'dn-method'} = 'file';
-            $Options->{'certificate-file'}
-                = "$ENV{HOME}/.globus/usercert.pem";
+            my $cert_file;
+            if (defined $User_Opt->{proxy}) {
+                if (defined $proxy_file) {
+                    $cert_file = $proxy_file;
+                }
+                else {
+                    Usage "Cannot determine name of proxy certificate\n";
+                }
+            }
+            elsif (defined $User_Opt->{'certificate-file'}) {
+                $cert_file = $User_Opt->{'certificate-file'};
+            }
+            else {
+                if (defined $user_cert_file) {
+                    $cert_file = $user_cert_file;
+                }
+                else {
+                    Usage "Cannot determine name of user certificate\n";
+                }
+            }
+            my $dn = Get_DN_From_File $cert_file;
+            if ($dn =~ /^\//) {
+                #
+                # Get_DN_From_File returned a valid DN
+                #
+                $Options->{dn} = [ $dn ];
+            }
+            else {
+                #
+                # Get_DN_From_File returned an error message
+                #
+                Usage "$dn\n";
+            }
         }
     }
 
@@ -1060,6 +1100,8 @@ Option names may be abbreviated.
     -help                   : Show a brief usage message and exit.
     -version                : Show version information and exit.
     -interactive            : Run interactively (recommended).
+                              The "set" operation is not currently
+                              available in interactive mode.
     -long-help              : Show this long usage message (recommended
                               only for Globus administrators and masochists).
     -add                    : Add the specified mapping.
@@ -1072,10 +1114,12 @@ Option names may be abbreviated.
                               overriding any existing mappings.  Zero or
                               more DNs may be specified.  This is
                               equivalent to a "remove-user" request
+                              followed by zero or more "add" requests.
                               All DNs must be specified explicitly; the
                               "-proxy" and "-certificate-file" options
-                              cannot be used with "-set".
-                              followed by zero or more "add" requests.
+                              cannot be used with "-set".  This operation
+                              is not currently available in "-interactive"
+                              mode.
     -update                 : Request an update of all grid-mapfiles.
                               This normally isn't necessary, but it can be
                               useful if you already have a certificate and
@@ -1097,8 +1141,9 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -proxy                  : Extract DN from proxy certificate.
     -certificate-file file  : Name of file from which to extract DN.
                               If neither "-dn", "-proxy", nor
-                              "-certificate-file" is specified, extract
-                              DN from \$HOME/.globus/usercert.pem .
+                              "-certificate-file" is specified,
+                              extract DN from \$X509_USER_CERT or
+                              \$HOME/.globus/usercert.pem .
     -force-dn               : Normally, gx-map (minimally) checks the DN for
                               proper syntax; this option overrides that check.
     -username name          : Unix user name to map.
