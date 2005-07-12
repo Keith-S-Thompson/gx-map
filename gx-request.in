@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.14 2005-07-11 23:29:14-07 kst Exp $
+# $Id: gx-request.in,v 1.15 2005-07-11 23:29:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -572,7 +572,7 @@ sub Get_Options_Interactively() {
 
     print Strip <<"EOF";
     > The $Program_Name command lets you submit a request to modify the
-    > Globus grid-mapfile(s )on one or more machines.  Once the request
+    > Globus grid-mapfile(s) on one or more machines.  Once the request
     > is submitted, the updates should occur within a few minutes.
     > 
     > A grid-mapfile entry maps a DN (Distinguished Name) to a Unix
