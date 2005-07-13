@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.15 2005-07-11 23:29:35-07 kst Exp $
+# $Id: gx-request.in,v 1.16 2005-07-13 01:12:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -72,7 +72,8 @@ sub Request_Update();
 sub Get_DN_From_File($);
 sub User_Cert_File_Name();
 sub Proxy_File_Name();
-sub Gen_Request_File_Name();
+sub Gen_Request_File_Name($);
+sub Clone($);
 sub Die_Quietly(@);
 sub Debug(@);
 sub Debugf(@);
@@ -373,7 +374,6 @@ if (not $Options->{force}) {
 
 $hostname = Gridmap_Utils::Get_Hostname();
 
-my $Request_File = Gen_Request_File_Name();
 my $Timestamp = Gridmap_Utils::Long_Time_Image $Now;
 my $requested_uid = undef;
 if (defined $requested_pw) {
@@ -405,16 +405,42 @@ $request->{comment}  = $Options->{comment}  if defined $Options->{comment};
 $request->{source}   = $Options->{source}   if defined $Options->{source};
 
 #
-# If gx-check-requests sees a partial request file, it will reject it
-# and move it to the bad-requests directory.  To avoid this, create
-# a temporary request file with a name ending in ".tmp" (making it
-# invisible to gx-check-requests).  After the temporary file is created
-# and has the proper permissions, rename it to the correct name.
+# A 'set' request is expanded to a 'remove-user' request
+# followed by zero or more 'add' requests.  No 'set' request
+# will actually be written to a file.
 #
-my $tmp_file = $Request_File . ".tmp";
-Gridmap_Utils::Write_Records '-single', $tmp_file, $request;
-chmod 0444, $tmp_file;
-rename $tmp_file, $Request_File;
+if ($Options->{operation} eq 'set') {
+    $request->{operation} = 'remove-user';
+    delete $request->{dn};
+}
+
+my @requests = ( $request );
+
+if ($Options->{operation} eq 'set') {
+    foreach my $dn (@dn_list) {
+        my $add_request = Clone $request;
+        $add_request->{operation} = 'add';
+        $add_request->{dn} = "\"$dn\"";
+        push @requests, $add_request;
+    }
+}
+
+my $index = 0;
+
+foreach my $request (@requests) {
+    #
+    # If gx-check-requests sees a partial request file, it will reject it
+    # and move it to the bad-requests directory.  To avoid this, create
+    # a temporary request file with a name ending in ".tmp" (making it
+    # invisible to gx-check-requests).  After the temporary file is created
+    # and has the proper permissions, rename it to the correct name.
+    #
+    my $request_file = Gen_Request_File_Name($index++);
+    my $tmp_file = $request_file . ".tmp";
+    Gridmap_Utils::Write_Records '-single', $tmp_file, $request;
+    chmod 0444, $tmp_file;
+    rename $tmp_file, $request_file;
+}
 
 unless ($Options->{force} and $Options->{quiet}) {
     print "Mapping request submitted.\n";
@@ -482,9 +508,11 @@ sub User_Cert_File_Name() {
 
 # ----------------------------------------------------------------------
 
-sub Gen_Request_File_Name() {
+sub Gen_Request_File_Name($) {
+    my($index) = @_;
     my $result = "$Requests_Dir/";
     $result .= sprintf "%010s", $Now;
+    $result .= sprintf "-%03d", $index;
     $result .= "-$hostname-$PW->{name}";
     if (defined $Options->{username} and
         $Options->{username} ne $PW->{name})
@@ -498,7 +526,7 @@ sub Gen_Request_File_Name() {
 # ----------------------------------------------------------------------
 
 #
-# Always reject non-printable characters and '"' character.
+# Always reject non-printable characters and '"' characters.
 # If "-force-dn" option was not specified, do a minimal syntax check.
 #
 sub Is_Valid_DN($) {
@@ -1063,6 +1091,22 @@ sub Get_Options_From_Command_Line() {
     
     return $Options;
 } # Get_Options_From_Command_Line
+
+# ----------------------------------------------------------------------
+
+#
+# Given a hash reference, returns a new reference whose fields are copies
+# of the original.  Used in expanding a 'set' request so we can
+# generate a list of similar nodes.
+#
+sub Clone($) {
+    my($ref) = @_;
+    my $new_ref = {};
+    foreach my $key (keys %$ref) {
+        $new_ref->{$key} = $ref->{$key};
+    }
+    return $new_ref;
+} # Clone
 
 # ----------------------------------------------------------------------
 
