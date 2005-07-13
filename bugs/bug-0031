@@ -1,4 +1,4 @@
-# $Id: bug-0031,v 1.4 2005-07-09 16:32:35-07 kst Exp $
+# $Id: bug-0031,v 1.5 2005-07-12 18:17:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0031,v $
 
 gx-map bug 0031
@@ -6,7 +6,7 @@ Date: Thu 2005-06-23
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Open
 Title: Clean up requests.log file
 
 Summary:
@@ -26,12 +26,8 @@ I also want to modify it so it retains comments.  This means adding an
 option to Read_Records so it treats a comment block as a pseudo-record,
 probably a reference to an array of lines.
 
-Fix:
+Partial fix:
 The gx-cleanup-logs command will be included in future releases.
-
-Fixed:
-gx-cleanup-logs.in, all versions
-gx-map ?
 
 Followup:
 I should consider writing a command that will invoke gx-cleanup-logs
