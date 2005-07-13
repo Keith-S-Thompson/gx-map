@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.75 2005-07-06 00:45:52-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.76 2005-07-12 19:33:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -869,13 +869,26 @@ sub Read_Records(@) {
 # depending on Perl to get this right, we annotate each record with an
 # __INDEX__ attribute, which we then delete before returning the result.
 #
+# A 'set' request is expanded to a 'remove-user' request followed by
+# zero or more 'add' requests.  For records with the same timestamp,
+# we want to guarantee that the 'remove-user' precedes the 'add's.
+#
 sub Sort_By_Timestamp(@) {
     for (my $i = 0; $i <= $#_; $i ++) {
         $_[$i]->{__INDEX__} = $i;
     }
+    my $a_op_index = 1;
+    my $b_op_index = 1;
+    if (defined $a->{operation} and $a->{operation} eq 'remove-user') {
+        $a_op_index = 0;
+    }
+    if (defined $b->{operation} and $b->{operation} eq 'remove-user') {
+        $b_op_index = 0;
+    }
     my @result = sort
         { (defined $a->{timestamp}?1:0) <=> (defined $b->{timestamp}?1:0) ||
            $a->{timestamp} cmp $b->{timestamp} ||
+           $a_op_index cmp $b_op_index ||
            $a->{__INDEX__} <=> $b->{__INDEX__} } @_;
     for (my $i = 0; $i <= $#_; $i ++) {
         delete $result[$i]->{__INDEX__};
