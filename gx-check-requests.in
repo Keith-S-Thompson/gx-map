@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.46 2005-07-12 00:34:22-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.47 2005-07-13 01:12:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -129,7 +129,7 @@ my @required_keys = qw( operation timestamp requested_by_name
 my @valid_keys = ( @required_keys,
                    qw( dn username email comment
                        user_uid source ) );
-my @valid_operations = qw( add remove remove-dn remove-user set );
+my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
 my %is_valid_operation = map { $_ => 1 } @valid_operations;
@@ -261,6 +261,21 @@ sub Get_Request_Info($) {
         push @{$result->{ERRORS}}, "Missing key(s): @missing";
     }
 
+    #
+    # Each key may occur only once, except possibly for 'comment'.
+    # (We allow multiple 'comment' attributes, but I'm not sure whether
+    # this actually occurs.)
+    #
+    my @multiple = ();
+    foreach my $key (keys %$result) {
+        if ($key ne 'comment' and ref $result->{$key} eq 'ARRAY') {
+            push @multiple, $key;
+        }
+    }
+    if (@multiple) {
+        push @{$result->{ERRORS}}, "Multiple occurrences of: @missing";
+    }
+
     if (defined $result->{ERRORS}) {
         return $result;
     }
@@ -285,19 +300,23 @@ sub Get_Request_Info($) {
 
     #
     # An add, remove, or remove-dn opereration requires exactly one DN.
-    # A remove-user operation may not have a DN.  A set operation may
-    # have zero or more DNs.
+    # A remove-user operation may not have a DN.
     #
     if ($OP eq 'add' or $OP eq 'remove' or $OP eq 'remove-dn') {
         if (not defined $result->{dn}) {
             push @{$result->{ERRORS}}, "Missing dn field";
         }
-        elsif (ref $result->{dn} eq 'ARRAY') {
-            push @{$result->{ERRORS}}, "Multiple dn fields";
-        }
     }
     elsif ($OP eq 'remove-user' and defined $result->{dn}) {
         push @{$result->{ERRORS}}, "Extraneous dn field";
+    }
+
+    #
+    # A DN (as stored in the log file) must start and end with a '"'
+    # character, and have no other '"' characters.
+    #
+    if (defined $result->{dn} and $result->{dn} !~ /^"[^"]+"$/) {
+        push @{$result->{ERRORS}}, "Invalid DN (quote error)";
     }
 
     if ($result->{timestamp} =~ /^(\d+)/) {
