@@ -1,9 +1,9 @@
-# $Id: bug-0041,v 1.1 2005-07-03 13:56:08-07 kst Exp $
+# $Id: bug-0041,v 1.2 2005-07-12 17:14:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0041,v $
 
 gx-map bug 0041
 Date: Sun 2005-07-03
-Severity: med
+Severity: low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
 Status: Open
@@ -15,3 +15,13 @@ permissions apply to directories but not to individual files).  Look
 into how this might affect a gx-map data directory.  If necessary,
 either modify gx-map to work properly under AFS or detect AFS and
 refuse to run.
+
+Later: An experiment on north.cs.wisc.edu gives an error during
+installation:
+
+chmod: changing permissions of `/u/k/t/kthompso/local/var/gx-map-0.4.5a-data/new-requests' (requested: 1733, actual: 0733): Operation not permitted
+
+If the gx-map data directory can't be installed under AFS, it looks
+like there isn't a real problem.  (It is possible to install gx-map
+under AFS, and put the data directory on a non-AFS partition; there
+shouldn't be any problem with that.)
