@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.58 2005-07-12 01:32:16-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.59 2005-07-13 01:14:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -57,7 +57,6 @@ use Getopt::Long ();
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
-sub Expand_Set_Request($);
 sub Image($);
 sub Usage(@);
 sub Debug(@);
@@ -173,8 +172,6 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 }
 
 @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
-
-@requests = map Expand_Set_Request $_, @requests;
 
 #
 # Process removals
@@ -590,69 +587,6 @@ sub User_Real_Name($) {
     $gcos =~ s/,.*$//;
     return $gcos;
 } # User_Real_Name
-
-# ----------------------------------------------------------------------
-
-#
-# Given a hash reference, returns a new reference whose fields are
-# copies of the original.  Use by Expand_Set_Request so it can create a list
-# of similar nodes.
-#
-sub Clone($) {
-    my($ref) = @_;
-    my $new_ref = {};
-    foreach my $key (keys %$ref) {
-        $new_ref->{$key} = $ref->{$key};
-    }
-    return $new_ref;
-} # Clone
-
-# ----------------------------------------------------------------------
-
-#
-# A 'set' request is equivalent to a 'remove-user' followed by zero
-# or more 'add' requests, so we expand it to a list of request records.
-#
-sub Expand_Set_Request($) {
-    my($ref) = @_;
-    if ($User_Opt->{debugging}) {
-        Debug "Entering Expand_Set_Request:\n";
-        Gridmap_Utils::Write_Records '-multiple', '-', $ref;
-    }
-    if ($ref->{operation} ne 'set') {
-        return $ref;
-    }
-    my @result = ();
-    my @dn_list;
-    if (not defined $ref->{dn}) {
-        @dn_list = ();
-    }
-    elsif (ref $ref->{dn} eq 'ARRAY') {
-        @dn_list = @{$ref->{dn}};
-    }
-    else {
-        @dn_list = ( $ref->{dn} );
-    }
-
-    my $new_ref = Clone $ref;
-    $new_ref->{operation} = 'remove-user';
-    delete $new_ref->{dn};
-    push @result, $new_ref;
-
-    foreach my $dn (@dn_list) {
-        $new_ref = Clone $ref;
-        $new_ref->{operation} = 'add';
-        $new_ref->{dn} = $dn;
-        push @result, $new_ref;
-    }
-    if ($User_Opt->{debugging}) {
-        Debug "Returning from Expand_Set_Request,
-              ", scalar @result,
-              " record(s)\n";
-        Gridmap_Utils::Write_Records '-multiple', '-', @result;
-    }
-    return @result;
-} # Expand_Set_Request
 
 # ----------------------------------------------------------------------
 
