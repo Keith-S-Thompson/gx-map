@@ -1,4 +1,4 @@
-# $Id: bug-0044,v 1.1 2005-07-08 21:15:17-07 kst Exp $
+# $Id: bug-0044,v 1.2 2005-07-12 17:14:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0044,v $
 
 gx-map bug 0044
@@ -7,7 +7,7 @@ Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
 Status: Open
-Title: gx-request: Mid-ordered lines in interactive mode
+Title: gx-request: Mis-ordered lines in interactive mode
 
 Summary:
 One of the prompts in "gx-request -interactive" is:
