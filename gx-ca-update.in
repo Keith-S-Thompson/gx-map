@@ -1,7 +1,6 @@
-#!%PERL% -w
-# To do: Add '-T' (bug-0018)
+#!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.58 2005-06-29 19:50:40-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.59 2005-07-13 19:26:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -157,6 +156,9 @@ my $lock_file = "$Data_Dir/.gx-ca-update.lock";
 my $ca_conf_dir = "$Install_Dir/etc/ca-config";
 my @ca_list_all;
 my $requested_all = undef; # true if user specified "-ca ALL"
+
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
 
 opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
 @ca_list_all = sort
@@ -327,6 +329,7 @@ foreach my $ref (@ca_info) {
     }
     if (not Disabled $ref) {
         my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
+	Gridmap_Utils::Untaint $prefix;
         $ref->{_CERT_FILE}           = "$prefix.0";
         $ref->{_SIGNING_POLICY_FILE} = "$prefix.signing_policy";
         $ref->{_CRL_FILE}            = "$prefix.r0";
@@ -1155,6 +1158,7 @@ sub Notify() {
     my $message_body = '';
 
     my $log_file = "$Install_Dir/var/$Program_Name.log";
+    Gridmap_Utils::Untaint $log_file;
     open LOG, ">>$log_file";
     print LOG Gridmap_Utils::Time_Image $now,
               " $Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
