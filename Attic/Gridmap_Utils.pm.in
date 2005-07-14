@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.77 2005-07-13 19:24:51-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.78 2005-07-13 20:36:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1386,7 +1386,7 @@ sub DN_List($) {
         return ($gt3_dn);
     }
     else {
-        return ($gt2_dn, $gt3_dn);
+        return sort ($gt2_dn, $gt3_dn);
     }
 } # DN_List
 
