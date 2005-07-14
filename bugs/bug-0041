@@ -1,4 +1,4 @@
-# $Id: bug-0041,v 1.2 2005-07-12 17:14:16-07 kst Exp $
+# $Id: bug-0041,v 1.3 2005-07-13 19:01:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0041,v $
 
 gx-map bug 0041
@@ -6,7 +6,7 @@ Date: Sun 2005-07-03
 Severity: low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Closed
 Title: Investigate behavior on AFS
 
 Summary:
@@ -25,3 +25,7 @@ If the gx-map data directory can't be installed under AFS, it looks
 like there isn't a real problem.  (It is possible to install gx-map
 under AFS, and put the data directory on a non-AFS partition; there
 shouldn't be any problem with that.)
+
+I think the only remaining issue here is making it possible to put
+the data directory on an AFS filesystem.  Unless there's some interest
+in doing this, I'm going to close this bug.
