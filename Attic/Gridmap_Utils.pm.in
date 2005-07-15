@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.79 2005-07-14 18:01:26-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.80 2005-07-14 18:03:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -145,8 +145,6 @@ sub Strip_Proxy_Info($);
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
 sub Register_Handler_Function($);
-sub Suspend_Die_Handler();
-sub Restore_Die_Handler();
 
 sub Debug(@);
 sub Debugf(@);
@@ -1394,10 +1392,8 @@ sub DN_List($) {
 
 # ----------------------------------------------------------------------
 
-my $die_handler_suspended = 0;
-
 sub Die_Handler($) {
-    die @_ if $die_handler_suspended and $^S;
+    die @_ if $^S;
 
     if (defined $Gridmap_Utils::Registered_Handler_Function) {
         &$Gridmap_Utils::Registered_Handler_Function;
@@ -1450,18 +1446,6 @@ sub Install_Warn_Handler() {
 sub Register_Handler_Function($) {
     $Gridmap_Utils::Registered_Handler_Function = $_[0];
 } # Register_Handler_Function
-
-# ----------------------------------------------------------------------
-
-sub Suspend_Die_Handler() {
-    $die_handler_suspended = 1;
-} # 
-
-# ----------------------------------------------------------------------
-
-sub Restore_Die_Handler() {
-    $die_handler_suspended = 0;
-} # 
 
 # ----------------------------------------------------------------------
 
