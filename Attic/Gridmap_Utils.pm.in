@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.78 2005-07-13 20:36:44-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.79 2005-07-14 18:01:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -106,8 +106,8 @@ BEGIN {
 #
 # sub Get_Config($);
 
-sub Is_Tainted($);
-sub Check_Tainting($$);
+# sub Is_Tainted($);
+# sub Check_Tainting($$);
 sub Untaint(\$);
 
 sub Get_mtime($);
@@ -145,6 +145,8 @@ sub Strip_Proxy_Info($);
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
 sub Register_Handler_Function($);
+sub Suspend_Die_Handler();
+sub Restore_Die_Handler();
 
 sub Debug(@);
 sub Debugf(@);
@@ -205,22 +207,22 @@ sub Debugf(@);
 
 # ----------------------------------------------------------------------
 
-sub Is_Tainted($) {
-    my($arg) = @_;
-    my $nada = substr($arg, 0, 0);  # zero-length
-    local $@;  # preserve caller's version
-    eval { eval "# $nada" };
-    return length($@) != 0;
-} # Is_Tainted
+# sub Is_Tainted($) {
+#     my($arg) = @_;
+#     my $nada = substr($arg, 0, 0);  # zero-length
+#     local $@;  # preserve caller's version
+#     eval { eval "# $nada" };
+#     return length($@) != 0;
+# } # Is_Tainted
 
 # ----------------------------------------------------------------------
 
-sub Check_Tainting($$) {
-    my($name, $value) = @_;
-    if (Is_Tainted $value) {
-        die ">>> $name = \"$value\" is tainted\n";
-    }
-} # Check_Tainting
+# sub Check_Tainting($$) {
+#     my($name, $value) = @_;
+#     if (Is_Tainted $value) {
+#         die ">>> $name = \"$value\" is tainted\n";
+#     }
+# } # Check_Tainting
 
 # ----------------------------------------------------------------------
 
@@ -1392,7 +1394,11 @@ sub DN_List($) {
 
 # ----------------------------------------------------------------------
 
+my $die_handler_suspended = 0;
+
 sub Die_Handler($) {
+    die @_ if $die_handler_suspended and $^S;
+
     if (defined $Gridmap_Utils::Registered_Handler_Function) {
         &$Gridmap_Utils::Registered_Handler_Function;
     }
@@ -1444,6 +1450,18 @@ sub Install_Warn_Handler() {
 sub Register_Handler_Function($) {
     $Gridmap_Utils::Registered_Handler_Function = $_[0];
 } # Register_Handler_Function
+
+# ----------------------------------------------------------------------
+
+sub Suspend_Die_Handler() {
+    $die_handler_suspended = 1;
+} # 
+
+# ----------------------------------------------------------------------
+
+sub Restore_Die_Handler() {
+    $die_handler_suspended = 0;
+} # 
 
 # ----------------------------------------------------------------------
 
