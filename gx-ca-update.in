@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.60 2005-07-14 18:02:29-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.61 2005-07-14 18:03:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -735,12 +735,10 @@ sub Update_Certificate($) {
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(https?|ftp)://>) {
         my $cache_file;
-        Gridmap_Utils::Suspend_Die_Handler;
         eval {
             $cache_file = Gridmap_Utils::Cache_File
                               $ref->{CERTIFICATE_URL}
         };
-        Gridmap_Utils::Restore_Die_Handler;
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
@@ -868,7 +866,6 @@ sub Update_CRL($) {
             ( defined $ref->{CRL_DOWNLOAD_GLITCH} and
               lc $ref->{CRL_DOWNLOAD_GLITCH} eq 'yes' );
 
-        Gridmap_Utils::Suspend_Die_Handler;
         if ($CRL_Download_Glitch) {
             #
             # See bug-0020
@@ -880,7 +877,6 @@ sub Update_CRL($) {
             eval { $new_crl_file
                        = Gridmap_Utils::Cache_File $ref->{CRL_URL} };
         }
-        Gridmap_Utils::Restore_Die_Handler;
         if (defined $@ and $@ ne '') {
             #
             # Error in Cache_File function
