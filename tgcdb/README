@@ -1,0 +1,8 @@
+# $Id: README,v 1.1 2005-07-15 20:13:52-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/tgcdb/README,v $
+
+This requires the DBI Perl module, which seems not to be installed
+by default.  Before using this code, try:
+
+    cpan install DBI
+    cpan install DBD::Pg
