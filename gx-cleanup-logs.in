@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.17 2005-07-06 19:05:06-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.18 2005-07-17 17:04:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -80,6 +80,7 @@ my @Opts = ( $User_Opt,
                  version
                  merge-only!
                  delete!
+                 sdsc!
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -168,6 +169,16 @@ if (not $User_Opt->{'merge-only'}) {
         my $new_op = $new->{operation};
         my $new_timestamp = $new->{timestamp};
         Debug "Outer loop, $new, $new_op\n";
+
+        if ($User_Opt->{sdsc} and
+            defined $new->{dn} and
+            $new->{dn} =~ m(^/C=US/O=SDSC/OU=SDSC) and
+            $new->{SOURCE} ne 'SDSC-CA')
+        {
+            $new->{__DELETED__} = 1;
+            next NEW;
+        }
+
         if ($new_op =~ /^remove/) {
             $new->{__DELETED__} = 1;
         }
@@ -276,6 +287,7 @@ Option names may be abbreviated.
     -version     Display version information and exit.
     -merge-only  Merge and sort input records; don't delete anything.
     -delete      Delete redundant requests (default is to comment them out).
+    -sdsc        Delete requests for SDSC certificates without SOURCE=SDSC-CA
     -debugging   Enable debugging output.
 
 Read gx-map requests log(s) from specified files or from stdin.
