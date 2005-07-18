@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.21 2005-07-01 21:58:38-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.22 2005-07-17 17:02:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -124,7 +124,7 @@ if (@missing_accounts) {
 
 my $now = time;
 
-my $Rev = '$Revision: 1.21 $';
+my $Rev = '$Revision: 1.22 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -165,10 +165,10 @@ if (not (defined $header_comment_lines[0] and
 }
 push @header_comment_lines,
      "Converted $timestamp by $Program_Name (gx-map $Gridmap_Utils::VERSION)",
-     "Converting $record_count records";
+     "Converting $record_count record(s)";
 
 if ($refs[0]->{operation} ne 'comment') {
-    unshift @refs, {};
+    unshift @refs, {operation => 'comment'};
 }
 $refs[0]->{lines} = \@header_comment_lines;
 
