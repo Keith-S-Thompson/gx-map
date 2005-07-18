@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.19 2005-07-17 17:36:44-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.20 2005-07-18 03:31:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -54,6 +54,7 @@ use File::Basename ();
 use File::Copy ();
 use Getopt::Long ();
 
+sub Image($);
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
@@ -108,7 +109,7 @@ foreach my $log (@input_logs) {
 if ($User_Opt->{debugging}) {
     Debug "Before sorting:\n";
     foreach my $request (@requests) {
-        Debug "$request $request->{timestamp} $request->{operation}\n";
+        Debug Image $request, "\n";
     }
 }
 
@@ -120,7 +121,7 @@ if ($User_Opt->{debugging}) {
 if ($User_Opt->{debugging}) { 
     Debug "After sorting:\n";
     foreach my $request (@requests) {
-        Debug "$request $request->{timestamp} $request->{operation}\n";
+        Debug Image $request, "\n";
     }
 }
 
@@ -168,7 +169,7 @@ if (not $User_Opt->{'merge-only'}) {
         next NEW if exists $new->{__DELETED__};
         my $new_op = $new->{operation};
         my $new_timestamp = $new->{timestamp};
-        Debug "Outer loop, $new, $new_op\n";
+        Debug "Outer loop, ", Image $new, "\n";
 
         if ($User_Opt->{sdsc} and
             defined $new->{dn} and
@@ -219,7 +220,7 @@ if (not $User_Opt->{'merge-only'}) {
             my $old_op = $old->{operation};
             next OLD if $old_op eq 'comment';
             next OLD if exists $old->{__DELETED__};
-            Debug "Inner loop, $old $old_op\n";
+            Debug "Inner loop, ", Image $old, "\n";
             next if $new->{NAMESPACE} ne $old->{NAMESPACE};
 
             if ( $new_op eq 'remove' and
@@ -227,7 +228,7 @@ if (not $User_Opt->{'merge-only'}) {
                  $old->{username} eq $new->{username} and
                  $old->{dn} eq $new->{dn} )
             {
-                Debug "Deleting $old, $old_op\n";
+                Debug "Deleting ", Image $old, "\n";
                 $old->{__DELETED__} = 1;
             }
 
@@ -237,7 +238,7 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-user' ) and
                     $old->{username} eq $new->{username} )
             {
-                Debug "Deleting $old, $old_op\n";
+                Debug "Deleting ", Image $old, "\n";
                 $old->{__DELETED__} = 1;
             }
 
@@ -247,7 +248,7 @@ if (not $User_Opt->{'merge-only'}) {
                       $old_op eq 'remove-dn' ) and
                     $old->{dn} eq $new->{dn} )
             {
-                Debug "Deleting $old, $old_op\n";
+                Debug "Deleting ", Image $old, "\n";
                 $old->{__DELETED__} = 1;
             }
 
@@ -256,7 +257,7 @@ if (not $User_Opt->{'merge-only'}) {
                     $old->{username} eq $new->{username} and
                     $old->{dn} eq $new->{dn} )
             {
-                Debug "Deleting $old, $old_op\n";
+                Debug "Deleting ", Image $old, "\n";
                 $old->{__DELETED__} = 1;
             }
         }
@@ -266,7 +267,7 @@ if (not $User_Opt->{'merge-only'}) {
 if ($User_Opt->{debugging}) {
     Debug "After filtering:\n";
     foreach my $request (@requests) {
-        Debug "$request $request->{timestamp} $request->{operation}\n";
+        Debug Image $request, "\n";
     }
 }
 
@@ -277,6 +278,33 @@ if ($User_Opt->{delete}) {
 Gridmap_Utils::Write_Records '-multiple', '-', @requests;
 
 ########################################################################
+
+sub Image($) {
+    my($ref) = @_;
+    if (not defined $ref) {
+        return undef;
+    }
+    else {
+        my @result = ();
+        if (defined $ref->{timestamp}) {
+            my $ts = $ref->{timestamp};
+            $ts =~ s/ .*$//;
+            push @result, $ts;
+        }
+        push @result, $ref->{SOURCE}    if defined $ref->{SOURCE};
+        push @result, $ref->{operation} if defined $ref->{operation};
+        push @result, $ref->{username}  if defined $ref->{username};
+        push @result, $ref->{dn}        if defined $ref->{dn};
+        if (@result) {
+            return "@result";
+        }
+        else {
+            return "(?)";
+        }
+    }
+} # Image
+
+# ----------------------------------------------------------------------
 
 sub Usage(@) {
     print @_ if @_;
