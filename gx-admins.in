@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-admins.in,v 1.5 2005-06-29 22:02:54-07 kst Exp $
+# $Id: gx-admins.in,v 1.6 2005-07-18 22:53:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
 
 use strict;
@@ -51,6 +51,7 @@ use strict;
 ########################################################################
 
 use File::Basename ();
+use Getopt::Long ();
 
 sub Usage(@);
 
@@ -62,6 +63,17 @@ BEGIN {
 use Gridmap_Utils ();
 
 my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = {};
+my @Opts = ( $User_Opt,
+             qw( help version ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
 
 Usage                            if scalar @ARGV !=1;
 Usage "No file $ARGV[0]\n"       if not -e $ARGV[0];
