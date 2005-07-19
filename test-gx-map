@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.8 2005-06-29 21:38:33-07 kst Exp $
+# $Id: test-gx-map,v 1.9 2005-07-18 23:06:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -98,22 +98,31 @@ my @commands = ();
 # gx-map was renamed to gx-request in release 0.4.5 (but gx-map
 # still exists as a symlink).
 #
+# gx-admins was added in release 0.4.0, but didn't have a "-version"
+# option until after release 0.4.5
+#
+# gx-cleanup-logs was added after release 0.4.5.
+#
 # gx-ingest was added in release 0.4.0, but didn't have a "-version"
 # option until release 0.4.2.
 #
+push @commands, 'bin/gx-map';
 if (Version_String $version ge Version_String '0.4.5') {
     push @commands, 'bin/gx-request';
 }
-push @commands, 'bin/gx-map';
-push @commands, 'sbin/gx-check-requests';
-push @commands, 'sbin/gx-gen-mapfile';
+
+if (Version_String $version gt Version_String '0.4.5') {
+    push @commands, 'sbin/gx-admins';
+}
 if (Version_String $version gt Version_String '0.4.0') {
     push @commands, 'sbin/gx-ca-update';
 }
+push @commands, 'sbin/gx-check-requests';
+push @commands, 'sbin/gx-convert-log';
+push @commands, 'sbin/gx-gen-mapfile';
 if (Version_String $version ge Version_String '0.4.2') {
     push @commands, 'sbin/gx-ingest';
 }
-push @commands, 'sbin/gx-convert-log';
 
 foreach my $command (@commands) {
     Try "$install_dir/$command", "-version";
