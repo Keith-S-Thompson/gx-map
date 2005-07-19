@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-admins.in,v 1.7 2005-07-18 23:26:30-07 kst Exp $
+# $Id: gx-admins.in,v 1.8 2005-07-18 23:29:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
 
 use strict;
@@ -101,6 +101,7 @@ foreach my $request (@requests) {
         {
             $admin_count{$request->{OWNER_NAME}} ++;
         }
+    }
 }
 
 foreach my $admin (sort keys %admin_count) {
