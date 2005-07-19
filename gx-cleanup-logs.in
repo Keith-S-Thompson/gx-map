@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.20 2005-07-18 03:31:29-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.21 2005-07-18 18:50:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -171,13 +171,28 @@ if (not $User_Opt->{'merge-only'}) {
         my $new_timestamp = $new->{timestamp};
         Debug "Outer loop, ", Image $new, "\n";
 
-        if ($User_Opt->{sdsc} and
-            defined $new->{dn} and
-            $new->{dn} =~ m(^"/C=US/O=SDSC/OU=SDSC) and
-            $new->{SOURCE} ne 'SDSC-CA')
-        {
-            $new->{__DELETED__} = 1;
-            next NEW;
+        if ($User_Opt->{sdsc}) {
+            if (defined $new->{dn} and
+                $new->{dn} =~ m(^"/C=US/O=SDSC/OU=SDSC) and
+                $new->{SOURCE} ne 'SDSC-CA')
+            {
+                $new->{__DELETED__} = 1;
+                next NEW;
+            }
+            elsif ($new->{timestamp} =~ /^1116513443 / and
+                   $new->{operation} eq 'remove-user' and
+                   $new->{username} eq 'lgrinb')
+            {
+                #
+                # This is an ugly special case.  In 2005-05, Leopold
+                # Grinberg obtained an SDSC certificate, did a
+                # manual remove-user, then manually re-added his SDSC
+                # certificate.  Ignore the user requests so the original
+                # SDSC-CA request will take effect.
+                #
+                $new->{__DELETED__} = 1;
+                next NEW;
+            }
         }
 
         if ($new_op =~ /^remove/) {
