@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-propagate.in.teragrid,v 1.2 2005-07-19 20:18:53-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.3 2005-07-20 01:04:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -54,6 +54,8 @@ use File::Basename ();
 use Getopt::Long ();
 
 sub Usage(@);
+sub Get_Config($);
+sub Debug(@);
 
 my $Install_Dir;
 BEGIN {
@@ -67,11 +69,12 @@ my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( help
-	         version
-	         add
-		 remove
-		 dn=s
-		 username=s ) );
+                 version
+                 debugging
+                 add
+                 remove
+                 dn=s
+                 username=s ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -93,11 +96,36 @@ $message .= "Missing -username option\n" if not defined $User_Opt->{username};
 $message .= "Missing -dn option\n"       if not defined $User_Opt->{dn};
 Usage $message if $message ne '';
 
-print ">>> ",
-      $User_Opt->{add} ? "Add" : "Remove",
-      " mapping for username $User_Opt->{username} to \"$User_Opt->{dn}\n";
+my $Config = Get_Config "$Install_Dir/etc/tgcdb.conf";
+
+print "Configuration:\n";
+foreach my $key (sort keys %$Config) {
+    printf "    %-8s => %s\n", $key, $Config->{$key};
+}
+
+print $User_Opt->{add} ? "Add" : "Remove",
+      " mapping for username $User_Opt->{username} to \"$User_Opt->{dn}\"\n";
 
 ########################################################################
+
+sub Get_Config($) {
+    my($config_file) = @_;
+    Debug "Get_Config $config_file\n";
+    my $config = Gridmap_Utils::Read_Records '-single', $config_file;
+    my @keys = sort keys %$config;
+    if ("@keys" ne 'db host passwd user') {
+        die "Bad config file $config_file\n";
+    }
+    return $config;
+} # Get_Config
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
 
 sub Usage(@) {
     print @_ if @_;
@@ -108,12 +136,13 @@ Usage: $Program_Name -help|-version
 Propagate a mapping to an implementation-defined system, such as a
 cross-site user database.
 
-    -help	    Show this message and exit.
+    -help           Show this message and exit.
     -version        Show version information and exit.
     -add            Add a mapping.
     -remove         Remove a mapping.
     -username name  Unix user name to map or unmap.
     -dn "string"    Distinguished name.
+    -debugging      Enable debugging output.
 
 EOF
     exit 1;
