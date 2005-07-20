@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-propagate.in.teragrid,v 1.1 2005-07-19 19:06:29-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.2 2005-07-19 20:18:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -91,7 +91,7 @@ elsif (not $User_Opt->{add} and not $User_Opt->{remove}) {
 my $message = '';
 $message .= "Missing -username option\n" if not defined $User_Opt->{username};
 $message .= "Missing -dn option\n"       if not defined $User_Opt->{dn};
-Usage $messsage if $message ne '';
+Usage $message if $message ne '';
 
 print ">>> ",
       $User_Opt->{add} ? "Add" : "Remove",
