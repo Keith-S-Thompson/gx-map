@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.27 2005-06-28 13:14:23-07 kst Exp $
+# $Id: configure-gx-map,v 1.28 2005-07-19 19:21:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -71,6 +71,7 @@ my @Var_Names = qw( PERL PATH
                     GLOBUS_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
+$Valid_Var_Name{GX_PROPAGATE} = 1; # optional
 
 if (scalar @ARGV == 1 and -e $ARGV[0]) {
     $Config_File = $ARGV[0];
@@ -199,9 +200,28 @@ if (defined $Config{GLOBUS_ADMINS}) {
 
 die @errors if @errors;
 
+my @in_files = ();
+my %out_file = ();
+
 opendir DIR, '.' or die ".: $!\n";
-my @in_files = sort grep /\.in$/, readdir DIR;
+foreach my $in_file (sort grep /\.in$/, readdir DIR) {
+    if ($in_file eq 'Gridmap_Valid_Mappings.pm.in' and
+        defined $Config{VALID_MAPPINGS_FILE})
+    {
+        push @in_files, $Config{VALID_MAPPINGS_FILE};
+        $out_file{$Config{VALID_MAPPINGS_FILE} = 'Gridmap_Valid_Mappings.pm';
+    }
+    else {
+        push @in_files, $in_file;
+        ($out_file{$in_file} = $in_file) =~ s/\.in$//;
+    }
+}
 closedir DIR;
+
+if (defined $Config{GX_PROPAGATE}) {
+    push @in_files, $Config{GX_PROPAGATE};
+    $out_file{$Config{GX_PROPAGATE} = 'gx-propagate';
+}
 
 die "No *.in files found\n" if not @in_files;
 
@@ -211,20 +231,6 @@ foreach my $in_file (@in_files) {
 }
 
 foreach my $in_file (@in_files) {
-    my $out_file = $in_file;
-    $out_file =~ s/\.in$//;
-
-    if ($in_file eq 'Gridmap_Valid_Mappings.pm.in' and
-        defined $Config{VALID_MAPPINGS_FILE})
-    {
-        #
-        # Special case: The VALID_MAPPINGS_FILE configuration option
-        # overrides the name of the input file (but not the output file)
-        # for Gridmap_Valid_Mappings.pm.
-        #
-        $in_file = $Config{VALID_MAPPINGS_FILE};
-    }
-
     printf "%-${max_len}s --> %s\n", $in_file, $out_file;
     open IN, $in_file or die "$in_file: $!\n";
     open OUT, ">$out_file" or die "$out_file: $!\n";
