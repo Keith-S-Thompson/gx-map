@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.16 2005-07-13 01:12:02-07 kst Exp $
+# $Id: gx-request.in,v 1.17 2005-07-19 18:59:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -1126,6 +1126,7 @@ sub Usage(@) {
 Usage: $Program_Name [options]
 Option names may be abbreviated.
     -help         : Show this message and exit.
+    -version      : Show version information and exit.
     -long-help    : Show long usage message (recommended only for
                     Globus administrators and masochists)
     -interactive  : Run interactively (recommended)
