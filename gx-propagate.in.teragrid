@@ -1,0 +1,120 @@
+#!%PERL% -w
+
+# $Id: gx-propagate.in.teragrid,v 1.1 2005-07-19 19:06:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
+
+use strict;
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2005 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Grid and Cluster Computing Group
+# at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use File::Basename ();
+use Getopt::Long ();
+
+sub Usage(@);
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = {};
+my @Opts = ( $User_Opt,
+             qw( help
+	         version
+	         add
+		 remove
+		 dn=s
+		 username=s ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+if ($User_Opt->{add} and $User_Opt->{remove}) {
+    Usage "Specify only one of -add, -remove\n";
+}
+elsif (not $User_Opt->{add} and not $User_Opt->{remove}) {
+    Usage "Specify either -add or -remove\n";
+}
+
+my $message = '';
+$message .= "Missing -username option\n" if not defined $User_Opt->{username};
+$message .= "Missing -dn option\n"       if not defined $User_Opt->{dn};
+Usage $messsage if $message ne '';
+
+print ">>> ",
+      $User_Opt->{add} ? "Add" : "Remove",
+      " mapping for username $User_Opt->{username} to \"$User_Opt->{dn}\n";
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name -help|-version
+       $Program_Name (-add|-remove) -username <name> -dn "string"
+
+Propagate a mapping to an implementation-defined system, such as a
+cross-site user database.
+
+    -help	    Show this message and exit.
+    -version        Show version information and exit.
+    -add            Add a mapping.
+    -remove         Remove a mapping.
+    -username name  Unix user name to map or unmap.
+    -dn "string"    Distinguished name.
+
+EOF
+    exit 1;
+} # Usage
