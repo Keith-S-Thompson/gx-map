@@ -1,9 +1,9 @@
 #!/bin/sh
 
-# $Id: cleanup-gx-map,v 1.5 2004-11-17 20:11:30-08 kst Exp $
+# $Id: cleanup-gx-map,v 1.6 2005-07-19 20:21:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/cleanup-gx-map,v $
 
-for file in *.in ; do
+for file in *.in gx-propagate ; do
     target=`echo $file | sed 's/\.in$//'`
     if [ -f $target ] ; then
 	echo "rm -f $target"
