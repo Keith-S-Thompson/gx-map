@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.38 2005-06-26 02:35:51-07 kst Exp $
+# $Id: install-gx-map.in,v 1.39 2005-07-19 20:21:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -63,6 +63,7 @@ DATA_DIR=%DATA_DIR%
 
 BIN_FILES="gx-request"
 SBIN_FILES="gx-check-requests gx-cleanup-logs gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
+OPTIONAL_SBIN_FILES="gx-propagate"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 ETC_FILES="LICENSE README README.CA README.CA-Security README.Cross-Site README.TeraGrid README.Upgrade Relnotes gx-map.ppt gx-map.pdf"
 CA_FILES=ca/*.cadesc
@@ -88,6 +89,11 @@ verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 
 verbosely cp -f $BIN_FILES  $BIN_DIR/.
 verbosely cp -f $SBIN_FILES $SBIN_DIR/.
+for file in $OPTIONAL_SBIN_FILES ; do
+    if [ -f $file ] ; then
+        verbosely cp -f $file $SBIN_DIR/.
+    fi
+done
 verbosely cp -f $LIB_FILES  $LIB_DIR/.
 verbosely cp -f $ETC_FILES  $ETC_DIR/.
 verbosely cp -f $CA_FILES   $ETC_DIR/ca-config/.
