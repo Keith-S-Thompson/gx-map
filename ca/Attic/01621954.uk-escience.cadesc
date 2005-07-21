@@ -1,8 +1,8 @@
-# $Id: 01621954.uk-escience.cadesc,v 1.17 2005-07-07 02:14:22-07 kst Exp $
+# $Id: 01621954.uk-escience.cadesc,v 1.18 2005-07-20 18:33:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/01621954.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
-HOMEPAGE            https://ca.grid-support.ac.uk/
+HOMEPAGE            http://www.grid-support.ac.uk/ca/
 CONTACT             support@grid-support.ac.uk
 HASH                01621954
 SUBJECT             /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
@@ -10,7 +10,7 @@ MAY_SIGN            /C=UK/O=eScience/*
 CERTIFICATE_MD5     F7:65:A8:5E:67:2B:7C:F4:90:20:38:14:BC:05:04:F6
 CERTIFICATE_SHA1    0C:B4:61:99:63:6C:A3:CB:E1:58:CE:F3:66:D2:C4:D3:34:BF:A7:40
 CERTIFICATE_URL     http://ca.grid-support.ac.uk/pub/cacert/cacert.pem
-SIGNING_POLICY_URL  http://www.grid-support.ac.uk/ca/user-documentation/01621954.signing_policy
+SIGNING_POLICY_URL  http://ca.grid-support.ac.uk/pub/01621954.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/pub/crl/cacrl.pem
 CERT_EXPIRES        Aug  4 10:36:41 2007 GMT
 
@@ -25,5 +25,3 @@ CERT_EXPIRES        Aug  4 10:36:41 2007 GMT
 # The web site was recently reorganized (before July 2005).  The URLs for
 # the certificate and CRL were changed, but they're still available at
 # the old CRLs (though the old certificate URL was invalid for a while).
-# The web page does not currently link to the signing_policy, but
-# the old URL still works.
