@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.19 2005-07-21 19:44:35-07 kst Exp $
+# $Id: gx-request.in,v 1.20 2005-07-21 19:47:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -304,11 +304,11 @@ foreach my $dn (@{$Options->{dn}}) {
     }
     $new_dn = Gridmap_Utils::Strip_Proxy_Info $new_dn;
     if ($new_dn ne $dn) {
-        $dn_was_updated = 1;
+        $dn_was_modified = 1;
     }
     push @new_dns, $new_dn;
 }
-if ($dn_was_updated) {
+if ($dn_was_modified) {
     $Options->{dn} = \@new_dns;
 }
 
