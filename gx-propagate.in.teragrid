@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.6 2005-07-21 19:23:17-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.7 2005-07-21 20:26:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -57,6 +57,7 @@ use Getopt::Long ();
 sub Usage(@);
 sub Get_Config($);
 sub Debug(@);
+sub Debugf(@);
 
 my $Install_Dir;
 BEGIN {
@@ -79,6 +80,8 @@ my @Opts = ( $User_Opt,
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
+
+$| = 1 if $User_Opt->{debugging};
 
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
@@ -110,30 +113,40 @@ my $Config = Get_Config "$Install_Dir/etc/tgcdb.conf";
 
 Debug "Configuration:\n";
 foreach my $key (sort keys %$Config) {
-    printf "    %-8s => %s\n", $key, $Config->{$key};
+    Debugf "    %-10s => %s\n", $key, $Config->{$key};
 }
 
 Debug $User_Opt->{add} ? "Add" : "Remove",
       " mapping for username $User_Opt->{username} to \"$User_Opt->{dn}\"\n";
 
+Debug "new TGCDB\n";
 my $tg = new TGCDB (host   => $Config->{host},
                     db     => $Config->{db},
                     user   => $Config->{user},
                     passwd => $Config->{passwd});
 
+Debug "\$tg->beginTransaction\n";
 $tg->beginTransaction;
 if ($Operation eq 'add') {
-    $tg->gxmap_add_dn($Config->{resource}, $User_Opt->{username}, $User_Opt->{dn});
+    Debug "\$tg->gxmap_add_dn\n";
+    $tg->gxmap_add_dn($Config->{resource},
+                      $User_Opt->{username},
+                      $User_Opt->{dn});
 }
 elsif ($Operation eq 'remove') {
-    $tg->gxmap_remove_dn($Config->{resource}, $User_Opt->{username}, $User_Opt->{dn});
+    Debug "\$tg->gxmap_remove_dn\n";
+    $tg->gxmap_remove_dn($Config->{resource},
+                         $User_Opt->{username},
+                         $User_Opt->{dn});
 }
 else {
     die "Internal error, \$Operation = ",
-	defined $Operation ? "\"$Operation\"" : 'undef',
-	"\n";
+        defined $Operation ? "\"$Operation\"" : 'undef',
+        "\n";
 }
+Debug "\$tg->commitTransaction\n";
 $tg->commitTransaction;
+Debug "commitTransaction done\n";
 
 ########################################################################
 
@@ -156,6 +169,12 @@ sub Get_Config($) {
 sub Debug(@) {
     print @_ if $User_Opt->{debugging};
 } # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
 
 # ----------------------------------------------------------------------
 
