@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.61 2005-07-14 18:03:56-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.62 2005-07-21 19:44:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -443,7 +443,7 @@ sub Seconds_To_String($) {
 #
 # Given a reference to a CA description record, returns a multi-line
 # string suitable for use as a signing_policy, compatible with both GT2
-# and GT3.
+# and GT4 (and GT3).
 #
 sub Signing_Policy($) {
     my($ref) = @_;
@@ -464,12 +464,12 @@ sub Signing_Policy($) {
                  "cond_subjects  globus  $cond_subjects\n";
 
     my $gt2_body = Gridmap_Utils::GT2_Subject $body;
-    my $gt3_body = Gridmap_Utils::GT3_Subject $body;
+    my $gt4_body = Gridmap_Utils::GT4_Subject $body;
 
     $result .= $gt2_body;
-    if ($gt3_body ne $gt2_body) {
+    if ($gt4_body ne $gt2_body) {
         $result .= "\n";
-        $result .= $gt3_body;
+        $result .= $gt4_body;
     }
     return $result;
 } # Signing_Policy;
@@ -520,14 +520,14 @@ sub Get_CA_Ref($) {
             }
         }
         #
-        # Map subject names to GT3-compatible forms.
+        # Map subject names to GT4-compatible (and GT3-compatible) forms.
         #
         if ($remap{$key}) {
             if (ref $ref->{$key} eq 'ARRAY') {
-                map { $_ = Gridmap_Utils::GT3_Subject $_ } @{$ref->{$key}};
+                map { $_ = Gridmap_Utils::GT4_Subject $_ } @{$ref->{$key}};
             }
             else {
-                $ref->{$key} = Gridmap_Utils::GT3_Subject $ref->{$key};
+                $ref->{$key} = Gridmap_Utils::GT4_Subject $ref->{$key};
             }
         }
     }
@@ -607,7 +607,7 @@ sub CRL_Info($$) {
             $result->{hash} = $_;
         }
         elsif (/^issuer=\s*(.*)$/) {
-            $result->{issuer} = Gridmap_Utils::GT3_Subject $1;
+            $result->{issuer} = Gridmap_Utils::GT4_Subject $1;
         }
         elsif (/^lastUpdate=\s*(.*)$/) {
             $result->{last_update} = Gridmap_Utils::Time_Value $1;
@@ -673,10 +673,10 @@ sub Certificate_Info($) {
             $result->{hash} = $_;
         }
         elsif (/^issuer=\s*(.*)$/) {
-            $result->{issuer} = Gridmap_Utils::GT3_Subject $1;
+            $result->{issuer} = Gridmap_Utils::GT4_Subject $1;
         }
         elsif (/^subject=\s*(.*)$/) {
-            $result->{subject} = Gridmap_Utils::GT3_Subject $1;
+            $result->{subject} = Gridmap_Utils::GT4_Subject $1;
         }
         elsif (/^md5.*=\s*(.*)$/i) {
             $result->{md5sum} = $1;
