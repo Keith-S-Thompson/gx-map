@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.17 2005-07-19 18:59:52-07 kst Exp $
+# $Id: gx-request.in,v 1.18 2005-07-21 19:40:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -294,7 +294,8 @@ if ($Options->{operation} ne 'remove-dn') {
 # If we've done the latter transformation, notify the user.
 # Don't bother to notify about stripping proxy components.
 #
-my $dn_was_translated = 0;
+my $dn_was_translated = 0;      # True if DN was translated to GT4 form
+my $dn_was_modified = 0;        # True if DN was modified in any way
 my @new_dns = ();
 foreach my $dn (@{$Options->{dn}}) {
     my $new_dn = Gridmap_Utils::GT3_Subject $dn;
@@ -302,9 +303,12 @@ foreach my $dn (@{$Options->{dn}}) {
         $dn_was_translated = 1;
     }
     $new_dn = Gridmap_Utils::Strip_Proxy_Info $new_dn;
+    if ($new_dn ne $dn) {
+        $dn_was_updated = 1;
+    }
     push @new_dns, $new_dn;
 }
-if ($dn_was_translated) {
+if ($dn_was_updated) {
     $Options->{dn} = \@new_dns;
 }
 
