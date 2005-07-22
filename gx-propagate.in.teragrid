@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.4 2005-07-21 02:31:06-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.5 2005-07-21 17:26:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
