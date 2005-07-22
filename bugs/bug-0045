@@ -1,0 +1,20 @@
+# $Id: bug-0045,v 1.1 2005-07-21 17:01:23-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0045,v $
+
+gx-map bug 0045
+Date: Thu 2005-07-21
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: gx-ingest: Don't add GT2-style DNs
+
+Summary:
+The gx-ingest command currently invokes gx-request for each DN in
+the input grid-mapfile.  If the input file contains both GT2-style
+and GT3/GT4-style DNs (/USERID=... vs. /UID=...), this will result
+in redundant requests.
+
+Suggested fix:
+Have gx-ingest translate all DNs to the new form.  For each mapping,
+check whether it's already been applied.
