@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.5 2005-07-21 17:26:28-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.6 2005-07-21 19:23:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -133,7 +133,7 @@ else {
 	defined $Operation ? "\"$Operation\"" : 'undef',
 	"\n";
 }
-$tg->endTransaction;
+$tg->commitTransaction;
 
 ########################################################################
 
