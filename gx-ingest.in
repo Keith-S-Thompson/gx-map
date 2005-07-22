@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-ingest.in,v 1.15 2005-07-21 17:11:57-07 kst Exp $
+# $Id: gx-ingest.in,v 1.16 2005-07-21 19:44:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -114,9 +114,9 @@ while (<>) {
         # as the default.
         #
         # We avoid duplicate mappings (common if the input grid-mapfile
-        # is compatible with both GT2 and GT3) using the %seen hash.
+        # is compatible with both GT2 and GT3/GT4) using the %seen hash.
         #
-        $dn = Gridmap_Utils::GT3_Subject $dn;
+        $dn = Gridmap_Utils::GT4_Subject $dn;
         my @users = reverse split /,/, $users;
         foreach my $user (@users) {
             next if $seen{"$dn $user"}++;
