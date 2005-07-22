@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.80 2005-07-14 18:03:56-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.81 2005-07-21 19:44:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -138,7 +138,7 @@ sub Read_User_Map($;$);
 sub Read_Admin_List($);
 
 sub GT2_Subject($);
-sub GT3_Subject($);
+sub GT4_Subject($);
 sub DN_List($);
 sub Strip_Proxy_Info($);
 
@@ -1342,18 +1342,19 @@ sub GT2_Subject($) {
 # ----------------------------------------------------------------------
 
 #
-# Given a string, possibly containing one or more certificate subject
-# names, translates certain fields to be compatible with GT3 (and newer)
-# and OpenSSL 0.9.7 (and newer).  The input string may consist of multiple
-# lines.  See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
+# Given a string, possibly containing one or more certificate
+# subject names, translates certain fields to be compatible
+# with GT4 (and also with GT3) and OpenSSL 0.9.7 (and newer).
+# The input string may consist of multiple lines.  See
+# <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
 # 
-sub GT3_Subject($) {
+sub GT4_Subject($) {
     my($string) = @_;
     $string =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=)g;
     $string =~ s(/USERID=)(/UID=)g;
     $string =~ s(/Email=)(/emailAddress=)g;
     return $string;
-} # GT3_Subject
+} # GT4_Subject
 
 # ----------------------------------------------------------------------
 
@@ -1374,19 +1375,19 @@ sub Strip_Proxy_Info($) {
 
 #
 # Given a single DN, returns a list of one or two DNs for compatibility
-# with both GT2 and GT3.
+# with both GT2 and GT4 (and GT3).
 # 
 sub DN_List($) {
     my $dn = $_[0];
 
     my $gt2_dn = GT2_Subject $dn;
-    my $gt3_dn = GT3_Subject $dn;
+    my $gt4_dn = GT4_Subject $dn;
 
-    if ($gt2_dn eq $gt3_dn) {
-        return ($gt3_dn);
+    if ($gt2_dn eq $gt4_dn) {
+        return ($gt4_dn);
     }
     else {
-        return sort ($gt2_dn, $gt3_dn);
+        return sort ($gt2_dn, $gt4_dn);
     }
 } # DN_List
 
