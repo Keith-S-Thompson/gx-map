@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.7 2005-07-21 20:26:39-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.8 2005-07-22 19:49:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -113,11 +113,27 @@ my $Config = Get_Config "$Install_Dir/etc/tgcdb.conf";
 
 Debug "Configuration:\n";
 foreach my $key (sort keys %$Config) {
-    Debugf "    %-10s => %s\n", $key, $Config->{$key};
+    my $value = $Config->{$key};
+    if ($key eq 'passwd') {
+        $value = '[not shown]';
+    }
+    Debugf "    %-10s => %s\n", $key, $value;
 }
 
 Debug $User_Opt->{add} ? "Add" : "Remove",
       " mapping for username $User_Opt->{username} to \"$User_Opt->{dn}\"\n";
+
+#
+# Database transactions produce trace output on stderr.
+# Log this output to a file.
+#
+my $logfile = "$Install_Dir/var/tgcdb.log";
+open LOG, ">>$logfile" || die "${logfile}: $!\n";
+print LOG Gridmap_Utils::Time_Image time, "\n";
+open SAVE_STDERR, '>&STDERR';
+print SAVE_STDERR if 0;    # to make "perl -cwT" happy
+close STDERR;
+open STDERR, '>&LOG';
 
 Debug "new TGCDB\n";
 my $tg = new TGCDB (host   => $Config->{host},
@@ -147,6 +163,15 @@ else {
 Debug "\$tg->commitTransaction\n";
 $tg->commitTransaction;
 Debug "commitTransaction done\n";
+
+print STDERR "\n";
+
+#
+# Now put things back (probably unnecessary since we're about to exit,
+# but good style).
+#
+close STDERR;
+open STDERR, '>&SAVE_STDERR';
 
 ########################################################################
 
