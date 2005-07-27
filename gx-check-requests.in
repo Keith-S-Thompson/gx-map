@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.48 2005-07-21 02:29:13-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.49 2005-07-27 15:40:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -218,28 +218,16 @@ if (-x $propagate) {
             $dn =~ s/^"//;
             $dn =~ s/"$//;
         }
-        my @debugging = ();
-        push @debugging, '-debugging' if $User_Opt->{debugging};
-        if ($request->{operation} eq 'add') {
-            system $propagate,
-                   @debugging,
-                   '-add',
-                   '-username', $request->{username},
-                   '-dn', $dn;
+        my @args = ();
+        push @args, '-debugging' if $User_Opt->{debugging};
+        push @args, "-$request->{operation}";
+        if ($requeset->{operation} ne 'remove-dn') {
+            push @args, '-username', $request->{username};
         }
-        elsif ($request->{operation} eq 'remove') {
-            system $propagate,
-                   @debugging,
-                   '-remove',
-                   '-username', $request->{username},
-                   '-dn', $dn;
+        if ($requeset->{operation} ne 'remove-user') {
+            push @args, '-dn', $request->{dn};
         }
-        else {
-            system $propagate,
-                   @debugging,
-                   "-$request->{operation}",
-                   "Not yet implemented";
-        }
+        Debug "$propagate @args\n";
     }
 }
 
