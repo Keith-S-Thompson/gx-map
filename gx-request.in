@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.21 2005-07-26 21:07:48-07 kst Exp $
+# $Id: gx-request.in,v 1.22 2005-07-27 15:35:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -345,8 +345,7 @@ if (not $Options->{quiet}) {
               "    \"$dn_list[0]\"\n";
     }
     elsif ($Options->{operation} eq 'remove-user') {
-        print "$Removing all mappings for user ",
-              "    \"$Options->{username}\"\n";
+        print "$Removing all mappings for user $Options->{username}\n";
     }
     if ($dn_was_modified) {
         print "The distinguished name was modified to a compatible format\n";
