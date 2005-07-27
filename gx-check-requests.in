@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.50 2005-07-27 15:42:27-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.51 2005-07-27 15:46:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -225,9 +225,10 @@ if (-x $propagate) {
             push @args, '-username', $request->{username};
         }
         if ($request->{operation} ne 'remove-user') {
-            push @args, '-dn', $request->{dn};
+            push @args, '-dn', $dn;
         }
         Debug "$propagate @args\n";
+        system $propagate, @args;
     }
 }
 
