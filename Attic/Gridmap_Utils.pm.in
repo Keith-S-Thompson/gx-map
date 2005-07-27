@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.81 2005-07-21 19:44:35-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.82 2005-07-26 21:23:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -96,6 +96,7 @@ BEGIN {
     use Cwd ();
     eval { require Net::Domain };
     $Have_Net_Domain_Module = ( $@ eq '' );
+    use Gridmap_Valid_Mappings ();
 }
 
 # ----------------------------------------------------------------------
@@ -131,11 +132,18 @@ sub Read_Records(@);
 
 sub Sort_By_Timestamp(@);
 
+sub Gen_Mappings(@);
+
 sub Init_Cache_Info();
 sub Cache_File($;$);
 
-sub Read_User_Map($;$);
-sub Read_Admin_List($);
+#
+# Read_User_Map and Read_Admin_List were intended to allow gx-gen-mapfile
+# to read request logs from other sites, with other namespaces.  This has
+# never really been used, and is currently unsupported.
+#
+# sub Read_User_Map($;$);
+# sub Read_Admin_List($);
 
 sub GT2_Subject($);
 sub GT4_Subject($);
@@ -896,6 +904,173 @@ sub Sort_By_Timestamp(@) {
 
 # ----------------------------------------------------------------------
 
+#
+# Given a list of request logs, reads them and returns a mapping.
+# The result is a reference to a hash; keys are DNs, values are hash
+# references { username => timestamp }.  Using a hash for each entry
+# allows for multiple usernames; the timestamp can be used to determine
+# the order for multiple usernames.
+# 
+sub Gen_Mappings(@) {
+    my(@log_files) = @_;
+    my $All = 0;
+    if (scalar @log_files >= 1 and $log_files[0] eq '-all') {
+        $All = 1;
+        shift @log_files;
+    }
+    die "Internal error, Gen_Mappings with no log file\n" if not @log_files;
+
+    my @requests = ();
+    foreach my $log (@log_files) {
+        push @requests, Gridmap_Utils::Read_Records '-multiple', $log;
+    }
+    @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
+    
+    my %Mappings = ();
+    my %By_User = ();  # key = username, value = hash ref { DN => 1 }
+
+    REQUEST:
+    foreach my $request (@requests) {
+# =     #
+# =     # === REVISIT THIS COMMENT ===
+# =     #
+# =     # By calling Valid_Mappings, we eliminate any requests for accounts
+# =     # that don't exist on this system (unless the "-all" option was
+# =     # specified).  This should also eliminate any unauthorized requests
+# =     # (which theoretically, could be created only by something like a
+# =     # hacked copy of gx-map).  The Valid_Mappings function can also be
+# =     # modified for site-specific requirements, such as rejecting mappings
+# =     # for certain accounts or for certificates issued by certain CAs.
+# =     #
+# =     # The Valid_Mappings function may return multiple mappings for a
+# =     # single request.
+# =     #
+# =     # Note that each mapping contains only the "dn" and/or "username"
+# =     # fields; other information, such as the operation and the timestamp,
+# =     # come from the original request, and thus may not be modified by
+# =     # the Valid_Mappings function.
+# =     #
+# =     # === REVISIT THIS COMMENT ===
+# =     #
+        my @options = ();
+        push @options, '-all' if $All;
+        my @request_mappings
+            = Gridmap_Valid_Mappings::Valid_Mappings(@options, $request);
+
+        my $operation = $request->{operation};
+        foreach my $mapping (@request_mappings) {
+#           if ($User_Opt->{dump}) {
+#               my $timestamp = Image $request->{timestamp};
+#               $timestamp =~ s/ .*$//;
+#               my $source    = Image $request->{SOURCE};
+#               my $namespace = Image $request->{NAMESPACE};
+#               my $op        = Image $request->{operation};
+#               my $user      = Image $mapping->{username};
+#               my $dn        = Image $mapping->{dn};
+#               push @dump_lines,
+#                    sprintf "%-10s %-8s %-8s %-11s %-8s %s\n",
+#                            $timestamp,
+#                            $source,
+#                            $namespace,
+#                            $op,
+#                            $user,
+#                            $dn;
+#               next REQUEST;
+#           }
+            #
+            # $mapping is a reference to a hash with keys "dn" and
+            # "username", both optional.
+            #
+            my $dn          = exists $mapping->{dn}
+                              ? $mapping->{dn}
+                              : undef;
+            my $username = exists $mapping->{username}
+                              ? $mapping->{username}
+                              : undef;
+            my $timestamp = $request->{timestamp};
+            $timestamp =~ s/ .*$//;
+
+            Debug ">>> Processing mapping, operation = $operation, dn = ",
+                  (defined $dn ? $dn : "undef"),
+                  ", username = ",
+                  (defined $username ? "\"$username\"" : "undef"),
+                  "\n";
+            if ($operation eq 'add') {
+                #
+                # Add a mapping; we have a DN and a user name.
+                #
+                # The key is the user name; the value is the timestamp.
+                #
+                Debug ">>> Add $dn --> $username\n";
+                $Mappings{$dn}->{$username} = $timestamp;
+                $By_User{$username}->{$dn} = 1;
+            }
+            elsif ($operation eq 'remove') {
+                if (exists $Mappings{$dn}) {
+                    if (exists $Mappings{$dn}->{$username}) {
+                        delete $Mappings{$dn}->{$username};
+                        if (scalar keys %{$Mappings{$dn}} == 0) {
+                            delete $Mappings{$dn};
+                        }
+                        delete $By_User{$username}->{$dn};
+                        if (scalar keys %{$By_User{$username}} == 0) {
+                            delete $By_User{$username};
+                        }
+                    }
+                }
+            }
+            elsif ($operation eq 'remove-dn') {
+                if (exists $Mappings{$dn}) {
+                    Debug ">>> Delete $dn\n";
+                    foreach my $user (keys %{$Mappings{$dn}}) {
+                        delete $By_User{$user}->{$dn};
+                        if (scalar keys %{$By_User{$user}} == 0) {
+                            delete $By_User{$user};
+                        }
+                    }
+                    delete $Mappings{$dn};
+                }
+            }
+            elsif ($operation eq 'remove-user') {
+                foreach my $dn (keys %{$By_User{$username}}) {
+                    if (exists $Mappings{$dn}->{$username}) {
+                        Debug ">>> Delete $dn --> $username\n";
+                        delete $Mappings{$dn}->{$username};
+                        if (scalar keys %{$Mappings{$dn}} == 0) {
+                            delete $Mappings{$dn};
+                        }
+                    }
+                }
+                delete $By_User{$username};
+            }
+            else {
+                die "Internal error, operation = \"$operation\"\n";
+            }
+
+            if ($Debugging) {
+                Debug ">>> Current grid-mapfile entries:\n";
+                foreach my $dn (sort keys %Mappings) {
+                    Debug "* $dn\n";
+                    my @items = ();
+                    my $by_name = $Mappings{$dn}; # name --> timestamp
+                    foreach my $name (sort { $by_name->{$a} <=> $by_name->{$b} }
+                                         keys %$by_name)
+                    {
+                        push @items, "$name\@$by_name->{$name}";
+                    }
+                    Debug "    @items\n";
+                }
+                Debug "<<< END\n";
+
+            }
+        }
+    }
+
+    return \%Mappings;
+} # Gen_Mappings
+
+# ----------------------------------------------------------------------
+
 my %Cache_File = ();
 my $Download_Dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var/cache";
 my $Download_Index = 0;
@@ -1076,199 +1251,199 @@ sub Cache_File($;$) {
 #     grid-mapfile entry into the user map support.  Ick.  Think about
 #     it later.)
 #
-sub Read_User_Map($;$) {
-    my($filename, $this_namespace) = @_;
-    #
-    # $this_namespace may be undef
-    #
-
-    #
-    # Each entry is a reference to a hash representing a single
-    # brace-enclosed entry in the user map file.  The structure is:
-    #     <entry>->{USERNAME} is a reference to a hash
-    #         mapping namespaces to user names
-    #     <entry>->{UID} is a reference to a hash
-    #         mapping namespaces to numeric UIDs
-    #     <entry>->{name} is the user's real name
-    #
-    # The %seen hash is used to avoid duplicate user@namespace or
-    # uid@namespace mappings.
-    # 
-    my @Entries = ();
-    my $curr_entry = undef;
-    my %seen = ();              # user@namespace or UID@namespace seen
-
-    open MAP, $filename or return $!;
-    LINE:
-    while (<MAP>) {
-        #
-        # First, parse the line into tokens.
-        #
-        chomp;
-        s/#.*$//;
-
-        my @tokens = ();
-
-        TOKEN:
-        while ($_ ne '') {
-            if (/^\s*$/) {                          # No more tokens on line
-                last TOKEN;
-            }
-            elsif (/^\s*{\s*(.*)$/) {               # opening brace
-                push @tokens, '{';
-                $_ = $1;
-            }
-            elsif (/^\s*(\S+\@\w+)\s*(.*)$/) {      # user@NAMESPACE
-                push @tokens, $1;
-                $_ = $2;
-            }
-            elsif (/^\s*(\S+:\d+\@\w+)\s*(.*)$/) {  # user:UID@NAMESPACE
-                push @tokens, $1;
-                $_ = $2;
-            }
-            elsif (/^\s*("[^"]*")\s*(.*)$/) {       # "Real Name"
-                push @tokens, $1;
-                $_ = $2;
-            }
-            elsif (/^\s*}\s*(.*)$/) {               # closing brace
-                push @tokens, '}';
-                $_ = $1;
-            }
-            else {
-                return "Unrecognized token, line $.";
-            }
-        }
-
-        #
-        # Now process each token.
-        #
-        # '{' introduces a new entry; '}' specifies the end of an entry.
-        #
-        # user:UID@NAMESPACE or user@NAMESPACE specifies a user
-        # identity.
-        #
-        # A string enclosed in double quotes is a user's real name.
-        #
-        # Any other token is an error.
-        #
-        foreach my $token (@tokens) {
-            #
-            # opening brace
-            #
-            if ($token eq '{') {
-                if (defined $curr_entry) {
-                    return "Unexpected '{', line $.";
-                }
-                $curr_entry = {};
-            }
-
-            #
-            # user:UID@NAMESPACE or user@NAMESPACE
-            # (numeric UID is optional)
-            #
-            elsif ($token =~ /^([^:@\s]+)(:(\d+))?\@(\S+)$/) {
-                my($username, $uid, $namespace) = ($1, $3, $4);
-                if (not defined $curr_entry) {
-                    return "Unexpected token \"$token\", line $."
-                }
-                if (defined $curr_entry->{USERNAME}->{$namespace}) {
-                    return "Duplicate namespace within entry, line $.";
-                }
-                if ($seen{"$username\@$namespace"}) {
-                    return "Duplicate entry for $username\@$namespace";
-                }
-                if (defined $uid and $seen{"$uid\@$namespace"}) {
-                    return "Duplicate entry for $uid\@$namespace";
-                }
-                $curr_entry->{USERNAME}->{$namespace} = $username;
-                $seen{"$username\@$namespace"} = 1;
-                if (defined $uid) {
-                    $curr_entry->{UID}->{$namespace} = $uid;
-                    $seen{"$uid\@$namespace"} = 1;
-                }
-            }
-
-            #
-            # "Real Name"
-            #
-            elsif ($token =~ /^".*"$/) {
-                if (not defined $curr_entry) {
-                    return "Unexpected token \"$token\", line $."
-                }
-                if (defined $curr_entry->{name}) {
-                    return "Name already defined, line $.";
-                }
-                $curr_entry->{name} = $token;
-            }
-
-            #
-            # closing brace
-            #
-            elsif ($token eq '}') {
-                if (not defined $curr_entry) {
-                    return "Unexpected '}'"
-                }
-                if (not defined $curr_entry->{name}) {
-                    return "No name defined";
-                }
-                if (not defined $curr_entry->{USERNAME}) {
-                    return "No user ids defined";
-                }
-                push @Entries, $curr_entry;
-                undef $curr_entry;
-            }
-            else {
-                return "Internal error";
-            }
-        }
-    }
-    close MAP;
-
-    # Add a '{' to this comment so brace-matching works when I edit this.
-    return "Missing '}' at end of file" if defined $curr_entry;
-
-    #
-    # Traverse the Entries array and build the Map data structure.
-    # For a user with username "ux123456" (UID 123456) at SDSC and "jmith"
-    # (UID 1234) at NCSA, we'll have
-    #     $Map->{SDSC}->{NCSA}->{ux123456} eq "jsmith"
-    #     $Map->{SDSC}->{NCSA}->{123456}   eq "jsmith"
-    #     $Map->{NCSA}->{SDSC}->{jsmith}   eq "ux123456"
-    #     $Map->{NCSA}->{SDSC}->{1234}     eq "ux123456"
-    #
-
-    my $Map = {};
-    foreach my $entry (@Entries) {
-        foreach my $namespace0 (sort keys %{$entry->{USERNAME}}) {
-            foreach my $namespace1 (sort keys %{$entry->{USERNAME}}) {
-                if ($namespace0 eq $namespace1) {
-                    #
-                    # Don't bother mapping from a namespace to itself.
-                    #
-                    next;
-                }
-                if (defined $this_namespace and
-                    $namespace1 ne $this_namespace)
-                {
-                    #
-                    # If specified, don't bother with mappings to any
-                    # namespace other than this one.
-                    #
-                    next;
-                }
-                my $username0 = $entry->{USERNAME}->{$namespace0};
-                my $username1 = $entry->{USERNAME}->{$namespace1};
-                $Map->{$namespace0}->{$namespace1}->{$username0} = $username1;
-                if (defined $entry->{UID}->{$namespace0}) {
-                    my $uid0 = $entry->{UID}->{$namespace0};
-                    $Map->{$namespace0}->{$namespace1}->{$uid0} = $username1;
-                }
-            }
-        }
-    }
-
-    return $Map;
-} # Read_User_Map
+# sub Read_User_Map($;$) {
+#     my($filename, $this_namespace) = @_;
+#     #
+#     # $this_namespace may be undef
+#     #
+# 
+#     #
+#     # Each entry is a reference to a hash representing a single
+#     # brace-enclosed entry in the user map file.  The structure is:
+#     #     <entry>->{USERNAME} is a reference to a hash
+#     #         mapping namespaces to user names
+#     #     <entry>->{UID} is a reference to a hash
+#     #         mapping namespaces to numeric UIDs
+#     #     <entry>->{name} is the user's real name
+#     #
+#     # The %seen hash is used to avoid duplicate user@namespace or
+#     # uid@namespace mappings.
+#     # 
+#     my @Entries = ();
+#     my $curr_entry = undef;
+#     my %seen = ();              # user@namespace or UID@namespace seen
+# 
+#     open MAP, $filename or return $!;
+#     LINE:
+#     while (<MAP>) {
+#         #
+#         # First, parse the line into tokens.
+#         #
+#         chomp;
+#         s/#.*$//;
+# 
+#         my @tokens = ();
+# 
+#         TOKEN:
+#         while ($_ ne '') {
+#             if (/^\s*$/) {                          # No more tokens on line
+#                 last TOKEN;
+#             }
+#             elsif (/^\s*{\s*(.*)$/) {               # opening brace
+#                 push @tokens, '{';
+#                 $_ = $1;
+#             }
+#             elsif (/^\s*(\S+\@\w+)\s*(.*)$/) {      # user@NAMESPACE
+#                 push @tokens, $1;
+#                 $_ = $2;
+#             }
+#             elsif (/^\s*(\S+:\d+\@\w+)\s*(.*)$/) {  # user:UID@NAMESPACE
+#                 push @tokens, $1;
+#                 $_ = $2;
+#             }
+#             elsif (/^\s*("[^"]*")\s*(.*)$/) {       # "Real Name"
+#                 push @tokens, $1;
+#                 $_ = $2;
+#             }
+#             elsif (/^\s*}\s*(.*)$/) {               # closing brace
+#                 push @tokens, '}';
+#                 $_ = $1;
+#             }
+#             else {
+#                 return "Unrecognized token, line $.";
+#             }
+#         }
+# 
+#         #
+#         # Now process each token.
+#         #
+#         # '{' introduces a new entry; '}' specifies the end of an entry.
+#         #
+#         # user:UID@NAMESPACE or user@NAMESPACE specifies a user
+#         # identity.
+#         #
+#         # A string enclosed in double quotes is a user's real name.
+#         #
+#         # Any other token is an error.
+#         #
+#         foreach my $token (@tokens) {
+#             #
+#             # opening brace
+#             #
+#             if ($token eq '{') {
+#                 if (defined $curr_entry) {
+#                     return "Unexpected '{', line $.";
+#                 }
+#                 $curr_entry = {};
+#             }
+# 
+#             #
+#             # user:UID@NAMESPACE or user@NAMESPACE
+#             # (numeric UID is optional)
+#             #
+#             elsif ($token =~ /^([^:@\s]+)(:(\d+))?\@(\S+)$/) {
+#                 my($username, $uid, $namespace) = ($1, $3, $4);
+#                 if (not defined $curr_entry) {
+#                     return "Unexpected token \"$token\", line $."
+#                 }
+#                 if (defined $curr_entry->{USERNAME}->{$namespace}) {
+#                     return "Duplicate namespace within entry, line $.";
+#                 }
+#                 if ($seen{"$username\@$namespace"}) {
+#                     return "Duplicate entry for $username\@$namespace";
+#                 }
+#                 if (defined $uid and $seen{"$uid\@$namespace"}) {
+#                     return "Duplicate entry for $uid\@$namespace";
+#                 }
+#                 $curr_entry->{USERNAME}->{$namespace} = $username;
+#                 $seen{"$username\@$namespace"} = 1;
+#                 if (defined $uid) {
+#                     $curr_entry->{UID}->{$namespace} = $uid;
+#                     $seen{"$uid\@$namespace"} = 1;
+#                 }
+#             }
+# 
+#             #
+#             # "Real Name"
+#             #
+#             elsif ($token =~ /^".*"$/) {
+#                 if (not defined $curr_entry) {
+#                     return "Unexpected token \"$token\", line $."
+#                 }
+#                 if (defined $curr_entry->{name}) {
+#                     return "Name already defined, line $.";
+#                 }
+#                 $curr_entry->{name} = $token;
+#             }
+# 
+#             #
+#             # closing brace
+#             #
+#             elsif ($token eq '}') {
+#                 if (not defined $curr_entry) {
+#                     return "Unexpected '}'"
+#                 }
+#                 if (not defined $curr_entry->{name}) {
+#                     return "No name defined";
+#                 }
+#                 if (not defined $curr_entry->{USERNAME}) {
+#                     return "No user ids defined";
+#                 }
+#                 push @Entries, $curr_entry;
+#                 undef $curr_entry;
+#             }
+#             else {
+#                 return "Internal error";
+#             }
+#         }
+#     }
+#     close MAP;
+# 
+#     # Add a '{' to this comment so brace-matching works when I edit this.
+#     return "Missing '}' at end of file" if defined $curr_entry;
+# 
+#     #
+#     # Traverse the Entries array and build the Map data structure.
+#     # For a user with username "ux123456" (UID 123456) at SDSC and "jmith"
+#     # (UID 1234) at NCSA, we'll have
+#     #     $Map->{SDSC}->{NCSA}->{ux123456} eq "jsmith"
+#     #     $Map->{SDSC}->{NCSA}->{123456}   eq "jsmith"
+#     #     $Map->{NCSA}->{SDSC}->{jsmith}   eq "ux123456"
+#     #     $Map->{NCSA}->{SDSC}->{1234}     eq "ux123456"
+#     #
+# 
+#     my $Map = {};
+#     foreach my $entry (@Entries) {
+#         foreach my $namespace0 (sort keys %{$entry->{USERNAME}}) {
+#             foreach my $namespace1 (sort keys %{$entry->{USERNAME}}) {
+#                 if ($namespace0 eq $namespace1) {
+#                     #
+#                     # Don't bother mapping from a namespace to itself.
+#                     #
+#                     next;
+#                 }
+#                 if (defined $this_namespace and
+#                     $namespace1 ne $this_namespace)
+#                 {
+#                     #
+#                     # If specified, don't bother with mappings to any
+#                     # namespace other than this one.
+#                     #
+#                     next;
+#                 }
+#                 my $username0 = $entry->{USERNAME}->{$namespace0};
+#                 my $username1 = $entry->{USERNAME}->{$namespace1};
+#                 $Map->{$namespace0}->{$namespace1}->{$username0} = $username1;
+#                 if (defined $entry->{UID}->{$namespace0}) {
+#                     my $uid0 = $entry->{UID}->{$namespace0};
+#                     $Map->{$namespace0}->{$namespace1}->{$uid0} = $username1;
+#                 }
+#             }
+#         }
+#     }
+# 
+#     return $Map;
+# } # Read_User_Map
 
 # ----------------------------------------------------------------------
 
@@ -1300,28 +1475,28 @@ sub Read_User_Map($;$) {
 # an entry, so a given user is considered an admin only over a specified
 # range of time.)
 #
-sub Read_Admin_List($) {
-    my($filename) = @_;
-    my $Map = {};
-    open MAP, $filename or return $!;
-    while (<MAP>) {
-        chomp;
-        s/#.*$//;
-        s/^\s*//;
-        s/\s*$//;
-        next if /^$/;
-        if (/^\S+\@\S+$/) {
-            $Map->{$_} = 1;
-        }
-        else {
-            my $line = $.;
-            close MAP;
-            return "Syntax error on line $line";
-        }
-    }
-    close MAP;
-    return $Map;
-} # Read_Admin_List
+# sub Read_Admin_List($) {
+#     my($filename) = @_;
+#     my $Map = {};
+#     open MAP, $filename or return $!;
+#     while (<MAP>) {
+#         chomp;
+#         s/#.*$//;
+#         s/^\s*//;
+#         s/\s*$//;
+#         next if /^$/;
+#         if (/^\S+\@\S+$/) {
+#             $Map->{$_} = 1;
+#         }
+#         else {
+#             my $line = $.;
+#             close MAP;
+#             return "Syntax error on line $line";
+#         }
+#     }
+#     close MAP;
+#     return $Map;
+# } # Read_Admin_List
 
 # ----------------------------------------------------------------------
 
