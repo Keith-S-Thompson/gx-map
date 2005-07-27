@@ -1,4 +1,4 @@
-# $Id: Gridmap_Valid_Mappings.pm.in,v 1.24 2005-06-29 22:02:54-07 kst Exp $
+# $Id: Gridmap_Valid_Mappings.pm.in,v 1.25 2005-07-26 21:04:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Valid_Mappings.pm.in,v $
 
 ########################################################################
@@ -172,14 +172,14 @@ sub Valid_Mappings(@) {
     }
     if (exists $request->{username}) {
         if ($request->{OWNER_NAME} ne $request->{username} and
-            not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME})
+            not Gridmap_Utils::Is_Globus_Admin($request->{OWNER_NAME}))
         {
             Debug ">>> Invalid, bad OWNER_NAME\n";
             return ();
         }
     }
     else {
-        if (not Gridmap_Utils::Is_Globus_Admin $request->{OWNER_NAME}) {
+        if (not Gridmap_Utils::Is_Globus_Admin($request->{OWNER_NAME})) {
             Debug ">>> Invalid, OWNER_NAME is not an admin\n";
             return ();
         }
