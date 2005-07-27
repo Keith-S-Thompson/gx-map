@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.59 2005-07-13 01:14:09-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.60 2005-07-26 21:03:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -93,7 +93,6 @@ my @Opts = ( $User_Opt,
                  permissions=s
                  compatible!
                  all!
-                 dump!
                  real-name! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -173,145 +172,7 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 
 @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
 
-#
-# Process removals
-#
-my %Mappings = (); # key = DN, value = hash ref { username => timestamp }
-my %By_User = ();  # key = username, value = hash ref { DN => 1 }
-my @dump_lines = ();
-
-REQUEST:
-foreach my $request (@requests) {
-    #
-    # By calling Valid_Mappings, we eliminate any requests for accounts
-    # that don't exist on this system (unless the "-all" option was
-    # specified).  This should also eliminate any unauthorized requests
-    # (which theoretically, could be created only by something like a
-    # hacked copy of gx-map).  The Valid_Mappings function can also be
-    # modified for site-specific requirements, such as rejecting mappings
-    # for certain accounts or for certificates issued by certain CAs.
-    #
-    # The Valid_Mappings function may return multiple mappings for a
-    # single request.
-    #
-    # Note that each mapping contains only the "dn" and/or "username"
-    # fields; other information, such as the operation and the timestamp,
-    # come from the original request, and thus may not be modified by
-    # the Valid_Mappings function.
-    #
-    my @options = ();
-    push @options, '-all' if $User_Opt->{all};
-    my @request_mappings
-        = Gridmap_Valid_Mappings::Valid_Mappings @options, $request;
-
-    my $operation = $request->{operation};
-    foreach my $mapping (@request_mappings) {
-        if ($User_Opt->{dump}) {
-            my $timestamp = Image $request->{timestamp};
-            $timestamp =~ s/ .*$//;
-            my $source    = Image $request->{SOURCE};
-            my $namespace = Image $request->{NAMESPACE};
-            my $op        = Image $request->{operation};
-            my $user      = Image $mapping->{username};
-            my $dn        = Image $mapping->{dn};
-            push @dump_lines,
-                 sprintf "%-10s %-8s %-8s %-11s %-8s %s\n",
-                         $timestamp,
-                         $source,
-                         $namespace,
-                         $op,
-                         $user,
-                         $dn;
-            next REQUEST;
-        }
-        #
-        # $mapping is a reference to a hash with keys "dn" and
-        # "username", both optional.
-        #
-        my $dn          = exists $mapping->{dn}
-                          ? $mapping->{dn}
-                          : undef;
-        my $username = exists $mapping->{username}
-                          ? $mapping->{username}
-                          : undef;
-        my $timestamp = $request->{timestamp};
-        $timestamp =~ s/ .*$//;
-
-        Debug ">>> Processing mapping, operation = $operation, dn = ",
-              (defined $dn ? $dn : "undef"),
-              ", username = ",
-              (defined $username ? "\"$username\"" : "undef"),
-              "\n";
-        if ($operation eq 'add') {
-            #
-            # Add a mapping; we have a DN and a user name.
-            #
-            # The key is the user name; the value is the timestamp.
-            #
-            Debug ">>> Add $dn --> $username\n";
-            $Mappings{$dn}->{$username} = $timestamp;
-            $By_User{$username}->{$dn} = 1;
-        }
-        elsif ($operation eq 'remove') {
-            if (exists $Mappings{$dn}) {
-                if (exists $Mappings{$dn}->{$username}) {
-                    delete $Mappings{$dn}->{$username};
-                    if (scalar keys %{$Mappings{$dn}} == 0) {
-                        delete $Mappings{$dn};
-                    }
-                    delete $By_User{$username}->{$dn};
-                    if (scalar keys %{$By_User{$username}} == 0) {
-                        delete $By_User{$username};
-                    }
-                }
-            }
-        }
-        elsif ($operation eq 'remove-dn') {
-            if (exists $Mappings{$dn}) {
-                Debug ">>> Delete $dn\n";
-                foreach my $user (keys %{$Mappings{$dn}}) {
-                    delete $By_User{$user}->{$dn};
-                    if (scalar keys %{$By_User{$user}} == 0) {
-                        delete $By_User{$user};
-                    }
-                }
-                delete $Mappings{$dn};
-            }
-        }
-        elsif ($operation eq 'remove-user') {
-            foreach my $dn (keys %{$By_User{$username}}) {
-                if (exists $Mappings{$dn}->{$username}) {
-                    Debug ">>> Delete $dn --> $username\n";
-                    delete $Mappings{$dn}->{$username};
-                    if (scalar keys %{$Mappings{$dn}} == 0) {
-                        delete $Mappings{$dn};
-                    }
-                }
-            }
-            delete $By_User{$username};
-        }
-        else {
-            die "Internal error, operation = \"$operation\"\n";
-        }
-
-        if ($User_Opt->{debugging}) {
-            Debug ">>> Current grid-mapfile entries:\n";
-            foreach my $dn (sort keys %Mappings) {
-                Debug "* $dn\n";
-                my @items = ();
-                my $by_name = $Mappings{$dn}; # name --> timestamp
-                foreach my $name (sort { $by_name->{$a} <=> $by_name->{$b} }
-                                     keys %$by_name)
-                {
-                    push @items, "$name\@$by_name->{$name}";
-                }
-                Debug "    @items\n";
-            }
-            Debug "<<< END\n";
-
-        }
-    }
-}
+my $Mappings = Gridmap_Utils::Gen_Mappings @{$User_Opt->{'requests-log'}};
 
 my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
 Gridmap_Utils::Register_Handler_Function sub { unlink $tmp_file };
@@ -338,54 +199,43 @@ print OUT <<"EOF";
 #
 EOF
 
-if ($User_Opt->{dump}) {
-    print OUT <<'EOF';
-# This is a log dump, not a grid-mapfile
-# Fields are:
-#     timestamp source namespace operation user dn
-
-EOF
-    print OUT @dump_lines;
-}
-else {
+#
+# Now traverse the Mappings hash, sorted by DN, and generate a mapfile
+#
+foreach my $dn (sort keys %$Mappings) {
+    my @dn_list = ( $dn );
+    if ($User_Opt->{compatible}) {
+        @dn_list = Gridmap_Utils::DN_List $dn;
+    }
+    my $mapping = $Mappings->{$dn};
     #
-    # Now traverse the %Mappings hash, sorted by DN, and generate a mapfile
+    # $mapping is a reference to a hash:
+    #     keys are user names
+    #     values are timestamps
     #
-    foreach my $dn (sort keys %Mappings) {
-        my @dn_list = ( $dn );
-        if ($User_Opt->{compatible}) {
-            @dn_list = Gridmap_Utils::DN_List $dn;
-        }
-        my $mapping = $Mappings{$dn};
-        #
-        # $mapping is a reference to a hash:
-        #     keys are user names
-        #     values are timestamps
-        #
-        # Sort names in reverse by timestamp, so the most recent
-        # mapping appears first (and is the default).
-        #
-        my @names = sort { $mapping->{$b} <=> $mapping->{$a} } keys %$mapping;
+    # Sort names in reverse by timestamp, so the most recent
+    # mapping appears first (and is the default).
+    #
+    my @names = sort { $mapping->{$b} <=> $mapping->{$a} } keys %$mapping;
 
-        if (@names) {
-            if ($User_Opt->{'real-name'}) {
-                my @real_names = ();
-                foreach my $name (@names) {
-                    my $real_name = User_Real_Name $name;
-                    push @real_names, ( defined $real_name ? $real_name : '?' );
-                }
-                foreach my $listed_dn (@dn_list) {
-                    print OUT "$listed_dn ",
-                              join(',', @names),
-                              " # ",
-                              join(',', @real_names),
-                              "\n";
-                }
+    if (@names) {
+        if ($User_Opt->{'real-name'}) {
+            my @real_names = ();
+            foreach my $name (@names) {
+                my $real_name = User_Real_Name $name;
+                push @real_names, ( defined $real_name ? $real_name : '?' );
             }
-            else {
-                foreach my $listed_dn (@dn_list) {
-                    print OUT "$listed_dn ", join(',', @names), "\n";
-                }
+            foreach my $listed_dn (@dn_list) {
+                print OUT "$listed_dn ",
+                          join(',', @names),
+                          " # ",
+                          join(',', @real_names),
+                          "\n";
+            }
+        }
+        else {
+            foreach my $listed_dn (@dn_list) {
+                print OUT "$listed_dn ", join(',', @names), "\n";
             }
         }
     }
@@ -626,8 +476,6 @@ Option names may be abbreviated.
                          certain DNs.
     -all               : Include entries for nonexistent accounts
                          (not normally recommended)
-    -dump              : Instead of generating a grid-mapfile, generate
-                         a sorted formatted dump of the requests log file(s).
     -real-name         : Include real names as comments.
 One or more output files may be specified on the command line.
 If no output files are specified, output is written to stdout.
