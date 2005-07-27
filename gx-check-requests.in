@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.49 2005-07-27 15:40:41-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.50 2005-07-27 15:42:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -221,10 +221,10 @@ if (-x $propagate) {
         my @args = ();
         push @args, '-debugging' if $User_Opt->{debugging};
         push @args, "-$request->{operation}";
-        if ($requeset->{operation} ne 'remove-dn') {
+        if ($request->{operation} ne 'remove-dn') {
             push @args, '-username', $request->{username};
         }
-        if ($requeset->{operation} ne 'remove-user') {
+        if ($request->{operation} ne 'remove-user') {
             push @args, '-dn', $request->{dn};
         }
         Debug "$propagate @args\n";
