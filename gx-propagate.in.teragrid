@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.8 2005-07-22 19:49:21-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.9 2005-07-26 21:20:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -75,6 +75,8 @@ my @Opts = ( $User_Opt,
                  debugging
                  add
                  remove
+                 remove-dn
+                 remove-user
                  dn=s
                  username=s ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -89,24 +91,29 @@ if ($User_Opt->{version}) {
 }
 
 my @operations = ();
-push @operations, 'add' if $User_Opt->{add};
-push @operations, 'remove' if $User_Opt->{remove};
+foreach my $op (qw(add remove remove-dn remove-user)) {
+    push @operations, $op if $User_Opt->{$op};
+}
 
 my $Operation;
 
 if (scalar @operations == 0) {
-    Usage "Specify either -add or -remove\n";
+    Usage "No operation specified\n";
 }
 elsif (scalar @operations == 1) {
     $Operation = $operations[0];
 }
 else {
-    Usage "Specify only one of -add, -remove\n";
+    Usage "Multiple operations specified\n";
 }
 
 my $message = '';
-$message .= "Missing -username option\n" if not defined $User_Opt->{username};
-$message .= "Missing -dn option\n"       if not defined $User_Opt->{dn};
+if ($Operation ne 'remove-dn' and not defined $User_Opt->{username}) {
+    $message .= "Missing -username option\n";
+}
+if ($Operation ne 'remove-user' and not defined $User_Opt->{dn}) {
+    $message .= "Missing -dn option\n";
+}
 Usage $message if $message ne '';
 
 my $Config = Get_Config "$Install_Dir/etc/tgcdb.conf";
@@ -120,8 +127,19 @@ foreach my $key (sort keys %$Config) {
     Debugf "    %-10s => %s\n", $key, $value;
 }
 
-Debug $User_Opt->{add} ? "Add" : "Remove",
-      " mapping for username $User_Opt->{username} to \"$User_Opt->{dn}\"\n";
+if ($Operation eq 'add' or $Operation eq 'remove') {
+    Debug ucfirst $Operation,
+          " mapping for username $User_Opt->{username}",
+          " to \"$User_Opt->{dn}\"\n";
+elsif ($Operation eq 'remove-dn') {
+    Debug "Remove mappings for DN \"$User_Opt->{dn}\"\n";
+}
+elsif ($Operation eq 'remove-user') {
+    Debug "Remove mappings for user $User_Opt->{username}\n";
+}
+else {
+    die "$Program_Name: Internal error, \$Operation = \"$Operation\"\n";
+}
 
 #
 # Database transactions produce trace output on stderr.
@@ -129,11 +147,16 @@ Debug $User_Opt->{add} ? "Add" : "Remove",
 #
 my $logfile = "$Install_Dir/var/tgcdb.log";
 open LOG, ">>$logfile" || die "${logfile}: $!\n";
-print LOG Gridmap_Utils::Time_Image time, "\n";
+print LOG "\n", Gridmap_Utils::Time_Image time, "\n";
+
 open SAVE_STDERR, '>&STDERR';
 print SAVE_STDERR if 0;    # to make "perl -cwT" happy
 close STDERR;
 open STDERR, '>&LOG';
+
+if ($Operation eq 'remove-dn' or $Operation eq 'remove-user') {
+    die "$Program_Name: $Operation not yet implemented\n";
+}
 
 Debug "new TGCDB\n";
 my $tg = new TGCDB (host   => $Config->{host},
@@ -164,14 +187,13 @@ Debug "\$tg->commitTransaction\n";
 $tg->commitTransaction;
 Debug "commitTransaction done\n";
 
-print STDERR "\n";
-
 #
 # Now put things back (probably unnecessary since we're about to exit,
 # but good style).
 #
 close STDERR;
 open STDERR, '>&SAVE_STDERR';
+close LOG;
 
 ########################################################################
 
@@ -207,7 +229,8 @@ sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
 Usage: $Program_Name -help|-version
-       $Program_Name (-add|-remove) -username <name> -dn "string"
+       $Program_Name <operation> -username <name> -dn "string"
+where <operation> is one of -add, -remove, -remove-dn, -remove-user
 
 Propagate a mapping to an implementation-defined interface, such as
 a cross-site user database.
@@ -216,6 +239,8 @@ a cross-site user database.
     -version        Show version information and exit.
     -add            Add a mapping.
     -remove         Remove a mapping.
+    -remove-dn      Remove all mappings for a DN.
+    -remove-user    Remove all mappings for a user.
     -username name  Unix user name to map or unmap.
     -dn "string"    Distinguished name.
     -debugging      Enable debugging output.
