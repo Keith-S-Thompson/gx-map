@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.60 2005-07-26 21:03:37-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.61 2005-07-28 16:48:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -172,7 +172,10 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 
 @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
 
-my $Mappings = Gridmap_Utils::Gen_Mappings @{$User_Opt->{'requests-log'}};
+my @args = ();
+push @args, '-all' if $User_Opt->{all};
+push @args, @{$User_Opt->{'requests-log'}};
+my $Mappings = Gridmap_Utils::Gen_Mappings @args;
 
 my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
 Gridmap_Utils::Register_Handler_Function sub { unlink $tmp_file };
