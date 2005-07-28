@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.11 2005-07-27 15:27:05-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.12 2005-07-28 00:29:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -55,8 +55,13 @@ use File::Basename ();
 use Getopt::Long ();
 
 sub Usage(@);
-sub Get_Config($);
+sub Get_TGCDB_Config($);
 sub Quote(@);
+sub Init_Mappings();
+sub Get_User_List($);
+sub Get_DN_List($);
+sub Add_Mapping($$$);
+sub Remove_Mapping($$$);
 sub Debug(@);
 sub Debugf(@);
 
@@ -75,12 +80,14 @@ my @Opts = ( $User_Opt,
              qw( help
                  version
                  debugging
+                 source=s
                  add
                  remove
                  remove-dn
                  remove-user
                  dn=s
-                 username=s ) );
+                 username=s
+                 dryrun ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -90,6 +97,13 @@ $| = 1 if $User_Opt->{debugging};
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
+}
+
+if (defined $User_Opt->{source}) {
+    exit if $User_Opt->{source} eq 'TGCDB';
+}
+else {
+    Usage "Missing -source option\n";
 }
 
 my @operations = ();
@@ -118,7 +132,7 @@ if ($Operation ne 'remove-user' and not defined $User_Opt->{dn}) {
 }
 Usage $message if $message ne '';
 
-my $Config = Get_Config "$Install_Dir/etc/tgcdb.conf";
+my $Config = Get_TGCDB_Config "$Install_Dir/etc/tgcdb.conf";
 
 Debug "Configuration:\n";
 foreach my $key (sort keys %$Config) {
@@ -144,6 +158,8 @@ else {
     die "$Program_Name: Internal error, \$Operation = \"$Operation\"\n";
 }
 
+my $Mappings = undef;
+
 #
 # Database transactions produce trace output on stderr.
 # Log this output to a file.
@@ -158,37 +174,47 @@ print SAVE_STDERR if 0;    # to make "perl -cwT" happy
 close STDERR;
 open STDERR, '>&LOG';
 
-if ($Operation eq 'remove-dn' or $Operation eq 'remove-user') {
-    die "$Program_Name: $Operation not yet implemented\n";
-}
-
 Debug "new TGCDB\n";
-my $tg = new TGCDB (host   => $Config->{host},
-                    db     => $Config->{db},
-                    user   => $Config->{user},
-                    passwd => $Config->{passwd});
+my $tg;
+if (not $User_Opt->{dryrun}) {
+    $tg = new TGCDB (host   => $Config->{host},
+                     db     => $Config->{db},
+                     user   => $Config->{user},
+                     passwd => $Config->{passwd});
+}
 
 Debug "\$tg->beginTransaction\n";
-$tg->beginTransaction;
+if (not $User_Opt->{dryrun}) {
+    $tg->beginTransaction;
+}
+Debug "beginTransaction done\n";
+
 if ($Operation eq 'add') {
-    Debug "\$tg->gxmap_add_dn\n";
-    $tg->gxmap_add_dn($Config->{resource},
-                      $User_Opt->{username},
-                      $User_Opt->{dn});
+    Add_Mapping $tg, $User_Opt->{username}, $User_Opt->{dn};
 }
 elsif ($Operation eq 'remove') {
-    Debug "\$tg->gxmap_remove_dn\n";
-    $tg->gxmap_remove_dn($Config->{resource},
-                         $User_Opt->{username},
-                         $User_Opt->{dn});
+    Remove_Mapping $tg, $User_Opt->{username}, $User_Opt->{dn};
+}
+elsif ($Operation eq 'remove-dn') {
+    foreach my $username (Get_User_List $User_Opt->{dn}) {
+        Remove_Mapping $tg, $username, $User_Opt->{dn};
+    }
+}
+elsif ($Operation eq 'remove-user') {
+    foreach my $dn (Get_DN_List $User_Opt->{username}) {
+        Remove_Mapping $tg, $User_Opt->{username}, $dn;
+    }
 }
 else {
     die "Internal error, \$Operation = ",
         defined $Operation ? "\"$Operation\"" : 'undef',
         "\n";
 }
+
 Debug "\$tg->commitTransaction\n";
-$tg->commitTransaction;
+if (not $User_Opt->{dryrun}) {
+    $tg->commitTransaction;
+}
 Debug "commitTransaction done\n";
 
 #
@@ -201,19 +227,110 @@ close LOG;
 
 ########################################################################
 
-sub Get_Config($) {
+sub Get_TGCDB_Config($) {
     my($config_file) = @_;
-    Debug "Get_Config $config_file\n";
+    Debug "Get_TGCDB_Config $config_file\n";
     my $config = Gridmap_Utils::Read_Records '-single', $config_file;
     my @keys = sort keys %$config;
     #
-    # To do: Give a more detailed error message.
+    # To do: Give more detailed error messages.
     #
     if ("@keys" ne 'db host namespace passwd resource user') {
         die "Bad config file $config_file\n";
     }
     return $config;
-} # Get_Config
+} # Get_TGCDB_Config
+
+# ----------------------------------------------------------------------
+
+sub Init_Mappings() {
+    if (not defined $Mappings) {
+        Debug "Calling Gridmap_Utils::Gen_Mappings ",
+              "$Install_Dir/var/requests.log\n";
+        $Mappings = Gridmap_Utils::Gen_Mappings
+                        "$Install_Dir/var/requests.log";
+    }
+} # Init_Mappings
+
+# ----------------------------------------------------------------------
+
+#
+# Give a DN, returns a list of usernames to which that DN is mapped.
+#
+sub Get_User_List($) {
+    my($dn) = @_;
+    $dn = "\"$dn\"";
+    Debug "Get_User_List $dn\n";
+    Init_Mappings;
+    if (defined $Mappings->{$dn}) {
+        if ($User_Opt->{debugging}) {
+            my @list = sort keys %{$Mappings->{$dn}};
+            Debug "Returning ( @list )\n";
+        }
+        return sort keys %{$Mappings->{$dn}};
+    }
+    else {
+        Debug "Returning empty list\n";
+        return ();
+    }
+} # Get_User_List
+
+# ----------------------------------------------------------------------
+
+#
+# Give a username, returns a list of DNs mapped to that username.
+#
+sub Get_DN_List($) {
+    my($username) = @_;
+    Debug "Get_DN_List $username\n";
+    Init_Mappings;
+    #
+    # This is O(N), but that's not a big deal, since it's only invoked
+    # once when a remove_user request is processed (not every time a
+    # grid-mapfile is generated).
+    #
+    my @result = ();
+    foreach my $dn (keys %$Mappings) {
+        if (defined $Mappings->{$dn}->{$username}) {
+            $dn =~ s/^"//;
+            $dn =~ s/"$//;
+            push @result, $dn;
+        }
+    }
+    Debug "Returning ( @result )\n";
+    return @result;
+} # Get_DN_List
+
+# ----------------------------------------------------------------------
+
+sub Add_Mapping($$$) {
+    my($tg, $username, $dn) = @_;
+    my $message =
+        "\$tg->gxmap_add_dn($Config->{resource}, $username, \"$dn\")\n";
+    if ($User_Opt->{dryrun}) {
+        print STDERR $message;
+    }
+    else {
+        Debug $message;
+        $tg->gxmap_add_dn($Config->{resource}, $username, $dn);
+    }
+} # Add_Mapping
+
+# ----------------------------------------------------------------------
+
+sub Remove_Mapping($$$) {
+    my($tg, $username, $dn) = @_;
+    my $message =
+        "\$tg->gxmap_remove($Config->{resource}, $username, \"$dn\")\n";
+    if ($User_Opt->{dryrun}) {
+        print STDERR
+              "gxmap_remove_dn($Config->{resource}, $username, \"$dn\")\n";
+    }
+    else {
+        Debug $message;
+        $tg->gxmap_remove_dn($Config->{resource}, $username, $dn);
+    }
+} # Remove_Mapping
 
 # ----------------------------------------------------------------------
 
@@ -254,18 +371,22 @@ a cross-site user database.
     -help           Show this message and exit.
     -version        Show version information and exit.
     -add            Add a mapping.
+    -source         The source attribute of the mapping.
+                    Mandatory.
+                    If this is "TGCDB", it's ignored.
     -remove         Remove a mapping.
     -remove-dn      Remove all mappings for a DN.
     -remove-user    Remove all mappings for a user.
     -username name  Unix user name to map or unmap.
     -dn "string"    Distinguished name.
+    -dryrun         Don't actually do the database transaction.
     -debugging      Enable debugging output.
 
 EOF
     exit 1;
 } # Usage
 
-# ----------------------------------------------------------------------
+########################################################################
 
 #
 # The TGCDB package is included here inline to minimize the number of
