@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.51 2005-07-27 15:46:06-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.52 2005-07-27 17:29:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -72,9 +72,15 @@ my $Program_Name = File::Basename::basename $0;
 my $Hostname = Gridmap_Utils::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/var";
 
-my $User_Opt = {};
+my $User_Opt = { namespace => $Gridmap_Utils::Config{NAMESPACE},
+                 propagate => 1 };
 my @Opts = ( $User_Opt,
-             qw( help version namespace=s copy=s debugging ) );
+             qw( help
+                 version
+                 namespace=s
+                 copy=s
+                 propagate!
+                 debugging ) );
              # directory=s
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -85,7 +91,7 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
+# Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 Gridmap_Utils::Install_Die_Handler;
@@ -228,7 +234,12 @@ if (-x $propagate) {
             push @args, '-dn', $dn;
         }
         Debug "$propagate @args\n";
-        system $propagate, @args;
+        if ($User_Opt->{propagate}) {
+            system $propagate, @args;
+        }
+        else {
+            Debug "(not invoking gx-propagate)\n";
+        }
     }
 }
 
@@ -466,10 +477,13 @@ sub Usage(@) {
 Usage: $Program_Name [options]
     -help           : Display this message and exit
     -version        : Display version information and exit
-    -namespace name : Specify namespace (e.g., "$Gridmap_Utils::Config{NAMESPACE}"); mandatory
+    -namespace name : Specify namespace (e.g., "$Gridmap_Utils::Config{NAMESPACE}")
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
+    -propagate      : Invoke sbin/gx-propagate if it's available.
+                      This is enabled by default; use "-nopropagate" to
+                      disable it.
     -debugging      : Enable debugging output
 EOF
 #   -directory dir  : Data directory
