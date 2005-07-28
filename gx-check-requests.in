@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.52 2005-07-27 17:29:30-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.53 2005-07-28 00:27:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -72,14 +72,13 @@ my $Program_Name = File::Basename::basename $0;
 my $Hostname = Gridmap_Utils::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/var";
 
-my $User_Opt = { namespace => $Gridmap_Utils::Config{NAMESPACE},
-                 propagate => 1 };
+my $User_Opt = { namespace => $Gridmap_Utils::Config{NAMESPACE} };
 my @Opts = ( $User_Opt,
              qw( help
                  version
                  namespace=s
                  copy=s
-                 propagate!
+                 dryrun
                  debugging ) );
              # directory=s
 Getopt::Long::GetOptions @Opts or Usage;
@@ -173,6 +172,37 @@ if (not @good_requests and not @bad_requests) {
     exit;
 }
 
+$ENV{PATH} = $Gridmap_Utils::Config{PATH};
+
+#
+# We need to invoke gx-propagate *before* appending the good requests
+# to the requests.log file, because gx-propagate sometimes needs to see
+# the existing requests.
+#
+my $propagate = "$Install_Dir/sbin/gx-propagate";
+if (-x $propagate) {
+    foreach my $request (@good_requests) {
+        my $dn = $request->{dn};
+        if (defined $dn) {
+            $dn =~ s/^"//;
+            $dn =~ s/"$//;
+        }
+        my @args = ();
+        push @args, '-debugging' if $User_Opt->{debugging};
+        push @args, '-dryrun'    if $User_Opt->{dryrun};
+        push @args, '-source', $request->{SOURCE};
+        push @args, "-$request->{operation}";
+        if ($request->{operation} ne 'remove-dn') {
+            push @args, '-username', $request->{username};
+        }
+        if ($request->{operation} ne 'remove-user') {
+            push @args, '-dn', $dn;
+        }
+        Debug "$propagate @args\n";
+        system $propagate, @args;
+    }
+}
+
 #
 # We have one or more new requests to process.  Append them to the
 # requests log and/or the errors log.
@@ -214,33 +244,6 @@ foreach my $file (@bad_request_files) {
 if (@rename_errors) {
     print STDERR "Error(s) moving request files:\n",
                  @rename_errors;
-}
-
-my $propagate = "$Install_Dir/sbin/gx-propagate";
-if (-x $propagate) {
-    foreach my $request (@good_requests) {
-        my $dn = $request->{dn};
-        if (defined $dn) {
-            $dn =~ s/^"//;
-            $dn =~ s/"$//;
-        }
-        my @args = ();
-        push @args, '-debugging' if $User_Opt->{debugging};
-        push @args, "-$request->{operation}";
-        if ($request->{operation} ne 'remove-dn') {
-            push @args, '-username', $request->{username};
-        }
-        if ($request->{operation} ne 'remove-user') {
-            push @args, '-dn', $dn;
-        }
-        Debug "$propagate @args\n";
-        if ($User_Opt->{propagate}) {
-            system $propagate, @args;
-        }
-        else {
-            Debug "(not invoking gx-propagate)\n";
-        }
-    }
 }
 
 unlink $lock_file;
@@ -481,9 +484,9 @@ Usage: $Program_Name [options]
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
-    -propagate      : Invoke sbin/gx-propagate if it's available.
-                      This is enabled by default; use "-nopropagate" to
-                      disable it.
+    -dryrun         : Passed to sbin-gx-propagate.
+                      This is for testing purposes only; it can cause
+                      requests to be permanently bypassed.
     -debugging      : Enable debugging output
 EOF
 #   -directory dir  : Data directory
