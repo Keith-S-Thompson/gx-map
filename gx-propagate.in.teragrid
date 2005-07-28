@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.12 2005-07-28 00:29:38-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.13 2005-07-28 16:50:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -246,9 +246,9 @@ sub Get_TGCDB_Config($) {
 sub Init_Mappings() {
     if (not defined $Mappings) {
         Debug "Calling Gridmap_Utils::Gen_Mappings ",
-              "$Install_Dir/var/requests.log\n";
+              "-all, $Install_Dir/var/requests.log\n";
         $Mappings = Gridmap_Utils::Gen_Mappings
-                        "$Install_Dir/var/requests.log";
+                        '-all', "$Install_Dir/var/requests.log";
     }
 } # Init_Mappings
 
