@@ -1,4 +1,4 @@
-# $Id: bug-0046,v 1.1 2005-07-28 19:40:04-07 kst Exp $
+# $Id: bug-0046,v 1.2 2005-07-29 16:09:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0046,v $
 
 gx-map bug 0046
@@ -36,5 +36,9 @@ Use Time::HiRes::time to determine the timestamp.
 Include the fine-grained timestamp in the request file name using
 the format "%17.6f" (since gx-check-requests determines the order by
 sorting the request file names).
+
+Or better yet, call Time::HiRes::gettimeofday in an array context,
+which returns a list (seconds, microseconds), and use "%010d.%06d".
+When sorting by timestamp, sort stringwise rather than numerically.
 
 Note that this creates a dependency on the Time::HiRes Perl module.
