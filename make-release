@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.9 2005-07-19 20:23:42-07 kst Exp $
+# $Id: make-release,v 1.10 2005-07-28 20:21:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -30,6 +30,7 @@ for file in \
     README.CA \
     README.CA-Security \
     README.Cross-Site \
+    README.Prereqs \
     README.TeraGrid \
     README.Upgrade \
     Relnotes \
