@@ -1,4 +1,4 @@
-# $Id: README.Prereqs,v 1.1 2005-07-28 20:20:04-07 kst Exp $
+# $Id: README.Prereqs,v 1.2 2005-07-28 20:20:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Prereqs,v $
 
 The gx-map system requires several Perl modules.
@@ -16,7 +16,7 @@ The required modules are:
 
     Time::HiRes     (standard in newer versions of Perl)
 
-    DBI             (needed by TGCDB version of gx-propagate)
+    DBI             (needed by TeraGrid version of gx-propagate)
     DBD::Pg         (needed by DBI)
 
 In addition, it requires several external commands:
