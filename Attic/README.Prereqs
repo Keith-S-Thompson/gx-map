@@ -1,0 +1,30 @@
+# $Id: README.Prereqs,v 1.1 2005-07-28 20:20:04-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/README.Prereqs,v $
+
+The gx-map system requires several Perl modules.
+Most of them are included in Perl by default, but some might have to
+be added.
+
+The required modules are:
+
+    File::Basename  (standard)
+    File::Copy      (standard)
+    Getopt::Long    (standard)
+    Time::Local     (standard)
+
+    Net::Domain     (optional, can get along without it)
+
+    Time::HiRes     (standard in newer versions of Perl)
+
+    DBI             (needed by TGCDB version of gx-propagate)
+    DBD::Pg         (needed by DBI)
+
+In addition, it requires several external commands:
+
+    hostname (used if the Net::Domain module is not availalbe)
+    co, ci, rcs
+    ncftpget
+    wget
+    openssl
+
+Finally, it requires Perl (version 5.6.0 or better) and cron.
