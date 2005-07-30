@@ -1,4 +1,4 @@
-# $Id: README.Prereqs,v 1.2 2005-07-28 20:20:31-07 kst Exp $
+# $Id: README.Prereqs,v 1.3 2005-07-29 19:25:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Prereqs,v $
 
 The gx-map system requires several Perl modules.
@@ -11,6 +11,7 @@ The required modules are:
     File::Copy      (standard)
     Getopt::Long    (standard)
     Time::Local     (standard)
+    Cwd             (standard)
 
     Net::Domain     (optional, can get along without it)
 
