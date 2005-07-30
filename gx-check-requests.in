@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.53 2005-07-28 00:27:18-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.54 2005-07-29 20:14:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -69,6 +69,8 @@ sub Debugf(@);
 
 my $Program_Name = File::Basename::basename $0;
 
+my $Now = time;
+
 my $Hostname = Gridmap_Utils::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/var";
 
@@ -123,8 +125,10 @@ if (not -d $bad_request_dir) {
 
 if (-e $lock_file) {
     my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
-    my $now = time;
-    die "Locked for ", $now - $lock_time, " seconds\n";
+    my $delta = $Now - $lock_time;
+    die "Locked since ",
+        Gridmap_Utils::Time_Image $lock_time,
+        " ($delta second(s))\n";
 }
 open LOCK, ">$lock_file";
 close LOCK;
@@ -176,8 +180,11 @@ $ENV{PATH} = $Gridmap_Utils::Config{PATH};
 
 #
 # We need to invoke gx-propagate *before* appending the good requests
-# to the requests.log file, because gx-propagate sometimes needs to see
-# the existing requests.
+# to the requests.log file, because gx-propagate sometimes needs to
+# see the existing requests.
+#
+# Annotate any propagated requests with a PROPAGATED attribute,
+# set to 'yes' (or to 'no' if the "-dryrun" option was specified).
 #
 my $propagate = "$Install_Dir/sbin/gx-propagate";
 if (-x $propagate) {
@@ -200,6 +207,12 @@ if (-x $propagate) {
         }
         Debug "$propagate @args\n";
         system $propagate, @args;
+        if ($User_Opt->{dryrun}) {
+            $request->{PROPAGATED} = 'no';
+        }
+        else {
+            $request->{PROPAGATED} = 'yes';
+        }
     }
 }
 
@@ -259,8 +272,10 @@ unlink $lock_file;
 #
 sub Get_Request_Info($) {
     my($filename) = @_;
-    my $result = { REQUEST_FILE => File::Basename::basename $filename,
-                   PROCESSED    => Gridmap_Utils::Long_Time_Image time };
+    my $request_file = File::Basename::basename $filename;
+    my $processed = Gridmap_Utils::Long_Time_Image
+                        Gridmap_Utils::Get_Time_Of_Day;
+    my $result;
 
     Debug "Get_Request_Info $filename\n";
     eval {
@@ -269,8 +284,9 @@ sub Get_Request_Info($) {
     if ($@) {
         my $message = $@;
         chomp $message;
-        push @{$result->{ERRORS}}, $message;
-        return $result;
+        return { REQUEST_FILE => $request_file,
+                 PROCESSED    => $processed,
+                 ERRORS       => [ $message ] };
     }
 
     foreach my $key (sort keys %$result) {
@@ -312,6 +328,9 @@ sub Get_Request_Info($) {
         push @{$result->{ERRORS}}, "Multiple occurrences of: @missing";
     }
 
+    $result->{REQUEST_FILE} = $request_file;
+    $result->{PROCESSED}    = $processed;
+
     if (defined $result->{ERRORS}) {
         return $result;
     }
@@ -335,16 +354,14 @@ sub Get_Request_Info($) {
     }
 
     #
-    # An add, remove, or remove-dn opereration requires exactly one DN.
-    # A remove-user operation may not have a DN.
+    # The dn field is forbidden for remove-user, required for other
+    # operations.
     #
-    if ($OP eq 'add' or $OP eq 'remove' or $OP eq 'remove-dn') {
-        if (not defined $result->{dn}) {
-            push @{$result->{ERRORS}}, "Missing dn field";
-        }
-    }
-    elsif ($OP eq 'remove-user' and defined $result->{dn}) {
+    if ($OP eq 'remove-user' and defined $result->{dn}) {
         push @{$result->{ERRORS}}, "Extraneous dn field";
+    }
+    elsif ($OP ne 'remove-user' and not defined $result->{dn}) {
+        push @{$result->{ERRORS}}, "Missing dn field";
     }
 
     #
@@ -355,8 +372,19 @@ sub Get_Request_Info($) {
         push @{$result->{ERRORS}}, "Invalid DN (quote error)";
     }
 
-    if ($result->{timestamp} =~ /^(\d+)/) {
-        $result->{timestamp} = Gridmap_Utils::Long_Time_Image $1;
+    my $new_timestamp = Gridmap_Utils::Timestamp_Of $result->{timestamp};
+    if (defined $new_timestamp) {
+        $result->{timestamp} = $new_timestamp;
+
+        my $seconds = $new_timestamp;
+        $seconds =~ s/[. ].*$//;
+        #
+        # Make sure the timestamp isn't more than 60 seconds in the future.
+        # (Allow 60 seconds for clock skew.)
+        #
+        if ($seconds - $Now > 60) {
+            push @{$result->{ERRORS}}, "Future timestamp: $result->{timestamp}\n";
+        }
     }
     else {
         push @{$result->{ERRORS}}, "Invalid timestamp: $result->{timestamp}\n";
