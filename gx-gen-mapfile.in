@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.61 2005-07-28 16:48:15-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.62 2005-07-29 20:15:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -219,7 +219,7 @@ foreach my $dn (sort keys %$Mappings) {
     # Sort names in reverse by timestamp, so the most recent
     # mapping appears first (and is the default).
     #
-    my @names = sort { $mapping->{$b} <=> $mapping->{$a} } keys %$mapping;
+    my @names = sort { $mapping->{$b} cmp $mapping->{$a} } keys %$mapping;
 
     if (@names) {
         if ($User_Opt->{'real-name'}) {
