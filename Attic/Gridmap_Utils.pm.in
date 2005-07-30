@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.84 2005-07-29 20:09:20-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.85 2005-07-30 03:14:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -754,7 +754,7 @@ sub Increment_Timestamp($) {
         ($sec, $usec) = ($1, $2);
     }
     elsif ($timestamp =~ /^\d+$/) {
-        ($sec, $usec) = ($timestamp, $0);
+        ($sec, $usec) = ($timestamp, 0);
     }
     else {
         die "Invalid timestamp \"$timestamp\"\n";
