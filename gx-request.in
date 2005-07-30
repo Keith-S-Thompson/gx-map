@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.24 2005-07-29 20:31:32-07 kst Exp $
+# $Id: gx-request.in,v 1.25 2005-07-30 03:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -420,15 +420,13 @@ if ($Options->{operation} eq 'set') {
         $add_request->{operation} = 'add';
         $add_request->{dn} = "\"$dn\"";
 
-        my $new_timestamp = 
-            = Gridmap_Utils::Long_Time_Image
-                  Gridmap_Utils::Get_Time_Of_Day;
+        my $new_timestamp = Gridmap_Utils::Long_Time_Image
+                                Gridmap_Utils::Get_Time_Of_Day;
         if ($new_timestamp eq $previous_timestamp) {
-            $new_timestamp = Gridmap_Utils::Increment_Timestamp
-                                 $new_timestamp;
+            $new_timestamp = Gridmap_Utils::Increment_Timestamp $new_timestamp;
         }
         $add_request->{timestamp} = $new_timestamp;
-        $previous_timestamp = new_timestamp;
+        $previous_timestamp = $new_timestamp;
 
         push @requests, $add_request;
     }
