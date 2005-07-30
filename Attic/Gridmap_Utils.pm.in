@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.85 2005-07-30 03:14:57-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.86 2005-07-30 16:24:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -514,8 +514,8 @@ sub Timestamp_Of($) {
     if ($s =~ /^(\d+)\.(\d+)$/) {
         ($sec, $usec) = ($1, $2);
     }
-    elsif ($s =~ /^\d+/) {
-        ($sec, $usec) = ($s, 0);
+    elsif ($s =~ /^\d+$/) {
+        ($sec, $usec) = ($s, '000000');
     }
     else {
         return undef;
