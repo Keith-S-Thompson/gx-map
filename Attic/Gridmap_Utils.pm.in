@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.82 2005-07-26 21:23:44-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.83 2005-07-29 19:25:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -94,6 +94,7 @@ BEGIN {
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
     use Cwd ();
+    use Time::HiRes ();
     eval { require Net::Domain };
     $Have_Net_Domain_Module = ( $@ eq '' );
     use Gridmap_Valid_Mappings ();
@@ -123,6 +124,8 @@ sub Is_Globus_Admin($);
 sub Use_Commands(@);
 sub Ensure_RCS();   # Provided only for compatibility with gx-map 0.3
 
+sub Get_Time_Of_Day();
+sub Timestamp_Of($);
 sub Time_Image($);
 sub Long_Time_Image($);
 sub Time_Value($);
@@ -481,7 +484,51 @@ sub Ensure_RCS() {
 # ----------------------------------------------------------------------
 
 #
-# For a given time, returns a string of the form
+# Returns the current raw time with exactly 10 digits before the decimal
+# point and 6 digits after.
+#
+sub Get_Time_Of_Day() {
+    my($sec, $usec) = Time::HiRes::gettimeofday;
+    return sprintf "%010d.%06d", $sec, $usec;
+} # Get_Time_Of_Day
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, constructs a valid timestamp string in the same
+# format used by Long_Time_Image.
+# The required input format is:
+#     1-10 decimal digits (good until 2286-11-20)
+#     optionally:
+#         a decimal point followed by exactly 6 decimal digits
+#     optionally:
+#         a space followed by arbitrary text (which is ignored)
+#
+# If the input string is invalid, returns undef.
+#
+sub Timestamp_Of($) {
+    my($s) = @_;
+    $s =~ s/ .*$//;
+    my($sec, $usec);
+    if ($s =~ /^(\d+)\.(\d+)$/) {
+        ($sec, $usec) = ($1, $2);
+    }
+    elsif ($s =~ /^\d+/) {
+        ($sec, $usec) = ($s, 0);
+    }
+    else {
+        return undef;
+    }
+    return undef if length $sec > 10;
+    return undef if length $usec != 6;
+    return Gridmap_Utils::Long_Time_Image
+               sprintf "%010d.%06d", $sec, $usec;
+} # Timestamp_Of
+
+# ----------------------------------------------------------------------
+
+#
+# For a given time (integer seconds only), returns a string of the form
 #     Ddd YYYY-MM-DD hh:mm:ss UTC"
 #
 sub Time_Image($) {
@@ -497,19 +544,30 @@ sub Time_Image($) {
 # ----------------------------------------------------------------------
 
 #
-# For a given time, returns a string of the form
-#     "ssssssssss YYYY-MM-DD hh:mm:ss UTC"
-# where "ssssssssss" is the raw Unix timestamp.
+# For a given time, either an integer or a high-resolution
+# floating-point string, returns a string of the form
+#     "ssssssssss.uuuuuu Ddd YYYY-MM-DD hh:mm:ss UTC"
+# where "ssssssssss" is the raw Unix timestamp, and
+# "uuuuuu" is in microseconds (as returned by gettimeofday().
 #
 sub Long_Time_Image($) {
     my($time) = @_;
-    my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-        = gmtime $time;
+    my $seconds;
+    my $microseconds;
+    if ($time =~ /^(\d+)\.(\d{6})$/) {
+        ($seconds, $microseconds) = ($1, $2);
+    }
+    elsif ($time =~ /^\d+$/) {
+        ($seconds, $microseconds) = ($time, 0);
+    }
+    else {
+        die "Invalid timestamp \"$time\"\n";
+    }
 
-    return sprintf "%010d %s %04d-%02d-%02d %02d:%02d:%02d UTC",
-                   $time,
-                   (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
-                   1900+$year, 1+$mon, $mday, $hour, $min, $sec;
+    return sprintf "%010d.%06d %s", 
+                   $seconds,
+                   $microseconds,
+                   Gridmap_Utils::Time_Image $seconds;
 } # Long_Time_Image
 
 # ----------------------------------------------------------------------
@@ -684,6 +742,31 @@ sub Write_Records($$@) {
 
 # ----------------------------------------------------------------------
 
+sub Increment_Timestamp($) {
+    my($timestamp) = @_;
+    $timestamp =~ s/ .*$//;
+    my($sec, $usec);
+    if ($timestamp =~ /^(\d+)\.(\d+)$/) {
+        ($sec, $usec) = ($1, $2);
+    }
+    elsif ($timestamp =~ /^\d+$/) {
+        ($sec, $usec) = ($timestamp, $0);
+    }
+    else {
+        die "Invalid timestamp \"$timestamp\"\n";
+    }
+    if ($usec < 999999) {
+        $usec ++;
+    }
+    else {
+        $sec ++;
+        $usec = 0;
+    }
+    return Long_Time_Image sprintf "%010d.%06d", $sec, $usec;
+} # Increment_Timestamp
+
+# ----------------------------------------------------------------------
+
 #
 # The first zero or more arguments are option names starting with a
 # '-' character.  Recognized options, which may not be abbreviated, are:
@@ -702,8 +785,9 @@ sub Write_Records($$@) {
 #               'operation':
 #                   Set to 'comment'.
 #               'timestamp':
-#                   An artificial timestamp set to the timestamp of the
-#                   previous record (or 0 for a header comment).
+#                   An artificial timestamp set to the timestamp of
+#                   the previous record plus 1 microsecond (or 0 for a
+#                   header comment).
 #               'lines':
 #                   a reference to an array of lines.
 #
@@ -791,7 +875,8 @@ sub Read_Records(@) {
                 if (@result) {
                     my $previous = $result[$#result];
                     if (defined $previous->{timestamp}) {
-                        $ref->{timestamp} = $previous->{timestamp};
+                        $ref->{timestamp}
+                            = Increment_Timestamp $previous->{timestamp};
                     }
                 }
                 if (not defined $ref->{timestamp}) {
@@ -875,27 +960,13 @@ sub Read_Records(@) {
 # depending on Perl to get this right, we annotate each record with an
 # __INDEX__ attribute, which we then delete before returning the result.
 #
-# A 'set' request is expanded to a 'remove-user' request followed by
-# zero or more 'add' requests.  For records with the same timestamp,
-# we want to guarantee that the 'remove-user' precedes the 'add's.
-#
 sub Sort_By_Timestamp(@) {
     for (my $i = 0; $i <= $#_; $i ++) {
         $_[$i]->{__INDEX__} = $i;
     }
-    my $a_op_index = 1;
-    my $b_op_index = 1;
-    if (defined $a->{operation} and $a->{operation} eq 'remove-user') {
-        $a_op_index = 0;
-    }
-    if (defined $b->{operation} and $b->{operation} eq 'remove-user') {
-        $b_op_index = 0;
-    }
     my @result = sort
-        { (defined $a->{timestamp}?1:0) <=> (defined $b->{timestamp}?1:0) ||
-           $a->{timestamp} cmp $b->{timestamp} ||
-           $a_op_index cmp $b_op_index ||
-           $a->{__INDEX__} <=> $b->{__INDEX__} } @_;
+        { $a->{timestamp} cmp $b->{timestamp} ||
+          $a->{__INDEX__} <=> $b->{__INDEX__} } @_;
     for (my $i = 0; $i <= $#_; $i ++) {
         delete $result[$i]->{__INDEX__};
     }
