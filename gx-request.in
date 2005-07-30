@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.22 2005-07-27 15:35:48-07 kst Exp $
+# $Id: gx-request.in,v 1.23 2005-07-29 20:10:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -80,7 +80,7 @@ sub Debugf(@);
 
 my $Program_Name = File::Basename::basename $0;
 my $hostname;
-my $Now = time;
+my $Now = Gridmap_Utils::Get_Time_Of_Day;
 my $proxy_file = Proxy_File_Name;
 my $user_cert_file = User_Cert_File_Name;
 
@@ -418,6 +418,8 @@ if ($Options->{operation} eq 'set') {
         my $add_request = Clone $request;
         $add_request->{operation} = 'add';
         $add_request->{dn} = "\"$dn\"";
+        $add_request->{timestamp}
+            = Gridmap_Utils::Increment_Timestamp $add_request->{timestamp};
         push @requests, $add_request;
     }
 }
@@ -505,11 +507,9 @@ sub User_Cert_File_Name() {
 
 # ----------------------------------------------------------------------
 
-sub Gen_Request_File_Name($) {
-    my($index) = @_;
+sub Gen_Request_File_Name() {
     my $result = "$Requests_Dir/";
-    $result .= sprintf "%010s", $Now;
-    $result .= sprintf "-%03d", $index;
+    $result .= $Now;
     $result .= "-$hostname-$PW->{name}";
     if (defined $Options->{username} and
         $Options->{username} ne $PW->{name})
