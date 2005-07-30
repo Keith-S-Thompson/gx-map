@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.23 2005-07-21 19:44:35-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.24 2005-07-29 20:16:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -122,9 +122,7 @@ if (@missing_accounts) {
     Usage "Missing account$s: @missing_accounts\n";
 }
 
-my $now = time;
-
-my $Rev = '$Revision: 1.23 $';
+my $Rev = '$Revision: 1.24 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -144,7 +142,7 @@ foreach my $ref (@refs) {
     $record_count ++ if $ref->{operation} ne 'comment';
 }
 
-my $timestamp = Gridmap_Utils::Time_Image $now;
+my $Now = Gridmap_Utils::Time_Image time;
 
 my @header_comment_lines = ();
 if ($refs[0]->{operation} eq 'comment') {
@@ -164,7 +162,7 @@ if (not (defined $header_comment_lines[0] and
             '$' . 'Source:$',
 }
 push @header_comment_lines,
-     "Converted $timestamp by $Program_Name (gx-map $Gridmap_Utils::VERSION)",
+     "Converted $Now by $Program_Name (gx-map $Gridmap_Utils::VERSION)",
      "Converting $record_count record(s)";
 
 if ($refs[0]->{operation} ne 'comment') {
@@ -178,6 +176,8 @@ foreach my $ref (@refs) {
 
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
     my $new_comment = undef;
+
+    $ref->{timestamp} = Gridmap_Utils::Timestamp_Of $ref->{timestamp};
 
     if (defined $ref->{dn}) {
         $ref->{dn} = Gridmap_Utils::GT4_Subject $ref->{dn};
