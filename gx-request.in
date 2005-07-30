@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.23 2005-07-29 20:10:51-07 kst Exp $
+# $Id: gx-request.in,v 1.24 2005-07-29 20:31:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -413,13 +413,23 @@ if ($Options->{operation} eq 'set') {
 
 my @requests = ( $request );
 
+my $previous_timestamp = $Timestamp;
 if ($Options->{operation} eq 'set') {
     foreach my $dn (@dn_list) {
         my $add_request = Clone $request;
         $add_request->{operation} = 'add';
         $add_request->{dn} = "\"$dn\"";
-        $add_request->{timestamp}
-            = Gridmap_Utils::Increment_Timestamp $add_request->{timestamp};
+
+        my $new_timestamp = 
+            = Gridmap_Utils::Long_Time_Image
+                  Gridmap_Utils::Get_Time_Of_Day;
+        if ($new_timestamp eq $previous_timestamp) {
+            $new_timestamp = Gridmap_Utils::Increment_Timestamp
+                                 $new_timestamp;
+        }
+        $add_request->{timestamp} = $new_timestamp;
+        $previous_timestamp = new_timestamp;
+
         push @requests, $add_request;
     }
 }
@@ -434,7 +444,7 @@ foreach my $request (@requests) {
     # invisible to gx-check-requests).  After the temporary file is created
     # and has the proper permissions, rename it to the correct name.
     #
-    my $request_file = Gen_Request_File_Name($index++);
+    my $request_file = Gen_Request_File_Name $request->{timestamp};
     my $tmp_file = $request_file . ".tmp";
     Gridmap_Utils::Write_Records '-single', $tmp_file, $request;
     chmod 0444, $tmp_file;
@@ -507,9 +517,11 @@ sub User_Cert_File_Name() {
 
 # ----------------------------------------------------------------------
 
-sub Gen_Request_File_Name() {
+sub Gen_Request_File_Name($) {
+    my($timestamp) = @_;
     my $result = "$Requests_Dir/";
-    $result .= $Now;
+    $timestamp =~ s/ .*$//;
+    $result .= $timestamp;
     $result .= "-$hostname-$PW->{name}";
     if (defined $Options->{username} and
         $Options->{username} ne $PW->{name})
