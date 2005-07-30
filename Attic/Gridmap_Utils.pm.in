@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.83 2005-07-29 19:25:51-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.84 2005-07-29 20:09:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -124,6 +124,7 @@ sub Is_Globus_Admin($);
 sub Use_Commands(@);
 sub Ensure_RCS();   # Provided only for compatibility with gx-map 0.3
 
+sub Increment_Timestamp($);
 sub Get_Time_Of_Day();
 sub Timestamp_Of($);
 sub Time_Image($);
@@ -742,6 +743,9 @@ sub Write_Records($$@) {
 
 # ----------------------------------------------------------------------
 
+#
+# Increment a timestamp by 1 microsecond.
+#
 sub Increment_Timestamp($) {
     my($timestamp) = @_;
     $timestamp =~ s/ .*$//;
