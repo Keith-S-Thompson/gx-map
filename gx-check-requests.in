@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.54 2005-07-29 20:14:07-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.55 2005-08-02 21:36:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -183,8 +183,9 @@ $ENV{PATH} = $Gridmap_Utils::Config{PATH};
 # to the requests.log file, because gx-propagate sometimes needs to
 # see the existing requests.
 #
-# Annotate any propagated requests with a PROPAGATED attribute,
-# set to 'yes' (or to 'no' if the "-dryrun" option was specified).
+# Annotate any propagated requests with a PROPAGATION attribute,
+# set to 'ok' if it appears to have succeeded, 'failed' if it failed,
+# or 'dryrun' if the "-dryrun" option was specified).
 #
 my $propagate = "$Install_Dir/sbin/gx-propagate";
 if (-x $propagate) {
@@ -206,12 +207,16 @@ if (-x $propagate) {
             push @args, '-dn', $dn;
         }
         Debug "$propagate @args\n";
-        system $propagate, @args;
+        my $result = system $propagate, @args;
+        Debug "\$result = $result\n";
         if ($User_Opt->{dryrun}) {
-            $request->{PROPAGATED} = 'no';
+            $request->{PROPAGATION} = 'dryrun';
+        }
+        elsif ($result == 0) {
+            $request->{PROPAGATION} = 'ok';
         }
         else {
-            $request->{PROPAGATED} = 'yes';
+            $request->{PROPAGATION} = 'failed';
         }
     }
 }
