@@ -1,0 +1,17 @@
+# $Id: bug-0047,v 1.1 2005-08-03 20:56:06-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0047,v $
+
+gx-map bug 0047
+Date: Wed 2005-08-03
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Configure e-mail program
+
+Summary:
+Currently, gx-ca-update searches for "mail" or "mailx" in a fixed
+sequence of directories.  Instead, configure the mail program as is
+done for other commands.  Document the requirements in sample.conf:
+    Must accept <program> -s "subject" address
+    with the message on stdin.
