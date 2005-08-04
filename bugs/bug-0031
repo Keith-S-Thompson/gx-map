@@ -1,4 +1,4 @@
-# $Id: bug-0031,v 1.5 2005-07-12 18:17:00-07 kst Exp $
+# $Id: bug-0031,v 1.6 2005-08-03 20:50:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0031,v $
 
 gx-map bug 0031
@@ -42,3 +42,6 @@ DN, keep the older one - but watch out for interactions with remove*
 requests.
 
 And of course "set" requests will also have to be handled.
+
+Correction: "set" requests do not appear in the requests.log; they're
+expanded by gx-request.
