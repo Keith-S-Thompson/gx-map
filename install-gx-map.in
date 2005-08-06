@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.39 2005-07-19 20:21:43-07 kst Exp $
+# $Id: install-gx-map.in,v 1.40 2005-08-05 23:15:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -76,7 +76,8 @@ for dir in $INSTALL_DIR \
            $ETC_DIR/ca-config \
            $DATA_DIR \
            $DATA_DIR/RCS \
-           $DATA_DIR/cache
+           $DATA_DIR/cache \
+           $DATA_DIR/reported-errors
 do
     if [ ! -d $dir ] ; then
         verbosely mkdir -p  $dir
