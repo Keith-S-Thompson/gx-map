@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cleanup-logs.in,v 1.21 2005-07-18 18:50:16-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.22 2005-08-23 18:58:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -63,8 +63,6 @@ sub Debugf(@);
 # Make warnings fatal.
 # 
 $SIG{__WARN__} = sub { die @_ };
-
-$ENV{PATH} = '/bin:/usr/bin';
 
 my $Install_Dir;
 BEGIN {
