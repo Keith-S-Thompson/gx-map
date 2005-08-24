@@ -1,4 +1,4 @@
-# $Id: README.Prereqs,v 1.3 2005-07-29 19:25:17-07 kst Exp $
+# $Id: README.Prereqs,v 1.4 2005-08-23 20:59:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Prereqs,v $
 
 The gx-map system requires several Perl modules.
@@ -22,7 +22,7 @@ The required modules are:
 
 In addition, it requires several external commands:
 
-    hostname (used if the Net::Domain module is not availalbe)
+    hostname (used if the Net::Domain module is not available)
     co, ci, rcs
     ncftpget
     wget
