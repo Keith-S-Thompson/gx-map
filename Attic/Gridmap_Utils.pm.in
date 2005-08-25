@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.86 2005-07-30 16:24:04-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.87 2005-08-24 18:13:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -122,7 +122,6 @@ sub Dir_Error($);
 sub Is_Globus_Admin($);
 
 sub Use_Commands(@);
-sub Ensure_RCS();   # Provided only for compatibility with gx-map 0.3
 
 sub Increment_Timestamp($);
 sub Get_Time_Of_Day();
@@ -472,15 +471,6 @@ sub Use_Commands(@) {
             "in configured \$PATH ($ENV{PATH})\n";
     }
 } # Use_Commands
-
-# ----------------------------------------------------------------------
-
-#
-# Provided only for compatibility with gx-map 0.3
-#
-sub Ensure_RCS() {
-    Use_Commands 'co', 'ci', 'rcs';
-} # Ensure_RCS
 
 # ----------------------------------------------------------------------
 
