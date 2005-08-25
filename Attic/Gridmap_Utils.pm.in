@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.88 2005-08-24 18:26:44-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.89 2005-08-24 18:30:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1643,10 +1643,12 @@ sub DN_List($) {
 #
 sub Send_Email($$$) {
     my($recipient, $subject, $body) = @_;
-    foreach my $mail_command (qw(mailx mail)) {
-        eval { Gridmap_Utils::Use_Commands $mail_command };
+    foreach my $mail_program (qw(mailx mail)) {
+        eval { Gridmap_Utils::Use_Commands $mail_program };
         next if $@;
-        open PIPE, "| $mail_command -s '$subject' $recipient";
+        my $command = "$mail_program -s '$subject' $recipient";
+        Gridmap_Utils::Untaint $command;
+        open PIPE, "| $command";
         print PIPE $body;
         close PIPE;
         last;
