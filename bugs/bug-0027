@@ -1,4 +1,4 @@
-# $Id: bug-0027,v 1.1 2005-06-16 15:20:53-07 kst Exp $
+# $Id: bug-0027,v 1.2 2005-08-25 15:43:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0027,v $
 
 gx-map bug 0027
@@ -6,7 +6,7 @@ Date: Thu 2005-06-16
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed, ?
 Title: Add -ca-list option to gx-ca-update
 
 Summary:
@@ -19,3 +19,6 @@ Suggested fix:
 Add a -ca-list option.  The argument is a file containing a list of
 CAs, one per line, specified in the same form as the argument to the
 existing -ca option.  Allow comments in the file.
+
+Fixed:
+gx-ca-update.in 1.64, gx-map ?
