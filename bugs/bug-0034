@@ -1,4 +1,4 @@
-# $Id: bug-0034,v 1.1 2005-06-27 20:37:49-07 kst Exp $
+# $Id: bug-0034,v 1.2 2005-08-25 15:43:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0034,v $
 
 gx-map bug 0034
@@ -6,7 +6,7 @@ Date: Sun 2005-06-26
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed, ?
 Title: Be smarter about reporting errors by e-mail
 
 Summary:
@@ -29,3 +29,9 @@ When an error condition goes away or changes, remove the corresponding
 entry.  This is specific to CRL errors; think about what's needed for
 other kind of errors (though since certificates and signing_policy
 files are generally only installed once, that probably doesn't matter).
+
+Fixed:
+gx-ca-update.in 1.64, gx-map ?
+
+Error files are created in the var/reported-errors directory.
+There is currently no mechanism to clean them up automatically.
