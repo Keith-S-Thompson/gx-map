@@ -1,4 +1,4 @@
-# $Id: bug-0010,v 1.3 2005-08-24 18:10:40-07 kst Exp $
+# $Id: bug-0010,v 1.4 2005-08-24 18:11:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0010,v $
 
 gx-map bug 0010
@@ -17,6 +17,7 @@ Compare grid-mapfile for consistency with one newly generated
 by gx-gen-mapfile and/or for internal consistency.  See also
 <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=3520>.
 
-For each file certificates/hash.0, check hash.0, hash.r0,
-hash.signing_policy.  Check against downloaded versions and/or check
-for internal consistency.  Warn about overly permissive signing_policy.
+For each file certificates/xxxxxxxx.0, check xxxxxxxx.0, xxxxxxxx.r0,
+xxxxxxxx.signing_policy.  Check against downloaded versions and/or
+check for internal consistency.  Warn about overly permissive
+signing_policy.
