@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.63 2005-07-28 19:50:58-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.64 2005-08-24 22:53:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -66,6 +66,7 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
+sub Read_CA_List_File($);
 sub Match_CA_Name($$);
 sub String_To_Seconds($);
 sub Seconds_To_String($);
@@ -81,7 +82,7 @@ sub Install_Certificate($);
 sub Update_Signing_Policy($);
 sub Check_Dependencies();
 sub Log($$);
-sub Error($$);
+sub Error($$$$);
 sub Vprint(@);
 sub Notify();
 sub Debug(@);
@@ -98,6 +99,7 @@ my @Opts = ( $User_Opt,
                  U! UN! UNS! UNSA! UNSAF!
                  UNSAFE!
                  ca=s@
+                 ca-list=s@
                  all-cas!
                  list-cas!
                  target-dir=s
@@ -118,6 +120,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 $| = 1 if $User_Opt->{verbose};
 
@@ -145,8 +149,12 @@ if (not $User_Opt->{UNSAFE}) {
     Usage @errors if @errors;
 }
 
-if (defined $User_Opt->{ca} and $User_Opt->{'all-cas'}) {
-    Usage "The \"-ca\" and \"-all-cas\" options may not be used together\n";
+if ($User_Opt->{'all-cas'}
+    and
+    (defined $User_Opt->{ca} or defined $User_Opt->{'ca-list'}))
+{
+    Usage "The \"-all-cas\" options may not be used " .
+          "with \"-ca\" or \"-ca-list\"\n";
 }
 
 my $Data_Dir = "$Install_Dir/var";
@@ -154,7 +162,7 @@ my $lock_file = "$Data_Dir/.gx-ca-update.lock";
 
 my $ca_conf_dir = "$Install_Dir/etc/ca-config";
 my @ca_list_all;
-my $requested_all = undef; # true if user specified "-ca ALL"
+my $requested_all = undef; # true if user specified "-all-cas"
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
@@ -178,7 +186,10 @@ if ($User_Opt->{'list-cas'}) {
     exit 0;
 }
 
-if (not $User_Opt->{'all-cas'} and not defined $User_Opt->{ca}) {
+if (not $User_Opt->{'all-cas'} and
+    not defined $User_Opt->{ca} and
+    not defined $User_Opt->{'ca-list'})
+{
     Usage "No CA specified\n"
 }
 
@@ -241,6 +252,11 @@ my @requested_ca_list = ();
 if (defined $User_Opt->{ca}) {
     foreach my $arg (@{$User_Opt->{ca}}) {
         push @requested_ca_list, split /[ ,]/, $arg;
+    }
+}
+if (defined $User_Opt->{'ca-list'}) {
+    foreach my $arg (@{$User_Opt->{'ca-list'}}) {
+        push @requested_ca_list, Read_CA_List_File $arg;
     }
 }
 
@@ -319,7 +335,7 @@ foreach my $ref (@ca_info) {
             # The user explicitly requested a disabled CA without
             # specifying the "-ignore-disable" option.
             #
-            Error $ref, "CA is disabled\n";
+            Error $ref, undef, undef, "CA is disabled\n";
         }
         if ($User_Opt->{'ignore-disable'}) {
             Vprint "Overriding \"DISABLE\" attribute\n";
@@ -341,7 +357,7 @@ foreach my $ref (@ca_info) {
     }
     if (defined $ref->{_ERRORS}) {
         foreach my $error (@{$ref->{_ERRORS}}) {
-            Vprint ">>> $error";
+            Vprint ">>> $error->{message}";
         }
     }
 
@@ -355,6 +371,24 @@ Notify;
 unlink $lock_file;
 
 ########################################################################
+
+sub Read_CA_List_File($) {
+    my($filename) = @_;
+    my @ca_list = ();
+    open FILE, $filename or die "${filename}: $!\n";
+    while (<FILE>) {
+        s/#.*$//;
+        s/^\s*//;
+        s/\s*$//;
+        next if /^$/;
+        my @fields = split;
+        push @ca_list, @fields;
+    }
+    close FILE;
+    return @ca_list;
+} # Read_CA_List_File
+
+# ----------------------------------------------------------------------
 
 #
 # Given an argument to the "-ca" option and the name of a *.cadesc
@@ -742,7 +776,7 @@ sub Update_Certificate($) {
             #
             # Error in Cache_File function
             #
-            Error $ref, $@;
+            Error $ref, undef, undef, $@;
         }
         elsif (defined $cache_file and -r $cache_file) {
             $ref->{_CACHED_CERT_FILE} = $cache_file;
@@ -750,22 +784,26 @@ sub Update_Certificate($) {
             my $cert_info = Certificate_Info $cache_file;
             if (defined $cert_info->{enddate}) {
                 if ($cert_info->{enddate} < $now) {
-                    Error $ref, "Certificate expired " .
-                                Seconds_To_String
-                                    ($now - $cert_info->{enddate}) .
-                                " ago\n";
+                    Error $ref, 'cert_expired',
+                                $cert_info->{enddate},
+                                "Certificate expired " .
+                                 Seconds_To_String
+                                     ($now - $cert_info->{enddate}) .
+                                 " ago\n";
                 }
             }
             else {
-                Error $ref,
+                Error $ref, undef, undef,
                       "Unable to determine certificate expiration date\n";
             }
             if ($cert_info->{hash} ne $ref->{HASH}) {
-                Error $ref, "Mismatched hash, expected $ref->{HASH}, " .
+                Error $ref, undef, undef,
+                            "Mismatched hash, expected $ref->{HASH}, " .
                             "got $cert_info->{hash}\n";
             }
             if ($cert_info->{subject} ne $ref->{SUBJECT}) {
-                Error $ref, "Mismatched subject, expected " .
+                Error $ref, undef, undef,
+                            "Mismatched subject, expected " .
                             "\"$ref->{SUBJECT}\", got " .
                             "\"$cert_info->{subject}\"\n";
             }
@@ -773,25 +811,29 @@ sub Update_Certificate($) {
                 $ref->{SIGNED_BY} ne '?')
             {
                 if ($cert_info->{issuer} ne $ref->{SIGNED_BY}) {
-                    Error $ref, "Mismatched issuer, expected " .
+                    Error $ref, undef, undef,
+                                "Mismatched issuer, expected " .
                                 "\"$ref->{SIGNED_BY}\", got " .
                                 "\"$cert_info->{issuer}\"\n";
                 }
             }
             else {
                 if ($cert_info->{issuer} ne $cert_info->{subject}) {
-                    Error $ref, "Certificate is not self-signed, " .
+                    Error $ref, undef, undef,
+                                "Certificate is not self-signed, " .
                                 "but no SIGNED_BY attribute was " .
                                 "specified in $ref->{_FILENAME}\n";
                 }
             }
             if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
-                Error $ref, "Mismatched md5 fingerprint, expected " .
+                Error $ref, undef, undef,
+                            "Mismatched md5 fingerprint, expected " .
                             "\"$ref->{CERTIFICATE_MD5}\", got " .
                             "\"$cert_info->{md5sum}\"\n";
             }
             if ($cert_info->{sha1sum} ne $ref->{CERTIFICATE_SHA1}) {
-                Error $ref, "Mismatched sha1 fingerprint, expected " .
+                Error $ref, undef, undef,
+                            "Mismatched sha1 fingerprint, expected " .
                             "\"$ref->{CERTIFICATE_SHA1}\", got " .
                             "\"$cert_info->{sha1sum}\"\n";
             }
@@ -834,7 +876,7 @@ sub Update_CRL($) {
         # flagged an error in Update_Certificate, so we should never
         # get here, but check it anyway.
         #
-        Error $ref, "No certificate, can't check CRL\n";
+        Error $ref, undef, undef, "No certificate, can't check CRL\n";
         return;
     }
 
@@ -880,7 +922,7 @@ sub Update_CRL($) {
             #
             # Error in Cache_File function
             #
-            Error $ref, $@;
+            Error $ref, undef, undef, $@;
         }
     }
     else {
@@ -893,7 +935,7 @@ sub Update_CRL($) {
         if (not $User_Opt->{'allow-missing-crl'} and
             not Allow_Missing_CRL $ref)
         {
-            Error $ref, "No CRL specified\n";
+            Error $ref, undef, undef, "No CRL specified\n";
         }
     }
     #
@@ -929,19 +971,23 @@ sub Update_CRL($) {
             if ($User_Opt->{'allow-missing-crl'} or
                  Allow_Missing_CRL $ref)
             {
-                Vprint "Newly downloaded CRL has expired\n";
+                Vprint "CRL has expired\n";
             }
             else {
-                Error $ref, "Newly downloaded CRL has expired\n";
+                Error $ref, 'crl_has_expired',
+                            $new_crl_info->{next_update},
+                            "CRL has expired\n";
             }
         }
         elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
-            Error $ref, "Newly downloaded CRL expires in " .
+            Error $ref, 'crl_will_expire',
+                        $new_crl_info->{next_update},
+                        "CRL expires in " .
                         Seconds_To_String($remaining) .
                         ", not installing\n";
         }
         elsif (not $new_crl_info->{verified}) {
-            Error $ref, "Can't verify new CRL\n";
+            Error $ref, undef, undef, "Can't verify new CRL\n";
         }
         elsif (defined $old_crl_info) {
             #
@@ -956,7 +1002,8 @@ sub Update_CRL($) {
             elsif ($new_crl_info->{next_update} <
                    $old_crl_info->{next_update})
             {
-                Error $ref, "Newly downloaded CRL expires sooner " .
+                Error $ref, undef, undef,
+                            "Newly downloaded CRL expires sooner " .
                             "than old CRL, not installing\n";
             }
             else {
@@ -975,7 +1022,7 @@ sub Update_CRL($) {
             Vprint "No URL given for CRL\n";
         }
         else {
-            Error $ref, "Unable to get information for CRL\n";
+            Error $ref, undef, undef, "Unable to get information for CRL\n";
         }
     }
 
@@ -985,9 +1032,9 @@ sub Update_CRL($) {
         Vprint    "Installing $ref->{_CRL_FILE}\n";
         Log $ref, "Installing $ref->{_CRL_FILE}\n";
         File::Copy::copy $new_crl_file, "$ref->{_CRL_FILE}.$$"
-            or Error $ref, "Failed to copy CRL: $!\n";
+            or Error $ref, undef, undef, "Failed to copy CRL: $!\n";
         rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE}
-            or Error $ref, "Failed to rename CRL: $!\n";
+            or Error $ref, undef, undef, "Failed to rename CRL: $!\n";
     }
 
     #
@@ -1000,13 +1047,15 @@ sub Update_CRL($) {
         my $remove_crl = 0;
         if (defined $crl_info) {
             if (not $crl_info->{verified}) {
-                Error $ref, "Removing unverified CRL\n";
+                Error $ref, undef, undef, "Removing unverified CRL\n";
                 $remove_crl = 1;
             }
             elsif (defined $CRL_Expiration and
                    $remaining < $CRL_Expiration)
             {
-                Error $ref, "CRL will expire in " .
+                Error $ref, 'crl_will_expire',
+                            $crl_info->{next_update},
+                            "CRL will expire in " .
                             Seconds_To_String($remaining) .
                             ", removing it\n";
                 $remove_crl = 1;
@@ -1028,15 +1077,21 @@ sub Update_CRL($) {
                     }
                 }
                 if ($remaining < 0) {
-                    Error $ref, "CRL expired at $expiration_string " .
+                    Error $ref, 'crl_has_expired',
+                                $crl_info->{next_update},
+                                "CRL expired at $expiration_string " .
                                 "($how_long ago)\n";
                 }
                 elsif ($remaining == 0) {
-                    Error $ref, "CRL expires at $expiration_string\n";
+                    Error $ref, 'crl_will_expire',
+                                $crl_info->{next_update},
+                                "CRL expires at $expiration_string\n";
                 }
                 else {
                     if ($notify) {
-                        Error $ref, "CRL will expire at $expiration_string " .
+                        Error $ref, 'crl_will_expire',
+                                    $crl_info->{next_update},
+                                    "CRL will expire at $expiration_string " .
                                     "($how_long from now)\n";
                     }
                     else {
@@ -1045,7 +1100,7 @@ sub Update_CRL($) {
                     }
                 }
                 if (not $crl_info->{verified}) {
-                    Error $ref, "CRL is not verified\n";
+                    Error $ref, undef, undef, "CRL is not verified\n";
                 }
             }
         }
@@ -1074,9 +1129,9 @@ sub Install_Certificate($) {
     Vprint    "Installing $ref->{_CERT_FILE}\n";
     Log $ref, "Installing $ref->{_CERT_FILE}\n";
     File::Copy::copy $ref->{_CACHED_CERT_FILE}, "$ref->{_CERT_FILE}.$$"
-        or Error $ref, "Failed to copy certificate: $!\n";
+        or Error $ref, undef, undef, "Failed to copy certificate: $!\n";
     rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
-        or Error $ref, "Failed to rename certificate: $!\n";
+        or Error $ref, undef, undef, "Failed to rename certificate: $!\n";
 } # Install_Certificate
 
 # ----------------------------------------------------------------------
@@ -1098,19 +1153,13 @@ sub Update_Signing_Policy($) {
         Vprint "Skipping existing $ref->{_SIGNING_POLICY_FILE}\n";
     }
     else {
-        if (defined $ref->{_ERRORS}) {
-            Vprint "Skipping $ref->{_SIGNING_POLICY_FILE} " .
-                   "due to previous errors\n";
-        }
-        else {
-            Vprint    "Creating $ref->{_SIGNING_POLICY_FILE}\n";
-            Log $ref, "Creating $ref->{_SIGNING_POLICY_FILE}\n";
-            open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
-                or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
-            print POLICY Signing_Policy $ref;
-            close POLICY;
-            $ref->{_INSTALLED_SIGNING_POLICY} = 1;
-        }
+        Vprint    "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+        Log $ref, "Creating $ref->{_SIGNING_POLICY_FILE}\n";
+        open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
+            or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
+        print POLICY Signing_Policy $ref;
+        close POLICY;
+        $ref->{_INSTALLED_SIGNING_POLICY} = 1;
     }
 } # Update_Signing_Policy
 
@@ -1135,13 +1184,60 @@ sub Log($$) {
 
 # ----------------------------------------------------------------------
 
+sub Error_File($) {
+    my($error_ref) = @_;
+    if (defined $error_ref->{desc}) {
+        my $name = join('.', $error_ref->{timestamp},
+                             $error_ref->{ca_hash},
+                             $error_ref->{desc});
+        return "$Data_Dir/reported-errors/$name";
+    }
+    else {
+        return undef;
+    }
+} # Error_File
+
+# ----------------------------------------------------------------------
+
 #
 # Report an error.
-# Annotate the CA reference (first argument) with the error message.
+# The arguments are:
+#      $ref
+#          A reference to the CA record.
+#      $desc
+#          A brief description, used to distinguish different kinds of errors,
+#          suitable for inclusion in a filename.
+#          If this is defined, an error file may be created.
+#          May be undef.
+#      $timestamp
+#          A timestamp, typically the expiration time of the CRL
+#          May be undef.
+#      $message
+#          A human-readable error message, terminated with a newline.
+# Annotate the CA reference (first argument) with an error record.
 #
-sub Error($$) {
-    my($ref, $message) = @_;
-    push @{$ref->{_ERRORS}}, $message;
+sub Error($$$$) {
+    my($ref, $desc, $timestamp, $message) = @_;
+    my $error_ref = {};
+    $error_ref->{message}   = $message;
+    $error_ref->{ca_hash}   = $ref->{HASH};
+    $error_ref->{desc}      = $desc      if defined $desc;
+    $error_ref->{timestamp} = $timestamp if defined $timestamp;
+
+    my $error_file = Error_File $error_ref;
+    if (defined $error_file) {
+        $error_ref->{filename} = $error_file;
+        if (-e $error_file) {
+            $error_ref->{reported} = 1;
+        }
+        else {
+            open ERROR_FILE, ">$error_file";
+            print ERROR_FILE $message;
+            close ERROR_FILE;
+        }
+    }
+
+    push @{$ref->{_ERRORS}}, $error_ref;
 } # Error
 
 # ----------------------------------------------------------------------
@@ -1149,12 +1245,20 @@ sub Error($$) {
 #
 # Send an error notification by e-mail.
 # Log messages to log file.
+# Error files in the var/reported-errors directory are used to track
+# which errors have already been reported by e-mail; all errors are
+# logged regardless.  Some classes of errors are not currently recorded
+# in error files; these are treated as new errors and can potentially
+# be reported by e-mail repeatedly.
 #
 sub Notify() {
     my $total_ca_count = scalar @ca_info;
-    my $error_ca_count = 0;
-    my $error_count = 0;
-    my $message_body = '';
+    my $error_ca_count = 0;       # CAs with errors
+    my $new_error_ca_count = 0;   # CAs with new errors
+    my $error_count = 0;          # Number of errors
+    my $new_error_count = 0;      # Number of new errors
+    my $log_message_body = '';
+    my $mail_message_body = '';
 
     my $log_file = "$Install_Dir/var/$Program_Name.log";
     Gridmap_Utils::Untaint $log_file;
@@ -1162,12 +1266,41 @@ sub Notify() {
     print LOG Gridmap_Utils::Time_Image $now,
               " $Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
 
+    #
+    # _NEW_ERRORS is a subset of _ERRORS, specifically the errors
+    # that need to be reported by e-mail.
+    #
     foreach my $ref (@ca_info) {
         if (defined $ref->{_ERRORS}) {
             $error_ca_count ++;
             $error_count += scalar @{$ref->{_ERRORS}};
+            foreach my $error (@{$ref->{_ERRORS}}) {
+                if (not $error->{reported}) {
+                    push @{$ref->{_NEW_ERRORS}}, $error;
+                    $new_error_count ++;
+                    if (defined $error->{filename}) {
+                        open FILE, ">$error->{filename}";
+                        print FILE $error->{message}, "\n";
+                        close FILE;
+                    }
+                }
+            }
+            if (defined $ref->{_NEW_ERRORS}) {
+                $new_error_ca_count ++;
+            }
         }
     }
+
+# ========================================================================
+# TO DO:
+# Treat elements of _ERRORS as records (see sub Error for details).
+# Check each error record to see whether it's already been reported
+# by e-mail (corresponding file in var/reported-errors directory).
+# If so, log but don't report by e-mail.
+# If not, log, report by e-mail, and create notification file.
+# 
+# Eventually, consider a mechanism to clean out old notification files.
+# ========================================================================
 
     foreach my $ref (@ca_info) {
         if (defined $ref->{_MESSAGES} or defined $ref->{_ERRORS}) {
@@ -1181,12 +1314,18 @@ sub Notify() {
 
             if (defined $ref->{_ERRORS}) {
                 my @error_list = @{$ref->{_ERRORS}};
-                $message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
-                $message_body .= join '', @error_list;
-                $message_body .= "\n";
                 foreach my $error (@error_list) {
-                    print LOG "    >>> ERROR: $error";
+                    print LOG "    >>> ERROR: $error->{message}";
                 }
+            }
+
+            if (defined $ref->{_NEW_ERRORS}) {
+                my @error_list = @{$ref->{_NEW_ERRORS}};
+                $mail_message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
+                foreach my $error (@error_list) {
+                    $mail_message_body .= $error->{message};
+                }
+                $mail_message_body .= "\n";
             }
         }
     }
@@ -1194,38 +1333,14 @@ sub Notify() {
     print LOG "\n";
     close LOG;
 
-    if ($User_Opt->{email} and $error_count > 0) {
-        my $subject = "$Program_Name: $error_count error(s), " .
-                      "$error_ca_count/$total_ca_count CA(s)";
+    if ($User_Opt->{email} and $new_error_count > 0) {
+        my $subject = "$Program_Name: $new_error_count error(s), " .
+                      "$new_error_ca_count/$total_ca_count CA(s)";
 
         my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
-        #
-        # Find a mail program.
-        # Look in /usr/bin, /bin, /usr/sbin, and /sbin; prefer mailx to mail.
-        # (On some systems with both "mail" and "mailx", "mailx"
-        # recognizes the "-s" option but "mail" doesn't; on systems
-        # without "mailx", "mail" usually recoognizes "-s".)
-        # This isn't pretty, but it should work on most systems.
-        #
-        my $mail_program = undef;
-        TRY:
-        foreach my $prog (qw(mailx mail)) {
-            foreach my $dir(qw(/usr/bin /bin /usr/sbin)) {
-                if (-x "$dir/$prog") {
-                    $mail_program = "$dir/$prog";
-                    last TRY;
-                }
-            }
-        }
-        if (defined $mail_program) {
-            # Gridmap_Utils::Untaint $mail_program;
-            # open PIPE, "| $mail_program -s '$subject' $recipient";
-            my $command = "$mail_program -s '$subject' $recipient";
-            Gridmap_Utils::Untaint  $command;
-            open PIPE, "| $command";
-            print PIPE $message_body;
-            close PIPE;
-        }
+        Gridmap_Utils::Send_Email $Gridmap_Utils::Config{ADMIN_EMAIL},
+                                  $subject,
+                                  $mail_message_body;
     }
 } # Notify
 
@@ -1264,10 +1379,18 @@ Usage: $Program_Name [options]
                             -allow-missing-crl
                             -expire-crl time
                             -ignore-disable
-    -ca name           Name of a CA.  This argument may be given multiple
+    -ca name           Name of a CA.  This option may be given multiple
                        times, or CA names may be delimited by commas or
                        blanks.  The argument is a field of the *.cadesc
                        file name; use the hash value to avoid ambiguity.
+    -ca-list file      Name of a text file containing a list of CAs.
+                       Comments are introduced by '#'.
+                       Leading and trailing whitespace and blank lines
+                       are ignored.
+                       CAs are specified the same way as arguments to the
+                       "-ca" option.
+                       Multiple "-ca-list" options may be given.
+                       The "-ca" and "-ca-list" options may be combined.
     -all-cas           Use all available CAs.
                        Requires "-UNSAFE".
     -list-cas          List available CAs and exit.
