@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.87 2005-08-24 18:13:09-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.88 2005-08-24 18:26:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -152,6 +152,8 @@ sub GT2_Subject($);
 sub GT4_Subject($);
 sub DN_List($);
 sub Strip_Proxy_Info($);
+
+sub Send_Email($$$);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
@@ -1630,6 +1632,26 @@ sub DN_List($) {
         return sort ($gt2_dn, $gt4_dn);
     }
 } # DN_List
+
+# ----------------------------------------------------------------------
+
+#
+# (Attempt to) send an e-mail message.
+# Arguments are recipient, subject, body.
+# Use the "mailx" command if it exists; otherwise use "mail".
+# Failures are quietly ignored.
+#
+sub Send_Email($$$) {
+    my($recipient, $subject, $body) = @_;
+    foreach my $mail_command (qw(mailx mail)) {
+        eval { Gridmap_Utils::Use_Commands $mail_command };
+        next if $@;
+        open PIPE, "| $mail_command -s '$subject' $recipient";
+        print PIPE $body;
+        close PIPE;
+        last;
+    }
+} # Send_Email
 
 # ----------------------------------------------------------------------
 
