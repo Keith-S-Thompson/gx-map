@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.89 2005-08-24 18:30:48-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.90 2005-08-24 22:49:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -94,6 +94,7 @@ BEGIN {
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
     use Cwd ();
+    use Time::Local ();
     use Time::HiRes ();
     eval { require Net::Domain };
     $Have_Net_Domain_Module = ( $@ eq '' );
@@ -688,7 +689,7 @@ sub Write_Records($$@) {
 
     REF:
     foreach my $ref (@refs) {
-        if ($ref->{operation} eq 'comment') {
+        if (defined $ref->{oeration} and $ref->{operation} eq 'comment') {
             foreach my $line (@{$ref->{lines}}) {
                 if ($line !~ /^#/) {
                     $line = "# $line";
