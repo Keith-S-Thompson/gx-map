@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.6 2005-08-26 15:31:16-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.7 2005-08-26 15:33:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -68,12 +68,18 @@ my $Program_Name = File::Basename::basename $0;
 my %Opt = ( path => '/bin:/usr/bin',
             tg   => 1 );
 my @Opts = ( \%Opt, qw( help
+                        version
                         path=s
                         verbose!
                         tg! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $Opt{help};
 Usage if @ARGV;
+
+if ($Opt{version}) {
+    print "$Program_Name (gx-map) (no version)\n";
+    exit 1;
+}
 
 $ENV{PATH} = $Opt{path};
 my @path = split /:/, $ENV{PATH};
@@ -267,6 +273,10 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Program_Name [options]
     -help       Display this message and exit.
+    -version    Display version number and exit.
+                Note that $Program_Name doesn't really have a version 
+                number; this option is included for consistency with
+                other gx-map commands.
     -verbose    Verbose output
     -path ...   Specify value of \$PATH.
                 Default is "/bin:/usr/bin".
