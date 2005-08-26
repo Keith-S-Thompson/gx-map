@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.5 2005-08-26 15:21:35-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.6 2005-08-26 15:31:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -57,6 +57,7 @@ sub Usage(@);
 sub Check_Perl($);
 sub Check_Command($);
 sub Check_Module($);
+sub Wget_Supports_SSL();
 sub Vprint(@);
 sub Vprintf(@);
 
@@ -150,6 +151,22 @@ Note: Missing Net::Domain module is ok, will use hostname command
 EOF
 }
 
+if ($Command_Found{wget}) {
+    my $ssl = Wget_Supports_SSL();
+    if (not defined $ssl) {
+        push @Notes, <<"EOF";
+Note: Can't determine whether wget supports SSL.
+
+EOF
+    }
+    elsif (not $ssl) {
+        push @Notes, <<"EOF";
+Note: wget does not support SSL (this may be a problem for some CAs).
+
+EOF
+    }
+}
+
 if (@Errors) {
     print @Errors;
     print @Notes;
@@ -211,6 +228,25 @@ sub Check_Module($) {
         $All_Modules_Found = 0;
     }
 } # Check_Module
+
+# ----------------------------------------------------------------------
+
+sub Wget_Supports_SSL() {
+    my $lines = 0;
+    my $supports_ssl = 0;
+    open PIPE, "wget --help |";
+    while (<PIPE>) {
+        $lines ++;
+        $supports_ssl = 1 if /\bssl\b/i;
+    }
+    close PIPE;
+    if ($lines == 0) {
+        return 'unknown';
+    }
+    else {
+        return $supports_ssl;
+    }
+} # Wget_Supports_SSL
 
 # ----------------------------------------------------------------------
 
