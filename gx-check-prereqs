@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.4 2005-08-26 15:20:49-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.5 2005-08-26 15:21:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -129,9 +129,9 @@ Note: Consider changing the "#!" line at the top of this script
 EOF
 }
 
-if (not $All_Command_Found) {
+if (not $All_Commands_Found) {
     push @Notes, <<"EOF";
-Note: Consider specifying a different value for $PATH to find
+Note: Consider specifying a different value for \$PATH to find
       missing commands.  This should match the PATH option in
       your config file.
 
