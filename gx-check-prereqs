@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.15 2005-08-26 16:07:30-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.16 2005-08-26 16:32:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -65,13 +65,12 @@ $| = 1;
 
 my $Program_Name = File::Basename::basename $0;
 
-my %Opt = ( path => '/bin:/usr/bin',
-            tg   => 1 );
+my %Opt = ( path => '/bin:/usr/bin' );
 my @Opts = ( \%Opt, qw( help
                         version
                         path=s
                         verbose!
-                        tg! ) );
+                        teragrid! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $Opt{help};
 Usage if @ARGV;
@@ -119,9 +118,9 @@ Check_Module 'Time::Local';
 Check_Module 'Cwd';
 Check_Module 'Net::Domain';
 Check_Module 'Time::HiRes';
-if ($Opt{tg}) {
-    Check_Module '-tg', 'DBI';
-    Check_Module '-tg', 'DBD::Pg';
+if ($Opt{teragrid}) {
+    Check_Module '-teragrid', 'DBI';
+    Check_Module '-teragrid', 'DBD::Pg';
 }
 
 my @Notes = ();
@@ -230,10 +229,10 @@ sub Check_Command($) {
 # ----------------------------------------------------------------------
 
 sub Check_Module($;$) {
-    my $tg = 0;
-    if (scalar @_ == 2 and $_[0] eq '-tg') {
+    my $teragrid = 0;
+    if (scalar @_ == 2 and $_[0] eq '-teragrid') {
         shift;
-        $tg = 1;
+        $teragrid = 1;
     }
     my($module) = @_;
     Vprintf "%-50s", "Checking for Perl module $module: ";
@@ -243,7 +242,7 @@ sub Check_Module($;$) {
         $Module_Found{$module} = 1;
     }
     else {
-        my $tg_string = $tg ? ' (TG only)' : '';
+        my $tg_string = $teragrid ? ' (TeraGrid only)' : '';
         Vprint "not found$tg_string\n";
         push @Errors, "Module $module not found$tg_string\n";
         $All_Modules_Found = 0;
@@ -295,8 +294,7 @@ Usage: $Program_Name [options]
     -verbose    Verbose output
     -path ...   Specify value of \$PATH.
                 Default is "/bin:/usr/bin".
-    -tg         Check for packages required for TeraGrid functionality.
-                This is enabled by default; use "-notg" to disable.
+    -teragrid   Check for packages required for TeraGrid functionality.
 EOF
     exit 1;
 
