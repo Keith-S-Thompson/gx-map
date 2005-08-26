@@ -1,0 +1,215 @@
+#!/usr/bin/perl -w
+
+# $Id: gx-check-prereqs,v 1.1 2005-08-26 15:04:28-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2005 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Grid and Cluster Computing Group
+# at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use Getopt::Long ();
+use File::Basename ();
+
+sub Usage(@);
+sub Check_Perl($);
+sub Check_Command($);
+sub Check_Module($);
+sub Vprint(@);
+sub Vprintf(@);
+
+$| = 1;
+
+my $Program_Name = File::Basename::basename $0;
+
+my %Opt = ( path => '/bin:/usr/bin',
+            tg   => 1 );
+my @Opts = ( \%Opt, qw( help
+                        path=s
+                        verbose!
+                        tg! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $Opt{help};
+Usage if @ARGV;
+
+$ENV{PATH} = $Opt{path};
+my @path = split /:/, $ENV{PATH};
+
+my @path_errors = ();
+foreach my $dir (@path) {
+    if (not -d $dir) {
+        push @path_errors, "No directory $dir\n";
+    }
+    elsif ($dir !~ /^\//) {
+        push @path_errors, "Directory $dir is not an absolute pathname\n";
+    }
+}
+die @path_errors if @path_errors;
+
+Check_Perl 5.006;
+
+my @Errors = ();
+my $Perl_OK = 0;
+my %Command_Found = ();
+my %Module_Found = ();
+
+Check_Command 'hostname';
+Check_Command 'co';
+Check_Command 'ci';
+Check_Command 'rcs';
+Check_Command 'ncftpget';
+Check_Command 'wget';
+Check_Command 'openssl';
+
+Check_Module 'File::Basename';
+Check_Module 'File::Copy';
+Check_Module 'Getopt::Long';
+Check_Module 'Time::Local';
+Check_Module 'Cwd';
+Check_Module 'Net::Domain';
+Check_Module 'Time::HiRes';
+if ($Opt{tg}) {
+    Check_Module 'DBI';
+    Check_Module 'DBD::Pg';
+}
+
+my @Notes = ();
+if ($Module_Found{'Net::Domain'} and not $Command_Found{hostname}) {
+    push @Notes,
+         "Note: Missing hostname command is ok, will use Net::Domain module\n";
+}
+elsif (not $Module_Found{'Net::Domain'} and $Command_Found{hostname}) {
+    push @Notes,
+         "Note: Missing Net::Domain module is ok, will use hostname command\n";
+}
+
+if (@Errors) {
+    print @Errors;
+    print @Notes;
+    exit 1;
+}
+else {
+    print "All preprequisites ok\n";
+    exit 0;
+}
+
+########################################################################
+
+sub Check_Perl($) {
+    my($min_version) = @_;
+    Vprint "Checking Perl version (need $min_version, have $]): ";
+    if ($] < $min_version) {
+        Vprint "too old\n";
+        push @Errors, "Using Perl version $], need at least $min_version\n";
+    }
+    else {
+        Vprint "ok\n";
+        $Perl_OK = 1;
+    }
+} # Check_Perl
+
+# ----------------------------------------------------------------------
+
+sub Check_Command($) {
+    my($command) = @_;    
+    Vprintf "%-50s", "Checking for $command command: ";
+    foreach my $dir (@path) {
+        if (-x "$dir/$command") {
+            Vprint "found $dir/$command\n";
+            $Command_Found{$command} = 1;
+            last;
+        }
+    }
+    if (not $Command_Found{$command}) {
+        Vprint "not found in \$PATH=$ENV{PATH}\n";
+        push @Errors, "Command $command not found\n";
+        return;
+    }
+} # Check_Command
+
+# ----------------------------------------------------------------------
+
+sub Check_Module($) {
+    my($module) = @_;
+    Vprintf "%-50s", "Checking for Perl module $module: ";
+    eval "require $module";
+    if ($@ eq '') {
+        Vprint "found\n";
+        $Module_Found{$module} = 1;
+    }
+    else {
+        Vprint "not found\n";
+        push @Errors, "Module $module not found\n";
+    }
+} # Check_Module
+
+# ----------------------------------------------------------------------
+
+sub Vprint(@) {
+    print @_ if $Opt{verbose};
+} # Vprint
+
+# ----------------------------------------------------------------------
+
+sub Vprintf(@) {
+    printf @_ if $Opt{verbose};
+} # Vprintf
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+    -help       Display this message and exit.
+    -verbose    Verbose output
+    -path ...   Specify value of \$PATH.
+                Default is "/bin:/usr/bin".
+    -tg         Check for packages required for TeraGrid functionality.
+                This is enabled by default; use "-notg" to disable.
+EOF
+    exit 1;
+
+} # Usage
