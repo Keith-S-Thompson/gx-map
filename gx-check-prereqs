@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.3 2005-08-26 15:18:11-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.4 2005-08-26 15:20:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -118,20 +118,36 @@ if ($Opt{tg}) {
 }
 
 my @Notes = ();
+
 if (not $Perl_OK or not $All_Modules_Found) {
     push @Notes, <<"EOF";
 Note: Consider changing the "#!" line at the top of this script
       or invoking it with "/path/to/perl $Program_Name"
-      to get a newer version of Perl and/or any missing modules
+      to get a newer version of Perl and/or any missing modules.
+      This should match the PERL option in your config file.
+
 EOF
 }
+
+if (not $All_Command_Found) {
+    push @Notes, <<"EOF";
+Note: Consider specifying a different value for $PATH to find
+      missing commands.  This should match the PATH option in
+      your config file.
+
+}
+
 if ($Module_Found{'Net::Domain'} and not $Command_Found{hostname}) {
-    push @Notes,
-         "Note: Missing hostname command is ok, will use Net::Domain module\n";
+    push @Notes, <<"EOF";
+Note: Missing hostname command is ok, will use Net::Domain module
+
+EOF
 }
 elsif (not $Module_Found{'Net::Domain'} and $Command_Found{hostname}) {
-    push @Notes,
-         "Note: Missing Net::Domain module is ok, will use hostname command\n";
+    push @Notes, <<"EOF";
+Note: Missing Net::Domain module is ok, will use hostname command
+
+EOF
 }
 
 if (@Errors) {
