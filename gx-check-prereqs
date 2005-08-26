@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.10 2005-08-26 15:42:30-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.11 2005-08-26 15:43:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -176,12 +176,18 @@ EOF
 
 if (@Errors) {
     print @Errors;
-    print @Notes;
+    if (@Notes) {
+        print "\n";
+        print @Notes;
+    }
     exit 1;
 }
 else {
     print "All preprequisites ok\n";
-    print @Notes;
+    if (@Notes) {
+        print "\n";
+        print @Notes;
+    }
     exit 0;
 }
 
