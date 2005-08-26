@@ -1,4 +1,4 @@
-# $Id: bug-0047,v 1.1 2005-08-03 20:56:06-07 kst Exp $
+# $Id: bug-0047,v 1.2 2005-08-25 18:47:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0047,v $
 
 gx-map bug 0047
@@ -6,7 +6,7 @@ Date: Wed 2005-08-03
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed ?
 Title: Configure e-mail program
 
 Summary:
@@ -15,3 +15,9 @@ sequence of directories.  Instead, configure the mail program as is
 done for other commands.  Document the requirements in sample.conf:
     Must accept <program> -s "subject" address
     with the message on stdin.
+
+Fixed: gx-ca-update.in, Gridmap_Utils.pm.in 1.88, gx-map ?
+
+The new Send_Email function uses "mailx" if it's available; otherwise
+it falls back to "mail".  It searches for the commands in the
+configured $PATH.
