@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.2 2005-08-26 15:07:31-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.3 2005-08-26 15:18:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -93,7 +93,9 @@ Check_Perl 5.006;
 my @Errors = ();
 my $Perl_OK = 0;
 my %Command_Found = ();
+my $All_Commands_Found = 0;
 my %Module_Found = ();
+my $All_Modules_Found = 0;
 
 Check_Command 'hostname';
 Check_Command 'co';
@@ -116,10 +118,12 @@ if ($Opt{tg}) {
 }
 
 my @Notes = ();
-if (not $Perl_OK) {
-    push @Notes, "Note: Consider changing the \"#!\" line at the " .
-                 "top of this script\n" .
-                 "      or invoking it with \"/path/to/perl $Program_Name\"\n";
+if (not $Perl_OK or not $All_Modules_Found) {
+    push @Notes, <<"EOF";
+Note: Consider changing the "#!" line at the top of this script
+      or invoking it with "/path/to/perl $Program_Name"
+      to get a newer version of Perl and/or any missing modules
+EOF
 }
 if ($Module_Found{'Net::Domain'} and not $Command_Found{hostname}) {
     push @Notes,
@@ -170,6 +174,7 @@ sub Check_Command($) {
     if (not $Command_Found{$command}) {
         Vprint "not found in \$PATH=$ENV{PATH}\n";
         push @Errors, "Command $command not found\n";
+        $All_Commands_Found = 0;
         return;
     }
 } # Check_Command
@@ -187,6 +192,7 @@ sub Check_Module($) {
     else {
         Vprint "not found\n";
         push @Errors, "Module $module not found\n";
+        $All_Modules_Found = 0;
     }
 } # Check_Module
 
