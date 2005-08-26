@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.13 2005-08-26 16:02:05-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.14 2005-08-26 16:04:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -242,8 +242,9 @@ sub Check_Module($;$) {
         $Module_Found{$module} = 1;
     }
     else {
-        Vprint "not found (TG only)\n";
-        push @Errors, "Module $module not found (TG only)\n";
+        my $tg_string = $tg ? ' (TG only)' : '';
+        Vprint "not found$tg_string\n";
+        push @Errors, "Module $module not found$tg_string\n";
         $All_Modules_Found = 0;
     }
 } # Check_Module
