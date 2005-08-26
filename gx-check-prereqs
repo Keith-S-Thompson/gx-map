@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.1 2005-08-26 15:04:28-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.2 2005-08-26 15:07:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -116,6 +116,11 @@ if ($Opt{tg}) {
 }
 
 my @Notes = ();
+if (not $Perl_OK) {
+    push @Notes, "Note: Consider changing the \"#!\" line at the " .
+                 "top of this script\n" .
+                 "      or invoking it with \"/path/to/perl $Program_Name\"\n";
+}
 if ($Module_Found{'Net::Domain'} and not $Command_Found{hostname}) {
     push @Notes,
          "Note: Missing hostname command is ok, will use Net::Domain module\n";
