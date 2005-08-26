@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.8 2005-08-26 15:34:54-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.9 2005-08-26 15:40:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -56,7 +56,7 @@ use File::Basename ();
 sub Usage(@);
 sub Check_Perl($);
 sub Check_Command($);
-sub Check_Module($);
+sub Check_Module($;$);
 sub Wget_Supports_SSL();
 sub Vprint(@);
 sub Vprintf(@);
@@ -120,8 +120,8 @@ Check_Module 'Cwd';
 Check_Module 'Net::Domain';
 Check_Module 'Time::HiRes';
 if ($Opt{tg}) {
-    Check_Module 'DBI';
-    Check_Module 'DBD::Pg';
+    Check_Module '-tg', 'DBI';
+    Check_Module '-tg', 'DBD::Pg';
 }
 
 my @Notes = ();
@@ -221,7 +221,12 @@ sub Check_Command($) {
 
 # ----------------------------------------------------------------------
 
-sub Check_Module($) {
+sub Check_Module($;$) {
+    my $tg = 0;
+    if (scalar @_ == 2 and $_[0] eq '-tg') {
+        shift;
+        $tg = 1;
+    }
     my($module) = @_;
     Vprintf "%-50s", "Checking for Perl module $module: ";
     eval "require $module";
@@ -230,8 +235,8 @@ sub Check_Module($) {
         $Module_Found{$module} = 1;
     }
     else {
-        Vprint "not found\n";
-        push @Errors, "Module $module not found\n";
+        Vprint "not found (TG only)\n";
+        push @Errors, "Module $module not found (TG only)\n";
         $All_Modules_Found = 0;
     }
 } # Check_Module
