@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.12 2005-08-26 15:47:43-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.13 2005-08-26 16:02:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -95,14 +95,14 @@ foreach my $dir (@path) {
 }
 die @path_errors if @path_errors;
 
-Check_Perl 5.006;
-
 my @Errors = ();
-my $Perl_OK = 0;
+my $Perl_OK = 1;
 my %Command_Found = ();
 my $All_Commands_Found = 1;
 my %Module_Found = ();
 my $All_Modules_Found = 1;
+
+Check_Perl 5.006;
 
 Check_Command 'hostname';
 Check_Command 'co';
@@ -199,10 +199,10 @@ sub Check_Perl($) {
     if ($] < $min_version) {
         Vprint "too old\n";
         push @Errors, "Using Perl version $], need at least $min_version\n";
+        $Perl_OK = 0;
     }
     else {
         Vprint "ok\n";
-        $Perl_OK = 1;
     }
 } # Check_Perl
 
