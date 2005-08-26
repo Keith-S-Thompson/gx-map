@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.14 2005-08-26 16:04:55-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.15 2005-08-26 16:07:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -168,7 +168,8 @@ EOF
     }
     elsif (not $ssl) {
         push @Notes, <<"EOF";
-Note: wget does not support SSL (this may be a problem for CAs that use https).
+Note: Your wget command does not support SSL.
+      This may be a problem for CAs that use https.
 
 EOF
     }
