@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.29 2005-07-19 19:24:20-07 kst Exp $
+# $Id: configure-gx-map,v 1.30 2005-08-30 18:02:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -79,6 +79,8 @@ if (scalar @ARGV == 1 and -e $ARGV[0]) {
 else {
     Usage;
 }
+
+my $Prereq_Error = undef;
 
 my $version = Get_Version;
 
@@ -200,6 +202,29 @@ if (defined $Config{GLOBUS_ADMINS}) {
 
 die @errors if @errors;
 
+#
+# Check prerequisites
+#
+print "Checking prerequisites... \n";
+if (-x 'gx-check-prereqs') {
+    my @command = ( $Config{PERL},
+                    './gx-check-prereqs',
+                    '-path', $Config{PATH} );
+    if (defined $Config{GX_PROPAGATE} and
+        $Config{GX_PROPAGATE} =~ /teragrid/i)
+    {
+        push @command, '-teragrid';
+    }
+    print "% @command\n";
+    my $result = system @command;
+    if ($result != 0) {
+        $Prereq_Error = "gx-check-prereqs failed";
+    }
+}
+else {
+    $Prereq_Error = "Can't find gx-check-prereqs command";
+}
+
 my @in_files = ();
 my %out_file = ();
 
@@ -249,6 +274,10 @@ foreach my $in_file (@in_files) {
 
     my $mode = (stat $in_file)[2];
     chmod $mode, $out_file;
+}
+
+if (defined $Prereq_Error) {
+    print ">>> $Prereq_Error, proceed with caution\n";
 }
 
 ########################################################################
