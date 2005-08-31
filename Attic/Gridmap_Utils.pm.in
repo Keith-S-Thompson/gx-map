@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.90 2005-08-24 22:49:00-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.91 2005-08-30 18:51:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -936,6 +936,7 @@ sub Read_Records(@) {
             }
         }
     }
+    close FILE;
     if ($keep_comments and $context eq 'comment') {
         push @result, $ref;
         $context = 'none';
