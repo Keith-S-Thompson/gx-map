@@ -1,0 +1,27 @@
+# $Id: bug-0048,v 1.1 2005-08-30 17:54:23-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0048,v $
+
+gx-map bug 0048
+Date: Tue 2005-08-30
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.4.5
+Status: Open
+Title: Don't use bareword filehandles or dirhandles
+
+Summary:
+The gx-map currently uses old-style bareword filehandles and
+dirhandles, such as
+    open FILE, $filename or die "${filename}: $!\n";
+    opendir DIR, $dirname or die "${dirname}: $!\n";
+
+Replace these with lexical variables used as indirect filehandles,
+and use the 3-argument form of open:
+
+    open my $File, '<', $filename or die "${filename}: $!\n";
+    opendir my $Dir, $dirname or die "${dirname}: $!\n";
+
+This requires Perl 5.006 or better, but we already require that
+explicitly.
+
+See _Perl Best Practices_ by Damian Conway, chapter 10.
