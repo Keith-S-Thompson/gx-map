@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.64 2005-08-24 22:53:46-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.65 2005-08-31 17:24:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -167,11 +167,11 @@ my $requested_all = undef; # true if user specified "-all-cas"
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
 
-opendir CONF_DIR, $ca_conf_dir or die "$ca_conf_dir: $!\n";
+opendir my $Conf_Dir, $ca_conf_dir or die "$ca_conf_dir: $!\n";
 @ca_list_all = sort
                    grep { /\.cadesc$/ and not /^00000000\./ }
-                       readdir CONF_DIR;
-closedir CONF_DIR;
+                       readdir $Conf_Dir;
+closedir $Conf_Dir;
 
 if ($User_Opt->{'list-cas'}) {
     foreach my $ca (@ca_list_all) {
@@ -318,8 +318,8 @@ if (-e $lock_file) {
     my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
     die "Locked for ", $now - $lock_time, " seconds\n";
 }
-open LOCK, ">$lock_file";
-close LOCK;
+open my $Lock, '>', $lock_file;
+close $Lock;
 
 Gridmap_Utils::Init_Cache_Info;
 
@@ -375,8 +375,8 @@ unlink $lock_file;
 sub Read_CA_List_File($) {
     my($filename) = @_;
     my @ca_list = ();
-    open FILE, $filename or die "${filename}: $!\n";
-    while (<FILE>) {
+    open my $List, '<', $filename or die "${filename}: $!\n";
+    while (<$List>) {
         s/#.*$//;
         s/^\s*//;
         s/\s*$//;
@@ -384,7 +384,7 @@ sub Read_CA_List_File($) {
         my @fields = split;
         push @ca_list, @fields;
     }
-    close FILE;
+    close $List;
     return @ca_list;
 } # Read_CA_List_File
 
@@ -632,9 +632,11 @@ sub CRL_Info($$) {
     #
     # Get attributes of CRL
     #
-    open PIPE, "openssl crl -in $CRL_file -noout " .
-               "-hash -issuer -lastupdate -nextupdate 2>&1 |" or return undef;
-    while (<PIPE>) {
+    open my $Pipe, '-|',
+         "openssl crl -in $CRL_file -noout " .
+         "-hash -issuer -lastupdate -nextupdate 2>&1"
+        or return undef;
+    while (<$Pipe>) {
         chomp;
         if (/^[\da-f]{8}$/) {
             $result->{hash} = $_;
@@ -649,7 +651,7 @@ sub CRL_Info($$) {
             $result->{next_update} = Gridmap_Utils::Time_Value $1;
         }
     }
-    close PIPE;
+    close $Pipe;
     
     #
     # If we didn't get everything we need, don't return any information.
@@ -666,14 +668,14 @@ sub CRL_Info($$) {
     # (If it's ok, openssl prints "verify OK" to stderr.)
     #
     if (defined $cert_file and -r $cert_file) {
-        open PIPE, "openssl crl -in $CRL_file -noout " .
-                   "-CAfile $cert_file 2>&1 |";
-        while (<PIPE>) {
+        open my $Pipe, '-|',
+             "openssl crl -in '$CRL_file' -noout -CAfile $cert_file 2>&1";
+        while (<$Pipe>) {
             if (/verify ok/i) {
                 $result->{verified} = 1;
             }
         }
-        close PIPE;
+        close $Pipe;
     }
 
     return $result;
@@ -698,9 +700,10 @@ sub Certificate_Info($) {
     my($cert_file) = @_;
     return undef if not -r $cert_file;
     my $result = {};
-    open PIPE, "openssl x509 -in $cert_file -noout -hash -issuer -subject " .
-               "-md5 -fingerprint -startdate -enddate |";
-    while (<PIPE>) {
+    open my $Pipe1, '-|',
+         "openssl x509 -in '$cert_file' -noout -hash -issuer -subject " .
+         "-md5 -fingerprint -startdate -enddate";
+    while (<$Pipe1>) {
         chomp;
         if (/^[\da-f]{8}$/) {
             $result->{hash} = $_;
@@ -721,19 +724,20 @@ sub Certificate_Info($) {
             $result->{enddate} = Gridmap_Utils::Time_Value $1;
         }
     }
-    close PIPE;
+    close $Pipe1;
 
     #
     # openssl won't display both md5 and sha1 fingerprints in a single
     # command (unless it reads commands from stdin).
     #
-    open PIPE, "openssl x509 -in $cert_file -noout -sha1 -fingerprint |";
-    while (<PIPE>) {
+    open my $Pipe2, '-|',
+         "openssl x509 -in '$cert_file' -noout -sha1 -fingerprint";
+    while (<$Pipe2>) {
         if (/^sha1.*=\s*(.*)$/i) {
             $result->{sha1sum} = $1;
         }
     }
-    close PIPE;
+    close $Pipe2;
 
     foreach my $key (qw(hash issuer subject
                         md5sum sha1sum
@@ -1155,10 +1159,10 @@ sub Update_Signing_Policy($) {
     else {
         Vprint    "Creating $ref->{_SIGNING_POLICY_FILE}\n";
         Log $ref, "Creating $ref->{_SIGNING_POLICY_FILE}\n";
-        open POLICY, ">$ref->{_SIGNING_POLICY_FILE}"
+        open my $Policy, '>', $ref->{_SIGNING_POLICY_FILE}
             or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
-        print POLICY Signing_Policy $ref;
-        close POLICY;
+        print $Policy Signing_Policy $ref;
+        close $Policy;
         $ref->{_INSTALLED_SIGNING_POLICY} = 1;
     }
 } # Update_Signing_Policy
@@ -1231,9 +1235,9 @@ sub Error($$$$) {
             $error_ref->{reported} = 1;
         }
         else {
-            open ERROR_FILE, ">$error_file";
-            print ERROR_FILE $message;
-            close ERROR_FILE;
+            open my $Error_File, '>', $error_file;
+            print $Error_File $message;
+            close $Error_File;
         }
     }
 
@@ -1262,9 +1266,9 @@ sub Notify() {
 
     my $log_file = "$Install_Dir/var/$Program_Name.log";
     Gridmap_Utils::Untaint $log_file;
-    open LOG, ">>$log_file";
-    print LOG Gridmap_Utils::Time_Image $now,
-              " $Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    open my $Log, '>>', $log_file;
+    print $Log Gridmap_Utils::Time_Image $now,
+               " $Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
 
     #
     # _NEW_ERRORS is a subset of _ERRORS, specifically the errors
@@ -1279,9 +1283,9 @@ sub Notify() {
                     push @{$ref->{_NEW_ERRORS}}, $error;
                     $new_error_count ++;
                     if (defined $error->{filename}) {
-                        open FILE, ">$error->{filename}";
-                        print FILE $error->{message}, "\n";
-                        close FILE;
+                        open my $File, '>', $error->{filename};
+                        print $File $error->{message}, "\n";
+                        close $File;
                     }
                 }
             }
@@ -1291,31 +1295,20 @@ sub Notify() {
         }
     }
 
-# ========================================================================
-# TO DO:
-# Treat elements of _ERRORS as records (see sub Error for details).
-# Check each error record to see whether it's already been reported
-# by e-mail (corresponding file in var/reported-errors directory).
-# If so, log but don't report by e-mail.
-# If not, log, report by e-mail, and create notification file.
-# 
-# Eventually, consider a mechanism to clean out old notification files.
-# ========================================================================
-
     foreach my $ref (@ca_info) {
         if (defined $ref->{_MESSAGES} or defined $ref->{_ERRORS}) {
-            print LOG "$ref->{HASH} $ref->{CA_NAME}:\n";
+            print $Log "$ref->{HASH} $ref->{CA_NAME}:\n";
 
             if (defined $ref->{_MESSAGES}) {
                 foreach my $message (@{$ref->{_MESSAGES}}) {
-                    print LOG "    $message";
+                    print $Log "    $message";
                 }
             }
 
             if (defined $ref->{_ERRORS}) {
                 my @error_list = @{$ref->{_ERRORS}};
                 foreach my $error (@error_list) {
-                    print LOG "    >>> ERROR: $error->{message}";
+                    print $Log "    >>> ERROR: $error->{message}";
                 }
             }
 
@@ -1330,8 +1323,8 @@ sub Notify() {
         }
     }
 
-    print LOG "\n";
-    close LOG;
+    print $Log "\n";
+    close $Log;
 
     if ($User_Opt->{email} and $new_error_count > 0) {
         my $subject = "$Program_Name: $new_error_count error(s), " .
