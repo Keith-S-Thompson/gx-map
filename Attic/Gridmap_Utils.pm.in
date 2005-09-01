@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.94 2005-08-31 21:05:35-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.95 2005-08-31 21:28:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -732,11 +732,12 @@ sub Write_Records($$@) {
     #
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
+    my $File = undef;
     if ($filename eq '-') {
-        open my $File, '>-' or die "stdout: $!\n";
+        open $File, '>-' or die "stdout: $!\n";
     }
-    else }
-        open my $File, '>>', $filename or die "${filename}: $!\n";
+    else {
+        open $File, '>>', $filename or die "${filename}: $!\n";
     }
     print $File $output or die "printing to ${filename}: $!\n";
     close $File or die "closing ${filename}: $!\n";
@@ -857,11 +858,12 @@ sub Read_Records(@) {
     #
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
+    my $File = undef;
     if ($filename eq '-') {
-        open my $File, '<-' or die "stdin: $!\n";
+        open $File, '<-' or die "stdin: $!\n";
     }
     else {
-        open my $File, '<', $filename or die "${filename}: $!\n";
+        open $File, '<', $filename or die "${filename}: $!\n";
     }
     my @result = ();
     my $ref = ( $multiple ? undef : {} );
