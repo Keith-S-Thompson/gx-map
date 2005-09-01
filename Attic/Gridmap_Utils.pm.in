@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.91 2005-08-30 18:51:15-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.92 2005-08-31 17:24:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -179,8 +179,8 @@ sub Debugf(@);
 #                                  ADMIN_EMAIL
 #                                  VALID_MAPPINGS_FILE );
 #     my %optional_var = ( VALID_MAPPINGS_FILE => 1 );
-#     open CONFIG, $config_file or die "$config_file: $!\n";
-#     while (<CONFIG>) {
+#     open my $Config, '<', $config_file or die "$config_file: $!\n";
+#     while (<$Config>) {
 #         s/#.*$//;
 #         s/^\s+//;
 #         s/\s+$//;
@@ -213,7 +213,7 @@ sub Debugf(@);
 #             }
 #         }
 #     }
-#     close CONFIG;
+#     close $Config;
 #     die @errors if @errors;
 # } Get_Config
 
@@ -411,8 +411,8 @@ sub Dir_Error($) {
         $< = 1;
     }
     Untaint $temp_file_name;
-    open TEMP, ">$temp_file_name" or return "Cannot create file in $dir";
-    close TEMP;
+    open my $Temp, '>', $temp_file_name or return "Cannot create file in $dir";
+    close $Temp;
     if (chown(0, 0, $temp_file_name) == 1) {
         $result = "$dir allows non-root chown";
     }
@@ -729,9 +729,9 @@ sub Write_Records($$@) {
         }
     }
 
-    open FILE, ">>$filename" or die "${filename}: $!\n";
-    print FILE $output or die "printing to ${filename}: $!\n";
-    close FILE or die "closing ${filename}: $!\n";
+    open my $File, '>>', $filename or die "${filename}: $!\n";
+    print $File $output or die "printing to ${filename}: $!\n";
+    close $File or die "closing ${filename}: $!\n";
 } # Write_Records
 
 # ----------------------------------------------------------------------
@@ -846,7 +846,7 @@ sub Read_Records(@) {
         die "Read_Records: Usage error, -keep-comments vs. -single\n";
     }
 
-    open FILE, $filename or die "${filename}: $!\n";
+    open my $File, '<', $filename or die "${filename}: $!\n";
     my @result = ();
     my $ref = ( $multiple ? undef : {} );
     #
@@ -857,7 +857,7 @@ sub Read_Records(@) {
     #
     my $context = $multiple ? 'none' : 'record';
     LINE:
-    while (<FILE>) {
+    while (<$File>) {
         chomp;
         s/^\s+//;
         s/\s+$//;
@@ -936,7 +936,7 @@ sub Read_Records(@) {
             }
         }
     }
-    close FILE;
+    close $File;
     if ($keep_comments and $context eq 'comment') {
         push @result, $ref;
         $context = 'none';
@@ -1147,21 +1147,21 @@ my $Download_Index = 0;
 # ----------------------------------------------------------------------
 
 sub Init_Cache_Info() {
-    opendir DIR, $Download_Dir or die "$Download_Dir: $!\n";
+    opendir my $Dir, $Download_Dir or die "$Download_Dir: $!\n";
     SUBDIR:
-    foreach my $subdir (sort readdir DIR) {
+    foreach my $subdir (sort readdir $Dir) {
         next SUBDIR if $subdir !~ /^\d+-\d+-\d+$/;
-        open URL, "$Download_Dir/$subdir/.url" or next SUBDIR;
-        my $url = <URL>;
+        open my $URL_File, '<', "$Download_Dir/$subdir/.url" or next SUBDIR;
+        my $url = <$URL_File>;
         chomp $url;
-        close URL;
+        close $URL_File;
         my $filename = "$Download_Dir/$subdir/" .
                        File::Basename::basename $url;
         Untaint $url;
         Untaint $filename;
         $Cache_File{$url} = $filename;
     }
-    closedir DIR;
+    closedir $Dir;
 } # Init_Cache_Info
 
 # ----------------------------------------------------------------------
@@ -1212,9 +1212,9 @@ sub Cache_File($;$) {
                                      $url;
         }
         if ($result == 0) {
-            open URL, ">$dir/.url" or die "$dir/.url: $!\n";
-            print URL "$url\n";
-            close URL;
+            open my $URL_File, '>', "$dir/.url" or die "$dir/.url: $!\n";
+            print $URL_File "$url\n";
+            close $URL_File;
             $Cache_File{$url} = $cache_file;
         }
         else {
@@ -1342,9 +1342,9 @@ sub Cache_File($;$) {
 #     my $curr_entry = undef;
 #     my %seen = ();              # user@namespace or UID@namespace seen
 # 
-#     open MAP, $filename or return $!;
+#     open my $Map, '<', $filename or return $!;
 #     LINE:
-#     while (<MAP>) {
+#     while (<$Map>) {
 #         #
 #         # First, parse the line into tokens.
 #         #
@@ -1466,7 +1466,7 @@ sub Cache_File($;$) {
 #             }
 #         }
 #     }
-#     close MAP;
+#     close $Map;
 # 
 #     # Add a '{' to this comment so brace-matching works when I edit this.
 #     return "Missing '}' at end of file" if defined $curr_entry;
@@ -1547,8 +1547,8 @@ sub Cache_File($;$) {
 # sub Read_Admin_List($) {
 #     my($filename) = @_;
 #     my $Map = {};
-#     open MAP, $filename or return $!;
-#     while (<MAP>) {
+#     open my $Map_File, '<', $filename or return $!;
+#     while (<$Map_File>) {
 #         chomp;
 #         s/#.*$//;
 #         s/^\s*//;
@@ -1563,7 +1563,7 @@ sub Cache_File($;$) {
 #             return "Syntax error on line $line";
 #         }
 #     }
-#     close MAP;
+#     close $Map_File;
 #     return $Map;
 # } # Read_Admin_List
 
@@ -1650,9 +1650,9 @@ sub Send_Email($$$) {
         next if $@;
         my $command = "$mail_program -s '$subject' $recipient";
         Gridmap_Utils::Untaint $command;
-        open PIPE, "| $command";
-        print PIPE $body;
-        close PIPE;
+        open my $Pipe, '|-', $command;
+        print $Pipe $body;
+        close $Pipe;
         last;
     }
 } # Send_Email
