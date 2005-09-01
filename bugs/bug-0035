@@ -1,4 +1,4 @@
-# $Id: bug-0035,v 1.3 2005-08-03 20:50:51-07 kst Exp $
+# $Id: bug-0035,v 1.4 2005-09-01 16:16:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0035,v $
 
 gx-map bug 0035
@@ -6,7 +6,7 @@ Date: Mon 2005-06-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed
+Status: Fixed ?
 Title: Store all DNs in new (GT3+) form
 
 Summary:
