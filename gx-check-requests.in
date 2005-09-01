@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.55 2005-08-02 21:36:02-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.56 2005-08-31 17:24:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -130,8 +130,8 @@ if (-e $lock_file) {
         Gridmap_Utils::Time_Image $lock_time,
         " ($delta second(s))\n";
 }
-open LOCK, ">$lock_file";
-close LOCK;
+open my $Lock, '>', $lock_file;
+close $Lock;
 
 my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
@@ -143,9 +143,9 @@ my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
 my %is_valid_operation = map { $_ => 1 } @valid_operations;
 
-opendir DIR, $new_request_dir or die "$new_request_dir: $!\n";
-my @files = grep /\.request$/, sort readdir DIR;
-closedir DIR;
+opendir my $Dir, $new_request_dir or die "$new_request_dir: $!\n";
+my @files = grep /\.request$/, sort readdir $Dir;
+closedir $Dir;
 
 foreach my $file (@files) {
     Gridmap_Utils::Untaint $file;
@@ -462,11 +462,11 @@ sub Append_To_Log($@) {
     my $RCS_file = "$RCS_dir/$log_file_basename,v";
 
     if (not -e $log_file) {
-        open LOG, ">$log_file" or die "$log_file: $!\n";
-        print LOG "# \$", "Id:\$\n",
-                  "# \$", "Source:\$\n",
-                  "\n";
-        close LOG;
+        open my $Log, '>', $log_file or die "$log_file: $!\n";
+        print $Log "# \$", "Id:\$\n",
+                   "# \$", "Source:\$\n",
+                   "\n";
+        close $Log;
     }
 
     #
