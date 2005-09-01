@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.25 2005-07-30 03:08:05-07 kst Exp $
+# $Id: gx-request.in,v 1.26 2005-08-31 17:24:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -473,9 +473,14 @@ sub Get_DN_From_File($) {
 
     Gridmap_Utils::Use_Commands 'openssl';
 
-    open PIPE, "openssl x509 -in '$file' -noout -subject 2>/dev/null |";
-    my @output = <PIPE>;
-    close PIPE;
+    #
+    # We deliberately don't bother checking for errors.  If we get the
+    # expected output, we use it; if not, we don't bother to distinguish
+    # the reason we couldn't execute the command.
+    #
+    open my $Pipe, '-|', "openssl x509 -in '$file' -noout -subject 2>/dev/null";
+    my @output = <$Pipe>;
+    close $Pipe;
 
     return "Missing or bad output from openssl for $file"
         if scalar @output != 1;
@@ -561,9 +566,9 @@ sub Request_Update() {
     my $timestamp = Gridmap_Utils::Long_Time_Image $Now;
     my $info = "Update requested by $PW->{name} on $hostname at $timestamp\n";
 
-    open FILE, ">>$request_file" or die "$request_file: $!\n";
-    print FILE $info;
-    close FILE;
+    open my $Request, '>>', $request_file or die "$request_file: $!\n";
+    print $Request $info;
+    close $Request;
     if (not $Options->{quiet}) {
         print "Request processed.\n";
         print "The grid-mapfiles should be updated within a few minutes.\n";
