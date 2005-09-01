@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.56 2005-08-31 17:24:06-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.57 2005-08-31 19:16:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -513,7 +513,7 @@ sub Usage(@) {
 Usage: $Program_Name [options]
     -help           : Display this message and exit
     -version        : Display version information and exit
-    -namespace name : Specify namespace (e.g., "$Gridmap_Utils::Config{NAMESPACE}")
+    -namespace name : Specify namespace (default is "$Gridmap_Utils::Config{NAMESPACE}")
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
