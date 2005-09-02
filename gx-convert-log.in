@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.24 2005-07-29 20:16:25-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.25 2005-09-01 21:32:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -122,7 +122,7 @@ if (@missing_accounts) {
     Usage "Missing account$s: @missing_accounts\n";
 }
 
-my $Rev = '$Revision: 1.24 $';
+my $Rev = '$Revision: 1.25 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -276,7 +276,7 @@ sub Usage(@) {
 Usage: $Program_Name [options] logfile
 
 Reads a gx-map requests.log file and writes on stdout an equivalent
-file for use with gx-map release 0.4.x.  Adds a SOURCE attribute
+file for use with the current gx-map release.  Adds a SOURCE attribute
 to each record that doesn't already have one.
 
 If the "-old-admins" or "-new-admin" option is specified, the
