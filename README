@@ -1,5 +1,10 @@
-# $Id: README,v 1.24 2005-05-07 03:52:11-07 kst Exp $
+# $Id: README,v 1.25 2005-09-01 21:30:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
+
+========================================================================
+TODO:
+Update this for release 0.5.x
+========================================================================
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
 and CA files.
