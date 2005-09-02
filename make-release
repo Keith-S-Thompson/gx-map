@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.11 2005-08-30 18:02:42-07 kst Exp $
+# $Id: make-release,v 1.12 2005-09-02 16:06:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -40,7 +40,8 @@ for file in \
     gx-map.pdf \
     gx-map.ppt \
     gx-propagate.in.teragrid \
-    sample.conf
+    sample.conf \
+    test-gx-map
 do
     try cp -p ../../$file .
 done
