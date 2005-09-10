@@ -1,0 +1,17 @@
+# $Id: tg-ca-list,v 1.1 2005-09-09 19:32:59-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/tg-ca-list,v $
+
+01621954 # UK e-Science CA
+1c3f2ca8 # DOEGrids CA
+2ca73e82 # USC PKI Lite CA
+34a5e0db # UCSD Telescience CA
+3deda549 # SDSC CA
+4a6cd8b1 # NCSA CA
+67e8acfa # Purdue TeraGrid Registration Authority
+85ca9edc # PSC Kerberos Certification Authority
+95009ddc # Purdue CA
+9a1da9f9 # TACC Certification Authority
+aa99c057 # PSC Root Certificate Authority
+b89793e4 # NPACI CA
+d1b603c3 # ESnet Root CA
+fa9c3452 # USC Kerberos Certification Authority v2
