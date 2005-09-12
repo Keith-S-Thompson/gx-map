@@ -1,0 +1,30 @@
+# $Id: bug-0049,v 1.1 2005-09-11 21:26:47-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0049,v $
+
+gx-map bug 0049
+Date: Sun 2005-09-11
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a1
+Status: Open
+Title: How to handle https:// URLs
+
+Summary:
+Different versions of wget handle https:// URLs differently.
+Versions up to 1.6 don't handle them at all.  Versions 1.7 through
+1.9.1 can optionally be configured with SSL support.  Starting in
+version 1.10, wget requires the host certificate for the server,
+unless the "--no-check-certificate" option is given.
+
+As a result, if you have wget version 1.10 or newer, gx-map
+(particularly gx-ca-update) will not be able to download files from
+https servers.
+
+One possible fix is to use wget with the "--no-check-certificate"
+option *if* the URL uses https *and* the version (checked with
+"wget --version") is 1.10 or higher.
+
+A better solution is to implement the fix for bug-0022: stop using
+wget and use curl instead.  "curl --head <url>" shows the timestamp
+of the file without downloading it.  "curl -s -o <filename> <url>"
+will download to a specified file.
