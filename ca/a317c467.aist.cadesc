@@ -1,0 +1,17 @@
+# $Id: a317c467.aist.cadesc,v 1.1 2005-09-13 17:22:41-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/a317c467.aist.cadesc,v $
+
+CA_NAME             AIST GRID CA
+HOMEPAGE            https://www.apgrid.org/CA/AIST/Production/system.html
+CONTACT             gridca@m.aist.go.jp
+HASH                a317c467
+SUBJECT             /C=JP/O=AIST/OU=GRID/CN=Certificate Authority
+MAY_SIGN            /C=JP/O=AIST/OU=GRID/*
+CERTIFICATE_MD5     CE:5A:D7:BC:AC:74:A0:60:A7:22:61:C5:C9:A9:DA:3F
+CERTIFICATE_SHA1    67:7F:8A:AD:3F:3E:CF:84:3D:F7:47:8B:E6:39:A4:F5:67:2D:CD:BA
+CERTIFICATE_URL     https://www.apgrid.org/CA/AIST/Production/a317c467.0
+SIGNING_POLICY_URL  https://www.apgrid.org/CA/AIST/Production/a317c467.signing_policy
+CRL_URL             https://www.apgrid.org/CA/AIST/Production/a317c467.r0
+CERT_EXPIRES        Oct 18 10:28:35 2009 GMT
+
+# MD5 and SHA1 fingerprints from a317c467.0, downloaded 2005-09-13
