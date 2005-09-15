@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.96 2005-09-01 21:28:59-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.97 2005-09-14 20:20:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -365,6 +365,10 @@ sub Get_Groups($) {
 
 # ----------------------------------------------------------------------
 
+sub Do_Nothing($) {
+} # Do_Nothing
+
+# ----------------------------------------------------------------------
 #
 # Return the current hostname, as a fully qualified domain name if
 # possible.  Use the Net::Domain module if it's available; otherwise,
@@ -372,6 +376,13 @@ sub Get_Groups($) {
 #
 sub Get_Hostname() {
     if ($Have_Net_Domain_Module) {
+        #
+        # Workaround for Perl bug on Blue Gene/L (Linux/PPC64).
+        # Calls that depend on asm-ppc/unistd.ph result in spurious
+        # warning messages.  Temporarily redirect the warning handler
+        # to avoid this.
+        #
+        local($SIG{__WARN__}) = \&Do_Nothing;
         return Net::Domain::hostfqdn();
     }
     else {
