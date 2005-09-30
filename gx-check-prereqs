@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.16 2005-08-26 16:32:28-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.17 2005-09-29 18:30:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -57,7 +57,7 @@ sub Usage(@);
 sub Check_Perl($);
 sub Check_Command($);
 sub Check_Module($;$);
-sub Wget_Supports_SSL();
+# sub Wget_Supports_SSL();
 sub Vprint(@);
 sub Vprintf(@);
 
@@ -157,22 +157,22 @@ Note: Missing Net::Domain module is ok, will use hostname command
 EOF
 }
 
-if ($Command_Found{wget}) {
-    my $ssl = Wget_Supports_SSL();
-    if (not defined $ssl) {
-        push @Notes, <<"EOF";
-Note: Can't determine whether wget supports SSL.
-
-EOF
-    }
-    elsif (not $ssl) {
-        push @Notes, <<"EOF";
-Note: Your wget command does not support SSL.
-      This may be a problem for CAs that use https.
-
-EOF
-    }
-}
+# if ($Command_Found{wget}) {
+#     my $ssl = Wget_Supports_SSL();
+#     if (not defined $ssl) {
+#         push @Notes, <<"EOF";
+# Note: Can't determine whether wget supports SSL.
+# 
+# EOF
+#     }
+#     elsif (not $ssl) {
+#         push @Notes, <<"EOF";
+# Note: Your wget command does not support SSL.
+#       This may be a problem for CAs that use https.
+# 
+# EOF
+#     }
+# }
 
 if (@Errors) {
     print @Errors;
@@ -251,22 +251,22 @@ sub Check_Module($;$) {
 
 # ----------------------------------------------------------------------
 
-sub Wget_Supports_SSL() {
-    my $lines = 0;
-    my $supports_ssl = 0;
-    open PIPE, "wget --help |";
-    while (<PIPE>) {
-        $lines ++;
-        $supports_ssl = 1 if /\bssl\b/i;
-    }
-    close PIPE;
-    if ($lines == 0) {
-        return 'unknown';
-    }
-    else {
-        return $supports_ssl;
-    }
-} # Wget_Supports_SSL
+# sub Wget_Supports_SSL() {
+#     my $lines = 0;
+#     my $supports_ssl = 0;
+#     open PIPE, "wget --help |";
+#     while (<PIPE>) {
+#         $lines ++;
+#         $supports_ssl = 1 if /\bssl\b/i;
+#     }
+#     close PIPE;
+#     if ($lines == 0) {
+#         return 'unknown';
+#     }
+#     else {
+#         return $supports_ssl;
+#     }
+# } # Wget_Supports_SSL
 
 # ----------------------------------------------------------------------
 
