@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.17 2005-09-29 18:30:00-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.18 2005-10-11 18:38:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -210,7 +210,7 @@ sub Check_Perl($) {
 
 sub Check_Command($) {
     my($command) = @_;    
-    Vprintf "%-50s", "Checking for $command command: ";
+    Vprintf "%-42s", "Checking for $command command: ";
     foreach my $dir (@path) {
         if (-x "$dir/$command") {
             Vprint "found $dir/$command\n";
@@ -235,7 +235,7 @@ sub Check_Module($;$) {
         $teragrid = 1;
     }
     my($module) = @_;
-    Vprintf "%-50s", "Checking for Perl module $module: ";
+    Vprintf "%-42s", "Checking for Perl module $module: ";
     eval "require $module";
     if ($@ eq '') {
         Vprint "found\n";
