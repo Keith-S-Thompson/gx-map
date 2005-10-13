@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.65 2005-08-31 17:24:06-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.66 2005-10-12 20:05:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1003,11 +1003,11 @@ sub Update_CRL($) {
             {
                 Vprint "CRL update not needed\n";
             }
-            elsif ($new_crl_info->{next_update} <
-                   $old_crl_info->{next_update})
+            elsif ($new_crl_info->{last_update} <
+                   $old_crl_info->{last_update})
             {
                 Error $ref, undef, undef,
-                            "Newly downloaded CRL expires sooner " .
+                            "Newly downloaded CRL seems to be older " .
                             "than old CRL, not installing\n";
             }
             else {
