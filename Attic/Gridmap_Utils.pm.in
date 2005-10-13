@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.97 2005-09-14 20:20:39-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.98 2005-10-13 15:16:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -365,10 +365,6 @@ sub Get_Groups($) {
 
 # ----------------------------------------------------------------------
 
-sub Do_Nothing($) {
-} # Do_Nothing
-
-# ----------------------------------------------------------------------
 #
 # Return the current hostname, as a fully qualified domain name if
 # possible.  Use the Net::Domain module if it's available; otherwise,
@@ -382,7 +378,7 @@ sub Get_Hostname() {
         # warning messages.  Temporarily redirect the warning handler
         # to avoid this.
         #
-        local($SIG{__WARN__}) = \&Do_Nothing;
+        local($SIG{__WARN__}) = sub { };
         return Net::Domain::hostfqdn();
     }
     else {
