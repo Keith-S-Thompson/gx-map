@@ -1,0 +1,22 @@
+# $Id: bug-0050,v 1.1 2005-10-12 20:02:17-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0050,v $
+
+gx-map bug 0050
+Date: Wed 2005-10-12
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a1
+Status: Open
+Title: Failure to install updated CRLs
+
+Summary:
+gx-ca-update checks the lastUpdate and nextUpdate fields of a newly
+downloaded CRL.  Currently, if the new nextUpdate field precedes the
+nextUpdate field of the previously cached copy. it doesn't install it.
+
+This is incorrect behavior.  It's harmless as long as the lifetime
+(nextUpdate - lastUpdate) is constant, but if the lifetime is shortened
+it can prevent installation of newer CRLs, possibly allowing revoked
+certificates to continue to be accepted.  For example, if a CRL's
+lifetime is shortened from 14 days to 7 days no new CRLs will be
+installed for a week after the change.
