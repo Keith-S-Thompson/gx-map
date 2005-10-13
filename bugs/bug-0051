@@ -1,4 +1,4 @@
-# $Id: bug-0051,v 1.1 2005-10-13 14:50:15-07 kst Exp $
+# $Id: bug-0051,v 1.2 2005-10-13 14:54:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0051,v $
 
 gx-map bug 0051
@@ -6,7 +6,7 @@ Date: Thu 2005-10-13
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a1
-Status: Open
+Status: Fixed ?
 Title: Potentially long command lines for gx-request -set
 
 Summary:
@@ -15,3 +15,7 @@ command-line arguments with the "-set" option.  On some systems,
 this might overflow the maximum command line length, either of the
 OS or of the shell.  I don't think this is likely on modern systems,
 but it's worth providing an alternative.
+
+Fix:
+gx-request.in 1.27
+gx-map release 0.5a2
