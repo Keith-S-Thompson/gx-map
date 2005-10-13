@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.40 2005-08-05 23:15:06-07 kst Exp $
+# $Id: install-gx-map.in,v 1.41 2005-10-13 14:54:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -121,8 +121,8 @@ if [ ! -f $DATA_DIR/new-requests/.update ] ; then
 fi
 
 if [ ! -h $INSTALL_DIR/var ] ; then
-    verbosely ln -s $DATA_DIR $INSTALL_DIR/var
+    verbosely ln -s -f $DATA_DIR $INSTALL_DIR/var
 fi
 
 verbosely cd $BIN_DIR
-verbosely ln -s gx-request gx-map
+verbosely ln -s -f gx-request gx-map
