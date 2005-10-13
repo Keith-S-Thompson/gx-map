@@ -1,4 +1,4 @@
-# $Id: bug-0050,v 1.1 2005-10-12 20:02:17-07 kst Exp $
+# $Id: bug-0050,v 1.2 2005-10-13 14:50:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0050,v $
 
 gx-map bug 0050
@@ -6,7 +6,7 @@ Date: Wed 2005-10-12
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a1
-Status: Open
+Status: Fixed ?
 Title: Failure to install updated CRLs
 
 Summary:
@@ -20,3 +20,7 @@ it can prevent installation of newer CRLs, possibly allowing revoked
 certificates to continue to be accepted.  For example, if a CRL's
 lifetime is shortened from 14 days to 7 days no new CRLs will be
 installed for a week after the change.
+
+Fix:
+gx-ca-update.in 1.66
+gx-map release 0.5.0a2
