@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.26 2005-08-31 17:24:07-07 kst Exp $
+# $Id: gx-request.in,v 1.27 2005-10-13 14:53:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -69,7 +69,8 @@ sub Get_Options_Interactively();
 sub Get_Options_From_Command_Line();
 sub Is_Valid_DN($);
 sub Request_Update();
-sub Get_DN_From_File($);
+sub Get_DN_From_Certificate($);
+sub Get_DNs_From_List_File($);
 sub User_Cert_File_Name();
 sub Proxy_File_Name();
 sub Gen_Request_File_Name($);
@@ -134,7 +135,7 @@ my @Opts = ( $User_Opt,
                  set
                  update
                  quiet force no-admin
-                 dn=s@ certificate-file=s proxy
+                 dn=s@ certificate-file=s proxy dn-list-file=s
                  username=s
                  directory=s
                  email=s
@@ -457,8 +458,8 @@ unless ($Options->{force} and $Options->{quiet}) {
 ########################################################################
 
 #
-# Given a filename, invokes openssl to determine the subject name and
-# returns the resulting DN.
+# Given a certificate file name, invokes openssl to determine the subject
+# name and returns the resulting DN.
 # 
 # The output must be a single line starting with '/'.
 #
@@ -466,7 +467,7 @@ unless ($Options->{force} and $Options->{quiet}) {
 # be distinguished from a valid DN by the absence of a leading '/'.
 # (Not pretty, but it works.)
 #
-sub Get_DN_From_File($) {
+sub Get_DN_From_Certificate($) {
     my($file) = @_;
     return "No file $file"     if not -e $file;
     return "Cannot read $file" if not -r $file;
@@ -491,7 +492,38 @@ sub Get_DN_From_File($) {
     $line =~ s/^subject=\s*//;
     return "Bad DN from openssl for $file" if $line !~ /^\//;
     return $line;
-} # Get_DN_From_File
+} # Get_DN_From_Certificate
+
+# ----------------------------------------------------------------------
+
+#
+# Given a file name, reads a list of DNs listed in the file.
+#
+# Since the file is expected to be generated automatically, the format is
+# not fancy; one DN per line, no comments, no blank lines, no quotation
+# marks.  Each line must begin with a '/' and end with a non-whitespace
+# character.
+#
+sub Get_DNs_From_List_File($) {
+    my($file) = @_;
+    my $List_File;
+    if ($file eq '-') {
+        open $List_File, '<-' or die "stdin: $!\n";
+    }
+    else {
+        open $List_File, '<', $file or die "${file}: $!\n";
+    }
+    my @result = <$List_File>;
+    close $List_File;
+    chomp @result;
+
+    for (my $i = 0; $i <= $#result; $i ++) {
+        if ($result[$i] !~ m<^/.*\S$>) {
+            die "Invalid DN, $file line " . $i+1 . "\n";
+        }
+    }
+    return @result;
+} # Get_DNs_From_List_File
 
 # ----------------------------------------------------------------------
 
@@ -891,13 +923,13 @@ EOF
                 }
 
                 if (defined $cert_file) {
-                    $dn = Get_DN_From_File $cert_file;
+                    $dn = Get_DN_From_Certificate $cert_file;
                     if ($dn =~ /^\//) {
                         print "DN is \"$dn\"\n";
                     }
                     else {
                         #
-                        # Get_DN_From_File returned an error message.
+                        # Get_DN_From_Certificate returned an error message.
                         #
                         print "$dn\n";
                         undef $dn;
@@ -974,7 +1006,22 @@ sub Get_Options_From_Command_Line() {
     }
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
+
+    if (defined $User_Opt->{'dn-list-file'} and $OP ne 'set') {
+        Usage "The \"-dn-list-file\" option can be used only with \"-set\"\n";
+    }
+
     my @dn_list = @{$User_Opt->{dn}};
+    if (defined $User_Opt->{'dn-list-file'}) {
+        if (scalar @dn_list > 0) {
+            Usage "The \"-dn\" and \"-dn-list-file\" options " .
+                  "cannot be used together\n";
+        }
+        else {
+            @dn_list = Get_DNs_From_List_File $User_Opt->{'dn-list-file'};
+        }
+    }
+
     my $dn_count = scalar @dn_list +
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
                    (defined $User_Opt->{proxy} ? 1 : 0);
@@ -1077,16 +1124,16 @@ sub Get_Options_From_Command_Line() {
                     Usage "Cannot determine name of user certificate\n";
                 }
             }
-            my $dn = Get_DN_From_File $cert_file;
+            my $dn = Get_DN_From_Certificate $cert_file;
             if ($dn =~ /^\//) {
                 #
-                # Get_DN_From_File returned a valid DN
+                # Get_DN_From_Certificate returned a valid DN
                 #
                 $Options->{dn} = [ $dn ];
             }
             else {
                 #
-                # Get_DN_From_File returned an error message
+                # Get_DN_From_Certificate returned an error message
                 #
                 Usage "$dn\n";
             }
@@ -1172,11 +1219,9 @@ Option names may be abbreviated.
                               more DNs may be specified.  This is
                               equivalent to a "remove-user" request
                               followed by zero or more "add" requests.
-                              All DNs must be specified explicitly; the
-                              "-proxy" and "-certificate-file" options
+                              The "-proxy" and "-certificate-file" options
                               cannot be used with "-set".  This operation
-                              is not currently available in "-interactive"
-                              mode.
+                              is not available in "-interactive" mode.
     -update                 : Request an update of all grid-mapfiles.
                               This normally isn't necessary, but it can be
                               useful if you already have a certificate and
@@ -1201,6 +1246,11 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               "-certificate-file" is specified,
                               extract DN from \$X509_USER_CERT or
                               \$HOME/.globus/usercert.pem .
+    -dn-list-file file      : Read a list of DNs from a specified text file,
+                              one DN per line.  Use "-dn-list-file -" to read
+                              from stdin.  This cannot be used with other
+                              DN options (-dn, -proxy, -certificate-file),
+                              or with any operation other than "-set".
     -force-dn               : Normally, gx-map (minimally) checks the DN for
                               proper syntax; this option overrides that check.
     -username name          : Unix user name to map.
