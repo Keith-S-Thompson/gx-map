@@ -1,0 +1,36 @@
+# $Id: bug-0053,v 1.1 2005-10-14 13:52:09-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0053,v $
+
+gx-map bug 0053
+Date: Fri 2005-10-14
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a1
+Status: Open
+Title: Consider disallowing root as an administrator
+
+Summary:
+Running the gx-map cron jobs as root is unnecessary.  Apart from the
+general principle of not doing anything as root that doesn't actually
+*need* to be done as root, it can cause some problems.  See bug-0052
+for a bug that's triggered by running gx-check-requests as root.
+Also, NFS-mounted filesystems often don't allow root access (root is
+reduced to "nobody").
+
+The recommended practice is to set GLOBUS_ADMINS in the installation
+config file to a single, non-root, non-personal account.  (Using
+a personal account can cause problems if the owner leaves the
+organization, since the account name is permanently recorded in the
+requests.log file.)  The "globus" account is usually a good choice,
+or you can use a special "gx-map" account.
+
+Consider disallowing the use of "root" (or any account with UID 0)
+as an administrator.  Check during installation: disallow root as a
+member of GLOBUS_ADMINS, and don't allow root to run install-gx-map.
+Check during execution of gx-check-requests: bail out with an error
+message if running as root.
+
+We could also do some checking that the installed files, at least
+the data files, are owned by an admininistrative account.
+
+See also bug-0011, "Refactor GLOBUS_ADMINS".
