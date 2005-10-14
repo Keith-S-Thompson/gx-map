@@ -1,0 +1,26 @@
+# $Id: bug-0052,v 1.1 2005-10-14 13:33:35-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0052,v $
+
+gx-map bug 0052
+Date: Fri 2005-10-14
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a1
+Status: Open
+Title: Check for non-chown fails when running as root
+
+Summary:
+Kazi Anwar <kazi@ncsa.uiuc.edu> ran into this today while trying to
+install gx-map 0.4.5.
+
+gx-check-requests calls Gridmap_Utils::Dir_Error() which, among
+other things, attempts to determine whether the data directory allows
+non-root chowns (which would open a security hole, allowing forged
+requests).  If it's running as root, it attempts to drop its root
+privileges before doing the check.  This fails, incorrectly reporting
+that non-root chown *is* allowed, and causing gx-check-requests
+to terminate.
+
+Installing gx-map and running gx-check-requests as root is not
+recommended anyway (and I might consider disallowing it in a future
+release).
