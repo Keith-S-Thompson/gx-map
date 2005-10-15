@@ -1,0 +1,21 @@
+# $Id: bug-0054,v 1.1 2005-10-15 03:35:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0054,v $
+
+gx-map bug 0054
+Date: Sat 2005-10-15
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a2
+Status: Open
+Title: Ensure gx-map can be installed in $GLOBUS_LOCATION
+
+Summary:
+See also bug-0007, New configuration system.
+
+Make sure that gx-map can be installed in $GLOBUS_LOCATION.
+
+All file names must be distinct.  Look into the relationship between
+$GLOBUS_LOCATION/var and the gx-map var directory.
+
+A quick experiment indicates that it mostly works, but some problems
+may remain.
