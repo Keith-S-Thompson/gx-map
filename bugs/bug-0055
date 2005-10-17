@@ -1,0 +1,22 @@
+# $Id: bug-0055,v 1.1 2005-10-16 20:00:32-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0055,v $
+
+gx-map bug 0055
+Date: Sun 2005-10-16
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a2
+Status: Open
+Title: Send an e-mail warning on failure to download a file
+
+Summary:
+Currently, gx-ca-update sends an e-mail warning when a CRL has passed
+90% of its lifetime, and when it expires.  No warning is sent on a
+download failure as long as the last downloaded CRL is ok.
+
+Send an e-mail warning on a failure to download a CRL, even if the
+last one is ok.  We need to avoid sending this warning repeatedly,
+which may be trickier that for existing errors.  We might even consider
+sending another e-mail message if the CRL becomes available.
+
+See also bug-0034.
