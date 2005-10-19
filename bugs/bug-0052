@@ -1,4 +1,4 @@
-# $Id: bug-0052,v 1.1 2005-10-14 13:33:35-07 kst Exp $
+# $Id: bug-0052,v 1.2 2005-10-18 17:19:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0052,v $
 
 gx-map bug 0052
@@ -7,7 +7,7 @@ Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a1
 Status: Open
-Title: Check for non-chown fails when running as root
+Title: Check for non-root chown fails when running as root
 
 Summary:
 Kazi Anwar <kazi@ncsa.uiuc.edu> ran into this today while trying to
@@ -21,6 +21,22 @@ privileges before doing the check.  This fails, incorrectly reporting
 that non-root chown *is* allowed, and causing gx-check-requests
 to terminate.
 
+The code that attempts to drop root privileges is:
+
+    if ($running_as_root) {
+	$< = 1;
+    }
+    ... test chown ...
+    if ($running_as_root) {
+	$< = 0;
+    }
+
+$< is the real UID; I think it actually needs to set $>, the effective
+UID.
+
 Installing gx-map and running gx-check-requests as root is not
-recommended anyway (and I might consider disallowing it in a future
-release).
+recommended anyway; see bug-0053.
+
+I think I'm actually going to leave this un-corrected for now.
+If there's any good reason to support running as root, I can fix it
+later; if not, the code will go away anyway.
