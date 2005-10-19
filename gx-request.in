@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.27 2005-10-13 14:53:07-07 kst Exp $
+# $Id: gx-request.in,v 1.28 2005-10-18 20:57:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -180,7 +180,7 @@ if ($PW->{uid} != $<) {
 # option.
 #
 my $Globus_Admin = (not $User_Opt->{'no-admin'} and
-                    Gridmap_Utils::Is_Globus_Admin $PW->{name});
+                    Gridmap_Utils::Is_Admin_Account $PW->{name});
 my $Options  = {};
 
 if ($User_Opt->{interactive}) {
