@@ -1,4 +1,4 @@
-# $Id: bug-0053,v 1.1 2005-10-14 13:52:09-07 kst Exp $
+# $Id: bug-0053,v 1.2 2005-10-18 21:26:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0053,v $
 
 gx-map bug 0053
@@ -6,7 +6,7 @@ Date: Fri 2005-10-14
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a1
-Status: Open
+Status: Fixed ?
 Title: Consider disallowing root as an administrator
 
 Summary:
@@ -34,3 +34,11 @@ We could also do some checking that the installed files, at least
 the data files, are owned by an admininistrative account.
 
 See also bug-0011, "Refactor GLOBUS_ADMINS".
+
+Fixed:
+Gridmap_Utils.pm.in 1.100
+configure-gx-map 1.31
+gx-ca-update.in 1.67
+gx-check-requests.in 1.58
+install-gx-map.in 1.42
+gx-map release 0.5.0a3
