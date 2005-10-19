@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.100 2005-10-18 20:52:21-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.101 2005-10-18 21:10:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -437,7 +437,7 @@ sub Dir_Error($) {
 
 sub Require_Owner($) {
     my($program_name) = @_;
-    my $owner = Gridmap_Utils::Config{GX_MAP_OWNER}; 
+    my $owner = $Gridmap_Utils::Config{GX_MAP_OWNER}; 
     my $owner_pw = Gridmap_Utils::Get_PW $owner;
     my $owner_uid = $owner_pw->{uid};
     #
@@ -462,7 +462,7 @@ sub Is_Admin_Account($) {
         %is_admin_account = map { $_ => 1 } @admins;
     }
 
-    return $is_admin_account{$user};
+    return $is_admin_account{$account};
 } # Is_Admin_Account
 
 # ----------------------------------------------------------------------
