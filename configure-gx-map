@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.30 2005-08-30 18:02:23-07 kst Exp $
+# $Id: configure-gx-map,v 1.31 2005-10-18 20:27:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -59,6 +59,7 @@ use File::Basename;
 sub Home_Dir($);
 sub Command_Exists($$);
 sub Get_Version();
+sub Check_Admin($$);
 sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
@@ -68,7 +69,7 @@ my @Var_Names = qw( PERL PATH
                     NAMESPACE
                     INSTALL_DIR DATA_DIR
                     REQUESTS_LOG_PERMISSIONS
-                    GLOBUS_ADMINS ADMIN_EMAIL );
+                    GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 $Valid_Var_Name{VALID_MAPPINGS_FILE} = 1; # optional
 $Valid_Var_Name{GX_PROPAGATE} = 1; # optional
@@ -124,6 +125,18 @@ while (<CONFIG>) {
             push @errors, "Invalid name \"$name\", $Config_File line $.\n";
         }
     }
+    elsif (/^(\w+)$/) {
+        #
+        # Only ADDITIONAL_ADMINS is allowed to have an empty definition.
+        #
+        my($name) = $1;
+        if ($name eq 'ADDITIONAL_ADMINS') {
+            $Config{$name} = '';
+        }
+        else {
+            push @errors, "Invalid value for $name, $Config_File line $.\n";
+        }
+    }
 }
 close CONFIG;
 
@@ -134,8 +147,7 @@ foreach my $name (@Var_Names) {
 }
 
 #
-# Do some quick sanity checks (especially for GLOBUS_ADMINS, whose syntax
-# has changed in release 0.4).
+# Do some quick sanity checks.
 #
 if (defined $Config{PERL} and
     ($Config{PERL} !~ /^\// or not -x $Config{PERL}))
@@ -178,25 +190,12 @@ if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
                       "(use 400, 440, or 444)\n";
     }
 }
-if (defined $Config{GLOBUS_ADMINS}) {
-    foreach my $admin (split /\s+/, $Config{GLOBUS_ADMINS}) {
-        if ($admin =~ /^user:(.*)/) {
-            my $admin_name = $1;
-            push @errors,
-                 "$Config_File: Replace \"$admin\" with \"$admin_name\" " .
-                 "in GLOBUS_ADMINS\n";
-        }
-        elsif ($admin =~ /^group:/) {
-            push @errors, "$Config_File: Groups are no longer supported " .
-                          "in GLOBUS_ADMINS\n";
-        }
-        else {
-            my @pw = getpwnam $admin;
-            if (not @pw) {
-                push @errors,
-                     "$Config_File: No user \"$admin\" in GLOBUS_ADMINS\n";
-            }
-        }
+if (defined $Config{GX_MAP_OWNER}) {
+    Check_Admin $Config{GX_MAP_OWNER}, 'GX_MAP_OWNER';
+}
+if (defined $Config{ADDITIONAL_ADMINS}) {
+    foreach my $acct (split /\s+/, $Config{ADDITIONAL_ADMINS}) {
+        Check_Admin $acct, 'ADDITIONAL_ADMINS';
     }
 }
 
@@ -331,6 +330,26 @@ sub Get_Version() {
     die "Can't get version number from $module\n" if not defined $result;
     return $result;
 } # Get_Version
+
+# ----------------------------------------------------------------------
+
+sub Check_Admin($$) {
+    my($acct, $from) = @_;
+    if ($acct eq 'root') {
+        push @errors, "$Config_File: root is not allowed in $from\n";
+    }
+    else {
+        my @pw = getpwnam $acct;
+        if (not @pw) {
+            push @errors,
+                 "$Config_File: No user \"$acct\" in $from\n";
+        }
+        elsif ($pw[2] eq 0) {
+            push @errors,
+                 "$Config_File: User \"$acct\" has UID 0, not allowed in $from\n";
+        }
+    }
+} # Check_Admin
 
 # ----------------------------------------------------------------------
 
