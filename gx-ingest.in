@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-ingest.in,v 1.16 2005-07-21 19:44:35-07 kst Exp $
+# $Id: gx-ingest.in,v 1.17 2005-10-18 20:54:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -143,9 +143,10 @@ Usage: $Program_Name [options] [files]
 
 Reads an existing grid-mapfile (from stdin if no name is specified).
 
-Writes on stdout a /bin/sh script that invokes gx-map for each entry
-in the input grid-mapfile.  The generated script must be run by a
-privileged user (see GLOBUS_ADMINS in your gx-map config file).
+Writes on stdout a /bin/sh script that invokes gx-request for each
+entry in the input grid-mapfile.  The generated script must be run
+by a privileged user (see GX_MAP_OWNER and ADDITIONAL_ADMINS in your
+gx-map config file).
 
 Be sure to check the generated script carefully before running it.
 EOF
