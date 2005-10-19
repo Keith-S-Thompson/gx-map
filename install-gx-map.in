@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.41 2005-10-13 14:54:56-07 kst Exp $
+# $Id: install-gx-map.in,v 1.42 2005-10-18 20:48:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -60,6 +60,12 @@ SBIN_DIR=$INSTALL_DIR/sbin
 LIB_DIR=$INSTALL_DIR/lib
 ETC_DIR=$INSTALL_DIR/etc
 DATA_DIR=%DATA_DIR%
+GX_MAP_OWNER=%GX_MAP_OWNER%
+
+if [ `whoami` != "$GX_MAP_OWNER" ] ; then
+    echo ">>> Installation must be done by the GX_MAP_OWNER ($GX_MAP_OWNER)" 1>&2
+    exit 1
+fi
 
 BIN_FILES="gx-request"
 SBIN_FILES="gx-check-requests gx-cleanup-logs gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
