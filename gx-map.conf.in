@@ -1,9 +1,5 @@
-# $Id: gx-map.conf.in,v 1.4 2005-10-18 19:51:50-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.5 2005-10-18 20:55:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
-
-TODO: Update for new configuration variables:
-    Replace GLOBUS_ADMINS by GX_MAP_OWNER, ADDITIONAL_ADMINS
-    Add GX_PROPAGATE
 
 #
 # configure-gx-map reads "gx-map.conf.in" and generates "gx-map.conf".
@@ -66,20 +62,33 @@ DATA_DIR        UNDEF  # Do not edit this line
 REQUESTS_LOG_PERMISSIONS 444
 
 #
-# A space-separated list of users who are allowed to run gx-map on behalf
-# of other users.
-# 
-# It is recommended that this variable be set to a single non-human
-# account name other than "root".  Making a human user an admin can cause
-# problems if the account's owner leaves the organization.  Using "root"
-# can cause problems if an NFS filesystem holding the data files is
-# mounted in a way that maps the "root" account to "nobody".
-# 
-# The "globus" account is probably a good choice, or you can create a
-# custom account (say, "gxmap") for the purpose.  Make sure that access
-# to the administrative account is restricted to trusted users.
+# The name of the Unix account that owns the gx-map installation.
+# This cannot be "root", or any account with UID 0.  This account
+# must be used to run install-gx-map (invoked by "make install")
+# and the gx-check-requests and gx-ca-update commands.
 #
-GLOBUS_ADMINS   globus
+# Recommended practice is to use a non-personal account.  "globus" is
+# usually a good choice, or you can create a special account for the
+# purpose.  Using a personal account can cause problems if the owner
+# of the account leaves the organization; the account name still needs
+# to be recognized as an administrator in old requests.log entries.
+#
+# This account is allowed to run the "gx-request" command on behalf
+# of other users, so access to this account *must* be guarded as
+# carefully as access to the root account.
+#
+GX_MAP_OWNER sample
+
+#
+# A space-separated list of zero or more users who are allowed to
+# run gx-map on behalf of other users.  These are in addition to the
+# account specified in GX_MAP_OWNER.
+#
+# Recommended practice is to leave this empty, allowing only a
+# single administrative account.  All the security considerations
+# for GX_MAP_OWNER apply equally to ADDITIONAL_ADMINS.
+#
+ADDITIONAL_ADMINS
 
 #
 # An e-mail address for notifications of significant actions.
@@ -94,3 +103,12 @@ ADMIN_EMAIL     UNDEF
 # installation.
 #
 VALID_MAPPINGS_FILE   UNDEF  # Do not edit this line
+
+#
+# A Perl source file that implements the gx-propagate command,
+# to be invoked as needed by gx-check-requests.  If not specified,
+# no gx-propagate command will be installed; there is no default
+# implementation.  (Currently, a TeraGrid-specific version is included
+# in the distribution.)
+#
+GX_PROPAGATE      UNDEF  # Do not edit this line
