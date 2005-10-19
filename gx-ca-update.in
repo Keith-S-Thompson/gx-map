@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.66 2005-10-12 20:05:26-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.67 2005-10-18 20:48:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -120,6 +120,11 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+#
+# This program may only be executed by the GX_MAP_OWNER.
+#
+Gridmap_Utils::Require_Owner $Program_Name;
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
