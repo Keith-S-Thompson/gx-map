@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.99 2005-10-14 21:19:25-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.100 2005-10-18 20:52:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -81,7 +81,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.0a2';
+    $VERSION = '0.5.0a3';
 
     $Debugging = undef;
     %Config = ( PERL                     => '%PERL%',
@@ -90,7 +90,8 @@ BEGIN {
                 INSTALL_DIR              => '%INSTALL_DIR%',
                 DATA_DIR                 => '%DATA_DIR%',
                 REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
-                GLOBUS_ADMINS            => '%GLOBUS_ADMINS%',
+                GX_MAP_OWNER             => '%GX_MAP_OWNER%',
+                ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
     use Cwd ();
@@ -119,8 +120,9 @@ sub Get_GR(;$);
 sub Get_Groups($);
 sub Get_Hostname();
 sub Dir_Error($);
+sub Require_Owner($);
 
-sub Is_Globus_Admin($);
+sub Is_Admin_Account($);
 
 sub Use_Commands(@);
 
@@ -175,9 +177,11 @@ sub Debugf(@);
 #                                  INSTALL_DIR
 #                                  DATA_DIR
 #                                  REQUESTS_LOG_PERMISSIONS
-#                                  GLOBUS_ADMINS
+#                                  GX_MAP_OWNER
+#                                  ADDITIONAL_ADMINS
 #                                  ADMIN_EMAIL
-#                                  VALID_MAPPINGS_FILE );
+#                                  VALID_MAPPINGS_FILE
+#                                  GX_PROPAGATE );
 #     my %optional_var = ( VALID_MAPPINGS_FILE => 1 );
 #     open my $Config, '<', $config_file or die "$config_file: $!\n";
 #     while (<$Config>) {
@@ -400,9 +404,14 @@ sub Get_Hostname() {
 # create files, and non-root users must *not* be able to use chown to
 # change the ownership of a file.
 #
+# A previous version of this function was designed to work when running
+# as root (it attempted to temporarily drop root privileges before
+# doing the chown).  The code was incorrect; see bug-0052.  Since this
+# function is called only from gx-ca-update, which cannot be run by
+# root (see bug-0053), the special-case code is no longer neccessary.
+#
 sub Dir_Error($) {
     my($dir) = @_;
-    my $running_as_root = ($< == 0);
     return "$dir does not exist"     if not -e $dir;
     return "$dir is not a directory" if not -d $dir;
     my @stat = stat $dir;
@@ -414,9 +423,6 @@ sub Dir_Error($) {
 
     my $temp_file_name = "$dir/tmp-" . time . "-$$";
     my $result = undef;
-    if ($running_as_root) {
-        $< = 1;
-    }
     Untaint $temp_file_name;
     open my $Temp, '>', $temp_file_name or return "Cannot create file in $dir";
     close $Temp;
@@ -424,33 +430,40 @@ sub Dir_Error($) {
         $result = "$dir allows non-root chown";
     }
     unlink $temp_file_name;
-    if ($running_as_root) {
-        $< = 0;
-    }
     return $result;
 } # Dir_Error
 
 # ----------------------------------------------------------------------
 
-my %is_globus_admin = ();
+sub Require_Owner($) {
+    my($program_name) = @_;
+    my $owner = Gridmap_Utils::Config{GX_MAP_OWNER}; 
+    my $owner_pw = Gridmap_Utils::Get_PW $owner;
+    my $owner_uid = $owner_pw->{uid};
+    #
+    # Both real and effective UIDs must match.
+    #
+    if ($< != $owner_uid or $> != $owner_uid) {
+        die "$program_name must be run by GX_MAP_OWNER ($owner)\n"; 
+    } 
+} # Require_Owner
 
-sub Is_Globus_Admin($) {
-    my($user) = @_;
-    my $admins = $Gridmap_Utils::Config{GLOBUS_ADMINS};
+# ----------------------------------------------------------------------
 
-    if (scalar keys %is_globus_admin == 0) {
-        foreach my $entry (split /\s+/, $admins) {
-            if ($entry =~ /:/) {
-                die "Syntax error in GLOBUS_ADMINS: $entry\n";
-            }
-            else {
-                $is_globus_admin{$entry} = 1;
-            }
-        }
+my %is_admin_account = ();
+
+sub Is_Admin_Account($) {
+    my($account) = @_;
+
+    if (scalar keys %is_admin_account == 0) {
+        my @admins = ();
+        push @admins, $Gridmap_Utils::Config{GX_MAP_OWNER};
+        push @admins, split /\s+/, $Gridmap_Utils::Config{ADDITIONAL_ADMINS};
+        %is_admin_account = map { $_ => 1 } @admins;
     }
 
-    return $is_globus_admin{$user};
-} # Is_Globus_Admin
+    return $is_admin_account{$user};
+} # Is_Admin_Account
 
 # ----------------------------------------------------------------------
 
