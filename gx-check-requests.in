@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.57 2005-08-31 19:16:41-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.58 2005-10-18 20:48:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -91,6 +91,11 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+#
+# This program may only be executed by the GX_MAP_OWNER.
+#
+Gridmap_Utils::Require_Owner $Program_Name;
 
 # Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
@@ -411,7 +416,7 @@ sub Get_Request_Info($) {
 
     my $owner_is_admin =
         ( defined $result->{OWNER_NAME} and
-          Gridmap_Utils::Is_Globus_Admin $result->{OWNER_NAME} );
+          Gridmap_Utils::Is_Admin_Account $result->{OWNER_NAME} );
 
     #
     # By convention, user-defined options are in lower case, and
