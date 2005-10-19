@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-personal-gx-map,v 1.5 2005-05-10 17:52:27-07 kst Exp $
+# $Id: install-personal-gx-map,v 1.6 2005-10-18 21:07:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-personal-gx-map,v $
 
 #
@@ -107,7 +107,8 @@ NAMESPACE                $namespace
 INSTALL_DIR              $install_dir
 DATA_DIR                 $data_dir
 REQUESTS_LOG_PERMISSIONS 444
-GLOBUS_ADMINS            $USER
+GX_MAP_OWNER             $USER
+ADDITIONAL_ADMINS
 ADMIN_EMAIL              $USER@sdsc.edu
 EOF
 
