@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.25 2005-09-01 21:32:04-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.26 2005-10-18 20:58:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -122,7 +122,7 @@ if (@missing_accounts) {
     Usage "Missing account$s: @missing_accounts\n";
 }
 
-my $Rev = '$Revision: 1.25 $';
+my $Rev = '$Revision: 1.26 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
@@ -264,7 +264,7 @@ sub Owned_By_Admin($) {
         return $Is_Old_Admin->{$ref->{OWNER_NAME}};
     }
     else {
-        return Gridmap_Utils::Is_Globus_Admin $ref->{OWNER_NAME};
+        return Gridmap_Utils::Is_Admin_Account $ref->{OWNER_NAME};
     }
 } # Owned_By_Admin
 
