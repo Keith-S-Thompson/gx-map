@@ -1,4 +1,4 @@
-# $Id: bug-0052,v 1.2 2005-10-18 17:19:18-07 kst Exp $
+# $Id: bug-0052,v 1.3 2005-10-18 21:26:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0052,v $
 
 gx-map bug 0052
@@ -6,7 +6,7 @@ Date: Fri 2005-10-14
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a1
-Status: Open
+Status: Fixed ?
 Title: Check for non-root chown fails when running as root
 
 Summary:
@@ -40,3 +40,7 @@ recommended anyway; see bug-0053.
 I think I'm actually going to leave this un-corrected for now.
 If there's any good reason to support running as root, I can fix it
 later; if not, the code will go away anyway.
+
+Fixed:
+Gridmap_Utils.pm.in 1.100
+gx-map release 0.5.0a3
