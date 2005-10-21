@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.28 2005-10-18 20:57:17-07 kst Exp $
+# $Id: gx-request.in,v 1.29 2005-10-20 19:04:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -519,7 +519,8 @@ sub Get_DNs_From_List_File($) {
 
     for (my $i = 0; $i <= $#result; $i ++) {
         if ($result[$i] !~ m<^/.*\S$>) {
-            die "Invalid DN, $file line " . $i+1 . "\n";
+            my $line_number = $i + 1;
+            die "Invalid DN, $file line $line_number\n";
         }
     }
     return @result;
