@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.42 2005-10-18 20:48:36-07 kst Exp $
+# $Id: install-gx-map.in,v 1.43 2005-10-25 17:53:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -72,7 +72,7 @@ SBIN_FILES="gx-check-requests gx-cleanup-logs gx-gen-mapfile gx-ingest gx-ca-upd
 OPTIONAL_SBIN_FILES="gx-propagate"
 LIB_FILES="Gridmap_Utils.pm Gridmap_Valid_Mappings.pm"
 ETC_FILES="LICENSE README README.CA README.CA-Security README.Cross-Site README.TeraGrid README.Upgrade Relnotes gx-map.ppt gx-map.pdf"
-CA_FILES=ca/*.cadesc
+# CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
            $BIN_DIR \
@@ -94,16 +94,31 @@ done
 verbosely touch $DATA_DIR/requests.log
 verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 
-verbosely cp -f $BIN_FILES  $BIN_DIR/.
-verbosely cp -f $SBIN_FILES $SBIN_DIR/.
+for file in $BIN_FILES ; do 
+    verbosely cp -f $file  $BIN_DIR/.
+done
+for file in $SBIN_FILES ; do
+    verbosely cp -f $file $SBIN_DIR/.
+done
 for file in $OPTIONAL_SBIN_FILES ; do
     if [ -f $file ] ; then
         verbosely cp -f $file $SBIN_DIR/.
     fi
 done
-verbosely cp -f $LIB_FILES  $LIB_DIR/.
-verbosely cp -f $ETC_FILES  $ETC_DIR/.
-verbosely cp -f $CA_FILES   $ETC_DIR/ca-config/.
+for file in $LIB_FILES ; do
+    verbosely cp -f $file  $LIB_DIR/.
+done
+for file in $ETC_FILES ; do
+    verbosely cp -f $file  $ETC_DIR/.
+done
+#
+# There are a *lot* of *.cadesc files.  To avoid possible problems with
+# overly long command lines, don't store all the names in a variable.
+#
+ls ca | grep '\.cadesc$' | \
+    while read file ; do
+        verbosely cp -f ca/$file $ETC_DIR/ca-config/.
+    done
 if [ -r .config-file ] ; then
     config_file=`cat .config-file`
     config_file_basename=`basename $config_file`
