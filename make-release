@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.13 2005-10-18 21:01:57-07 kst Exp $
+# $Id: make-release,v 1.14 2005-10-27 00:04:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -22,49 +22,39 @@ esac
 
 num=$1
 in_files=`ls *.in | grep -v gx-map.conf.in`
-cadesc_files=`cd ca ; echo *.cadesc`
-bug_files=`cd bugs ; echo bug-*`
+other_files="INSTALL LICENSE Makefile README README.CA \
+             README.CA-Security README.Cross-Site README.Prereqs \
+             README.TeraGrid README.Upgrade Relnotes cleanup-gx-map \
+             configure-gx-map gx-check-prereqs gx-map.odp gx-map.pdf \
+             gx-map.ppt gx-propagate.in.teragrid sample.conf test-gx-map"
+
+# cadesc_files=`cd ca ; echo *.cadesc`
+# bug_files=`cd bugs ; echo bug-*`
 
 try mkdir release/gx-map-$num
 try cd release/gx-map-$num
 
-for file in \
-    $in_files \
-    INSTALL \
-    LICENSE \
-    Makefile \
-    README \
-    README.CA \
-    README.CA-Security \
-    README.Cross-Site \
-    README.Prereqs \
-    README.TeraGrid \
-    README.Upgrade \
-    Relnotes \
-    cleanup-gx-map \
-    configure-gx-map \
-    gx-check-prereqs \
-    gx-map.pdf \
-    gx-map.ppt \
-    gx-propagate.in.teragrid \
-    sample.conf \
-    test-gx-map
-do
+for file in $in_files ; do
+    try cp -p ../../$file .
+done
+for file in $other_files ; do
     try cp -p ../../$file .
 done
 
 try mkdir ca
 try cd ca
-for file in $cadesc_files ; do
-    try cp -p ../../../ca/$file .
-done
+ls ../../../ca | grep '\.cadesc$' | \
+    while read file ; do
+        try cp -p ../../../ca/$file .
+    done
 try cd ..
 
 try mkdir bugs
 try cd bugs
-for file in $bug_files ; do
-    try cp -p ../../../bugs/$file .
-done
+ls ../../../bugs | grep '^bug-....$' | \
+    while read file ; do
+        try cp -p ../../../bugs/$file .
+    done
 try cd ..
 
 try cd ..
