@@ -1,4 +1,4 @@
-# $Id: bug-0057,v 1.1 2005-10-27 19:51:28-07 kst Exp $
+# $Id: bug-0057,v 1.2 2005-10-28 16:28:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0057,v $
 
 gx-map bug 0057
@@ -6,7 +6,7 @@ Date: Thu 2005-10-27
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a4
-Status: Open
+Status: Fixed 0.5.0a5
 Title: gx-gen-mapfile needs to check existence of input files
 
 Summary:
@@ -25,6 +25,7 @@ Traceback:
     .../sbin/gx-gen-mapfile:328 in main::Update_List
     .../sbin/gx-gen-mapfile:159
 
-Suggested fix:
-Check explicitly that the input files exist and are readable before
-doing any actual processing.
+Fixed:
+Check for existence of input log files before trying to use them.
+gx-gen-mapfile.in 1.66
+gx-map release 0.5.0a5
