@@ -1,0 +1,30 @@
+# $Id: bug-0057,v 1.1 2005-10-27 19:51:28-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0057,v $
+
+gx-map bug 0057
+Date: Thu 2005-10-27
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a4
+Status: Open
+Title: gx-gen-mapfile needs to check existence of input files
+
+Summary:
+gx-gen-mapfile doesn't explicitly check for the existence of its
+input files (var/requests.log or whatever is specified).  If an
+input file doesn't exist, the current behavior depends on whether an
+output file was specified.  If no output file is specified, it dies
+in Read_Records with a "No such file or directory" message.  If an
+output file is specified, it never gets to Read_Records; instead,
+it dies mysteriously in Long_Time_Image (because it looks at the
+mtime of the input file):
+
+Use of uninitialized value in pattern match (m//) at .../lib/Gridmap_Utils.pm line 571.
+Traceback:
+    .../lib/Gridmap_Utils.pm:571 in Gridmap_Utils::Long_Time_Image
+    .../sbin/gx-gen-mapfile:328 in main::Update_List
+    .../sbin/gx-gen-mapfile:159
+
+Suggested fix:
+Check explicitly that the input files exist and are readable before
+doing any actual processing.
