@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.65 2005-10-23 14:10:35-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.66 2005-10-28 16:27:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -131,6 +131,21 @@ if (@{$User_Opt->{'requests-log'}}) {
 }
 else {
     $User_Opt->{'requests-log'} = [ $Default_Requests_Log ];
+}
+
+{
+    my @log_errors = ();
+    foreach my $log (@{$User_Opt->{'requests-log'}}) {
+        if (not -e $log) {
+            push @log_errors, "No file $log\n";
+        }
+        elsif (not -r $log) {
+            push @log_errors, "Can't read $log\n";
+        }
+    }
+    if (@log_errors) {
+        die @log_errors;
+    }
 }
 
 if ($User_Opt->{debugging}) {
