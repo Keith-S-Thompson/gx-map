@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.67 2005-10-18 20:48:36-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.68 2005-10-29 02:22:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -91,7 +91,8 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 my $now = time;
 
-my $User_Opt = { email => 1 };
+my $User_Opt = { permissions => '444',
+                 email => 1 };
 my @Opts = ( $User_Opt,
              qw( help!
                  version!
@@ -103,6 +104,7 @@ my @Opts = ( $User_Opt,
                  all-cas!
                  list-cas!
                  target-dir=s
+                 permissions=s
                  allow-missing-crl!
                  expire-crl=s
                  warn-crl=s
@@ -210,6 +212,19 @@ elsif (not -d $User_Opt->{'target-dir'}) {
 elsif (not -w $User_Opt->{'target-dir'}) {
     Usage "Can't write target directory $User_Opt->{'target-dir'}\n";
 }
+
+if ($User_Opt->{permissions} !~ /^[0-7][0-7][0-7]$/) {
+    Usage "Permissions must be a 3-digit octal number\n";
+}
+#
+# $Octal_Permissions is a string representing the permissions
+# in octal, suitable for display.
+#
+# $Permissions is the numeric equivalent, suitable for use with the
+# chmod call.
+#
+my $Octal_Permissions = $User_Opt->{permissions};
+my $Permissions = oct "0$Octal_Permissions";
 
 my $CRL_Expiration = undef;
 foreach my $opt (qw(expire-crl warn-crl)) {
@@ -1040,9 +1055,13 @@ sub Update_CRL($) {
     if ($install_new_crl) {
         Vprint    "Installing $ref->{_CRL_FILE}\n";
         Log $ref, "Installing $ref->{_CRL_FILE}\n";
-        File::Copy::copy $new_crl_file, "$ref->{_CRL_FILE}.$$"
+        my $temp_file = "$ref->{_CRL_FILE}.$$";
+        File::Copy::copy $new_crl_file, $temp_file
             or Error $ref, undef, undef, "Failed to copy CRL: $!\n";
-        rename "$ref->{_CRL_FILE}.$$", $ref->{_CRL_FILE}
+        chmod $Permissions, $temp_file
+            or Error $ref, undef, undef,
+                     "chmod $Octal_Permissions, $temp_file: $!\n";
+        rename $temp_file, $ref->{_CRL_FILE}
             or Error $ref, undef, undef, "Failed to rename CRL: $!\n";
     }
 
@@ -1137,9 +1156,14 @@ sub Install_Certificate($) {
     }
     Vprint    "Installing $ref->{_CERT_FILE}\n";
     Log $ref, "Installing $ref->{_CERT_FILE}\n";
-    File::Copy::copy $ref->{_CACHED_CERT_FILE}, "$ref->{_CERT_FILE}.$$"
+    my $temp_file = "$ref->{_CERT_FILE}.$$";
+    File::Copy::copy $ref->{_CACHED_CERT_FILE}, $temp_file
         or Error $ref, undef, undef, "Failed to copy certificate: $!\n";
-    rename "$ref->{_CERT_FILE}.$$", $ref->{_CERT_FILE}
+    chmod $Permissions, $temp_file
+        or Error $ref, undef, undef,
+                 "chmod $Octal_Permissions, $temp_file: $!\n";
+    }
+    rename $temp_file, $ref->{_CERT_FILE}
         or Error $ref, undef, undef, "Failed to rename certificate: $!\n";
 } # Install_Certificate
 
@@ -1168,14 +1192,16 @@ sub Update_Signing_Policy($) {
             or die "$ref->{_SIGNING_POLICY_FILE}: $!\n";
         print $Policy Signing_Policy $ref;
         close $Policy;
+        chmod $Permissions, $ref->{_SIGNING_POLICY_FILE}
+            or Error $ref, undef, undef,
+                     "chmod $Octal_Permissions, " .
+                     "$ref->{_SIGNING_POLICY_FILE}: $!\n";
         $ref->{_INSTALLED_SIGNING_POLICY} = 1;
     }
 } # Update_Signing_Policy
 
 # ----------------------------------------------------------------------
 
-#
-# 
 sub Check_Dependencies() {
     Vprint "Dependency checking not yet implemented\n";
 } # Check_Dependencies
@@ -1393,6 +1419,8 @@ Usage: $Program_Name [options]
                        Requires "-UNSAFE".
     -list-cas          List available CAs and exit.
     -target-dir dir    Target directory.
+    -permissions perm  Specify permissions for installed files (in octal);
+                       default is 444
     -allow-missing-crl Allow a CA with no CRL to be installed.
                        Requires "-UNSAFE".
     -expire-crl time   Remove a CRL that will expire within
