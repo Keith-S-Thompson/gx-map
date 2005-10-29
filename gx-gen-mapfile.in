@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.66 2005-10-28 16:27:13-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.67 2005-10-29 02:21:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -167,7 +167,15 @@ foreach my $file (@Output_Files) {
 if ($User_Opt->{permissions} !~ /^[0-7][0-7][0-7]$/) {
     Usage "Permissions must be a 3-digit octal number\n";
 }
-$User_Opt->{permissions} = oct "0$User_Opt->{permissions}";
+#
+# $Octal_Permissions is a string representing the permissions
+# in octal, suitable for display.
+#
+# $Permissions is the numeric equivalent, suitable for use with the
+# chmod call.
+#
+my $Octal_Permissions = $User_Opt->{permissions};
+my $Permissions = oct "0$Octal_Permissions";
 
 if (not $Write_To_Stdout) {
     Debug "\@Output_Files = (@Output_Files)\n";
@@ -301,9 +309,8 @@ foreach my $output_file (@Output_Files) {
     # Gridmap_Utils::Check_Tainting '$output_file', $output_file;
     rename $intermediate_file, $output_file
         or die "rename $intermediate_file, $output_file: $!\n";
-    if (not chmod $User_Opt->{permissions}, $output_file) {
-        my $perm = sprintf "0%03o", $User_Opt->{permissions};
-        die "chmod $perm, $output_file: $!\n";
+    chmod $Permissions, $output_file
+        or die "chmod $Octal_Permissions, $output_file: $!\n";
     }
 }
 unlink $tmp_file;
