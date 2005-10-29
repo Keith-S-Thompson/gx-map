@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.68 2005-10-29 02:22:34-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.69 2005-10-29 02:35:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1162,7 +1162,6 @@ sub Install_Certificate($) {
     chmod $Permissions, $temp_file
         or Error $ref, undef, undef,
                  "chmod $Octal_Permissions, $temp_file: $!\n";
-    }
     rename $temp_file, $ref->{_CERT_FILE}
         or Error $ref, undef, undef, "Failed to rename certificate: $!\n";
 } # Install_Certificate
