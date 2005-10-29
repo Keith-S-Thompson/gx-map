@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.67 2005-10-29 02:21:06-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.68 2005-10-29 02:57:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -311,7 +311,6 @@ foreach my $output_file (@Output_Files) {
         or die "rename $intermediate_file, $output_file: $!\n";
     chmod $Permissions, $output_file
         or die "chmod $Octal_Permissions, $output_file: $!\n";
-    }
 }
 unlink $tmp_file;
 
