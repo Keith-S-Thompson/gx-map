@@ -1,0 +1,22 @@
+# $Id: bug-0058,v 1.1 2005-10-28 21:35:24-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0058,v $
+
+gx-map bug 0058
+Date: Fri 2005-10-28
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a5
+Status: Open
+Title: gx-ca-update needs to set permissions on generated files
+
+Summary:
+gx-ca-update doesn't set permissions on generated files.  This is
+more or less ok if the umask is sane, but under Cygwin the umask for
+a cron job is 000, resulting in files with permissions 666 (rw-rw-rw-).
+
+Proposed fix:
+Add a "-permissions" option to gx-ca-update, similar to the existing
+option for gx-gen-mapfile, defaulting to 444.  Make sure everything
+works properly if a file already exists with permissions 444.
+Note that this also guards against accidental modification by the
+GX_MAP_OWNER.
