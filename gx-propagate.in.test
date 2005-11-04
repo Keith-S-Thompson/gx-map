@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.test,v 1.1 2005-11-03 18:20:00-08 kst Exp $
+# $Id: gx-propagate.in.test,v 1.2 2005-11-04 02:21:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 use strict;
@@ -99,11 +99,18 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-my $logfile = "$Install_Dir/var/tgcdb.log";
+my $logfile = "$Install_Dir/var/gx-propagate.log";
 open my $Log, ">>$logfile" or die "${logfile}: $!\n";
 print $Log "\n", Gridmap_Utils::Time_Image time, "\n";
 print $Log "$Program_Name ", Quote(@SAVED_ARGV), "\n";
 close $Log;
+
+if (defined $User_Opt->{dn} and $User_Opt->{dn} =~ /fail/i) {
+    exit 1;
+}
+else {
+    exit 0;
+}
 
 ########################################################################
 
@@ -154,8 +161,9 @@ to a log.
     -remove-user    Remove all mappings for a user.
     -username name  Unix user name to map or unmap.
     -dn "string"    Distinguished name.
+                    Propagation fails if DN contains "fail".
     -dryrun         Don't actually do the database transaction.
-		    No effect in this version.
+                    No effect in this version.
     -debugging      Enable debugging output.
 
 EOF
