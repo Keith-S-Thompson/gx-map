@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.58 2005-10-18 20:48:36-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.59 2005-11-04 02:21:22-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -522,7 +522,7 @@ Usage: $Program_Name [options]
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
-    -dryrun         : Passed to sbin-gx-propagate.
+    -dryrun         : Passed to sbin/gx-propagate.
                       This is for testing purposes only; it can cause
                       requests to be permanently bypassed.
     -debugging      : Enable debugging output
