@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.14 2005-10-27 00:04:59-07 kst Exp $
+# $Id: make-release,v 1.15 2005-11-03 17:48:22-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -26,7 +26,8 @@ other_files="INSTALL LICENSE Makefile README README.CA \
              README.CA-Security README.Cross-Site README.Prereqs \
              README.TeraGrid README.Upgrade Relnotes cleanup-gx-map \
              configure-gx-map gx-check-prereqs gx-map.odp gx-map.pdf \
-             gx-map.ppt gx-propagate.in.teragrid sample.conf test-gx-map"
+             gx-map.ppt gx-propagate.in.teragrid gx-propagate.in.test \
+             sample.conf test-gx-map"
 
 # cadesc_files=`cd ca ; echo *.cadesc`
 # bug_files=`cd bugs ; echo bug-*`
@@ -59,4 +60,3 @@ try cd ..
 
 try cd ..
 try tar zcf gx-map-$num.tar.gz gx-map-$num
-
