@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.30 2005-11-06 23:46:04-08 kst Exp $
+# $Id: gx-request.in,v 1.31 2005-11-07 02:06:03-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -1179,7 +1179,7 @@ sub Die_Quietly(@) {
     #     delete $SIG{__DIE__};
     # but that doesn't work properly in some versions of Perl.
     #
-    $SIG{__WARN__} = sub { warn @_ };  
+    $SIG{__DIE__} = sub { warn @_ };  
     die @_;
 } # Die_Quietly
 
