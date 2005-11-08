@@ -1,0 +1,18 @@
+# $Id: 21bf4d92.apac-grid.cadesc,v 1.1 2005-11-08 15:49:58-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/21bf4d92.apac-grid.cadesc,v $
+
+CA_NAME             APAC-GRID CA
+HOMEPAGE            http://www.apac.edu.au/
+CONTACT             camanager@vpac.org
+HASH                21bf4d92
+SIGNED_BY           /O=Grid/OU=example.org/CN=example.org Root CA
+SUBJECT             /O=Grid/OU=example.org/CN=example.org CA
+MAY_SIGN            /O=Grid/OU=example.org/*
+CERTIFICATE_MD5     67:58:DF:8B:F8:FA:B5:A1:5D:8C:06:35:8D:70:04:68
+CERTIFICATE_SHA1    56:AE:C8:80:05:C7:F7:D5:64:59:09:E4:4B:AD:83:E6:EB:B8:60:C4
+CERTIFICATE_URL     https://www.apgrid.org/CA/21bf4d92.0
+SIGNING_POLICY_URL  https://www.apgrid.org/CA/21bf4d92.signing_policy
+CRL_URL             http://register.vpac.org/pub/crl/cacrl.crl
+CERT_EXPIRES        Aug  8 04:58:49 2014 GMT
+
+# MD5 and SHA1 fingerprints from 21bf4d92.0 downloaded 2005-11-08
