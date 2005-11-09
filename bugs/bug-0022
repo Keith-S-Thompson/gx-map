@@ -1,4 +1,4 @@
-# $Id: bug-0022,v 1.3 2005-05-10 18:22:46-07 kst Exp $
+# $Id: bug-0022,v 1.4 2005-11-08 20:52:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0022,v $
 
 gx-map bug 0022
@@ -45,6 +45,14 @@ ftp URLs, but be sure to test all the cases.  If the timestamp reported
 by curl is newer than the cached copy, do a "wget --timestamping" in
 a unique temporary directory; if the download is successful, remove
 the cached copy and rename the new copy into the cache directory.
+
+Correction: rather than using "curl --head", use:
+    curl --silent --dump-header <file>.head -o <file> <url>
+Check <file>.head to see whether the download succeeded, and if so,
+to see the timestamp.  Provide an option for large files to try
+    curl --head <url>
+first, avoiding the download if it fails or if the timestamp matches
+the cached copy.
 
 Note that "wget --timestamping" doesn't work properly with the
 -O/--output-document option, so download the file into a new empty
