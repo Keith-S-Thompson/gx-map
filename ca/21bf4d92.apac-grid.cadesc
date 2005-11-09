@@ -1,4 +1,4 @@
-# $Id: 21bf4d92.apac-grid.cadesc,v 1.2 2005-11-08 15:51:43-08 kst Exp $
+# $Id: 21bf4d92.apac-grid.cadesc,v 1.3 2005-11-09 12:31:42-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/21bf4d92.apac-grid.cadesc,v $
 
 CA_NAME             APAC-GRID CA
@@ -11,7 +11,7 @@ CERTIFICATE_MD5     67:58:DF:8B:F8:FA:B5:A1:5D:8C:06:35:8D:70:04:68
 CERTIFICATE_SHA1    56:AE:C8:80:05:C7:F7:D5:64:59:09:E4:4B:AD:83:E6:EB:B8:60:C4
 CERTIFICATE_URL     https://www.apgrid.org/CA/21bf4d92.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/21bf4d92.signing_policy
-CRL_URL             http://register.vpac.org/pub/crl/cacrl.crl
+CRL_URL             http://register.vpac.org/pub/crl/cacrl.pem
 CERT_EXPIRES        Aug  8 04:58:49 2014 GMT
 
 # MD5 and SHA1 fingerprints from 21bf4d92.0 downloaded 2005-11-08
