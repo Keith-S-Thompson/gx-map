@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.10 2005-10-18 21:07:08-07 kst Exp $
+# $Id: test-gx-map,v 1.11 2005-11-09 21:04:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -107,10 +107,10 @@ my @commands = ();
 # gx-ingest was added in release 0.4.0, but didn't have a "-version"
 # option until release 0.4.2.
 #
-push @commands, 'bin/gx-map';
 if (Version_String $version ge Version_String '0.4.5') {
     push @commands, 'bin/gx-request';
 }
+push @commands, 'bin/gx-map';
 
 if (Version_String $version gt Version_String '0.4.5') {
     push @commands, 'sbin/gx-admins';
