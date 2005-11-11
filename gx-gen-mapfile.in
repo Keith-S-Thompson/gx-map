@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.68 2005-10-29 02:57:40-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.69 2005-11-10 17:49:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -122,10 +122,15 @@ if (@{$User_Opt->{'requests-log'}}) {
         elsif ($log =~ m<^(https?|ftp)://>) {
             #
             # Untaint the log file name so the Cache_File function can
-            # use system() to pass it to wget.
+            # use system() to pass it to curl.
             #
             Gridmap_Utils::Untaint $log;
-            $log = Gridmap_Utils::Cache_File $log;
+            my $error;
+            my $url = $log;
+            ($log, $error) = Gridmap_Utils::Cache_File $log;
+            if (not defined $log and defined $error) {
+                die "$url: $error\n";
+            }
         }
     }
 }
