@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.18 2005-10-11 18:38:27-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.19 2005-11-10 16:37:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -57,7 +57,6 @@ sub Usage(@);
 sub Check_Perl($);
 sub Check_Command($);
 sub Check_Module($;$);
-# sub Wget_Supports_SSL();
 sub Vprint(@);
 sub Vprintf(@);
 
@@ -107,8 +106,7 @@ Check_Command 'hostname';
 Check_Command 'co';
 Check_Command 'ci';
 Check_Command 'rcs';
-Check_Command 'ncftpget';
-Check_Command 'wget';
+Check_Command 'curl';
 Check_Command 'openssl';
 
 Check_Module 'File::Basename';
@@ -156,23 +154,6 @@ Note: Missing Net::Domain module is ok, will use hostname command
 
 EOF
 }
-
-# if ($Command_Found{wget}) {
-#     my $ssl = Wget_Supports_SSL();
-#     if (not defined $ssl) {
-#         push @Notes, <<"EOF";
-# Note: Can't determine whether wget supports SSL.
-# 
-# EOF
-#     }
-#     elsif (not $ssl) {
-#         push @Notes, <<"EOF";
-# Note: Your wget command does not support SSL.
-#       This may be a problem for CAs that use https.
-# 
-# EOF
-#     }
-# }
 
 if (@Errors) {
     print @Errors;
@@ -248,25 +229,6 @@ sub Check_Module($;$) {
         $All_Modules_Found = 0;
     }
 } # Check_Module
-
-# ----------------------------------------------------------------------
-
-# sub Wget_Supports_SSL() {
-#     my $lines = 0;
-#     my $supports_ssl = 0;
-#     open PIPE, "wget --help |";
-#     while (<PIPE>) {
-#         $lines ++;
-#         $supports_ssl = 1 if /\bssl\b/i;
-#     }
-#     close PIPE;
-#     if ($lines == 0) {
-#         return 'unknown';
-#     }
-#     else {
-#         return $supports_ssl;
-#     }
-# } # Wget_Supports_SSL
 
 # ----------------------------------------------------------------------
 
