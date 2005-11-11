@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.73 2005-11-03 19:07:58-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.74 2005-11-10 17:49:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -341,8 +341,6 @@ if (-e $lock_file) {
 open my $Lock, '>', $lock_file;
 close $Lock;
 
-Gridmap_Utils::Init_Cache_Info;
-
 CA:
 foreach my $ref (@ca_info) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
@@ -552,7 +550,7 @@ sub Get_CA_Ref($) {
                                     CERTIFICATE_URL SIGNING_POLICY_URL
                                     CRL_URL ALLOW_MISSING_CRL
                                     INDEX CERT_EXPIRES DISABLE
-                                    CRL_DOWNLOAD_GLITCH _FILENAME );
+                                    _FILENAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
     my %remap = ( SIGNED_BY => 1,
@@ -648,6 +646,19 @@ sub Allow_Missing_CRL($) {
 sub CRL_Info($$) {
     my($CRL_file, $cert_file) = @_;
     my $result = {};
+
+    Debug "%%% CRL_Info(",
+          (defined $CRL_file ? $CRL_file : 'undef'),
+          ", ",
+          (defined $cert_file ? $cert_file : 'undef'),
+          ")\n";
+    if ($User_Opt->{debugging}) {
+        my @files = ();
+        push @files, $CRL_file if defined $CRL_file;
+        push @files, $cert_file if defined $cert_file;
+        print "%%% % ls -lsF @files\n";
+        system 'ls', '-lsF', @files;
+    }
 
     return undef if not defined $CRL_file or not -r $CRL_file;
 
@@ -793,16 +804,16 @@ sub Update_Certificate($) {
         Vprint "Skipping existing $ref->{_CERT_FILE}\n";
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(https?|ftp)://>) {
-        my $cache_file;
-        eval {
-            $cache_file = Gridmap_Utils::Cache_File
-                              $ref->{CERTIFICATE_URL}
-        };
-        if (defined $@ and $@ ne '') {
+        my($cache_file, $error)
+            = Gridmap_Utils::Cache_File $ref->{CERTIFICATE_URL};
+        if (defined $error) {
             #
-            # Error in Cache_File function
+            # TODO: Think of a better way to generate a timestamp for
+            # this error message.
             #
-            Error $ref, undef, undef, $@;
+            my $timestamp = Gridmap_Utils::Get_mtime $cache_file;
+            $timestamp = 0 if not defined $timestamp;
+            Error $ref, 'cert_download_failed', $timestamp, $error;
         }
         elsif (defined $cache_file and -r $cache_file) {
             $ref->{_CACHED_CERT_FILE} = $cache_file;
@@ -908,7 +919,9 @@ sub Update_CRL($) {
 
     # Debug "Checking $ref->{_CRL_FILE} against $cert_file\n";
 
+    Debug "%%% Calling CRL_Info for existing CRL\n";
     my $old_crl_info = CRL_Info $ref->{_CRL_FILE}, $cert_file;
+    Debug "%%% After CRL_Info\n";
 
     # if ($User_Opt->{debugging}) {
     #     if (defined $old_crl_info) {
@@ -929,31 +942,19 @@ sub Update_CRL($) {
         #
         # Attempt to download a new CRL (or use a cached copy)
         #
-        my $CRL_Download_Glitch =
-            ( defined $ref->{CRL_DOWNLOAD_GLITCH} and
-              lc $ref->{CRL_DOWNLOAD_GLITCH} eq 'yes' );
-
-        if ($CRL_Download_Glitch) {
-            #
-            # See bug-0020
-            #
-            eval { $new_crl_file
-                       = Gridmap_Utils::Cache_File $ref->{CRL_URL}, 1 };
-        }
-        else {
-            eval { $new_crl_file
-                       = Gridmap_Utils::Cache_File $ref->{CRL_URL} };
-        }
-        if (defined $@ and $@ ne '') {
-            #
-            # Error in Cache_File function
-            #
-            Error $ref, undef, undef, $@;
+        my $error;
+        ($new_crl_file, $error) = Gridmap_Utils::Cache_File $ref->{CRL_URL};
+        Debug "%%%  \$new_crl_file = \"$new_crl_file\"\n";
+        Debug "%%%  \$error = ", (defined $error ? $error : 'undef'), "\n";
+        if (defined $error) {
+            my $timestamp = Gridmap_Utils::Get_mtime $new_crl_file;
+            $timestamp = 0 if not defined $timestamp;
+            Error $ref, 'crl_download_failed', $timestamp, $@;
         }
     }
     else {
         #
-        # If not CRL is specified, it's considered an error unless either
+        # If no CRL is specified, it's considered an error unless either
         # the "-allow-missing-crl" (with "-UNSAFE") option is specified
         # on the command line *or* the ALLOW_MISSING_CRL attribute is
         # set to "yes" in the cadesc file.
@@ -974,7 +975,20 @@ sub Update_CRL($) {
     #       (defined $cert_file ? $cert_file : 'undef') .
     #       "\n";
 
+    Debug "%%% Calling CRL_Info for new CRL file, \$new_crl_file=",
+	  (defined $new_crl_file ? $new_crl_file : 'undef'),
+	  "\n";
     my $new_crl_info = CRL_Info $new_crl_file, $cert_file;
+    Debug "%%% After CRL_Info\n";
+    if (defined $new_crl_info) {
+	Debug "%%% \$new_crl_info = $new_crl_info\n";
+	foreach my $key (sort keys %$new_crl_info) {
+	    Debug "        $key => $new_crl_info->{$key}\n";
+	}
+    }
+    else {
+	Debug "%%% \$new_crl_info = undef\n";
+    }
 
     # if ($User_Opt->{debugging}) {
     #     if (defined $new_crl_info) {
@@ -1067,12 +1081,30 @@ sub Update_CRL($) {
             or Error $ref, undef, undef, "Failed to rename CRL: $!\n";
     }
 
+    if (defined $ref->{_CRL_FILE}) {
+        Debug "%%% \$ref->{_CRL_FILE} = \"$ref->{_CRL_FILE}\"\n";
+        if (-r $ref->{_CRL_FILE}) {
+            Debug "%%% File is readable\n";
+        }
+        elsif (-e $ref->{_CRL_FILE}) {
+            Debug "%%% File exists but is not readable\n";
+        }
+        else {
+            Debug "%%% File does not exist\n";
+        }
+    }
+    else {
+        Debug "%%% \$ref->{_CRL_FILE} = undef\n";
+    }
+
     #
     # Just to be sure, re-fetch CRL info from the target CRL file
     # (which may or may not have just been updated).
     #
     if (-r $ref->{_CRL_FILE}) {
+        Debug "%%% Re-fetching CRL info for $ref->{_CRL_FILE}\n";
         my $crl_info = CRL_Info $ref->{_CRL_FILE}, $cert_file;
+        Debug "%%% After CRL_Info\n";
         my $remaining = $crl_info->{next_update} - $now;
         my $remove_crl = 0;
         if (defined $crl_info) {
