@@ -1,4 +1,4 @@
-# $Id: README.CA,v 1.11 2005-06-20 20:00:48-07 kst Exp $
+# $Id: README.CA,v 1.12 2005-11-10 16:41:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA,v $
 
 ************************************************************************
@@ -114,12 +114,6 @@ the PSC or USC Kerberos CA that only issues short-term certificates.
 If this attribute is set to "yes", an unspecified, missing, or expired
 CRL is not a fatal error.
 
-CRL_DOWNLOAD_GLITCH, if set to "yes", indicates that the web server
-hosting the CRL has a problem affecting the "wget --timestamping"
-command used by cacheing mechanism.  This causes the CRL to be
-downloaded unconditionally each time gx-ca-update is run.  This is set
-only for the DOEGrids CA, 1c3f2ca8.doegrids.cadesc.  See bugs/bug-0020.
-
 INDEX is a URL from which a ca.db.index file can be downloaded.
 This is provided by CACL-based CAs.  This attribute is not currently
 used by gx-ca-update.
@@ -146,8 +140,7 @@ See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575> for
 more information about this issue.
 
 All URLs may be specified with a prefix of either "http://",
-"https://", or "ftp://".  http and https URLs are downloaded using
-wget (an ssl-enabled version of wget is required for https URLs).
-ftp URLs are downloaded using ncftpget.
+"https://", or "ftp://".  URLs are downloaded using the "curl"
+command.
 
                 --- Keith Thompson <kst@sdsc.edu> 2005-05-07
