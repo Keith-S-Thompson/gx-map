@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.106 2005-11-07 00:30:50-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.107 2005-11-10 17:48:18-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -140,8 +140,7 @@ sub Sort_By_Timestamp(@);
 
 sub Gen_Mappings(@);
 
-sub Init_Cache_Info();
-sub Cache_File($;$);
+sub Cache_File($);
 
 #
 # Read_User_Map and Read_Admin_List were intended to allow gx-gen-mapfile
@@ -1178,132 +1177,175 @@ sub Gen_Mappings(@) {
 
 # ----------------------------------------------------------------------
 
-my %Cache_File = ();
-my $Download_Dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var/cache";
-my $Download_Index = 0;
-
-# ----------------------------------------------------------------------
-
-sub Init_Cache_Info() {
-    opendir my $Dir, $Download_Dir or die "$Download_Dir: $!\n";
-    SUBDIR:
-    foreach my $subdir (sort readdir $Dir) {
-        next SUBDIR if $subdir !~ /^\d+-\d+-\d+$/;
-        open my $URL_File, '<', "$Download_Dir/$subdir/.url" or next SUBDIR;
-        my $url = <$URL_File>;
-        chomp $url;
-        close $URL_File;
-        my $filename = "$Download_Dir/$subdir/" .
-                       File::Basename::basename $url;
-        Untaint $url;
-        Untaint $filename;
-        $Cache_File{$url} = $filename;
+#
+# Translate an arbitrary string, such as a URL, to a form usable
+# as a file name, using something similar to Quoted-Printable encoding.
+#
+sub QP_Encode($) {
+    my($s) = @_;
+    my $result = '';
+    foreach my $ch (split //, $s) {
+        if ($ch =~ /[\w+,-._]/) {
+            $result .= $ch;
+        }
+        else {
+            $result .= sprintf "=%02X", ord $ch;
+        }
     }
-    closedir $Dir;
-} # Init_Cache_Info
+    return $result;
+} # QP_Encode
 
 # ----------------------------------------------------------------------
 
 #
-# Given a URL, returns the name of a local file containing a copy of
-# the specified file.  Uses the wget or ncftpget command.
+# Given a URL, returns the a two-element list consisting of:
+#     The name of a local file containing a copy of the specified file,
+#     or undef on failure; and
+#     An error message (or undef if everything is ok).
+#
+# Both elements can be defined if we already have a cached copy, but
+# the attempt to get a new copy failed.  The caller can use the cached
+# copy, but may wish to generate an error message of some sort.
+#
+# Uses the curl command.
 #
 # If the specified file has already been cached, we attempt to update it;
 # if the update fails, we still return the name of the old cached file.
 #
-# The wget command, if invoked with the "-N" (or "--timestamping") option,
-# sets the mtime of the local file to be the same as the modification
-# time of the remote file.  The "-N" option also says not to re-retrieve
-# the file unless the remote file is newer than the local copy.
-#
-# Due to a bug in wget, we need to chdir to the target directory before
-# downloading the file (rather than using the "-O" option); otherwise
-# we risk clobbering the target file.
-#
-sub Cache_File($;$) {
-    my($url, $nuke_first) = @_;
+sub Cache_File($) {
+    my($url) = @_;
     my $is_ftp = $url =~ /^ftp/;
-    my $result;
-    my $cwd = Cwd::getcwd;
-    Untaint $cwd;
 
-    Init_Cache_Info();
-    my $initial_download = not defined $Cache_File{$url};
+    my $cache_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var/cache";
+    my $filename = QP_Encode $url;
+    my $cached_file = "$cache_dir/$filename";
+    my $cached_file_exists = -e $cached_file;
+    my $temp_dir = "$cache_dir/tmp-" . time . "-$$";
+    my $temp_file = "$temp_dir/$filename";
+    my $info_file = "$temp_dir/$filename.info";
+    my $dump_file = "$temp_dir/$filename.dump";
+    my $server_mtime = undef;
+    my $cached_file_result = -e $cached_file ? $cached_file : undef;
 
-    if ($initial_download) {
-        my $dir = "$Download_Dir/" . time . "-$$-$Download_Index";
-        my $file = File::Basename::basename $url;
-        $Download_Index ++;
-        mkdir $dir, 0777 or die "${dir}: $!\n";
-        my $cache_file = "$dir/$file";
-        chdir $dir or die "${dir}: $!\n";
-        if ($is_ftp) {
-            Gridmap_Utils::Use_Commands 'ncftpget';
-            $result = system "ncftpget -V -t 30 $url 2>/dev/null";
+    Gridmap_Utils::Use_Commands 'curl';
+
+    mkdir $temp_dir, 0777 or die "${temp_dir}: $!\n";
+
+    #
+    # Try to get the last-modified timestamp of the file from
+    # the server.  Don't worry if this fails.
+    #
+    system "curl --silent --head --max-time 30 '$url' >$info_file";
+    if (open my $Info, '<', $info_file) {
+        while (<$Info>) {
+            if (/^Last-Modified: (.*)$/) {
+                $server_mtime = Time_Value $1;
+            }
+        }
+        close $Info;
+    }
+    unlink $info_file;
+
+    if (defined $server_mtime) {
+        if ($cached_file_exists) {
+            my $cached_mtime = Get_mtime $cached_file;
+            if ($cached_mtime == $server_mtime) {
+                #
+                # We already have a cached copy of the file, and the
+                # timestamps match.  Use the cached copy; no need to
+                # download it again.
+                # 
+                #
+                rmdir $temp_dir;
+                return ($cached_file, undef);
+            }
+        }
+    }
+
+    #
+    # Either the timestamps didn't match, or we don't already have a
+    # cached copy, or we couldn't determine the timestamp from the server.
+    # Try to download the file.
+    #
+
+    my @curl_command = ('curl');
+    push @curl_command, '--silent';
+    if (not $is_ftp) {
+        push @curl_command, '--dump-header', $dump_file;
+    }
+    push @curl_command, '--max-time', '30';
+    push @curl_command, '--remote-time';
+    push @curl_command, '--url', $url;
+    push @curl_command, '--output', $temp_file;
+
+    my $result = system @curl_command;
+
+    #
+    # For an http or https URL, the "curl" command returns an
+    # exit status of 0 (success) even if the file doesn't exist.
+    # For an ftp URL, curl fails if the file doesn't exist.
+    # In any case, a non-zero exit status implies a failure.
+    #
+    if ($result != 0) {
+        unlink $temp_file, $dump_file;
+        rmdir $temp_dir;
+        return ($cached_file_result, "curl failed");
+    }
+
+    #
+    # See if the newly downloaded file exists.
+    #
+    if (not -e $temp_file) {
+        unlink $temp_file, $dump_file;
+        rmdir $temp_dir;
+        return ($cached_file_result, "ftp download failed");
+    }
+
+    #
+    # For a non-ftp URL, check the dumped headers.
+    #
+    if (not $is_ftp) {
+        my $error = undef;
+        if (not -e $dump_file) {
+            $error = "curl --dump-header failed";
         }
         else {
-            Gridmap_Utils::Use_Commands 'wget';
-            $result = system 'wget', '--timestamping',
-                                     '--output-file=/dev/null',
-                                     '--timeout=30',
-                                     '--tries=1',
-                                     $url;
-        }
-        if ($result == 0) {
-            open my $URL_File, '>', "$dir/.url" or die "$dir/.url: $!\n";
-            print $URL_File "$url\n";
-            close $URL_File;
-            $Cache_File{$url} = $cache_file;
-        }
-        else {
-            unlink $cache_file;
-            chdir '..';
-            rmdir $dir;
-            my $cmd = $is_ftp ? 'ncftpget' : 'wget';
-            if ($result % 256 == 0) {
-                die "$cmd failed for $url, exit(" . $result / 256 . ")\n";
+            my $Dump = undef;
+            if (open $Dump, '<', $dump_file) {
+                my $first_line = scalar <$Dump>;
+                if (not defined $first_line or
+                    $first_line !~ /^HTTP.* 200 OK/)
+                {
+                    $error = "Download failed";
+                }
             }
             else {
-                die "$cmd failed for $url, system() returned $result\n";
+                $error = "Failed to open dump file";
             }
+            close $Dump;
+            unlink $dump_file;
         }
+        if (defined $error) {
+            unlink $temp_file;
+            rmdir $temp_dir;
+            return ($cached_file_result, $error);
+        }
+    }
+
+    #
+    # The download was succeessful.
+    # Rename the temporary file into the cache and return its name.
+    #
+    if (rename $temp_file, $cached_file) {
+        rmdir $temp_dir or warn "$temp_dir: $!\n";
+        Debug "=== ok, returning ($cached_file, undef)\n";
+        return ($cached_file, undef);
     }
     else {
-        #
-        # Try to refresh the file.
-        #
-        my $backup = "$Cache_File{$url}.bak";
-        if ($nuke_first) {
-            rename $Cache_File{$url}, $backup;
-        }
-        my $dir = File::Basename::dirname $Cache_File{$url};
-        chdir $dir or die "${dir}: $!\n";
-        if ($is_ftp) {
-            Gridmap_Utils::Use_Commands 'ncftpget';
-            $result = system "ncftpget -V $url 2>/dev/null";
-        }
-        else {
-            Gridmap_Utils::Use_Commands 'wget';
-            $result = system 'wget', '--timestamping',
-                                     '--output-file=/dev/null',
-                                     '--timeout=30',
-                                     '--tries=1',
-                                     $url;
-        }
-        if ($nuke_first) {
-            if (-e $Cache_File{$url}) {
-                unlink $backup;
-            }
-            else {
-                rename $backup, $Cache_File{$url};
-            }
-        }
-        #
-        # Ignore errors; we already have a copy of the file.
-        #
+        unlink $temp_file;
+        rmdir $temp_dir;
+        return undef, "Failed to rename temp file";
     }
-    chdir $cwd;
-    return $Cache_File{$url};
 } # Cache_File
 
 # ----------------------------------------------------------------------
