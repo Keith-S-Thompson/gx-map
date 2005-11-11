@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.31 2005-10-18 20:27:51-07 kst Exp $
+# $Id: configure-gx-map,v 1.32 2005-11-10 16:40:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -161,11 +161,12 @@ if (defined $Config{PATH}) {
         }
     }
     #
-    # The wget and ncftpget commands are not required if you don't use
-    # a downloadable requests log.
+    # Currently, all external commands are mandatory.  (curl is arguably
+    # optional, but only if you don't use a downloaded requests.log *and*
+    # you don't use gx-ca-update.)
     #
-    my %optional = (wget => 1, ncftpget => 1);
-    foreach my $command (qw(wget ncftpget rcs ci cp)) {
+    my %optional = ();
+    foreach my $command (qw(curl rcs ci)) {
         if (not Command_Exists $command, $Config{PATH}) {
             if ($optional{$command}) {
                 push @warnings,
