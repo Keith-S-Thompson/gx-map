@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.11 2005-11-09 21:04:28-08 kst Exp $
+# $Id: test-gx-map,v 1.12 2005-11-10 17:51:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -216,7 +216,7 @@ Installs and tests a gx-map release.
     -path ...     Value for \$PATH to be used by the installation
                   Default is $default_path
                   Should provide access to the following commands:
-                  wget ncftpget rcs ci openssl hostname
+                  curl rcs ci openssl hostname
     -tmpdir ...   Temporary directory (will be created)
                   Default is $default_tmpdir (may vary)
     -[no]verbose  Produce verbose output
