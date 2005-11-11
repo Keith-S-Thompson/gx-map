@@ -1,4 +1,4 @@
-# $Id: bug-0049,v 1.2 2005-11-08 20:52:55-08 kst Exp $
+# $Id: bug-0049,v 1.3 2005-11-10 17:34:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0049,v $
 
 gx-map bug 0049
@@ -30,3 +30,9 @@ of the file without downloading it.  "curl -s -o <filename> <url>"
 will download to a specified file.  "curl --silent --dump-header
 <filename>.head -o <filename> <url>" will get both the header and
 the file.
+
+There's still a potential problem with server certificates.  The client
+either has to have a copy of the signing certificate for the CA that
+issued the server certificate, or it has to ignore the certificate.
+curl seems more flexible in this area; recent versions use an installed
+bundle of CA certificates that can be reconfigured if necessary.
