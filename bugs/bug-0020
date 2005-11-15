@@ -1,4 +1,4 @@
-# $Id: bug-0020,v 1.4 2005-05-10 18:22:45-07 kst Exp $
+# $Id: bug-0020,v 1.5 2005-11-14 17:15:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0020,v $
 
 gx-map bug 0020
@@ -49,3 +49,13 @@ Add a new CRL_DOWNLOAD_GLITCH attribute.
 If set, rename the existing cached file before attempting to download
 a new one.
 The eventual fix for bug-0022 should supersede this workaround.
+
+New fix:
+Gridmap_Utils.pm.in 1.107
+gx-ca-update.in 1.74
+ca/1c3f2ca8.doegrids.cadesc 1.15
+gx-map 0.5.0a9
+Implemented fix for bug-0022 (new cache mechanism).
+Dropped CRL_DOWNLOAD_GLITCH attribute (no longer needed).
+Note that the special treatment for small files has not been
+implemented.
