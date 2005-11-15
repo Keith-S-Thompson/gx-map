@@ -1,4 +1,4 @@
-# $Id: bug-0022,v 1.5 2005-11-14 17:15:39-08 kst Exp $
+# $Id: bug-0022,v 1.6 2005-11-14 17:53:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0022,v $
 
 gx-map bug 0022
@@ -6,7 +6,7 @@ Date: Thu 2005-04-28
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.3
-Status: Open
+Status: Fixed 0.5.0a9
 Title: Improve cache mechanism
 
 Summary:
