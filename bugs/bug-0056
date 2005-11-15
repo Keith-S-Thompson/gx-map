@@ -1,4 +1,4 @@
-# $Id: bug-0056,v 1.1 2005-10-16 20:00:32-07 kst Exp $
+# $Id: bug-0056,v 1.2 2005-11-14 17:55:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0056,v $
 
 gx-map bug 0056
@@ -6,8 +6,13 @@ Date: Sun 2005-10-16
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a2
-Status: Open
+Status: Fixed 0.5.0a9
 Title: Send an e-mail warning on failure to update TGCDB
 
 Summary:
 Send an e-mail warning on a failure in gx-propagate.
+
+Fixed:
+gx-check-requests.in 1.60
+gx-map 0.5.0a9
+
