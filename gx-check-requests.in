@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.59 2005-11-04 02:21:22-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.60 2005-11-14 17:54:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -193,6 +193,7 @@ $ENV{PATH} = $Gridmap_Utils::Config{PATH};
 # or 'dryrun' if the "-dryrun" option was specified).
 #
 my $propagate = "$Install_Dir/sbin/gx-propagate";
+my @propagation_failures = ();
 if (-x $propagate) {
     foreach my $request (@good_requests) {
         my $dn = $request->{dn};
@@ -222,8 +223,29 @@ if (-x $propagate) {
         }
         else {
             $request->{PROPAGATION} = 'failed';
+            push @propagation_failures, $request;
         }
     }
+}
+if (@propagation_failures) {
+    my $count = scalar @propagation_failures;
+    my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+    my $subject = ($count == 1 ? "gx-propagate: 1 failure"
+                               : "gx-propagate: $count failures");
+    my $body = "$propagate failed on the following requests:\n\n";
+
+    foreach my $request (@propagation_failures) {
+        foreach my $field (qw(operation dn username SOURCE)) {
+            if (defined $request->{$field}) {
+                $body .= "    $field => $request->{$field}\n";
+            }
+        }
+        $body .= "\n";
+    }
+
+    $body .= "\n";
+
+    Gridmap_Utils::Send_Email $recipient, $subject, $body;
 }
 
 #
