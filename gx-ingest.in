@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-ingest.in,v 1.20 2005-11-03 18:26:39-08 kst Exp $
+# $Id: gx-ingest.in,v 1.21 2005-11-16 14:26:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -67,8 +67,7 @@ my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( help
-                 version
-                 old! ) );
+                 version ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
@@ -122,7 +121,6 @@ while (<>) {
         foreach my $user (@users) {
             next if $seen{"$dn $user"}++;
             my $command = "\$gx_request -add -force ";
-            $command .= "-no-email" if $User_Opt->{old};
             $command .= "-comment \"\$comment\" ";
             $command .= sprintf "-username %-8s ", $user;
             $command .= "-dn $dn";
@@ -139,8 +137,6 @@ sub Usage(@) {
 Usage: $Program_Name [options] [files]
     -help              : Display this message and exit.
     -version           : Display version information and exit.
-    -old               : Use the obsolete "-no-email" option.
-                         This is needed only for gx-map 0.3 and earlier.
 
 Reads an existing grid-mapfile (from stdin if no name is specified).
 
