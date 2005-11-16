@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.74 2005-11-10 17:49:14-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.75 2005-11-15 19:37:17-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -949,7 +949,7 @@ sub Update_CRL($) {
         if (defined $error) {
             my $timestamp = Gridmap_Utils::Get_mtime $new_crl_file;
             $timestamp = 0 if not defined $timestamp;
-            Error $ref, 'crl_download_failed', $timestamp, $@;
+            Error $ref, 'crl_download_failed', $timestamp, $error;
         }
     }
     else {
@@ -976,18 +976,18 @@ sub Update_CRL($) {
     #       "\n";
 
     Debug "%%% Calling CRL_Info for new CRL file, \$new_crl_file=",
-	  (defined $new_crl_file ? $new_crl_file : 'undef'),
-	  "\n";
+          (defined $new_crl_file ? $new_crl_file : 'undef'),
+          "\n";
     my $new_crl_info = CRL_Info $new_crl_file, $cert_file;
     Debug "%%% After CRL_Info\n";
     if (defined $new_crl_info) {
-	Debug "%%% \$new_crl_info = $new_crl_info\n";
-	foreach my $key (sort keys %$new_crl_info) {
-	    Debug "        $key => $new_crl_info->{$key}\n";
-	}
+        Debug "%%% \$new_crl_info = $new_crl_info\n";
+        foreach my $key (sort keys %$new_crl_info) {
+            Debug "        $key => $new_crl_info->{$key}\n";
+        }
     }
     else {
-	Debug "%%% \$new_crl_info = undef\n";
+        Debug "%%% \$new_crl_info = undef\n";
     }
 
     # if ($User_Opt->{debugging}) {
