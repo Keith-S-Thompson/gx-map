@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.61 2005-11-15 17:43:17-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.62 2005-11-16 18:09:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -74,11 +74,10 @@ my $Now = time;
 my $Hostname = Gridmap_Utils::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/var";
 
-my $User_Opt = { namespace => $Gridmap_Utils::Config{NAMESPACE} };
+my $User_Opt = { };
 my @Opts = ( $User_Opt,
              qw( help
                  version
-                 namespace=s
                  copy=s
                  dryrun
                  debugging ) );
@@ -97,7 +96,6 @@ if ($User_Opt->{version}) {
 #
 Gridmap_Utils::Require_Owner $Program_Name;
 
-# Usage "No -namespace option given\n" if not defined $User_Opt->{namespace};
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 Gridmap_Utils::Install_Die_Handler;
@@ -479,7 +477,7 @@ sub Get_Request_Info($) {
         $result->{SOURCE} = ( $owner_is_admin ? "admin" : "user" );
     }
 
-    $result->{NAMESPACE} = $User_Opt->{namespace};
+    $result->{NAMESPACE} = $Gridmap_Utils::Config{NAMESPACE};
 
     return $result;
 } # Get_Request_Info
@@ -547,7 +545,6 @@ sub Usage(@) {
 Usage: $Program_Name [options]
     -help           : Display this message and exit
     -version        : Display version information and exit
-    -namespace name : Specify namespace (default is "$Gridmap_Utils::Config{NAMESPACE}")
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
