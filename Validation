@@ -1,36 +1,62 @@
-# $Id: Validation,v 1.1 2005-11-17 17:00:25-08 kst Exp $
+# $Id: Validation,v 1.2 2005-11-18 15:21:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Validation,v $
 
 Validating a request
 
-Requirements to Check in gx-check-requests:
+Each request must be validated before being applied to a grid-mapfile.
+The gx-request client command is designed to create only valid request
+files, but since it's unprivileged a user could easily create
+a phony request file with whatever contents he wants.
 
-All required fields exist.
+There are three points at which checking must be performed.
 
-No unrecognized fields exist.
+1.  In gx-request, we need to check the validity of the request before
+    appending it to the requests.log file, *and* before attempting
+    to invoke gx-propagate (if it's installed).
 
-No key other than "comment" occurs more than once.
+    File format is correct (Read_Records doesn't choke)
 
-operation is valid
+    All required fields exist.
 
-(operation = remove-dn and username is not defined)
-or
-(operation != remove-dn and username is defined)
+    No unrecognized fields exist.
 
-(operation = remove-user and dn is not defined)
-or
-(operation != remove-user and dn is defined)
+    No key other than "comment" occurs more than once.
 
-dn (if defined) starts and ends with a '"' character, and has no other
-'"' characters.
+    operation is valid
 
-timestamp exists and is no more than 60 seconds in the future
+    (operation = remove-dn and username is not defined)
+    or
+    (operation != remove-dn and username is defined)
 
-((OWNER_NAME is defined) and (OWNER_NAME = username))
-or
-(OWNER_NAME is an admin)
+    (operation = remove-user and dn is not defined)
+    or
+    (operation != remove-user and dn is defined)
+
+    dn (if defined) starts and ends with a '"' character, and has no other
+    '"' characters.
+
+    timestamp exists and is no more than 60 seconds in the future
+    (allow for clock skew)
+
+    username matches user_uid (if the account exists)
+
+    requested_by_name matches requested_by_uid (if the account exists)
+
+    (OWNER_UID is an administrator)
+    or
+    (OWNER_UID matches user_uid)
 
 ========================================================================
+
+2.  Some additional checks will cause gx-request *not* to attempt
+    to invoke gx-propagate, but will not prevent the request from
+    being appended to requests.log.  In this case, the PROPAGATION
+    attribute is set to "failed" (possibly with an explanation),
+    and an e-mail notice will be sent.
+
+    username doesn't have an account on the system.
+
+    requested_by_name doesn't have an account on the system.
 
 Check in gx-gen-mapfile:
 
