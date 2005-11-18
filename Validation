@@ -1,0 +1,38 @@
+# $Id: Validation,v 1.1 2005-11-17 17:00:25-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Validation,v $
+
+Validating a request
+
+Requirements to Check in gx-check-requests:
+
+All required fields exist.
+
+No unrecognized fields exist.
+
+No key other than "comment" occurs more than once.
+
+operation is valid
+
+(operation = remove-dn and username is not defined)
+or
+(operation != remove-dn and username is defined)
+
+(operation = remove-user and dn is not defined)
+or
+(operation != remove-user and dn is defined)
+
+dn (if defined) starts and ends with a '"' character, and has no other
+'"' characters.
+
+timestamp exists and is no more than 60 seconds in the future
+
+((OWNER_NAME is defined) and (OWNER_NAME = username))
+or
+(OWNER_NAME is an admin)
+
+========================================================================
+
+Check in gx-gen-mapfile:
+
+(username is an account on the system) or ("-all" specified)
+    check in gx-gen-mapfile
