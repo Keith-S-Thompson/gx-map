@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.32 2005-11-10 16:40:56-08 kst Exp $
+# $Id: configure-gx-map,v 1.33 2005-11-18 15:40:40-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -347,7 +347,8 @@ sub Check_Admin($$) {
         }
         elsif ($pw[2] eq 0) {
             push @errors,
-                 "$Config_File: User \"$acct\" has UID 0, not allowed in $from\n";
+                 "$Config_File: User \"$acct\" has UID 0, " .
+                 "not allowed in $from\n";
         }
     }
 } # Check_Admin
