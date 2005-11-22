@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.62 2005-11-16 18:09:21-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.63 2005-11-21 18:10:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -193,7 +193,27 @@ $ENV{PATH} = $Gridmap_Utils::Config{PATH};
 my $propagate = "$Install_Dir/sbin/gx-propagate";
 my @propagation_failures = ();
 if (-x $propagate) {
+    REQUEST:
     foreach my $request (@good_requests) {
+        if (defined $request->{username}) {
+            my $user_pw = Gridmap_Utils::Get_PW $request->{username};
+            if (not defined $user_pw) {
+                $request->{PROPAGATION}
+                    = "failed: $request->{username} " .
+                      "has no account on $Hostname";
+                push @propagation_failures, $request;
+                next REQUEST;
+            }
+            my $requested_by_pw
+                = Gridmap_Utils::Get_PW $request->{requested_by_name};
+            if (not defined $requested_by_pw) {
+                $request->{PROPAGATION}
+                    = "failed: $request->{requested_by_name} " .
+                      "has no account on $Hostname";
+                push @propagation_failures, $request;
+                next REQUEST;
+            }
+        }
         my $dn = $request->{dn};
         if (defined $dn) {
             $dn =~ s/^"//;
@@ -220,7 +240,14 @@ if (-x $propagate) {
             $request->{PROPAGATION} = 'ok';
         }
         else {
-            $request->{PROPAGATION} = 'failed';
+            my $message;
+            if ($result % 256 == 0) {
+                $message = "exit " . $result / 256;
+            }
+            else {
+                $message = "system() returned $result";
+            }
+            $request->{PROPAGATION} = "failed: gx-propagate: $message";
             push @propagation_failures, $request;
         }
     }
@@ -337,7 +364,8 @@ sub Get_Request_Info($) {
         }
     }
     if (@invalid) {
-        push @{$result->{ERRORS}}, "Invalid key(s): @invalid";
+        my $s = (scalar @invalid == 1 ? '' : 's');
+        push @{$result->{ERRORS}}, "Invalid key$s: @invalid";
     }
 
     my @missing = ();
@@ -347,7 +375,8 @@ sub Get_Request_Info($) {
         }
     }
     if (@missing) {
-        push @{$result->{ERRORS}}, "Missing key(s): @missing";
+        my $s = (scalar @missing == 1 ? '' : 's');
+        push @{$result->{ERRORS}}, "Missing key$s: @missing";
     }
 
     #
@@ -420,11 +449,13 @@ sub Get_Request_Info($) {
         # (Allow 60 seconds for clock skew.)
         #
         if ($seconds - $Now > 60) {
-            push @{$result->{ERRORS}}, "Future timestamp: $result->{timestamp}\n";
+            push @{$result->{ERRORS}},
+                 "Future timestamp: $result->{timestamp}\n";
         }
     }
     else {
-        push @{$result->{ERRORS}}, "Invalid timestamp: $result->{timestamp}\n";
+        push @{$result->{ERRORS}},
+             "Invalid timestamp: $result->{timestamp}\n";
     }
 
     #
@@ -434,16 +465,86 @@ sub Get_Request_Info($) {
     if (not @stat) {
         die "stat failed: $!\n";
     }
-    my $file_uid = $stat[4];
-    my $file_pw = Gridmap_Utils::Get_PW $file_uid;
-    $result->{OWNER_UID} = $file_uid;
-    if (defined $file_pw and defined $file_pw->{name}) {
-        $result->{OWNER_NAME} = $file_pw->{name};
+    $result->{OWNER_UID} = $stat[4];
+    my $OWNER_pw = Gridmap_Utils::Get_PW $result->{OWNER_UID};
+    if (defined $OWNER_pw and defined $OWNER_pw->{name}) {
+        $result->{OWNER_NAME} = $OWNER_pw->{name};
+    }
+
+    my $user_pw;
+    my $requested_by_pw;
+
+    if (defined $result->{username}) {
+        $user_pw = Gridmap_Utils::Get_PW $result->{username};
+    }
+    $requested_by_pw = Gridmap_Utils::Get_PW $result->{requested_by_uid};
+
+    #
+    # Check that username matches user_uid (if the account exists).
+    #
+    if (defined $user_pw and
+        defined $result->{user_uid} and
+        $user_pw->{uid} ne $result->{user_uid})
+    {
+        push @{$result->{ERRORS}},
+             "username $result->{username} does not " .
+             "match user_uid $result->{user_uid}\n";
+    }
+
+    #
+    # Check that requested_by_name matches requested_by_uid (if the
+    # account exists)
+    #
+    if (defined $requested_by_pw and
+        $result->{requested_by_name} ne $requested_by_pw->{name})
+    {
+        push @{$result->{ERRORS}},
+             "requested_by_name $result->{requested_by_name} does not " .
+             "match requested_by_uid $result->{requested_by_uid}\n";
+    }
+
+
+    #
+    # Check that OWNER_UID matches requested_by_uid
+    #
+    if ($result->{OWNER_UID} ne $result->{requested_by_uid}) {
+        push @{$result->{ERRORS}},
+             "OWNER_UID $result->{OWNER_UID} does not " .
+             "match requested_by_uid $result->{requested_by_uid}\n";
+    }
+
+    if (defined $result->{username}) {
+        if ($result->{username} eq 'root') {
+            push @{$result->{ERRORS}}, "Cannot map to root\n";
+        }
+        else {
+            my $pw = Gridmap_Utils::Get_PW $result->{username};
+            if (defined $pw and $pw->{uid} == 0) {
+                push @{$result->{ERRORS}}, "Cannot map to UID 0\n";
+            }
+        }
     }
 
     my $owner_is_admin =
         ( defined $result->{OWNER_NAME} and
           Gridmap_Utils::Is_Admin_Account $result->{OWNER_NAME} );
+
+    if (not $owner_is_admin) {
+        if ($OP eq 'remove-dn') {
+            push @{$result->{ERRORS}},
+                 "remove-dn request by a non-admin\n";
+        }
+        elsif (defined $result->{OWNER_NAME} and
+               $result->{username} ne $result->{OWNER_NAME})
+        {
+            push @{$result->{ERRORS}},
+                 "request for another user by a non-admin\n";
+        }
+        elsif (defined $result->{source}) {
+            push @{$result->{ERRORS}},
+                 "source set by non-admin\n";
+        }
+    }
 
     #
     # By convention, user-defined options are in lower case, and
@@ -457,21 +558,7 @@ sub Get_Request_Info($) {
     # the same value.
     #
     if (defined $result->{source}) {
-        if ($owner_is_admin) {
-            $result->{SOURCE} = $result->{source};
-        }
-        else {
-            my $user;
-            if (defined $result->{OWNER_NAME}) {
-                $user = $result->{OWNER_NAME};
-            }
-            else {
-                $user = $result->{OWNER_UID};
-            }
-            push @{$result->{ERRORS}},
-                 "User $user tried to define SOURCE " .
-                 "\"$result->{SOURCE}\"\n";
-        }
+        $result->{SOURCE} = $result->{source};
     }
     else {
         $result->{SOURCE} = ( $owner_is_admin ? "admin" : "user" );
