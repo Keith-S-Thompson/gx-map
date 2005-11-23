@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.77 2005-11-22 19:51:56-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.78 2005-11-22 22:26:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -819,7 +819,7 @@ sub Update_Certificate($) {
                 $timestamp = Gridmap_Utils::Get_mtime $cache_file;
                 $timestamp = 0 if not defined $timestamp;
             }
-            Error $ref, 'cert_download_failed', $timestamp, $error;
+            Error $ref, 'cert_download_failed', $timestamp, "$error\n";
         }
         elsif (defined $cache_file and -r $cache_file) {
             $ref->{_CACHED_CERT_FILE} = $cache_file;
@@ -960,7 +960,7 @@ sub Update_CRL($) {
         if (defined $error) {
             my $timestamp = Gridmap_Utils::Get_mtime $new_crl_file;
             $timestamp = 0 if not defined $timestamp;
-            Error $ref, 'crl_download_failed', $timestamp, $error;
+            Error $ref, 'crl_download_failed', $timestamp, "$error\n";
         }
     }
     else {
