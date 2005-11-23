@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.75 2005-11-15 19:37:17-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.76 2005-11-22 19:38:18-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -811,8 +811,14 @@ sub Update_Certificate($) {
             # TODO: Think of a better way to generate a timestamp for
             # this error message.
             #
-            my $timestamp = Gridmap_Utils::Get_mtime $cache_file;
-            $timestamp = 0 if not defined $timestamp;
+            my $timestamp;
+            if (not defined $cache_file) {
+                $timestamp = 0;
+            }
+            else {
+                $timestamp = Gridmap_Utils::Get_mtime $cache_file;
+                $timestamp = 0 if not defined $timestamp;
+            }
             Error $ref, 'cert_download_failed', $timestamp, $error;
         }
         elsif (defined $cache_file and -r $cache_file) {
