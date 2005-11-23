@@ -1,4 +1,4 @@
-# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.3 2005-03-29 19:27:33-08 kst Exp $
+# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.4 2005-11-22 19:24:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e24fe33.melbourne-epp-grid.cadesc,v $
 
 CA_NAME             Melbourne EPP Grid CA
@@ -9,7 +9,7 @@ SUBJECT             /C=AU/O=University of Melbourne/OU=Experimental Particle Phy
 MAY_SIGN            /O=Grid/O=Belle/*
 MAY_SIGN            /O=Grid/O=BelleTestbed/*
 CERTIFICATE_MD5     2B:AC:D9:D0:95:43:11:A2:1F:F2:FC:37:53:27:19:5D
-## CERTIFICATE_SHA1    81:BF:37:0F:D9:4F:00:F9:1F:F6:11:98:F4:4D:4E:3B:0B:9D:65:43
+CERTIFICATE_SHA1    81:BF:37:0F:D9:4F:00:F9:1F:F6:11:98:F4:4D:4E:3B:0B:9D:65:43
 CERTIFICATE_URL     https://epp-ca.ph.unimelb.edu.au/Belle/5e24fe33.0
 SIGNING_POLICY_URL  https://epp-ca.ph.unimelb.edu.au/Belle/5e24fe33.signing_policy
 CRL_URL             https://epp-ca.ph.unimelb.edu.au/pub/crl/cacrl.pem
