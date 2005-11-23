@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.63 2005-11-21 18:10:16-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.64 2005-11-22 18:54:15-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -260,7 +260,13 @@ if (@propagation_failures) {
     my $body = "$propagate\n" .
                "failed on the following " .
                ($count == 1 ? "request" : "requests") .
-               ":\n\n";
+               ".\n\n";
+
+    $body .= "Please check the logs in the directory\n" .
+             "    $Install_Dir/var\n";
+    $body .= "You may need to resubmit " .
+             ($count == 1 ? "this request" : "these requests") .
+             "\n\n";
 
     foreach my $request (@propagation_failures) {
         foreach my $field (sort keys %$request) {
@@ -270,12 +276,6 @@ if (@propagation_failures) {
         }
         $body .= "\n";
     }
-
-    $body .= "Please check the logs in the directory\n" .
-             "$Install_Dir/var\n";
-    $body .= "You may need to resubmit " .
-             ($count == 1 ? "this request" : "these requests") .
-             "\n";
 
     Gridmap_Utils::Send_Email $recipient, $subject, $body;
 }
