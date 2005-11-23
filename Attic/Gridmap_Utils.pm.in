@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.109 2005-11-22 16:03:22-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.110 2005-11-22 20:07:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1273,6 +1273,7 @@ sub Cache_File($) {
     if (not $is_ftp) {
         push @curl_command, '--dump-header', $dump_file;
     }
+    push @curl_command, '--location'; # follow "Location:" hints
     push @curl_command, '--max-time', '30';
     push @curl_command, '--remote-time';
     push @curl_command, '--url', $url;
