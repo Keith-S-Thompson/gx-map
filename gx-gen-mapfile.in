@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.69 2005-11-10 17:49:58-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.70 2005-11-23 17:31:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -57,6 +57,7 @@ use Getopt::Long ();
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
+sub Slurp_File($);
 sub Image($);
 sub Usage(@);
 sub Debug(@);
@@ -90,6 +91,7 @@ my @Opts = ( $User_Opt,
                  requests-log=s@
                  permissions=s
                  compatible!
+                 merge-file=s@
                  all!
                  real-name! ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -197,6 +199,22 @@ foreach my $log (@{$User_Opt->{'requests-log'}}) {
 }
 
 @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
+
+#
+# Requests generated from slurped grid-mapfiles have timestamps starting
+# at 0 (1970-01-01) so that, in case of conflict, they'll be overridden
+# by requests from the log files.  (I might consider instead using the
+# timestamp of the input file, or optionally allowing slurped requests
+# to be processed last.)
+#
+my $Slurp_Timestamp = Gridmap_Utils::Timestamp_Of 0;
+
+if (@{$User_Opt->{'merge-file'}}) {
+    my @merge_files = @{$User_Opt->{'merge-file'}};
+    foreach my $file (@merge_files) {
+        push @requests, Slurp_File $file;
+    }
+}
 
 my @args = ();
 push @args, '-all' if $User_Opt->{all};
@@ -458,6 +476,51 @@ sub Identical_Files($$) {
 
 # ----------------------------------------------------------------------
 
+sub Slurp_File($) {
+    my($filename) = @_;
+    my @result = ();
+    my %seen = ();
+    open my $File, '<', $filename or die "${filename}: $!\n";
+    while (<$File>) {
+        chomp;
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        my($dn, $users) = /^\s*("[^"]*")\s*(\S+)\s*$/;
+        next if not defined $dn or not defined $users;
+        #
+        # Normally, only one user is specified, but it's also possible
+        # to have a list of user name separated by commas.  In this case,
+        # add them in reverse order; the most recently added is treated
+        # as the default.
+        #
+        # We avoid duplicate mappings (common if the input grid-mapfile
+        # is compatible with both GT2 and GT3/GT4) using the %seen hash.
+        #
+        $dn = Gridmap_Utils::GT4_Subject $dn;
+        my @users = reverse split /,/, $users;
+        foreach my $user (@users) {
+            next if $seen{"$dn $user"}++;
+            #
+            # Build a request record for the entry.
+            # There's no need to fill in all the fields.
+            #
+            my $request = { };
+            $request->{operation} = 'add';
+            $request->{dn} = $dn;
+            $request->{username} = $user;
+            $request->{timestamp} = $Slurp_Timestamp;
+            $Slurp_Timestamp
+                = Gridmap_Utils::Increment_Timestamp $Slurp_Timestamp;
+            push @result, $request;
+        }
+    }
+    return @result;
+} # Slurp_File
+
+# ----------------------------------------------------------------------
+
 sub User_Real_Name($) {
     my $pw = Gridmap_Utils::Get_PW $_[0];
     return undef if not $pw;
@@ -503,6 +566,9 @@ Option names may be abbreviated.
                          GT2 and GT3/GT4.  By default, the generated
                          grid-mapfile is *not* compatible with GT2 for
                          certain DNs.
+    -merge-file file   : Merge an existing grid-mapfile into the generated
+                         file.  May be given multiple times, e.g.,
+                             -merge file1 -merge file2
     -all               : Include entries for nonexistent accounts
                          (not normally recommended)
     -real-name         : Include real names as comments.
