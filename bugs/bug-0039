@@ -1,4 +1,4 @@
-# $Id: bug-0039,v 1.1 2005-06-30 19:44:25-07 kst Exp $
+# $Id: bug-0039,v 1.2 2005-11-23 19:59:54-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0039,v $
 
 gx-map bug 0039
@@ -6,7 +6,7 @@ Date: Thu 2005-06-30
 Severity: low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed 0.5.0b2
 Title: Consider removing Gridmap_Valid_Mappings.pm
 
 Summary:
@@ -15,3 +15,9 @@ that a site can set rules for rejecting certain mappings.  As far as I
 know, nobody is using anything other than the default implementation.
 Consider removing the module and incorporating the functionality of the
 default implementation into gx-gen-mapfile.in and/or Gridmap_Utils.pm.
+
+Fixed:
+Gridmap_Utils.pm.in 1.112
+gx-gen-mapfile.in 1.71
+install-gx-map.in 1.44
+gx-map 0.5.0b2
