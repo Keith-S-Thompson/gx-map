@@ -1,4 +1,4 @@
-# $Id: bug-0040,v 1.1 2005-07-01 13:45:42-07 kst Exp $
+# $Id: bug-0040,v 1.2 2005-11-23 17:32:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0040,v $
 
 gx-map bug 0040
@@ -6,7 +6,7 @@ Date: Fri 2005-07-01
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed 0.5.0b1
 Title: Add "-merge" option to gx-gen-mapfile
 
 Summary:
@@ -19,3 +19,7 @@ there will be no timestamp information.)
 This could be useful for dynamic or pool accounts, where the
 association with DNs can change rapidly.  Using gx-request for each
 update could cause the requests.log file to grow.
+
+Fixed:
+gx-gen-mapfile.in 1.70
+gx-map 0.5.0b1
