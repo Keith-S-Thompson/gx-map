@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.70 2005-11-23 17:31:32-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.71 2005-11-23 19:58:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -74,7 +74,6 @@ BEGIN {
     unshift @INC, "$Install_Dir/lib";
 }
 use Gridmap_Utils ();
-use Gridmap_Valid_Mappings ();
 
 my $Data_Dir             = "$Install_Dir/var";
 my $Default_Requests_Log = "$Data_Dir/requests.log";
@@ -157,7 +156,6 @@ else {
 
 if ($User_Opt->{debugging}) {
     $Gridmap_Utils::Debugging = 1;
-    $Gridmap_Valid_Mappings::Debugging = 1;
 }
 
 my @Output_Files = @ARGV;
