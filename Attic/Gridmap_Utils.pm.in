@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.111 2005-11-23 17:33:27-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.112 2005-11-23 19:59:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -61,8 +61,7 @@ package Gridmap_Utils;
 #
 # The %Config hash contains values generated before installation by
 # configure-gx-map.  Note that the PERL and INSTALL_DIR options are
-# necessarily expanded directly in each file, and the VALID_MAPPINGS
-# option is used directly by configure-gx-map; other options should be
+# necessarily expanded directly in each file; other options should be
 # referenced via the %Gridmap_Utils::Config hash.
 # 
 
@@ -99,7 +98,6 @@ BEGIN {
     use Time::HiRes ();
     eval { require Net::Domain };
     $Have_Net_Domain_Module = ( $@ eq '' );
-    use Gridmap_Valid_Mappings ();
 }
 
 # ----------------------------------------------------------------------
@@ -1012,6 +1010,9 @@ sub Sort_By_Timestamp(@) {
 
 #
 # Given a list of request logs, reads them and returns a mapping.
+# An optional first argument of '-all' specifies that mappings will be
+# generated even for accounts that don't exist on the current system.
+#
 # The result is a reference to a hash; keys are DNs, values are hash
 # references { username => timestamp }.  Using a hash for each entry
 # allows for multiple usernames; the timestamp can be used to determine
@@ -1037,138 +1038,152 @@ sub Gen_Mappings(@) {
 
     REQUEST:
     foreach my $request (@requests) {
-# =     #
-# =     # === REVISIT THIS COMMENT ===
-# =     #
-# =     # By calling Valid_Mappings, we eliminate any requests for accounts
-# =     # that don't exist on this system (unless the "-all" option was
-# =     # specified).  This should also eliminate any unauthorized requests
-# =     # (which theoretically, could be created only by something like a
-# =     # hacked copy of gx-map).  The Valid_Mappings function can also be
-# =     # modified for site-specific requirements, such as rejecting mappings
-# =     # for certain accounts or for certificates issued by certain CAs.
-# =     #
-# =     # The Valid_Mappings function may return multiple mappings for a
-# =     # single request.
-# =     #
-# =     # Note that each mapping contains only the "dn" and/or "username"
-# =     # fields; other information, such as the operation and the timestamp,
-# =     # come from the original request, and thus may not be modified by
-# =     # the Valid_Mappings function.
-# =     #
-# =     # === REVISIT THIS COMMENT ===
-# =     #
-        my @options = ();
-        push @options, '-all' if $All;
-        my @request_mappings
-            = Gridmap_Valid_Mappings::Valid_Mappings(@options, $request);
-
         my $operation = $request->{operation};
-        foreach my $mapping (@request_mappings) {
-#           if ($User_Opt->{dump}) {
-#               my $timestamp = Image $request->{timestamp};
-#               $timestamp =~ s/ .*$//;
-#               my $source    = Image $request->{SOURCE};
-#               my $namespace = Image $request->{NAMESPACE};
-#               my $op        = Image $request->{operation};
-#               my $user      = Image $mapping->{username};
-#               my $dn        = Image $mapping->{dn};
-#               push @dump_lines,
-#                    sprintf "%-10s %-8s %-8s %-11s %-8s %s\n",
-#                            $timestamp,
-#                            $source,
-#                            $namespace,
-#                            $op,
-#                            $user,
-#                            $dn;
-#               next REQUEST;
-#           }
+
+        my $message = "Processing request $operation";
+        if (defined $request->{dn}) {
+            $message .= " $request->{dn}";
+        }
+        if (defined $request->{username}) {
+            $message .= " $request->{username}";
+        }
+        Debug "$message\n";
+
+        #
+        # If OWNER_NAME wasn't set by gx-check-requests, try to set
+        # it here.
+        #
+        if (defined $request->{OWNER_UID} and
+            not defined $request->{OWNER_NAME})
+        {
+            my $pw = Gridmap_Utils::Get_PW($request->{OWNER_UID});
+            if (defined $pw->{name}) {
+                Debug "    Setting OWNER_NAME to $pw->{name}\n";
+                $request->{OWNER_NAME} = $pw->{name};
+            }
+        }
+
+        #
+        # Validate the request
+        #
+
+        if (not defined $request->{OWNER_NAME}) {
+            Debug "Reject, no OWNER_NAME\n";
+            next REQUEST;
+        }
+
+        if (defined $request->{username}) {
+            my $pw = Gridmap_Utils::Get_PW $request->{username};
+            if (not defined $pw and not $All) {
+                Debug "Reject, no account on this system\n";
+                next REQUEST;
+            }
+            if ($request->{username} eq 'root') {
+                Debug "Reject, mapping to root\n";
+                next REQUEST;
+            }
+            if (defined $pw->{uid} and $pw->{uid} == 0) {
+                Debug "Reject, mapping to UID 0\n";
+                next REQUEST;
+            }
+            if ($request->{OWNER_NAME} ne $request->{username} and
+                not Gridmap_Utils::Is_Admin_Account($request->{OWNER_NAME}))
+            {
+                Debug "Reject, $request->{OWNER_NAME} is not an admin\n";
+                next REQUEST;
+            }
+        }
+        else {
+            if (not Gridmap_Utils::Is_Admin_Account($request->{OWNER_NAME})) {
+                Debug "Reject, $request->{OWNER_NAME} is not an admin\n";
+                next REQUEST;
+            }
+        }
+
+        if (not defined $request->{NAMESPACE}) {
+            Debug "Reject, no NAMESPACE\n";
+            next REQUEST;
+        }
+        if ($request->{NAMESPACE} ne $Gridmap_Utils::Config{NAMESPACE}) {
+            Debug "Reject, bad NAMESPACE $request->{NAMESPACE}, " .
+                  "expected $Gridmap_Utils::Config{NAMESPACE}\n";
+            next REQUEST;
+        }
+
+        my $dn
+            = exists $request->{dn} ? $request->{dn} : undef;
+        my $username
+            = exists $request->{username} ? $request->{username} : undef;
+        my $timestamp = $request->{timestamp};
+        $timestamp =~ s/ .*$//;
+
+        if ($operation eq 'add') {
             #
-            # $mapping is a reference to a hash with keys "dn" and
-            # "username", both optional.
+            # Add a mapping; we have a DN and a user name.
             #
-            my $dn          = exists $mapping->{dn}
-                              ? $mapping->{dn}
-                              : undef;
-            my $username = exists $mapping->{username}
-                              ? $mapping->{username}
-                              : undef;
-            my $timestamp = $request->{timestamp};
-            $timestamp =~ s/ .*$//;
+            # The key is the user name; the value is the timestamp.
+            #
+            Debug ">>> Add $dn --> $username\n";
+            $Mappings{$dn}->{$username} = $timestamp;
+            $By_User{$username}->{$dn} = 1;
+        }
+        elsif ($operation eq 'remove') {
+            if (exists $Mappings{$dn}) {
+                if (exists $Mappings{$dn}->{$username}) {
+                    delete $Mappings{$dn}->{$username};
+                    if (scalar keys %{$Mappings{$dn}} == 0) {
+                        delete $Mappings{$dn};
+                    }
+                    delete $By_User{$username}->{$dn};
+                    if (scalar keys %{$By_User{$username}} == 0) {
+                        delete $By_User{$username};
+                    }
+                }
+            }
+        }
+        elsif ($operation eq 'remove-dn') {
+            if (exists $Mappings{$dn}) {
+                Debug ">>> Delete $dn\n";
+                foreach my $user (keys %{$Mappings{$dn}}) {
+                    delete $By_User{$user}->{$dn};
+                    if (scalar keys %{$By_User{$user}} == 0) {
+                        delete $By_User{$user};
+                    }
+                }
+                delete $Mappings{$dn};
+            }
+        }
+        elsif ($operation eq 'remove-user') {
+            foreach my $dn (keys %{$By_User{$username}}) {
+                if (exists $Mappings{$dn}->{$username}) {
+                    Debug ">>> Delete $dn --> $username\n";
+                    delete $Mappings{$dn}->{$username};
+                    if (scalar keys %{$Mappings{$dn}} == 0) {
+                        delete $Mappings{$dn};
+                    }
+                }
+            }
+            delete $By_User{$username};
+        }
+        else {
+            die "Internal error, operation = \"$operation\"\n";
+        }
 
-            Debug ">>> Processing mapping, operation = $operation, dn = ",
-                  (defined $dn ? $dn : "undef"),
-                  ", username = ",
-                  (defined $username ? "\"$username\"" : "undef"),
-                  "\n";
-            if ($operation eq 'add') {
-                #
-                # Add a mapping; we have a DN and a user name.
-                #
-                # The key is the user name; the value is the timestamp.
-                #
-                Debug ">>> Add $dn --> $username\n";
-                $Mappings{$dn}->{$username} = $timestamp;
-                $By_User{$username}->{$dn} = 1;
-            }
-            elsif ($operation eq 'remove') {
-                if (exists $Mappings{$dn}) {
-                    if (exists $Mappings{$dn}->{$username}) {
-                        delete $Mappings{$dn}->{$username};
-                        if (scalar keys %{$Mappings{$dn}} == 0) {
-                            delete $Mappings{$dn};
-                        }
-                        delete $By_User{$username}->{$dn};
-                        if (scalar keys %{$By_User{$username}} == 0) {
-                            delete $By_User{$username};
-                        }
-                    }
+        if ($Debugging) {
+            Debug ">>> Current grid-mapfile entries:\n";
+            foreach my $dn (sort keys %Mappings) {
+                Debug "* $dn\n";
+                my @items = ();
+                my $by_name = $Mappings{$dn}; # name --> timestamp
+                foreach my $name (sort { $by_name->{$a} <=> $by_name->{$b} }
+                                     keys %$by_name)
+                {
+                    push @items, "$name\@$by_name->{$name}";
                 }
+                Debug "    @items\n";
             }
-            elsif ($operation eq 'remove-dn') {
-                if (exists $Mappings{$dn}) {
-                    Debug ">>> Delete $dn\n";
-                    foreach my $user (keys %{$Mappings{$dn}}) {
-                        delete $By_User{$user}->{$dn};
-                        if (scalar keys %{$By_User{$user}} == 0) {
-                            delete $By_User{$user};
-                        }
-                    }
-                    delete $Mappings{$dn};
-                }
-            }
-            elsif ($operation eq 'remove-user') {
-                foreach my $dn (keys %{$By_User{$username}}) {
-                    if (exists $Mappings{$dn}->{$username}) {
-                        Debug ">>> Delete $dn --> $username\n";
-                        delete $Mappings{$dn}->{$username};
-                        if (scalar keys %{$Mappings{$dn}} == 0) {
-                            delete $Mappings{$dn};
-                        }
-                    }
-                }
-                delete $By_User{$username};
-            }
-            else {
-                die "Internal error, operation = \"$operation\"\n";
-            }
+            Debug "<<< END\n";
 
-            if ($Debugging) {
-                Debug ">>> Current grid-mapfile entries:\n";
-                foreach my $dn (sort keys %Mappings) {
-                    Debug "* $dn\n";
-                    my @items = ();
-                    my $by_name = $Mappings{$dn}; # name --> timestamp
-                    foreach my $name (sort { $by_name->{$a} <=> $by_name->{$b} }
-                                         keys %$by_name)
-                    {
-                        push @items, "$name\@$by_name->{$name}";
-                    }
-                    Debug "    @items\n";
-                }
-                Debug "<<< END\n";
-
-            }
         }
     }
 
