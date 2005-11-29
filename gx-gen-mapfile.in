@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.71 2005-11-23 19:58:26-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.72 2005-11-28 23:51:42-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -57,7 +57,6 @@ use Getopt::Long ();
 sub Update_List(@);
 sub Identical_Files($$);
 sub User_Real_Name($);
-sub Slurp_File($);
 sub Image($);
 sub Usage(@);
 sub Debug(@);
@@ -82,7 +81,8 @@ my $Dot_Update           = "$Data_Dir/new-requests/.update";
 my $Program_Name = File::Basename::basename $0;
 
 my $User_Opt = { 'requests-log' => [],
-                 'permissions'  => '444' };
+                 'permissions'  => '444',
+                 'merge-file'   => [] };
 my @Opts = ( $User_Opt,
              qw( help
                  version
@@ -130,7 +130,7 @@ if (@{$User_Opt->{'requests-log'}}) {
             my $url = $log;
             ($log, $error) = Gridmap_Utils::Cache_File $log;
             if (not defined $log and defined $error) {
-                die "$url: $error\n";
+                die "${url}: $error\n";
             }
         }
     }
@@ -191,32 +191,16 @@ if (not $Write_To_Stdout) {
     }
 }
 
-my @requests;
-foreach my $log (@{$User_Opt->{'requests-log'}}) {
-    push @requests, Gridmap_Utils::Read_Records '-multiple', $log;
-}
-
-@requests = Gridmap_Utils::Sort_By_Timestamp @requests;
-
-#
-# Requests generated from slurped grid-mapfiles have timestamps starting
-# at 0 (1970-01-01) so that, in case of conflict, they'll be overridden
-# by requests from the log files.  (I might consider instead using the
-# timestamp of the input file, or optionally allowing slurped requests
-# to be processed last.)
-#
-my $Slurp_Timestamp = Gridmap_Utils::Timestamp_Of 0;
-
-if (@{$User_Opt->{'merge-file'}}) {
-    my @merge_files = @{$User_Opt->{'merge-file'}};
-    foreach my $file (@merge_files) {
-        push @requests, Slurp_File $file;
-    }
-}
-
 my @args = ();
 push @args, '-all' if $User_Opt->{all};
+push @args, '-log';
 push @args, @{$User_Opt->{'requests-log'}};
+
+if (@{$User_Opt->{'merge-file'}}) {
+    push @args, '-gridmap';
+    push @args, @{$User_Opt->{'merge-file'}};
+}
+
 my $Mappings = Gridmap_Utils::Gen_Mappings @args;
 
 my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
@@ -365,7 +349,9 @@ sub Update_List(@) {
     my $dot_update_mtime = Gridmap_Utils::Get_mtime $Dot_Update;
     my $etc_passwd_mtime = Gridmap_Utils::Get_mtime '/etc/passwd';
 
-    foreach my $log (@{$User_Opt->{'requests-log'}}) {
+    foreach my $log (@{$User_Opt->{'requests-log'}},
+                     @{$User_Opt->{'merge-file'}})
+    {
         my $mtime = Gridmap_Utils::Get_mtime $log;
         Debug "input mtime ", Gridmap_Utils::Long_Time_Image $mtime, "\n";
         if (not defined $newest_input_mtime or
@@ -471,51 +457,6 @@ sub Identical_Files($$) {
     close $File2;
     return $ok;
 } # Identical_Files
-
-# ----------------------------------------------------------------------
-
-sub Slurp_File($) {
-    my($filename) = @_;
-    my @result = ();
-    my %seen = ();
-    open my $File, '<', $filename or die "${filename}: $!\n";
-    while (<$File>) {
-        chomp;
-        s/#.*$//;
-        s/^\s+//;
-        s/\s+$//;
-        next if /^$/;
-        my($dn, $users) = /^\s*("[^"]*")\s*(\S+)\s*$/;
-        next if not defined $dn or not defined $users;
-        #
-        # Normally, only one user is specified, but it's also possible
-        # to have a list of user name separated by commas.  In this case,
-        # add them in reverse order; the most recently added is treated
-        # as the default.
-        #
-        # We avoid duplicate mappings (common if the input grid-mapfile
-        # is compatible with both GT2 and GT3/GT4) using the %seen hash.
-        #
-        $dn = Gridmap_Utils::GT4_Subject $dn;
-        my @users = reverse split /,/, $users;
-        foreach my $user (@users) {
-            next if $seen{"$dn $user"}++;
-            #
-            # Build a request record for the entry.
-            # There's no need to fill in all the fields.
-            #
-            my $request = { };
-            $request->{operation} = 'add';
-            $request->{dn} = $dn;
-            $request->{username} = $user;
-            $request->{timestamp} = $Slurp_Timestamp;
-            $Slurp_Timestamp
-                = Gridmap_Utils::Increment_Timestamp $Slurp_Timestamp;
-            push @result, $request;
-        }
-    }
-    return @result;
-} # Slurp_File
 
 # ----------------------------------------------------------------------
 
