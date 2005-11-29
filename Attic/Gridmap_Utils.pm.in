@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.113 2005-11-23 20:00:28-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.114 2005-11-28 23:46:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1009,9 +1009,74 @@ sub Sort_By_Timestamp(@) {
 # ----------------------------------------------------------------------
 
 #
-# Given a list of request logs, reads them and returns a mapping.
+# Requests generated from slurped grid-mapfiles have timestamps starting
+# at 0 (1970-01-01) so that, in case of conflict, they'll be overridden
+# by requests from the log files.  (I might consider instead using the
+# timestamp of the input file, or optionally allowing slurped requests
+# to be processed last.)
+#
+my $Slurp_Timestamp = Gridmap_Utils::Timestamp_Of 0;
+
+sub Slurp_File($) {
+    my($filename) = @_;
+    Debug "Slurp_File $filename\n";
+    my @result = ();
+    my %seen = ();
+    open my $File, '<', $filename or die "${filename}: $!\n";
+    while (<$File>) {
+        chomp;
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        my($dn, $users) = /^\s*("[^"]*")\s*(\S+)\s*$/;
+        next if not defined $dn or not defined $users;
+        #
+        # Normally, only one user is specified, but it's also possible
+        # to have a list of user name separated by commas.  In this case,
+        # add them in reverse order; the most recently added is treated
+        # as the default.
+        #
+        # We avoid duplicate mappings (common if the input grid-mapfile
+        # is compatible with both GT2 and GT3/GT4) using the %seen hash.
+        #
+        $dn = Gridmap_Utils::GT4_Subject $dn;
+        my @users = reverse split /,/, $users;
+        foreach my $user (@users) {
+            next if $seen{"$dn $user"}++;
+            #
+            # Build a request record for the entry.
+            # There's no need to fill in all the fields.
+            #
+            my $request = { };
+            $request->{operation} = 'add';
+            $request->{dn} = $dn;
+            $request->{username} = $user;
+            $request->{timestamp} = $Slurp_Timestamp;
+            $request->{OWNER_NAME} = $Gridmap_Utils::Config{GX_MAP_OWNER};
+            $request->{NAMESPACE} = $Gridmap_Utils::Config{NAMESPACE};
+            Debug "Adding dn=$dn user=$user timestamp=$Slurp_Timestamp\n";
+            $Slurp_Timestamp
+                = Gridmap_Utils::Increment_Timestamp $Slurp_Timestamp;
+            push @result, $request;
+        }
+    }
+    Debug "Slurp_File returning ", scalar @result, " request(s)\n";
+    return @result;
+} # Slurp_File
+
+# ----------------------------------------------------------------------
+
+#
+# Given a list of input files, reads them and returns a mapping.
+#
 # An optional first argument of '-all' specifies that mappings will be
 # generated even for accounts that don't exist on the current system.
+#
+# The files are assumed to be request logs by default.  An argument of
+# '-gridmap' causes following files to be treated as grid-mapfiles;
+# an argument of '-log' causes following files to be treated as request
+# log files.
 #
 # The result is a reference to a hash; keys are DNs, values are hash
 # references { username => timestamp }.  Using a hash for each entry
@@ -1019,18 +1084,35 @@ sub Sort_By_Timestamp(@) {
 # the order for multiple usernames.
 # 
 sub Gen_Mappings(@) {
-    my(@log_files) = @_;
+    my(@args) = @_;
+    Debug "Entering Gen_Mappings(@args)\n";
     my $All = 0;
-    if (scalar @log_files >= 1 and $log_files[0] eq '-all') {
+    if (scalar @args >= 1 and $args[0] eq '-all') {
         $All = 1;
-        shift @log_files;
+        shift @args;
     }
-    die "Internal error, Gen_Mappings with no log file\n" if not @log_files;
 
+    my $kind = 'log';
     my @requests = ();
-    foreach my $log (@log_files) {
-        push @requests, Gridmap_Utils::Read_Records '-multiple', $log;
+
+    foreach my $arg (@args) {
+        if ($arg eq '-log') {
+            $kind = 'log';
+        }
+        elsif ($arg eq '-gridmap') {
+            $kind = 'gridmap';
+        }
+        elsif ($kind eq 'log') {
+            push @requests, Gridmap_Utils::Read_Records '-multiple', $arg;
+        }
+        elsif ($kind eq 'gridmap') {
+            push @requests, Gridmap_Utils::Slurp_File $arg;
+        }
+        else {
+            die "Internal error, \$kind = \"$kind\"\n";
+        }
     }
+
     @requests = Gridmap_Utils::Sort_By_Timestamp @requests;
     
     my %Mappings = ();
