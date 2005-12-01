@@ -1,4 +1,4 @@
-# $Id: README.Cross-Site,v 1.2 2005-05-07 03:52:11-07 kst Exp $
+# $Id: README.Cross-Site,v 1.3 2005-11-30 20:38:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Cross-Site,v $
 
 gx-map has some limited support for automatically propagating
@@ -23,22 +23,7 @@ the URL of the remote requests.log file.  This is currently being
 used to propagate information from SDSC's internal systems to SDSC's
 Datastar and Teragrid systems (but not vice versa).
 
-For systems with distinct namespaces, where "jsmith" on one system
-may not be the same user as "jsmith" on another system, there's
-currently no good mechanism for automatically propagating information.
-This requires users (or administrators) to run the "gx-request" command
-separately on each system.  There are some hooks in place to customize
-the Gridmap_Valid_Mappings.pm Perl module, allowing translations from
-one namespace to another, but this hasn't been widely used.
-
-Release 0.4.0 adds a "-dump" option to gx-gen-mapfile.  Rather than
-generating a grid-mapfile, this generates an ordered listing of all the
-transactions in the requests.log file.  Each entry includes a "source"
-attribute, indicating whether the mapping was requested by a user,
-by an administrator, or by some automated mechanism.  The intent is
-that a tool (not yet implemented) could use this to watch for new
-requests and propagate the information to other systems via a user
-database.  It's intended for use with the TeraGrid user database.
-The "source" attribute is intended to prevent duplication of requests
-that are already in the user database.  Not all the details have been
-worked out.
+The configurable Gridmap_Valid_Mappings.pm Perl module, and the "-dump"
+option to gx-gen-mapfile, are no longer supported in gx-map 0.5.*.
+Cross-site propagation is handled via the optional gx-propagate
+command.
