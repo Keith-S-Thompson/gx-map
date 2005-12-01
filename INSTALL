@@ -1,4 +1,4 @@
-# $Id: INSTALL,v 1.3 2004-11-22 18:01:41-08 kst Exp $
+# $Id: INSTALL,v 1.4 2005-11-30 20:36:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
 Installation instructions for gx-map.
@@ -6,40 +6,32 @@ Installation instructions for gx-map.
 1.  Create a configuration file.  See sample.conf in this directory
     for an outline.
 
-2.  Optionally create a customized version of the Gridmap_Valid_Mappings
-    Perl module.  (In most cases, this won't be necessary.)  The
-    default implementation only accepts mappings from the current
-    namespace (see sample.conf for the definition of "namespace"
-    in this context).  A customized version might recognize other
-    mappings (perhaps to be downloaded from a web page), translate
-    user names from one namespace to another, and so forth.
-
-3.  In this directory, run
+2.  In this directory, run
         ./configure-gx-map <...>.conf
 
-4.  In this directory, run
+3.  In this directory, run
         make install
     This must be done from the administrative account that will own
     the installed files (typically "globus").
 
-5.  Set up cron jobs to be executed by the installation account
+4.  Set up cron jobs to be executed by the installation account
     (words in all-caps will need to be substituted).
 
-    5a. Check for new requests:
+    4a. Check for new requests:
 	    DIR/sbin/gx-check-requests -namespace NAMESPACE
 
-    5b. Regenerate the grid-mapfile when necessary:
+    4b. Regenerate the grid-mapfile when necessary:
 	    DIR/sbin/gx-gen-mapfile MAPFILE
 	If mapping are to be processed from multiple sources (including
 	web pages), use the "-req" option; for example:
 	    DIR/sbin/gx-gen-mapfile -req default -req URL MAPFILE
 
-    5c. The gx-gen-mapfile command checks for updates to the /etc/passwd
+    4c. The gx-gen-mapfile command checks for updates to the /etc/passwd
 	file.  On systems where new user accounts do not cause the
 	/etc/passwd file to be updated (e.g., systems using YP/NIS),
 	it may be necessary to run "gx-map -update" periodically.
 
-6.  If you want to use gx-ca-update to maintain CA certificates,
+5.  If you want to use gx-ca-update to maintain CA certificates,
     CRLs, and signing_policy files, set up a cron job:
 
     DIR/gx-ca-update -ca b89793e4 \
