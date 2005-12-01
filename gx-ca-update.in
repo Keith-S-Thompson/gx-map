@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.79 2005-11-29 16:21:04-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.80 2005-11-30 20:49:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -822,7 +822,10 @@ sub Update_Certificate($) {
                 $timestamp = Gridmap_Utils::Get_mtime $cache_file;
                 $timestamp = 0 if not defined $timestamp;
             }
-            Error $ref, 'cert_download_failed', $timestamp, "$error\n";
+            Error $ref,
+                  'cert_download_failed',
+                  $timestamp,
+                  "$error for $ref->{CERTIFICATE_URL}\n";
         }
         elsif (defined $cache_file and -r $cache_file) {
             $ref->{_CACHED_CERT_FILE} = $cache_file;
@@ -963,7 +966,10 @@ sub Update_CRL($) {
         if (defined $error) {
             my $timestamp = Gridmap_Utils::Get_mtime $new_crl_file;
             $timestamp = 0 if not defined $timestamp;
-            Error $ref, 'crl_download_failed', $timestamp, "$error\n";
+            Error $ref,
+                  'crl_download_failed',
+                  $timestamp,
+                  "$error for $ref->{CRL_URL}\n";
         }
     }
     else {
@@ -1416,6 +1422,10 @@ sub Notify() {
                       "$new_error_ca_count/$total_ca_count CA(s)";
 
         my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+        $mail_message_body
+            .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on " .
+               Gridmap_Utils::Get_Hostname() .
+               "\n\n";
         Gridmap_Utils::Send_Email $Gridmap_Utils::Config{ADMIN_EMAIL},
                                   $subject,
                                   $mail_message_body;
