@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.64 2005-11-22 18:54:15-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.65 2005-12-02 20:20:13-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -64,6 +64,7 @@ use Gridmap_Utils ();
 sub Usage(@);
 sub Get_Request_Info($);
 sub Append_To_Log($@);
+sub Check_Admin_Accounts();
 sub Debug(@);
 sub Debugf(@);
 
@@ -90,6 +91,12 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+#
+# All admin accounts must exist on the current system.
+# Bail out if any are missing.
+#
+Check_Admin_Accounts;
 
 #
 # This program may only be executed by the GX_MAP_OWNER.
@@ -623,6 +630,32 @@ sub Append_To_Log($@) {
     chmod $readonly, $log_file or die "chmod $log_file: $!\n";
     chmod $readonly, $RCS_file or die "chmod $RCS_file: $!\n";
 } # Append_To_Log
+
+# ----------------------------------------------------------------------
+
+#
+# Verify that all admin accounts (GX_MAP_OWNER plus ADDITIONAL_ADMINS)
+# exist on the current system.  If not, die with an error message.
+#
+sub Check_Admin_Accounts() {
+    my @admins = ( $Gridmap_Utils::Config{GX_MAP_OWNER},
+                   split /\s+/, $Gridmap_Utils::Config{ADDITIONAL_ADMINS} );
+    my @missing = ();
+    foreach my $admin (@admins) {
+        #
+        # Since we're just checking whether the account exists, there's
+        # no need to use Gridmap_Utils::Get_PW.
+        #
+        my @pw = getpwnam $admin;
+        if (not @pw) {
+            push @missing, $admin;
+        }
+    }
+    if (@missing) {
+        my $s = (scalar @missing == 1 ? '' : 's');
+        die "Missing admin account$s: @missing\n";
+    }
+} # Check_Admin_Accounts
 
 # ----------------------------------------------------------------------
 
