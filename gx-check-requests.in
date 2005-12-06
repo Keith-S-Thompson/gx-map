@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.66 2005-12-06 03:20:34-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.67 2005-12-06 04:10:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -284,6 +284,9 @@ if (@propagation_failures) {
         $body .= "\n";
     }
 
+    $body
+        .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
+
     Gridmap_Utils::Send_Email $recipient, $subject, $body;
 }
 
@@ -328,6 +331,43 @@ foreach my $file (@bad_request_files) {
 if (@rename_errors) {
     print STDERR "Error(s) moving request files:\n",
                  @rename_errors;
+}
+
+#
+# If any bad request files were detected, send e-mail.
+#
+if (@bad_request_files) {
+    my $count = scalar @bad_request_files;
+    my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+    my $subject = ($count == 1 ? "$Program_Name: bad request"
+                               : "$Program_Name: $count bad requests");
+    my $body = "$Program_Name detected ";
+    if ($count == 1) {
+        $body .= "a bad request file:\n";
+    }
+    else {
+        $body .= "$count bad request files:\n";
+    }
+    foreach my $file (@bad_request_files) {
+        $body .= "$bad_request_dir/$file\n";
+    }
+    $body .= "\n";
+
+    if (@rename_errors) {
+        if (scalar @rename_errors == 1) {
+            $body .= "(Possible error renaming a file)\n";
+        }
+        else {
+            $body .= "(Possible errors renaming " .
+                     scalar @rename_errors .
+                     " files)\n";
+        }
+    }
+
+    $body
+        .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
+
+    Gridmap_Utils::Send_Email $recipient, $subject, $body;
 }
 
 unlink $lock_file;
