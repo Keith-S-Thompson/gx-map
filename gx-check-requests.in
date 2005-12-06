@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.67 2005-12-06 04:10:20-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.68 2005-12-06 15:20:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -202,7 +202,10 @@ my @propagation_failures = ();
 if (-x $propagate) {
     REQUEST:
     foreach my $request (@good_requests) {
-        if (defined $request->{username}) {
+	my $owner_is_admin =
+	    ( defined $request->{OWNER_NAME} and
+	      Gridmap_Utils::Is_Admin_Account $request->{OWNER_NAME} );
+        if (not $owner_is_admin and defined $request->{username}) {
             my $user_pw = Gridmap_Utils::Get_PW $request->{username};
             if (not defined $user_pw) {
                 $request->{PROPAGATION}
