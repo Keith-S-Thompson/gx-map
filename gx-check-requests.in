@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.68 2005-12-06 15:20:37-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.69 2005-12-06 15:29:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -75,12 +75,13 @@ my $Now = time;
 my $Hostname = Gridmap_Utils::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/var";
 
-my $User_Opt = { };
+my $User_Opt = { propagate => 1 };
 my @Opts = ( $User_Opt,
              qw( help
                  version
                  copy=s
                  dryrun
+                 propagate!
                  debugging ) );
              # directory=s
 Getopt::Long::GetOptions @Opts or Usage;
@@ -193,18 +194,23 @@ $ENV{PATH} = $Gridmap_Utils::Config{PATH};
 # to the requests.log file, because gx-propagate sometimes needs to
 # see the existing requests.
 #
-# Annotate any propagated requests with a PROPAGATION attribute,
-# set to 'ok' if it appears to have succeeded, 'failed' if it failed,
-# or 'dryrun' if the "-dryrun" option was specified).
+# Annotate any propagated requests with a PROPAGATION attribute, set to
+# 'ok' if it appears to have succeeded, 'failed: ...' if it failed,
+# 'skipped' if the "-nopropagate" option was specified.  or 'dryrun'
+# if the "-dryrun" option was specified,
 #
 my $propagate = "$Install_Dir/sbin/gx-propagate";
 my @propagation_failures = ();
 if (-x $propagate) {
     REQUEST:
     foreach my $request (@good_requests) {
-	my $owner_is_admin =
-	    ( defined $request->{OWNER_NAME} and
-	      Gridmap_Utils::Is_Admin_Account $request->{OWNER_NAME} );
+        if (not $User_Opt->{propagate}) {
+            $request->{PROPAGATION} = 'skipped';
+            next REQUEST;
+        }
+        my $owner_is_admin =
+            ( defined $request->{OWNER_NAME} and
+              Gridmap_Utils::Is_Admin_Account $request->{OWNER_NAME} );
         if (not $owner_is_admin and defined $request->{username}) {
             my $user_pw = Gridmap_Utils::Get_PW $request->{username};
             if (not defined $user_pw) {
@@ -711,9 +717,15 @@ Usage: $Program_Name [options]
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
+    -propagate      : Invoke gx-propagate when appropriate (if it's
+                      installed).  The default is "-propagate"; use
+                      "-nopropagate to override.  With "-nopropagate",
+                      the PROPAGATION attribute will be set to "skipped".
+                      Has no effect if gx-propagate isn't installed.
     -dryrun         : Passed to sbin/gx-propagate.
                       This is for testing purposes only; it can cause
                       requests to be permanently bypassed.
+                      Has no effect if "-nopropagate" is specified.
     -debugging      : Enable debugging output
 EOF
 #   -directory dir  : Data directory
