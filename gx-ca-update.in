@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.80 2005-11-30 20:49:57-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.81 2005-12-06 03:36:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1425,7 +1425,7 @@ sub Notify() {
         $mail_message_body
             .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on " .
                Gridmap_Utils::Get_Hostname() .
-               "\n\n";
+               "\n";
         Gridmap_Utils::Send_Email $Gridmap_Utils::Config{ADMIN_EMAIL},
                                   $subject,
                                   $mail_message_body;
