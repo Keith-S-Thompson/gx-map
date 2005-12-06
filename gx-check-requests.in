@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.65 2005-12-02 20:20:13-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.66 2005-12-06 03:20:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -457,12 +457,12 @@ sub Get_Request_Info($) {
         #
         if ($seconds - $Now > 60) {
             push @{$result->{ERRORS}},
-                 "Future timestamp: $result->{timestamp}\n";
+                 "Future timestamp: $result->{timestamp}";
         }
     }
     else {
         push @{$result->{ERRORS}},
-             "Invalid timestamp: $result->{timestamp}\n";
+             "Invalid timestamp: $result->{timestamp}";
     }
 
     #
@@ -495,7 +495,7 @@ sub Get_Request_Info($) {
     {
         push @{$result->{ERRORS}},
              "username $result->{username} does not " .
-             "match user_uid $result->{user_uid}\n";
+             "match user_uid $result->{user_uid}";
     }
 
     #
@@ -507,7 +507,7 @@ sub Get_Request_Info($) {
     {
         push @{$result->{ERRORS}},
              "requested_by_name $result->{requested_by_name} does not " .
-             "match requested_by_uid $result->{requested_by_uid}\n";
+             "match requested_by_uid $result->{requested_by_uid}";
     }
 
 
@@ -517,17 +517,17 @@ sub Get_Request_Info($) {
     if ($result->{OWNER_UID} ne $result->{requested_by_uid}) {
         push @{$result->{ERRORS}},
              "OWNER_UID $result->{OWNER_UID} does not " .
-             "match requested_by_uid $result->{requested_by_uid}\n";
+             "match requested_by_uid $result->{requested_by_uid}";
     }
 
     if (defined $result->{username}) {
         if ($result->{username} eq 'root') {
-            push @{$result->{ERRORS}}, "Cannot map to root\n";
+            push @{$result->{ERRORS}}, "Cannot map to root";
         }
         else {
             my $pw = Gridmap_Utils::Get_PW $result->{username};
             if (defined $pw and $pw->{uid} == 0) {
-                push @{$result->{ERRORS}}, "Cannot map to UID 0\n";
+                push @{$result->{ERRORS}}, "Cannot map to UID 0";
             }
         }
     }
@@ -539,17 +539,17 @@ sub Get_Request_Info($) {
     if (not $owner_is_admin) {
         if ($OP eq 'remove-dn') {
             push @{$result->{ERRORS}},
-                 "remove-dn request by a non-admin\n";
+                 "remove-dn request by a non-admin";
         }
         elsif (defined $result->{OWNER_NAME} and
                $result->{username} ne $result->{OWNER_NAME})
         {
             push @{$result->{ERRORS}},
-                 "request for another user by a non-admin\n";
+                 "request for another user by a non-admin";
         }
         elsif (defined $result->{source}) {
             push @{$result->{ERRORS}},
-                 "source set by non-admin\n";
+                 "source set by non-admin";
         }
     }
 
