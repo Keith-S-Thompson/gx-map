@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.69 2005-12-06 15:29:01-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.70 2005-12-06 15:35:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -722,6 +722,9 @@ Usage: $Program_Name [options]
                       "-nopropagate to override.  With "-nopropagate",
                       the PROPAGATION attribute will be set to "skipped".
                       Has no effect if gx-propagate isn't installed.
+                      Like the "-dryrun" options, the "-nopropagate"
+                      option can cause requests to be permanently
+                      bypassed; use with caution.
     -dryrun         : Passed to sbin/gx-propagate.
                       This is for testing purposes only; it can cause
                       requests to be permanently bypassed.
