@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.15 2005-11-03 17:48:22-08 kst Exp $
+# $Id: make-release,v 1.16 2005-12-08 17:54:41-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -31,6 +31,11 @@ other_files="INSTALL LICENSE Makefile README README.CA \
 
 # cadesc_files=`cd ca ; echo *.cadesc`
 # bug_files=`cd bugs ; echo bug-*`
+
+if [ -f release/gx-map-$num.tar.gz ] ; then
+    echo "release/gx-map-$num.tar.gz already exists" 1>&2
+    exit 1
+fi
 
 try mkdir release/gx-map-$num
 try cd release/gx-map-$num
