@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.70 2005-12-06 15:35:10-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.71 2005-12-09 00:44:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -303,10 +303,6 @@ if (@propagation_failures) {
 # We have one or more new requests to process.  Append them to the
 # requests log and/or the errors log.
 #
-
-if (not -d "$Data_Dir/RCS") {
-    mkdir "$Data_Dir/RCS", 0700 or die "mkdir $Data_Dir/RCS: $!\n";
-}
 
 Append_To_Log $errors_log,   @bad_requests;
 Append_To_Log $requests_log, @good_requests;
@@ -666,12 +662,6 @@ sub Append_To_Log($@) {
     # The RCS file is normally kept locked.
     # Unlock it temporarily to check in the file.
     #
-    if (not -d $RCS_dir) {
-        #
-        # It should already exist, but let's make sure.
-        #
-        mkdir $RCS_dir, 0777 or die "mkdir $RCS_dir: $!\n";
-    }
     Gridmap_Utils::Use_Commands 'rcs', 'ci';
     system "rcs -l $log_file >/dev/null 2>/dev/null";
     system "ci -u -f $log_file </dev/null >/dev/null 2>/dev/null";
@@ -717,7 +707,7 @@ Usage: $Program_Name [options]
     -copy file      : Copy the requests.log file to the specified location
                       (e.g., to make it visible on a web page)
                       The file's mode is set to 444 (-r--r--r--).
-    -propagate      : Invoke gx-propagate when appropriate (if it's
+    -[no]propagate  : Invoke gx-propagate when appropriate (if it's
                       installed).  The default is "-propagate"; use
                       "-nopropagate to override.  With "-nopropagate",
                       the PROPAGATION attribute will be set to "skipped".
