@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.118 2005-12-06 15:49:16-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.119 2005-12-08 18:44:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1387,7 +1387,14 @@ sub Cache_File($) {
     if ($result != 0) {
         unlink $temp_file, $dump_file;
         rmdir $temp_dir;
-        return ($cached_file_result, "curl failed");
+        my $message = "curl failed";
+        if ($result % 256 == 0) {
+            $message .= ", exit " . $result/256;
+        }
+        else {
+            $message .= ", system() returned $result";
+        }
+        return ($cached_file_result, $result);
     }
 
     #
@@ -1396,7 +1403,7 @@ sub Cache_File($) {
     if (not -e $temp_file) {
         unlink $temp_file, $dump_file;
         rmdir $temp_dir;
-        return ($cached_file_result, "ftp download failed");
+        return ($cached_file_result, "curl download failed");
     }
 
     #
