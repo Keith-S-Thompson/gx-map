@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.32 2005-11-07 02:29:26-08 kst Exp $
+# $Id: gx-request.in,v 1.33 2005-12-09 16:15:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -75,6 +75,7 @@ sub User_Cert_File_Name();
 sub Proxy_File_Name();
 sub Gen_Request_File_Name($);
 sub Clone($);
+sub Unique(@);
 sub Die_Quietly(@);
 sub Debug(@);
 sub Debugf(@);
@@ -309,7 +310,7 @@ if ($dn_was_modified) {
     $Options->{dn} = \@new_dns;
 }
 
-my @dn_list = @{$Options->{dn}};
+my @dn_list = Unique @{$Options->{dn}};
 
 if (not $Options->{quiet}) {
     $| = 1;
@@ -1167,6 +1168,20 @@ sub Clone($) {
     }
     return $new_ref;
 } # Clone
+
+# ----------------------------------------------------------------------
+
+#
+# Given a list, returns a list with duplicate entries deleted.
+#
+sub Unique(@) {
+    my %seen = ();
+    my @result = ();
+    foreach my $elem (@_) {
+        push @result, $elem if not $seen{$elem}++;
+    }
+    return @result;
+} # Unique
 
 # ----------------------------------------------------------------------
 
