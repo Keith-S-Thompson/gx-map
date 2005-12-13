@@ -1,4 +1,4 @@
-# $Id: bug-0036,v 1.2 2005-06-30 21:04:04-07 kst Exp $
+# $Id: bug-0036,v 1.3 2005-12-13 00:02:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0036,v $
 
 gx-map bug 0036
@@ -6,7 +6,7 @@ Date: Wed 2005-06-29
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: Rename field "map_to_name" to "username"
 
 Summary:
@@ -26,4 +26,4 @@ Fix all occurences of "map_to_name" and "map_to_uid" in all files.
 
 Fixed:
 Multiple files.
-gx-map ?
+gx-map 0.5.0a1
