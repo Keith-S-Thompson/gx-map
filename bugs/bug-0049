@@ -1,4 +1,4 @@
-# $Id: bug-0049,v 1.5 2005-11-14 17:53:27-08 kst Exp $
+# $Id: bug-0049,v 1.6 2005-12-13 00:02:09-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0049,v $
 
 gx-map bug 0049
@@ -40,7 +40,7 @@ bundle of CA certificates that can be reconfigured if necessary.
 Fixed:
 Gridmap_Utils.pm.in 1.107
 gx-ca-update.in 1.74
-gx-map 0.5.0a9
+gx-map release 0.5.0a9
 The new caching mechanism uses curl rather than wget and ncftpget.
 Unlike wget, curl is distributed with a collection of CA signing
 certificates, used to validate web sites.  Not all sites use a
