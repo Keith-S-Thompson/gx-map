@@ -1,4 +1,4 @@
-# $Id: bug-0023,v 1.4 2005-06-30 21:04:03-07 kst Exp $
+# $Id: bug-0023,v 1.5 2005-12-13 00:02:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0023,v $
 
 gx-map bug 0023
@@ -6,7 +6,7 @@ Date: Fri 2005-04-29
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.3
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: Allow version param in config file
 
 Summary:
@@ -27,4 +27,5 @@ INSTALL_DIR     /INSTALL/DIR/gx-map-%VERSION%
 DATA_DIR        /DATA/DIR/gx-map-%VERSION%-data
 
 Fixed:
-configure-gx-map 1.27, gx-map ?
+configure-gx-map 1.27
+gx-map release 0.5.0a1
