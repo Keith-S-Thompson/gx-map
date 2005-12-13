@@ -1,4 +1,4 @@
-# $Id: bug-0043,v 1.2 2005-08-25 18:47:34-07 kst Exp $
+# $Id: bug-0043,v 1.3 2005-12-13 00:02:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0043,v $
 
 gx-map bug 0043
@@ -6,7 +6,7 @@ Date: Fri 2005-07-08
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: gx-request: clumsy handling of missing certificate file
 
 Summary:
@@ -22,4 +22,5 @@ keep trying if no DN can be extracted.  On failure, explain what the
 problem was.  On success, show the DN.
 
 Fixed:
-gx-request.in1.14, gx-map ?
+gx-request.in 1.14
+gx-map release 0.5.0a1
