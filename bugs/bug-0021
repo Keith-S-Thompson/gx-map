@@ -1,4 +1,4 @@
-# $Id: bug-0021,v 1.2 2005-05-10 18:22:46-07 kst Exp $
+# $Id: bug-0021,v 1.3 2005-12-13 00:02:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0021,v $
 
 gx-map bug 0021
@@ -14,9 +14,10 @@ The new file gx-map.conf.in is a template file that will be used in
 the new configuration system (see bug-0007).  Since this is a work
 in progress, gx-map.conf.in should not be included in releases yet.
 It was accidentally included in release 0.4.2, which could cause
-confusion for installers..  (It didn't exist when 0.4.1 was released.)
+confusion for installers.  (It didn't exist when 0.4.1 was released.)
 
 Fixed:
-make-release 1.7, gx-map-0.4.3
+make-release 1.7
+gx-map release 0.4.3
 (Note that the change in make-release will have to be backed out when
 the new configuration system is ready.)
