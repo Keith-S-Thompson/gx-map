@@ -1,4 +1,4 @@
-# $Id: bug-0022,v 1.6 2005-11-14 17:53:27-08 kst Exp $
+# $Id: bug-0022,v 1.7 2005-12-13 00:02:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0022,v $
 
 gx-map bug 0022
@@ -77,6 +77,7 @@ happened:
 Fixed:
 Gridmap_Utils.pm.in 1.107
 gx-ca-update.in 1.74
-gx-map 0.5.0a9
+gx-map release 0.5.0a9
 Drop ncftpget, wget; use curl.
 Use quoted-printable scheme described above.
+Cache_File doesn't quite return all the information specified.
