@@ -1,4 +1,4 @@
-# $Id: bug-0003,v 1.4 2005-05-10 18:22:43-07 kst Exp $
+# $Id: bug-0003,v 1.5 2005-12-13 00:01:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0003,v $
 
 gx-map bug 0003
@@ -33,4 +33,4 @@ Set the permissions on both requests.log and RCS/requests.log,v
 
 Fixed:
 gx-check-requests.in 1.42
-gx-map-0.4.2
+gx-map release 0.4.2
