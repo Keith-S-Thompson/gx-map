@@ -1,4 +1,4 @@
-# $Id: bug-0045,v 1.3 2005-09-01 16:16:28-07 kst Exp $
+# $Id: bug-0045,v 1.4 2005-12-13 00:02:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0045,v $
 
 gx-map bug 0045
@@ -6,7 +6,7 @@ Date: Thu 2005-07-21
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: gx-ingest: Don't add GT2-style DNs
 
 Summary:
@@ -20,5 +20,5 @@ Have gx-ingest translate all DNs to the new form.  For each mapping,
 check whether it's already been applied.
 
 Fixed:
-gx-map ?
 gx-ingest.in 1.15
+gx-map release 0.5.0a1
