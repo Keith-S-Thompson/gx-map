@@ -1,12 +1,12 @@
-# $Id: bug-0044,v 1.3 2005-07-12 18:15:52-07 kst Exp $
+# $Id: bug-0044,v 1.4 2005-12-13 00:02:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0044,v $
 
 gx-map bug 0044
 Date: Fri 2005-07-08
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
-Version: 0.4.5
-Status: Fixed ?
+Version: 0.4.5+
+Status: Fixed 0.5.0a1
 Title: gx-request: Mis-ordered lines in interactive mode
 
 Summary:
@@ -28,3 +28,7 @@ release it first appeared in).
 Correction: this bug does not occur in any released version of gx-map.
 It was introduced in gx-request.in 1.6 and corrected in gx-request.in
 1.14.  (Release 0.4.5 includes gx-request.in revision 1.1.)
+
+Fixed:
+gx-request.in 1.14
+gx-map release 0.5.0a1
