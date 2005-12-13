@@ -1,4 +1,4 @@
-# $Id: bug-0011,v 1.3 2005-10-18 21:26:11-07 kst Exp $
+# $Id: bug-0011,v 1.4 2005-12-13 00:01:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0011,v $
 
 gx-map bug 0011
@@ -6,7 +6,7 @@ Date: Sun 2005-03-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
-Status: Fixed ?
+Status: Fixed 0.5.0a3
 Title: Refactor GLOBUS_ADMINS
 
 Summary:
@@ -18,8 +18,8 @@ it's the single user "globus", but confusing otherwise.
 Suggested fix:
 Delete GLOBUS_ADMINS.
 Add GX_MAP_OWNER, the owner of the installation.
-Add an optional ADDITIONAL_ADMINS; GLOBUS_ADMINS is the union of
-GX_MAP_OWNER and ADDITIONAL_ADMINS.
+Add an optional ADDITIONAL_ADMINS; the old GLOBUS_ADMINS corresponds
+the union of GX_MAP_OWNER and ADDITIONAL_ADMINS.
 
 Fixed:
 Gridmap_Utils.pm.in 1.100
