@@ -1,4 +1,4 @@
-# $Id: bug-0038,v 1.4 2005-09-01 16:16:28-07 kst Exp $
+# $Id: bug-0038,v 1.5 2005-12-13 00:02:06-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0038,v $
 
 gx-map bug 0038
@@ -6,7 +6,7 @@ Date: Wed 2005-06-29
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: Simplify GT2/GT3+ compatibility in gx-gen-mapfile
 
 Summary:
@@ -33,4 +33,4 @@ As described, with a "-compatible" option.
 
 Fixed:
 gx-gen-mapfile 1.55
-gx-map ?
+gx-map release 0.5.0a1
