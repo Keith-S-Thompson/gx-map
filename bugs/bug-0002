@@ -1,4 +1,4 @@
-# $Id: bug-0002,v 1.5 2005-05-10 18:22:42-07 kst Exp $
+# $Id: bug-0002,v 1.6 2005-12-13 00:01:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0002,v $
 
 gx-map bug 0002
@@ -23,4 +23,5 @@ To reproduce:
 "/O=FOO/CN=Phred Pharkle" phred,phred
 
 Fixed:
-gx-gen-mapfile.in 1.48, gx-map-0.4.2
+gx-gen-mapfile.in 1.48
+gx-map release 0.4.2
