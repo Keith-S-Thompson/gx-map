@@ -1,4 +1,4 @@
-# $Id: bug-0048,v 1.4 2005-08-31 21:29:18-07 kst Exp $
+# $Id: bug-0048,v 1.5 2005-12-13 00:02:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0048,v $
 
 gx-map bug 0048
@@ -6,7 +6,7 @@ Date: Tue 2005-08-30
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: Don't use bareword filehandles or dirhandles
 
 Summary:
@@ -27,9 +27,9 @@ explicitly.
 See _Perl Best Practices_ by Damian Conway, chapter 10.
 
 Fixed:
-    Gridmap_Utils.pm.in 1.92, 1.95
-    gx-ca-update.in 1.65
-    gx-check-requests.in 1.56
-    gx-gen-mapfile.in 1.64
-    gx-request.in 1.26
-    gx-map release ?
+Gridmap_Utils.pm.in 1.92, 1.95
+gx-ca-update.in 1.65
+gx-check-requests.in 1.56
+gx-gen-mapfile.in 1.64
+gx-request.in 1.26
+gx-map release 0.5.0a1
