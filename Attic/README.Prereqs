@@ -1,4 +1,4 @@
-# $Id: README.Prereqs,v 1.5 2005-11-10 16:37:49-08 kst Exp $
+# $Id: README.Prereqs,v 1.6 2005-12-13 00:08:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Prereqs,v $
 
 The gx-map system requires several Perl modules.
@@ -26,5 +26,6 @@ In addition, it requires several external commands:
     co, ci, rcs
     curl
     openssl
+    mail or mailx (optional)
 
 Finally, it requires Perl (version 5.6.0 or better) and cron.
