@@ -1,4 +1,4 @@
-# $Id: bug-0016,v 1.4 2005-12-09 00:49:40-08 kst Exp $
+# $Id: bug-0016,v 1.5 2005-12-13 00:02:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0016,v $
 
 gx-map bug 0016
@@ -17,8 +17,8 @@ Add a "-norcs" option to disable this.
 
 The file checked into RCS is the specified file with ".rcs" appended
 to its name.  Checking in the actual file would modify the file in
-place, causing possible problems.
+place, causing possible synchronization problems.
 
 Fixed:
 gx-gen-mapfile.in 1.73
-gx-map 0.5.0b7
+gx-map release 0.5.0b7
