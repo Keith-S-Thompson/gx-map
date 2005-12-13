@@ -1,4 +1,4 @@
-# $Id: bug-0035,v 1.4 2005-09-01 16:16:28-07 kst Exp $
+# $Id: bug-0035,v 1.5 2005-12-13 00:02:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0035,v $
 
 gx-map bug 0035
@@ -6,7 +6,7 @@ Date: Mon 2005-06-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Fixed ?
+Status: Fixed 0.5.0a1
 Title: Store all DNs in new (GT3+) form
 
 Summary:
@@ -30,4 +30,4 @@ This change should be made in conjunction with allowing proxy DNs (bug-0026).
 Fixed:
 gx-convert-log.in 1.10
 gx-request.in 1.4
-gx-map ?
+gx-map release 0.5.0a1
