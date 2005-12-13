@@ -1,4 +1,4 @@
-# $Id: bug-0058,v 1.1 2005-10-28 21:35:24-07 kst Exp $
+# $Id: bug-0058,v 1.2 2005-12-13 00:02:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0058,v $
 
 gx-map bug 0058
@@ -6,7 +6,7 @@ Date: Fri 2005-10-28
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0a5
-Status: Open
+Status: Fixed 0.5.0a6
 Title: gx-ca-update needs to set permissions on generated files
 
 Summary:
@@ -20,3 +20,7 @@ option for gx-gen-mapfile, defaulting to 444.  Make sure everything
 works properly if a file already exists with permissions 444.
 Note that this also guards against accidental modification by the
 GX_MAP_OWNER.
+
+Fixed:
+gx-ca-update-in 1.68
+gx-map release 0.5.0a6
