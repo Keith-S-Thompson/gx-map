@@ -1,4 +1,4 @@
-# $Id: bug-0005,v 1.5 2005-05-10 18:22:43-07 kst Exp $
+# $Id: bug-0005,v 1.6 2005-12-13 00:01:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0005,v $
 
 gx-map bug 0005
@@ -26,10 +26,10 @@ it will apply to are PSC's and USC's KCAs (85ca9edc and fa9c3452).
 Note that Fermilab's Kerberized CA has a CRL (with a 3-year lifetime
 and no revocations).
 
-Fix:
+Fixed:
 As above, but call the attribute ALLOW_MISSING_CRL for consistency
 with the command-line option.
 gx-ca-update.in 1.55
 ca/85ca9edc.psc-kerberos.cadesc 1.15
 ca/fa9c3452.usc-kerberos-v2.cadesc 1.4
-gx-map-0.4.2
+gx-map release 0.4.2
