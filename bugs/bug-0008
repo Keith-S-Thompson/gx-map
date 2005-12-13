@@ -1,4 +1,4 @@
-# $Id: bug-0008,v 1.4 2005-08-30 18:01:58-07 kst Exp $
+# $Id: bug-0008,v 1.5 2005-12-13 00:01:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0008,v $
 
 gx-map bug 0008
@@ -6,7 +6,7 @@ Date: Thu 2005-03-24
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
-Status: Open
+Status: Fixed 0.5.0a1
 Title: "Newly downloaded CRL has expired" is misleading
 
 Summary:
@@ -19,6 +19,9 @@ Update Gridmap_Utils::Cache_File so it returns, along with the name of
 the cache file, an indication of whether it's newly downloaded or not.
 Use this to make the error message clearer.
 
-Partially fixed: gx-ca-update.in 1.64
-The error message now says "CRL has expired".
-It would still be good to specify whether the CRL was newly downloaded.
+Fixed:
+gx-ca-update.in 1.64
+gx-map release 0.5.0a1
+The error message now says "CRL has expired".  If the download failed
+and it's the cached CRL that has expired, there will be an additional
+"curl failed" error message indicating this.
