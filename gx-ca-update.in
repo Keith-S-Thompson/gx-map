@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.82 2005-12-14 00:22:37-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.83 2005-12-14 00:30:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -90,6 +90,7 @@ sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
 my $now = time;
+my $Hostname = Gridmap_Utils::Get_Hostname();
 
 my $User_Opt = { permissions => '444',
                  email => 1 };
@@ -339,6 +340,7 @@ if (-e $lock_file) {
     die "Locked for ", $now - $lock_time, " seconds\n";
 }
 open my $Lock, '>', $lock_file;
+print $Lock " $Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
 close $Lock;
 
 CA:
@@ -1355,9 +1357,7 @@ sub Notify() {
 
     $log_message_body
         .= Gridmap_Utils::Time_Image($now) .
-           " $Program_Name (gx-map $Gridmap_Utils::VERSION) on " .
-           Gridmap_Utils::Get_Hostname() .
-           "\n";
+           " $Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
 
     #
     # _NEW_ERRORS is a subset of _ERRORS, specifically the errors
@@ -1427,8 +1427,7 @@ sub Notify() {
         my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
         $mail_message_body
             .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on " .
-               Gridmap_Utils::Get_Hostname() .
-               "\n";
+               $Hostname\n";
         Gridmap_Utils::Send_Email $Gridmap_Utils::Config{ADMIN_EMAIL},
                                   $subject,
                                   $mail_message_body;
