@@ -1,0 +1,20 @@
+# $Id: bug-0059,v 1.1 2005-12-14 00:17:54-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0059,v $
+
+gx-map bug 0059
+Date: Wed 2005-12-14
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a8
+Status: Open
+Title: gx-ca-update dies if CRL is unavailable
+
+Summary:
+gx-ca-update dies if a CRL is unavailable and there is no cached copy.
+The traceback is:
+
+Use of uninitialized value in stat at .../lib/Gridmap_Utils.pm line 255.
+Traceback:
+    .../lib/Gridmap_Utils.pm:255 in Gridmap_Utils::Get_mtime
+    .../sbin/gx-ca-update:967 in main::Update_CRL
+    .../sbin/gx-ca-update:371
