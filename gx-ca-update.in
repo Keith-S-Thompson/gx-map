@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.81 2005-12-06 03:36:27-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.82 2005-12-14 00:22:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -964,7 +964,10 @@ sub Update_CRL($) {
         }
         Debug "%%%  \$error = ", (defined $error ? $error : 'undef'), "\n";
         if (defined $error) {
-            my $timestamp = Gridmap_Utils::Get_mtime $new_crl_file;
+            my $timestamp = 0;
+            if (defined $new_crl_file) {
+                $timestamp = Gridmap_Utils::Get_mtime $new_crl_file;
+            }
             $timestamp = 0 if not defined $timestamp;
             Error $ref,
                   'crl_download_failed',
