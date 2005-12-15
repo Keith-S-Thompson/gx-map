@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.45 2005-12-14 17:08:31-08 kst Exp $
+# $Id: install-gx-map.in,v 1.46 2005-12-14 19:10:47-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -92,11 +92,15 @@ do
 done
 
 # verbosely touch $DATA_DIR/requests.log
-echo '# $Id'':$' > $DATA_DIR/requests.log
-echo '# $Source'':$' >> $DATA_DIR/requests.log
-echo '' >> $DATA_DIR/requests.log
-verbosely cat $DATA_DIR/requests.log
-verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
+if [ -f $DATA_DIR/requests.log ] ; then
+    echo $DATA_DIR/requests.log already exists
+else
+    echo '# $Id'':$' > $DATA_DIR/requests.log
+    echo '# $Source'':$' >> $DATA_DIR/requests.log
+    echo '' >> $DATA_DIR/requests.log
+    verbosely cat $DATA_DIR/requests.log
+    verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
+fi
 
 for file in $BIN_FILES ; do 
     verbosely cp -f $file  $BIN_DIR/.
