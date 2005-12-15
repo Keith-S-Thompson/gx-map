@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.85 2005-12-14 16:52:17-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.86 2005-12-15 15:33:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -339,7 +339,7 @@ if (-e $lock_file) {
     my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
     die "Locked for ", $now - $lock_time, " seconds\n";
 }
-open my $Lock, '>', $lock_file;
+open my $Lock, '>', $lock_file or die "$lock_file: $!\n";
 print $Lock "$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
 close $Lock;
 
