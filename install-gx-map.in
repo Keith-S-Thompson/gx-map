@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.44 2005-11-23 19:57:37-08 kst Exp $
+# $Id: install-gx-map.in,v 1.45 2005-12-14 17:08:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -91,7 +91,11 @@ do
     fi
 done
 
-verbosely touch $DATA_DIR/requests.log
+# verbosely touch $DATA_DIR/requests.log
+echo '# $Id'':$' > $DATA_DIR/requests.log
+echo '# $Source'':$' >> $DATA_DIR/requests.log
+echo '' >> $DATA_DIR/requests.log
+verbosely cat $DATA_DIR/requests.log
 verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 
 for file in $BIN_FILES ; do 
