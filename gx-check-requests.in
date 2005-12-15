@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.73 2005-12-14 16:52:17-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.74 2005-12-15 15:33:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -141,7 +141,7 @@ if (-e $lock_file) {
         Gridmap_Utils::Time_Image $lock_time,
         " ($delta second(s))\n";
 }
-open my $Lock, '>', $lock_file;
+open my $Lock, '>', $lock_file or die "$lock_file: $!\n";
 print $Lock "$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
 close $Lock;
 
