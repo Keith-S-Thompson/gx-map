@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.86 2005-12-15 15:33:12-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.87 2005-12-15 18:31:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -91,6 +91,12 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 my $now = time;
 my $Hostname = Gridmap_Utils::Get_Hostname();
+
+#
+# We want to call Check_Dependencies only if a certificate
+# has been installed; otherwise the check is redundant.
+#
+my $Certificate_Installed = 0;
 
 my $User_Opt = { permissions => '444',
                  email => 1 };
@@ -384,7 +390,11 @@ foreach my $ref (@ca_info) {
     Vprint "\n";
 }
 
-Check_Dependencies;
+#
+# Check that all non-self-signed certificates have their signing
+# certificates available.
+#
+Check_Dependencies if $Certificate_Installed;
 
 Notify;
 
@@ -1223,6 +1233,7 @@ sub Install_Certificate($) {
                  "chmod $Octal_Permissions, $temp_file: $!\n";
     rename $temp_file, $ref->{_CERT_FILE}
         or Error $ref, undef, undef, "Failed to rename certificate: $!\n";
+    $Certificate_Installed = 1;
 } # Install_Certificate
 
 # ----------------------------------------------------------------------
@@ -1262,8 +1273,52 @@ sub Update_Signing_Policy($) {
 
 # ----------------------------------------------------------------------
 
+#
+# Confirm that all installed certificates have their signers available
+# (if not self-signed).
+# TODO: Do this check only if a certificate was updated.
+#
 sub Check_Dependencies() {
-    Vprint "Dependency checking not yet implemented\n";
+    my @errors = ();
+    REF:
+    foreach my $ref (@ca_info) {
+        #
+        # We could specifically check each non-self-signed CA certificate
+        # against its signer, but it's easier to check against the
+        # directory using "-CApath".
+        #
+        next if not defined $ref->{SIGNED_BY};
+        my $target_dir = $User_Opt->{'target-dir'};
+        my $certificate_file = "$target_dir/$ref->{HASH}.0";
+        if (not -e $certificate_file) {
+            Error $ref, undef, undef, "$certificate_file is missing";
+            next REF;
+        }
+        Gridmap_Utils::Untaint $target_dir;
+        Gridmap_Utils::Untaint $certificate_file;
+        my $Pipe = undef;
+        if (not open $Pipe, '-|',
+                     "openssl verify -CApath $target_dir $certificate_file")
+        {
+            Error $ref, undef, undef,
+                  "Check_Dependencies failed to invoke openssl\n";
+            next REF;
+        }
+        my $ok = 0;
+        while (<$Pipe>) {
+            if (/: OK$/) {
+                $ok = 1;
+            }
+        }
+        close $Pipe;
+        if (not $ok) {
+            my $mtime = Gridmap_Utils::Get_mtime $certificate_file;
+            Error $ref,
+                  'dependency_check_failed',
+                  $mtime,
+                  "Dependency check failed\n";
+        }
+    }
 } # Check_Dependencies
 
 # ----------------------------------------------------------------------
@@ -1282,9 +1337,10 @@ sub Log($$) {
 sub Error_File($) {
     my($error_ref) = @_;
     if (defined $error_ref->{desc}) {
-        my $name = join('.', $error_ref->{timestamp},
-                             $error_ref->{ca_hash},
-                             $error_ref->{desc});
+        my $name = sprintf "%010s.%s.%s",
+                           $error_ref->{timestamp},
+                           $error_ref->{ca_hash},
+                           $error_ref->{desc};
         return "$Data_Dir/reported-errors/$name";
     }
     else {
