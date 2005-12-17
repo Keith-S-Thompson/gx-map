@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.74 2005-12-16 15:50:56-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.75 2005-12-16 16:02:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -94,7 +94,8 @@ my @Opts = ( $User_Opt,
                  merge-file=s@
                  all!
                  real-name!
-                 rcs! ) );
+                 rcs!
+                 force! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
@@ -367,6 +368,11 @@ sub Update_List(@) {
         Debug "    $_\n";
     }
 
+    if ($User_Opt->{force}) {
+        $Force_Update = map { $_ => 1 } @Output_Files;
+        return @Output_Files;
+    }
+
     my @result = ();
 
     my $newest_input_mtime = undef;
@@ -542,6 +548,8 @@ Option names may be abbreviated.
                          The file checked into RCS will have a ".rcs" suffix
                          appended to its name.
                          This has no effect if the file is written to stdout.
+    -force             : Force an update regardless of the timestamps of
+                         the input and output files.
 One or more output files may be specified on the command line.
 If no output files are specified, output is written to stdout.
 If output files are specified, they are generated only if necessary, i.e.,
