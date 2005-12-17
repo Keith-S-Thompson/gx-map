@@ -1,0 +1,20 @@
+# $Id: bug-0060,v 1.1 2005-12-16 16:02:15-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0060,v $
+
+gx-map bug 0060
+Date: Fri 2005-12-16
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0c1
+Status: Fixed 0.5.0c2
+Title: Add "-force" option for gx-gen-mapfile
+
+Summary:
+gx-gen-mapfile checks the modification times of its input and
+output files, and doesn't update any file that doesn't appear to
+need updating.  Add a "-force" option to force an update regardless
+of any timetstamps.
+
+Fixed:
+gx-gen-mapfile.in 1.75
+gx-map release 0.5.0c2
