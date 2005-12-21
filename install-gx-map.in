@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.46 2005-12-14 19:10:47-08 kst Exp $
+# $Id: install-gx-map.in,v 1.47 2005-12-21 01:03:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -83,6 +83,7 @@ for dir in $INSTALL_DIR \
            $DATA_DIR \
            $DATA_DIR/RCS \
            $DATA_DIR/cache \
+           $DATA_DIR/cache/errors \
            $DATA_DIR/reported-errors
 do
     if [ ! -d $dir ] ; then
