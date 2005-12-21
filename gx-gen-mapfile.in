@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.75 2005-12-16 16:02:21-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.76 2005-12-21 01:06:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -129,12 +129,18 @@ if (@{$User_Opt->{'requests-log'}}) {
             # use system() to pass it to curl.
             #
             Gridmap_Utils::Untaint $log;
-            my $error;
-            my $url = $log;
-            ($log, $error) = Gridmap_Utils::Cache_File $log;
-            if (not defined $log and defined $error) {
-                die "${url}: $error\n";
+            my $cache_result = Gridmap_Utils::Cache_File $log;
+            if ($cache_result->{status} eq 'failed') {
+                die "${log}: $cache_result->{error}\n";
             }
+            #
+            # We merely check that the Cache_File status isn't 'failed';
+            # we don't distinguish between 'new', 'cached', and 'old'.
+            # We might want to consider some kind of warning of the
+            # status is 'old', indicating that the download failed but
+            # we're using a previously cached copy.
+            #
+            $log = $cache_result->{filename};
         }
     }
 }
@@ -369,7 +375,7 @@ sub Update_List(@) {
     }
 
     if ($User_Opt->{force}) {
-        $Force_Update = map { $_ => 1 } @Output_Files;
+        %Force_Update = map { $_ => 1 } @Output_Files;
         return @Output_Files;
     }
 
