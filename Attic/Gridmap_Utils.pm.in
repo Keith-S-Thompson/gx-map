@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.127 2005-12-21 01:44:44-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.128 2005-12-21 13:27:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1348,6 +1348,12 @@ sub Error_Timestamp($$) {
 # If the downloaded file is empty, it's considered an error.  (An empty
 # may be valid, but not for anything used by gx-map.)
 #
+# Note that we use curl's "--insecure" option, which allows us to download
+# files from https: URLs without checking the server's certificate.
+# A number of CAs use https servers with certificates that aren't included
+# with curl's default bundle.  Since we check checksums and signatures
+# for certificates and CRLs, bypassing SSL shouldn't be a problem.
+# 
 sub Cache_File($) {
     my($url) = @_;
 
@@ -1382,6 +1388,7 @@ sub Cache_File($) {
     # read the mtime from the output file, we don't care why.
     #
     system 'curl', '--silent',
+                   '--insecure', # Ignore server certificate
                    '--head',     # Show document info only
                    '--location', # follow "Location:" hints
                    '--max-time', '30',
@@ -1421,6 +1428,7 @@ sub Cache_File($) {
 
     my @curl_command = ('curl');
     push @curl_command, '--silent';
+    push @curl_command, '--insecure'; # Ignore server certificate
     if (not $is_ftp) {
         push @curl_command, '--dump-header', $dump_file;
     }
