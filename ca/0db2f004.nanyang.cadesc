@@ -1,0 +1,22 @@
+# $Id: 0db2f004.nanyang.cadesc,v 1.1 2005-12-21 14:05:35-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/0db2f004.nanyang.cadesc,v $
+
+CA_NAME             Nanyang CA
+HOMEPAGE            http://ntu-cg.ntu.edu.sg/certservices/main.jsp
+CONTACT             Zhang Junwei <jwzhang@ntu.edu.sg>
+HASH                0db2f004
+SUBJECT             /C=SG/O=Nanyang Technological University/OU=Nanyang Campus Grid/CN=NTU-CG Certificate Authority
+MAY_SIGN            /C=SG/O=Nanyang Technological University/OU=Nanyang Campus Grid/*
+CERTIFICATE_MD5     2D:01:20:B3:7A:6C:F2:03:8C:76:FC:0A:78:01:C2:AD
+CERTIFICATE_SHA1    5A:93:93:3B:F1:33:F5:DE:B5:D0:B9:B2:81:0E:ED:46:2C:27:C9:9F
+CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/secure/certificates/0db2f004.0
+SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/0db2f004.signing_policy
+CRL_URL             ?
+CERT_EXPIRES        May 16 08:50:19 2015 GMT
+
+#
+# There is no CRL.  If this is acceptable, use the
+# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+#
+# MD5 and SHA1 checksums from 0db2f004.0, downloaded Wed 2005-12-21
+#
