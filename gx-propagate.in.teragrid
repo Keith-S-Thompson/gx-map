@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.13 2005-07-28 16:50:18-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.14 2005-12-21 01:07:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 use strict;
@@ -75,6 +75,9 @@ use Gridmap_Utils ();
 my $Program_Name = File::Basename::basename $0;
 my @SAVED_ARGV = @ARGV;
 
+my $Input_File = '$RCSfile: gx-propagate.in.teragrid,v $';
+($Input_File) = ($Input_File =~ m<\ (.*),v>);
+
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( help
@@ -95,7 +98,7 @@ Usage if @ARGV;
 $| = 1 if $User_Opt->{debugging};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION ($Input_File)\n";
     exit 0;
 }
 
