@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.12 2005-11-10 17:51:39-08 kst Exp $
+# $Id: test-gx-map,v 1.13 2005-12-21 01:07:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -19,10 +19,11 @@ $| = 1;
 
 my $Program_Name = File::Basename::basename $0;
 my $cwd = Cwd::getcwd;
+my $now = time;
 
 my $default_perl = '/usr/bin/perl';
 my $default_path = '/bin:/usr/bin';
-my $default_tmpdir = "$ENV{HOME}/gx-map-test-$$";
+my $default_tmpdir = "$ENV{HOME}/gx-map-test-$now-$$";
 
 my %Opt = ( perl    => $default_perl,
             path    => $default_path,
