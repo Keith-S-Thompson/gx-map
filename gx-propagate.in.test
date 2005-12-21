@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.test,v 1.4 2005-11-16 20:18:33-08 kst Exp $
+# $Id: gx-propagate.in.test,v 1.5 2005-12-21 01:07:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 use strict;
@@ -73,6 +73,8 @@ use Gridmap_Utils ();
 
 my $Program_Name = File::Basename::basename $0;
 my @SAVED_ARGV = @ARGV;
+my $Input_File = '$RCSfile: gx-propagate.in.test,v $';
+($Input_File) = ($Input_File =~ m<\ (.*),v>);
 
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
@@ -94,7 +96,7 @@ Usage if @ARGV;
 $| = 1 if $User_Opt->{debugging};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION ($Input_File)\n";
     exit 0;
 }
 
