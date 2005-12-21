@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.125 2005-12-15 18:33:17-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.126 2005-12-21 01:04:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1295,10 +1295,45 @@ sub QP_Encode($) {
 # ----------------------------------------------------------------------
 
 #
-# Given a URL, returns the a two-element list consisting of:
-#     The name of a local file containing a copy of the specified file,
-#     or undef on failure; and
-#     An error message (or undef if everything is ok).
+# A helper function for Cache_File.
+# The arguments are the name of an error file and an error message.
+# If the error file doesn't exist, create it and write the message to it.
+# Return the error file's modification time.
+#
+sub Error_Timestamp($$) {
+    my($error_file, $message) = @_;
+    if (not -e $error_file) {
+        open my $File, '>', $error_file or die "$error_file: $!\n";
+        print $File "$message\n";
+        close $File;
+    }
+    return Gridmap_Utils::Get_mtime $error_file;
+} # Error_Timestamp
+
+# ----------------------------------------------------------------------
+
+#
+# Given a URL, returns a hash reference with one or more of the following
+# fields:
+#     status (always set)
+#         A brief description of the status, one of
+#             new    : File was newly downloaded
+#             cached : Cache is ok; file was not modified
+#             old    : Download failed; use old cached file
+#             failed : Download failed; no cached file is available.
+#     filename
+#         The full pathname of a local file containing a copy of the
+#         specified file.  Not set if the download failed and there's
+#         no previously downloaded cached copy.
+#     error
+#         An optional error message.
+#         Not set if status is 'new' or 'cached'.
+#         Set if status is 'old' or 'failed'.
+#     timestamp
+#         A timestamp associated with the cache file, used to avoid
+#         reporting the same error more than once.  If necessary,
+#         an error file is created and its timestamp is used; the
+#         error file is removed on success.
 #
 # Both elements can be defined if we already have a cached copy, but
 # the attempt to get a new copy failed.  The caller can use the cached
@@ -1307,32 +1342,51 @@ sub QP_Encode($) {
 # Uses the curl command.
 #
 # If the specified file has already been cached, we attempt to update it;
-# if the update fails, we still return the name of the old cached file.
+# if the update fails, we still return the name of the old cached file,
+# if any.
+#
+# If the downloaded file is empty, it's considered an error.  (An empty
+# may be valid, but not for anything used by gx-map.)
 #
 sub Cache_File($) {
     my($url) = @_;
-    my $is_ftp = $url =~ /^ftp/;
+
+    my $is_ftp = $url =~ /^ftp:/;
 
     my $cache_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var/cache";
     my $filename = QP_Encode $url;
+
     my $cached_file = "$cache_dir/$filename";
     my $cached_file_exists = -e $cached_file;
+    my $cached_mtime = ($cached_file_exists
+                        ? Gridmap_Utils::Get_mtime $cached_file
+                        : undef);
+
+    my $error_dir = "$cache_dir/errors";
+    my $error_file = "$error_dir/$filename";
+
     my $temp_dir = "$cache_dir/tmp-" . time . "-$$";
     my $temp_file = "$temp_dir/$filename";
     my $info_file = "$temp_dir/$filename.info";
     my $dump_file = "$temp_dir/$filename.dump";
+
     my $server_mtime = undef;
-    my $cached_file_result = -e $cached_file ? $cached_file : undef;
 
     Gridmap_Utils::Use_Commands 'curl';
 
-    mkdir $temp_dir, 0777 or die "${temp_dir}: $!\n";
+    mkdir $temp_dir, 0700 or die "${temp_dir}: $!\n";
 
     #
-    # Try to get the last-modified timestamp of the file from
-    # the server.  Don't worry if this fails.
+    # Try to get the last-modified timestamp of the file from the server.
+    # Ignore any errors opening or reading the output file; if we can't
+    # read the mtime from the output file, we don't care why.
     #
-    system "curl --silent --head --max-time 30 '$url' >$info_file";
+    system 'curl', '--silent',
+                   '--head',     # Show document info only
+                   '--location', # follow "Location:" hints
+                   '--max-time', '30',
+                   '--url', $url,
+                   '--output', $info_file;
     if (open my $Info, '<', $info_file) {
         while (<$Info>) {
             if (/^Last-Modified: (.*)$/) {
@@ -1343,20 +1397,20 @@ sub Cache_File($) {
     }
     unlink $info_file;
 
-    if (defined $server_mtime) {
-        if ($cached_file_exists) {
-            my $cached_mtime = Get_mtime $cached_file;
-            if ($cached_mtime == $server_mtime) {
-                #
-                # We already have a cached copy of the file, and the
-                # timestamps match.  Use the cached copy; no need to
-                # download it again.
-                # 
-                #
-                rmdir $temp_dir;
-                return ($cached_file, undef);
-            }
-        }
+    if (defined $server_mtime and
+        $cached_file_exists and
+        $cached_mtime == $server_mtime)
+    {
+        #
+        # We already have a cached copy of the file, and the
+        # timestamps match.  Use the cached copy; no need to
+        # download it again.
+        # 
+        rmdir $temp_dir;
+        unlink $error_file if -e $error_file;
+        return { status    => 'cached',
+                 filename  => $cached_file,
+                 timestamp => $cached_mtime };
     }
 
     #
@@ -1372,47 +1426,66 @@ sub Cache_File($) {
     }
     push @curl_command, '--location'; # follow "Location:" hints
     push @curl_command, '--max-time', '30';
-    push @curl_command, '--remote-time';
+    push @curl_command, '--remote-time'; # Copy remote file's mtime
     push @curl_command, '--url', $url;
     push @curl_command, '--output', $temp_file;
 
-    my $result = system @curl_command;
+    my $curl_result = system @curl_command;
 
     #
     # For an http or https URL, the "curl" command returns an
     # exit status of 0 (success) even if the file doesn't exist.
     # For an ftp URL, curl fails if the file doesn't exist.
     # In any case, a non-zero exit status implies a failure.
+    # Also check whether the newly-downloaded file exists and is
+    # non-empty (we assume that an empty file is an error).
     #
-    if ($result != 0) {
+    if ($curl_result != 0 or not -e $temp_file or -z $temp_file) {
         unlink $temp_file, $dump_file;
         rmdir $temp_dir;
         my $message = "curl failed";
-        if ($result % 256 == 0) {
-            $message .= " (exit " . $result/256 . ")";
+        if ($curl_result != 0) {
+            $message = 'curl failed';
+            if ($curl_result % 256 == 0) {
+                $message .= " (exit " . $curl_result/256 . ")";
+            }
+            else {
+                $message .= " (system() returned $curl_result)";
+            }
+        }
+        elsif (not -e $temp_file) {
+            $message = 'curl download failed';
+        }
+        elsif (-z $temp_file) {
+            $message = 'curl downloaded an empty file';
         }
         else {
-            $message .= " (system() returned $result)";
+            #
+            # This shouldn't happen.
+            #
+            $message = 'curl, unknown failure';
         }
-        return ($cached_file_result, $message);
-    }
-
-    #
-    # See if the newly downloaded file exists.
-    #
-    if (not -e $temp_file) {
-        unlink $temp_file, $dump_file;
-        rmdir $temp_dir;
-        return ($cached_file_result, "curl download failed");
+        if ($cached_file_exists) {
+            unlink $error_file if -e $error_file;
+            return { status    => 'old',
+                     filename  => $cached_file,
+                     error     => $message,
+                     timestamp => $cached_mtime };
+        }
+        else {
+            return { status    => 'failed',
+                     error     => $message,
+                     timestamp => Error_Timestamp $error_file, $message };
+        }
     }
 
     #
     # For a non-ftp URL, check the dumped headers.
     #
     if (not $is_ftp) {
-        my $error = undef;
+        my $message = undef;
         if (not -e $dump_file) {
-            $error = "curl --dump-header failed";
+            $message = "curl --dump-header failed";
         }
         else {
             my $Dump = undef;
@@ -1421,19 +1494,30 @@ sub Cache_File($) {
                 if (not defined $first_line or
                     $first_line !~ /^HTTP.* 200 OK/)
                 {
-                    $error = "Download failed";
+                    $message = 'Download failed';
                 }
+                close $Dump;
             }
             else {
-                $error = "Failed to open dump file";
+                $message = 'Failed to open dump file';
             }
-            close $Dump;
             unlink $dump_file;
         }
-        if (defined $error) {
+        if (defined $message) {
             unlink $temp_file;
             rmdir $temp_dir;
-            return ($cached_file_result, $error);
+            if ($cached_file_exists) {
+                unlink $error_file if -e $error_file;
+                return { status    => 'old',
+                         filename  => $cached_file,
+                         error     => $message,
+                         timestamp => $cached_mtime };
+            }
+            else {
+                return { status    => 'failed',
+                         error     => $message,
+                         timestamp => Error_Timestamp $error_file, $message };
+            }
         }
     }
 
@@ -1443,13 +1527,22 @@ sub Cache_File($) {
     #
     if (rename $temp_file, $cached_file) {
         rmdir $temp_dir or warn "$temp_dir: $!\n";
-        Debug "=== ok, returning ($cached_file, undef)\n";
-        return ($cached_file, undef);
+        unlink $error_file if -e $error_file;
+        return { status    => 'new',
+                 filename  => $cached_file,
+                 timestamp => $cached_mtime };
     }
     else {
+        #
+        # Something has gone badly wrong.
+        #
+        my $timestamp = Gridmap_Utils::Get_mtime $temp_file;
+        $timestamp = 0 if not defined $timestamp;
         unlink $temp_file;
         rmdir $temp_dir;
-        return undef, "Failed to rename temp file";
+        return { status    => 'failed',
+                 error     => 'Failed to rename temp file',
+                 timestamp => $timestamp };
     }
 } # Cache_File
 
