@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.129 2005-12-21 14:58:19-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.130 2005-12-21 22:13:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1313,6 +1313,75 @@ sub Error_Timestamp($$) {
 # ----------------------------------------------------------------------
 
 #
+# Messages for curl exit codes (from the man page).
+#
+my %Curl_Error
+    = (  1 => "Unsupported protocol",
+         2 => "Failed to initialize",
+         3 => "URL malformat",
+         4 => "URL user malformatted",
+         5 => "Couldn't resolve proxy",
+         6 => "Couldn't resolve host",
+         7 => "Failed to connect to host",
+         8 => "FTP weird server  reply",
+         9 => "FTP access denied",
+        10 => "FTP user/password incorrect",
+        11 => "FTP weird PASS reply",
+        12 => "FTP weird USER reply",
+        13 => "FTP weird PASV reply",
+        14 => "FTP weird 227 format",
+        15 => "FTP can't get host",
+        16 => "FTP can't reconnect",
+        17 => "FTP  couldn't  set  binary",
+        18 => "Partial file",
+        19 => "FTP couldn't download/access the given file",
+        20 => "FTP write error",
+        21 => "FTP quote error",
+        22 => "HTTP page not retrieved",
+        23 => "Write error",
+        24 => "Malformat user",
+        25 => "FTP couldn't STOR file",
+        26 => "Read error",
+        27 => "Out of memory",
+        28 => "Operation timeout",
+        29 => "FTP couldn't set ASCII",
+        30 => "FTP PORT failed",
+        31 => "FTP couldn't use REST",
+        32 => "FTP couldn't use SIZE",
+        33 => "HTTP range error",
+        34 => "HTTP  post  error",
+        35 => "SSL connect error",
+        36 => "FTP bad download resume",
+        37 => "FILE couldn't read file",
+        38 => "LDAP cannot bind",
+        39 => "LDAP search failed",
+        40 => "Library not found",
+        41 => "Function not found",
+        42 => "Aborted by callback",
+        43 => "Internal error",
+        44 => "Internal error",
+        45 => "Interface error",
+        46 => "Bad password entered",
+        47 => "Too many redirects",
+        48 => "Unknown TELNET option specified",
+        49 => "Malformed telnet option",
+        51 => "The remote peer's SSL certificate wasn't ok",
+        52 => "No reply from server",
+        53 => "SSL crypto engine not found",
+        54 => "Cannot set SSL crypto engine as default",
+        55 => "Failed sending network data",
+        56 => "Failure in receiving network data",
+        57 => "Share is in use (internal error)",
+        58 => "Problem with the local certificate",
+        59 => "Couldn't use specified SSL cipher",
+        60 => "Problem with the CA cert",
+        61 => "Unrecognized transfer encoding",
+        62 => "Invalid LDAP URL",
+        63 => "Maximum file size exceeded" );
+
+# ----------------------------------------------------------------------
+
+#
 # Given a URL, returns a hash reference with one or more of the following
 # fields:
 #     status (always set)
@@ -1374,7 +1443,6 @@ sub Cache_File($) {
     my $temp_dir = "$cache_dir/tmp-" . time . "-$$";
     my $temp_file = "$temp_dir/$filename";
     my $info_file = "$temp_dir/$filename.info";
-    my $dump_file = "$temp_dir/$filename.dump";
 
     my $server_mtime = undef;
 
@@ -1383,15 +1451,24 @@ sub Cache_File($) {
     mkdir $temp_dir, 0700 or die "${temp_dir}: $!\n";
 
     #
-    # Try to get the last-modified timestamp of the file from the server.
-    # Ignore any errors opening or reading the output file; if we can't
-    # read the mtime from the output file, we don't care why.
+    # We invoke curl (potentially) twice, once to get the header info
+    # (particularly the timestamp), and once to download the file.
+    # Define a common set of options.
     #
-    system 'curl', '--silent',
-                   '--insecure', # Ignore server certificate
+    my @curl_opts = ( '--silent',
+                      '--fail',         # Fail on server errors
+                      '--insecure',     # Ignore server certificates
+                      '--location',     # Follow "Location:" hints
+                      '--max-time', '30' );
+
+    #
+    # Try to get the last-modified timestamp of the file from the server.
+    # Ignore any errors invoking curl or opening or reading the output
+    # file; if we can't read the mtime from the output file, we don't
+    # care why.
+    #
+    system 'curl', @curl_opts,
                    '--head',     # Show document info only
-                   '--location', # follow "Location:" hints
-                   '--max-time', '30',
                    '--url', $url,
                    '--output', $info_file;
     if (open my $Info, '<', $info_file) {
@@ -1426,36 +1503,32 @@ sub Cache_File($) {
     # Try to download the file.
     #
 
-    my @curl_command = ('curl');
-    push @curl_command, '--silent';
-    push @curl_command, '--insecure'; # Ignore server certificate
-    if (not $is_ftp) {
-        push @curl_command, '--dump-header', $dump_file;
-    }
-    push @curl_command, '--location'; # follow "Location:" hints
-    push @curl_command, '--max-time', '30';
-    push @curl_command, '--remote-time'; # Copy remote file's mtime
-    push @curl_command, '--url', $url;
-    push @curl_command, '--output', $temp_file;
+    my @curl_command = ( 'curl',
+                         @curl_opts,
+                         '--remote-time',   # Copy remote file's mtime
+                         '--url', $url,
+                         '--output', $temp_file );
 
     my $curl_result = system @curl_command;
 
     #
-    # For an http or https URL, the "curl" command returns an
-    # exit status of 0 (success) even if the file doesn't exist.
-    # For an ftp URL, curl fails if the file doesn't exist.
-    # In any case, a non-zero exit status implies a failure.
-    # Also check whether the newly-downloaded file exists and is
-    # non-empty (we assume that an empty file is an error).
+    # With the "--fail" option, curl should return a non-zero exit status
+    # on a server failure.  We also check whether the newly-downloaded
+    # file exists and is non-empty (we assume that an empty file is
+    # an error).
     #
     if ($curl_result != 0 or not -e $temp_file or -z $temp_file) {
-        unlink $temp_file, $dump_file;
+        unlink $temp_file;
         rmdir $temp_dir;
         my $message = "curl failed";
         if ($curl_result != 0) {
             $message = 'curl failed';
             if ($curl_result % 256 == 0) {
-                $message .= " (exit " . $curl_result/256 . ")";
+                my $status = $curl_result / 256;
+                $message .= " (exit $status)";
+                if (defined $Curl_Error{$status}) {
+                    $message .= " ($Curl_Error{$status})";
+                }
             }
             else {
                 $message .= " (system() returned $curl_result)";
@@ -1484,48 +1557,6 @@ sub Cache_File($) {
             return { status    => 'failed',
                      error     => $message,
                      timestamp => Error_Timestamp $error_file, $message };
-        }
-    }
-
-    #
-    # For a non-ftp URL, check the dumped headers.
-    #
-    if (not $is_ftp) {
-        my $message = undef;
-        if (not -e $dump_file) {
-            $message = "curl --dump-header failed";
-        }
-        else {
-            my $Dump = undef;
-            if (open $Dump, '<', $dump_file) {
-                my $first_line = scalar <$Dump>;
-                if (not defined $first_line or
-                    $first_line !~ /^HTTP.* 200 OK/)
-                {
-                    $message = 'Download failed';
-                }
-                close $Dump;
-            }
-            else {
-                $message = 'Failed to open dump file';
-            }
-            unlink $dump_file;
-        }
-        if (defined $message) {
-            unlink $temp_file;
-            rmdir $temp_dir;
-            if ($cached_file_exists) {
-                unlink $error_file if -e $error_file;
-                return { status    => 'old',
-                         filename  => $cached_file,
-                         error     => $message,
-                         timestamp => $cached_mtime };
-            }
-            else {
-                return { status    => 'failed',
-                         error     => $message,
-                         timestamp => Error_Timestamp $error_file, $message };
-            }
         }
     }
 
