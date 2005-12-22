@@ -1,19 +1,20 @@
-# $Id: e7ad98af.baldridge.cadesc,v 1.4 2005-04-17 02:43:34-07 kst Exp $
+# $Id: e7ad98af.baldridge.cadesc,v 1.5 2005-12-21 16:53:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e7ad98af.baldridge.cadesc,v $
 
 CA_NAME             Baldridge group CA
-HOMEPAGE            ?
-CONTACT             ?
+HOMEPAGE            http://www.baldridge.unizh.ch/grid/
+CONTACT             wibke@oci.unizh.ch
 HASH                e7ad98af
 SUBJECT             /O=University of Zurich/OU=OCI/OU=Baldridge group/CN=Baldridge group CA
 MAY_SIGN            /O=University of Zurich/OU=OCI/OU=Baldridge group/*
 CERTIFICATE_MD5     9A:51:80:2B:DE:35:43:04:D8:0B:0C:7E:C5:30:7D:3F
 CERTIFICATE_SHA1    88:3A:50:F2:13:98:6E:F0:F8:B3:DB:AE:F1:BB:D2:F3:09:63:33:10
-CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/e7ad98af.0
-SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/e7ad98af.signing_policy
+CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/e7ad98af.0
+SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/e7ad98af.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Aug 24 11:00:50 2009 GMT
 
-# There is no CRL.
+# There is no CRL.  If this is acceptable, use the
+# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
 
-# MD5 and SHA1 fingerprints from e7ad98af.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from e7ad98af.0 downloaded Wed 2005-12-21
