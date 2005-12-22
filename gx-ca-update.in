@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.89 2005-12-21 01:08:04-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.90 2005-12-21 23:18:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1287,7 +1287,7 @@ sub Check_Dependencies() {
         my $target_dir = $User_Opt->{'target-dir'};
         my $certificate_file = "$target_dir/$ref->{HASH}.0";
         if (not -e $certificate_file) {
-            Error $ref, undef, undef, "$certificate_file is missing";
+            Error $ref, undef, undef, "$certificate_file is missing\n";
             next REF;
         }
         Gridmap_Utils::Untaint $target_dir;
