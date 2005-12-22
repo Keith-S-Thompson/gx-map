@@ -1,4 +1,4 @@
-# $Id: f4cacd1f.anu.cadesc,v 1.5 2005-04-17 02:43:34-07 kst Exp $
+# $Id: f4cacd1f.anu.cadesc,v 1.6 2005-12-21 22:11:48-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f4cacd1f.anu.cadesc,v $
 
 CA_NAME             Australian National University Simple CA (expired)
@@ -9,12 +9,13 @@ SUBJECT             /O=Grid/OU=GlobusTest/OU=simpleCA-store.anu.edu.au/CN=Globus
 MAY_SIGN            /O=Grid/OU=GlobusTest/OU=simpleCA-store.anu.edu.au/*
 CERTIFICATE_MD5     D7:27:42:35:FE:AB:3C:CD:14:97:7C:24:40:72:15:11
 CERTIFICATE_SHA1    26:52:3E:51:89:FF:18:A2:24:38:05:A1:6A:62:2B:CA:A6:DF:B9:F3
-CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/f4cacd1f.0
-SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/f4cacd1f.signing_policy
+CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/f4cacd1f.0
+SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/f4cacd1f.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Aug 14 05:41:51 2003 GMT
 DISABLE             yes
 
-# There is no CRL.
+# There is no CRL.  If this is acceptable, use the
+# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
 
-# MD5 and SHA1 fingerprints from f4cacd1f.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from f4cacd1f.0 downloaded Wed 2005-12-21
