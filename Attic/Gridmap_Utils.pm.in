@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.131 2005-12-21 22:17:06-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.132 2005-12-22 00:03:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1379,6 +1379,8 @@ my %Curl_Error
         62 => "Invalid LDAP URL",
         63 => "Maximum file size exceeded" );
 
+my $Curl_Supports_Insecure_Option = undef;
+
 # ----------------------------------------------------------------------
 
 #
@@ -1448,6 +1450,24 @@ sub Cache_File($) {
 
     Gridmap_Utils::Use_Commands 'curl';
 
+    #
+    # Older versions of curl don't support the "--insecure" option.
+    # More precisely, older versions don't attempt to verify server
+    # certificates for https URLs; newer versions do unless the
+    # "--insecure" option is specified.  We need to parse the output of
+    # "curl --help" to determine how to invoke the version we're using.
+    #
+    if (not defined $Curl_Supports_Insecure_Option) {
+        $Curl_Supports_Insecure_Option = 0;
+        open my $Pipe, '-|', 'curl --help';
+        while (<$Pipe>) {
+            if (/--insecure/) {
+                $Curl_Supports_Insecure_Option = 1;
+            }
+        }
+        close $Pipe;
+    }
+
     mkdir $temp_dir, 0700 or die "${temp_dir}: $!\n";
 
     #
@@ -1457,9 +1477,11 @@ sub Cache_File($) {
     #
     my @curl_opts = ( '--silent',
                       '--fail',         # Fail on server errors
-                      '--insecure',     # Ignore server certificates
                       '--location',     # Follow "Location:" hints
                       '--max-time', '30' );
+    if ($Curl_Supports_Insecure_Option) {
+        push @curl_opts, '--insecure';  # Ignore server certificates
+    }
 
     #
     # Try to get the last-modified timestamp of the file from the server.
