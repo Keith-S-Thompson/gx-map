@@ -1,4 +1,4 @@
-# $Id: c49209e5.rocks10.cadesc,v 1.4 2005-04-17 02:43:31-07 kst Exp $
+# $Id: c49209e5.rocks10.cadesc,v 1.5 2005-12-21 22:11:47-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c49209e5.rocks10.cadesc,v $
 
 CA_NAME             rocks10.sdsc.edu Simple CA
@@ -9,11 +9,12 @@ SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=rocks10.sdsc.ed
 MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=rocks10.sdsc.edu/*
 CERTIFICATE_MD5     02:9C:82:AB:F0:1E:68:C6:1A:FE:38:95:D6:D1:2D:18
 CERTIFICATE_SHA1    49:EA:B9:CC:5B:3A:45:22:ED:A8:B0:6D:A7:F7:68:87:72:DE:AC:1C
-CERTIFICATE_URL     http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c49209e5.0
-SIGNING_POLICY_URL  http://pragma-goc.rocksclusters.org/pragma-doc/certificates/c49209e5.signing_policy
+CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/c49209e5.0
+SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/c49209e5.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Jun  1 00:46:11 2009 GMT
 
-# There is no CRL.
+# There is no CRL.  If this is acceptable, use the
+# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
 
-# MD5 and SHA1 fingerprints from c49209e5.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from c49209e5.0 downloaded Wed 2005-12-21
