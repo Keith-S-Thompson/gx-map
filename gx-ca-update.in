@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.90 2005-12-21 23:18:56-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.91 2005-12-22 19:57:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -361,7 +361,7 @@ foreach my $ref (@ca_info) {
             # The user explicitly requested a disabled CA without
             # specifying the "-ignore-disable" option.
             #
-            Error $ref, undef, undef, "CA is disabled\n";
+            Error $ref, undef, undef, "CA is disabled";
         }
         if ($User_Opt->{'ignore-disable'}) {
             Vprint "Overriding \"DISABLE\" attribute\n";
@@ -383,7 +383,7 @@ foreach my $ref (@ca_info) {
     }
     if (defined $ref->{_ERRORS}) {
         foreach my $error (@{$ref->{_ERRORS}}) {
-            Vprint ">>> $error->{message}";
+            Vprint ">>> $error->{message}\n";
         }
     }
 
@@ -825,14 +825,14 @@ sub Update_Certificate($) {
             Error $ref,
                   'cert_download_failed',
                   $cache_result->{timestamp},
-                  "$cache_result->{error} for $ref->{CERTIFICATE_URL}\n";
+                  "$cache_result->{error} for $ref->{CERTIFICATE_URL}";
         }
         elsif ($cache_result->{status} eq 'old') {
             Error $ref,
                   'cert_download_failed',
                   $cache_result->{timestamp},
                   "$cache_result->{error} for $ref->{CERTIFICATE_URL}, " .
-                      "using cached copy\n",
+                      "using cached copy",
                   'warning';
         }
 
@@ -847,23 +847,23 @@ sub Update_Certificate($) {
                                 "Certificate expired " .
                                  Seconds_To_String
                                      ($now - $cert_info->{enddate}) .
-                                 " ago\n";
+                                 " ago";
                 }
             }
             else {
                 Error $ref, undef, undef,
-                      "Unable to determine certificate expiration date\n";
+                      "Unable to determine certificate expiration date";
             }
             if ($cert_info->{hash} ne $ref->{HASH}) {
                 Error $ref, undef, undef,
                             "Mismatched hash, expected $ref->{HASH}, " .
-                            "got $cert_info->{hash}\n";
+                            "got $cert_info->{hash}";
             }
             if ($cert_info->{subject} ne $ref->{SUBJECT}) {
                 Error $ref, undef, undef,
                             "Mismatched subject, expected " .
                             "\"$ref->{SUBJECT}\", got " .
-                            "\"$cert_info->{subject}\"\n";
+                            "\"$cert_info->{subject}\"";
             }
             if (defined $ref->{SIGNED_BY} and
                 $ref->{SIGNED_BY} ne '?')
@@ -872,7 +872,7 @@ sub Update_Certificate($) {
                     Error $ref, undef, undef,
                                 "Mismatched issuer, expected " .
                                 "\"$ref->{SIGNED_BY}\", got " .
-                                "\"$cert_info->{issuer}\"\n";
+                                "\"$cert_info->{issuer}\"";
                 }
             }
             else {
@@ -880,20 +880,20 @@ sub Update_Certificate($) {
                     Error $ref, undef, undef,
                                 "Certificate is not self-signed, " .
                                 "but no SIGNED_BY attribute was " .
-                                "specified in $ref->{_FILENAME}\n";
+                                "specified in $ref->{_FILENAME}";
                 }
             }
             if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
                 Error $ref, undef, undef,
                             "Mismatched md5 fingerprint, expected " .
                             "\"$ref->{CERTIFICATE_MD5}\", got " .
-                            "\"$cert_info->{md5sum}\"\n";
+                            "\"$cert_info->{md5sum}\"";
             }
             if ($cert_info->{sha1sum} ne $ref->{CERTIFICATE_SHA1}) {
                 Error $ref, undef, undef,
                             "Mismatched sha1 fingerprint, expected " .
                             "\"$ref->{CERTIFICATE_SHA1}\", got " .
-                            "\"$cert_info->{sha1sum}\"\n";
+                            "\"$cert_info->{sha1sum}\"";
             }
         }
     }
@@ -934,7 +934,7 @@ sub Update_And_Install_CRL($) {
         # flagged an error in Update_Certificate, so we should never
         # get here, but check it anyway.
         #
-        Error $ref, undef, undef, "No certificate, can't check CRL\n";
+        Error $ref, undef, undef, "No certificate, can't check CRL";
         return;
     }
 
@@ -968,7 +968,7 @@ sub Update_And_Install_CRL($) {
         if (not $User_Opt->{'allow-missing-crl'} and
             not Allow_Missing_CRL $ref)
         {
-            Error $ref, undef, undef, "No CRL specified\n";
+            Error $ref, undef, undef, "No CRL specified";
         }
         return;
     }
@@ -992,7 +992,7 @@ sub Update_And_Install_CRL($) {
         Error $ref,
               'crl_download_failed',
               $cache_result->{timestamp},
-              "$cache_result->{error} for $ref->{CRL_URL}\n";
+              "$cache_result->{error} for $ref->{CRL_URL}";
         return;
     }
     elsif ($cache_result->{status} eq 'old') {
@@ -1000,7 +1000,7 @@ sub Update_And_Install_CRL($) {
               'crl_download_failed',
               $cache_result->{timestamp},
               "$cache_result->{error} for $ref->{CRL_URL}, " .
-                  "using cached copy\n",
+                  "using cached copy",
               'warning';
     }
 
@@ -1053,7 +1053,7 @@ sub Update_And_Install_CRL($) {
             else {
                 Error $ref, 'crl_has_expired',
                             $new_crl_info->{next_update},
-                            "CRL has expired\n";
+                            "CRL has expired";
             }
         }
         elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
@@ -1061,10 +1061,10 @@ sub Update_And_Install_CRL($) {
                         $new_crl_info->{next_update},
                         "CRL expires in " .
                         Seconds_To_String($remaining) .
-                        ", not installing\n";
+                        ", not installing";
         }
         elsif (not $new_crl_info->{verified}) {
-            Error $ref, undef, undef, "Can't verify new CRL\n";
+            Error $ref, undef, undef, "Can't verify new CRL";
         }
         elsif (defined $old_crl_info) {
             #
@@ -1081,7 +1081,7 @@ sub Update_And_Install_CRL($) {
             {
                 Error $ref, undef, undef,
                             "Newly downloaded CRL seems to be older " .
-                            "than old CRL, not installing\n";
+                            "than old CRL, not installing";
             }
             else {
                 $install_new_crl = 1;
@@ -1095,7 +1095,7 @@ sub Update_And_Install_CRL($) {
         #
         # We don't have a new CRL
         #
-        Error $ref, undef, undef, "Unable to get information for CRL\n";
+        Error $ref, undef, undef, "Unable to get information for CRL";
     }
 
     # Debug "install_new_crl = $install_new_crl\n";
@@ -1105,12 +1105,12 @@ sub Update_And_Install_CRL($) {
         Log $ref, "Installing $ref->{_CRL_FILE}\n";
         my $temp_file = "$ref->{_CRL_FILE}.$$";
         File::Copy::copy $cache_result->{filename}, $temp_file
-            or Error $ref, undef, undef, "Failed to copy CRL: $!\n";
+            or Error $ref, undef, undef, "Failed to copy CRL: $!";
         chmod $Permissions, $temp_file
             or Error $ref, undef, undef,
-                     "chmod $Octal_Permissions, $temp_file: $!\n";
+                     "chmod $Octal_Permissions, $temp_file: $!";
         rename $temp_file, $ref->{_CRL_FILE}
-            or Error $ref, undef, undef, "Failed to rename CRL: $!\n";
+            or Error $ref, undef, undef, "Failed to rename CRL: $!";
     }
 
     if (defined $ref->{_CRL_FILE}) {
@@ -1141,7 +1141,7 @@ sub Update_And_Install_CRL($) {
         my $remove_crl = 0;
         if (defined $crl_info) {
             if (not $crl_info->{verified}) {
-                Error $ref, undef, undef, "Removing unverified CRL\n";
+                Error $ref, undef, undef, "Removing unverified CRL";
                 $remove_crl = 1;
             }
             elsif (defined $CRL_Expiration and
@@ -1151,7 +1151,7 @@ sub Update_And_Install_CRL($) {
                             $crl_info->{next_update},
                             "CRL will expire in " .
                             Seconds_To_String($remaining) .
-                            ", removing it\n";
+                            ", removing it";
                 $remove_crl = 1;
             }
             if ($remove_crl) {
@@ -1174,19 +1174,19 @@ sub Update_And_Install_CRL($) {
                     Error $ref, 'crl_has_expired',
                                 $crl_info->{next_update},
                                 "CRL expired at $expiration_string " .
-                                "($how_long ago)\n";
+                                "($how_long ago)";
                 }
                 elsif ($remaining == 0) {
                     Error $ref, 'crl_will_expire',
                                 $crl_info->{next_update},
-                                "CRL expires at $expiration_string\n";
+                                "CRL expires at $expiration_string";
                 }
                 else {
                     if ($notify) {
                         Error $ref, 'crl_will_expire',
                                     $crl_info->{next_update},
                                     "CRL will expire at $expiration_string " .
-                                    "($how_long from now)\n";
+                                    "($how_long from now)";
                     }
                     else {
                         Vprint "CRL will expire at $expiration_string " .
@@ -1194,7 +1194,7 @@ sub Update_And_Install_CRL($) {
                     }
                 }
                 if (not $crl_info->{verified}) {
-                    Error $ref, undef, undef, "CRL is not verified\n";
+                    Error $ref, undef, undef, "CRL is not verified";
                 }
             }
         }
@@ -1224,12 +1224,12 @@ sub Install_Certificate($) {
     Log $ref, "Installing $ref->{_CERT_FILE}\n";
     my $temp_file = "$ref->{_CERT_FILE}.$$";
     File::Copy::copy $ref->{_CACHED_CERT_FILE}, $temp_file
-        or Error $ref, undef, undef, "Failed to copy certificate: $!\n";
+        or Error $ref, undef, undef, "Failed to copy certificate: $!";
     chmod $Permissions, $temp_file
         or Error $ref, undef, undef,
-                 "chmod $Octal_Permissions, $temp_file: $!\n";
+                 "chmod $Octal_Permissions, $temp_file: $!";
     rename $temp_file, $ref->{_CERT_FILE}
-        or Error $ref, undef, undef, "Failed to rename certificate: $!\n";
+        or Error $ref, undef, undef, "Failed to rename certificate: $!";
     $Certificate_Installed = 1;
 } # Install_Certificate
 
@@ -1261,9 +1261,9 @@ sub Update_And_Install_Signing_Policy($) {
         chmod $Permissions, $temp_file
             or Error $ref, undef, undef,
                      "chmod $Octal_Permissions, " .
-                     "$ref->{_SIGNING_POLICY_FILE}: $!\n";
+                     "$ref->{_SIGNING_POLICY_FILE}: $!";
         rename $temp_file, $ref->{_SIGNING_POLICY_FILE}
-            or Error $ref, undef, undef, "Failed to rename signing_policy: $!\n";
+            or Error $ref, undef, undef, "Failed to rename signing_policy: $!";
         $ref->{_INSTALLED_SIGNING_POLICY} = 1;
     }
 } # Update_And_Install_Signing_Policy
@@ -1287,7 +1287,7 @@ sub Check_Dependencies() {
         my $target_dir = $User_Opt->{'target-dir'};
         my $certificate_file = "$target_dir/$ref->{HASH}.0";
         if (not -e $certificate_file) {
-            Error $ref, undef, undef, "$certificate_file is missing\n";
+            Error $ref, undef, undef, "$certificate_file is missing";
             next REF;
         }
         Gridmap_Utils::Untaint $target_dir;
@@ -1297,7 +1297,7 @@ sub Check_Dependencies() {
                      "openssl verify -CApath $target_dir $certificate_file")
         {
             Error $ref, undef, undef,
-                  "Check_Dependencies failed to invoke openssl\n";
+                  "Check_Dependencies failed to invoke openssl";
             next REF;
         }
         my $ok = 0;
@@ -1312,7 +1312,7 @@ sub Check_Dependencies() {
             Error $ref,
                   'dependency_check_failed',
                   $mtime,
-                  "Dependency check failed\n";
+                  "Dependency check failed";
         }
     }
 } # Check_Dependencies
@@ -1394,11 +1394,9 @@ sub Error($$$$;$) {
         if (-e $error_file) {
             $error_ref->{reported} = 1;
         }
-        else {
-            open my $Error_File, '>', $error_file;
-            print $Error_File $message;
-            close $Error_File;
-        }
+        #
+        # If the error file doens't exist, it will be created by Notify().
+        #
     }
 
     push @{$ref->{_ERRORS}}, $error_ref;
@@ -1445,7 +1443,7 @@ sub Notify() {
                     $new_error_count ++;
                     if (defined $error->{filename}) {
                         open my $File, '>', $error->{filename};
-                        print $File $error->{message}, "\n";
+                        print $File "$error->{message}\n";
                         close $File;
                     }
                 }
@@ -1469,7 +1467,7 @@ sub Notify() {
             if (defined $ref->{_ERRORS}) {
                 my @error_list = @{$ref->{_ERRORS}};
                 foreach my $error (@error_list) {
-                    $log_message_body .= "    >>> ERROR: $error->{message}";
+                    $log_message_body .= "    >>> ERROR: $error->{message}\n";
                 }
             }
 
@@ -1477,7 +1475,7 @@ sub Notify() {
                 my @error_list = @{$ref->{_NEW_ERRORS}};
                 $mail_message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
                 foreach my $error (@error_list) {
-                    $mail_message_body .= $error->{message};
+                    $mail_message_body .= "$error->{message}\n";
                 }
                 $mail_message_body .= "\n";
             }
