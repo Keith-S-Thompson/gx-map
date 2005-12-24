@@ -1,0 +1,67 @@
+# $Id: gx-map.7.pod,v 1.1 2005-12-23 19:17:14-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
+
+=head1 NAME
+
+gx-map - A system for maintaining Globus grid-mapfiles and CRLs
+
+=head1 DESCRIPTION
+
+The B<gx-map> package is a set of programs, implemented in Perl,
+designed to automate the maintenance of the F<grid-mapfile> and the
+various CA files used by Globus.
+
+All commands accept a B<-help> option to print a brief usage message
+and a B<-version> option to display the current software version.
+
+=head1 GRID-MAPFILE maintenance
+
+F<grid-mapfile> maintenance is done in three phases.
+
+Phase one is the client program, B<gx-requests>.  Using this command,
+an unprivileged user can request an update to the F<grid-mapfile>.  The
+update will be automatically propagated as needed.  The B<gx-request>
+command creates a request file in a world-writable directory.
+
+(In previous releases, the B<gx-request> command was called B<gx-map>,
+but using the same name for the client command and the package as a
+whole was confusing.  The B<gx-map> command is still available as a
+symbolic link to B<gx-request>, but it's deprecated and is likely to
+be removed in a future release.)
+
+Phase two is the B<gx-check-requests> program.  This is normally
+executed from a cron job.  This checks for new request files generated
+by B<gx-request>.  Any new request files are validated; if this is
+successful, the request file is appended, with annotations, to the
+F<requests.log> file.
+
+Phase three is the B<gx-gen-mapfile> command.  This is normally
+executed from a cron job.  This reads the F<requests.log> file and
+generates a new F<grid-mapfile> as needed.  The F<grid-mapfile> is
+regenerated from scratch whenever necessary, so any manual changes
+to the F<grid-mapfile> will be lost on the next update.
+
+=head1 CA FILE MAINTENANCE
+
+The B<gx-ca-update> command maintains the certificate, CRL, and
+signing_policy files used by Globus.  See the B<gx-ca-update(8)
+man page for details.
+
+=head1 GUARANTEES
+
+None.  I believe the B<gx-map> package is reasonably robust, but if
+you install this software and it breaks your system, it's your own
+fault for trusting me.
+
+=head1 SEE ALSO
+
+gx-request(1), gx-check-requests(8), gx-gen-mapfile(8), gx-ca-update(8)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc> subdirectory.
