@@ -1,0 +1,206 @@
+# $Id: gx-ca-update.8.pod,v 1.1 2005-12-23 18:28:13-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
+
+=head1 NAME
+
+gx-ca-update - Maintain certificate authority files
+
+=head1 SYNOPSIS
+
+gx-ca-update -help
+
+gx-ca-update [options]
+
+=head1 DESCRIPTION
+
+B<gx-ca-update> is part of the B<gx-map> system.  It is used to
+maintain the CA (Certificate Authority) files (signing certificates,
+signing_policy files, and CRLs (Certificate Revocation Lists)) used
+by Globus.
+
+B<gx-ca-update> is normally run from a cron job.  It attempts to
+update the files for a specified set of certificate authorities.
+
+It uses a caching mechanism to avoid downloading files unless they've
+been updated.
+
+=head1 EXAMPLES
+
+A typical cron job entry might look something like this:
+
+    0,30 * * * * [...]/sbin/gx-ca-update \
+	         -target-dir [...]/certificates \
+	         -ca-list [...]/certificates/.list
+
+In real life, the entire cron job entry has to be on a single line,
+and the "[...]"s need to be replaced with actual directory names.
+
+This cron job runs every 30 minutes.  It maintains the F<*.0>,
+F<*.signing_policy>, and F<*.r0> files for the CAs listed in the
+F<.list> file.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=item B<-help>
+
+Display a usage message and exit.  The usage message contains
+descriptions of all command-line options, and is likely to be more
+correct than this man page.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<UNSAFE>
+
+Enable options that can create potential security problems.
+The B<-UNSAFE> option must be in all-caps, and it may not be
+abbreviated.
+
+=item B<-ca> I<name>
+
+Name of a certificate authority.  Normally this is given as the
+8-digit hexadecimal hash value, but a brief name can also be used;
+use B<-list-cas> to see a list.  This option may be given multiple
+times, and/or the argument may be a list of CA names separated by
+commas or blanks (in the latter case, the argument must be quoted).
+
+=item B<-ca-list> I<file>
+
+Name of a text file containing a list of CAs.  This option may be
+given multiple times.
+
+=item B<-all-cas>
+
+Use all available CAs.  There is rarely any good reason to do this.
+Requires the B<-UNSAFE> option.
+
+=item B<-list-cas>
+
+Show a list of available CAs and exit.
+
+=item B<-target-dir> I<dir>
+
+Specify the target directory.  Typically this will be either
+F</etc/grid-security/certificates> or a directory to which
+F</etc/grid-security/certificates> is a symbolic link.
+
+=item B<-permissions> I<perm>
+
+Specify the permissions, in octal, for the installed files.  The
+default is 444; there is rarely any reason to use a different value.
+
+=item B<-allow-missing-crl>
+
+Allow a CA with no CRL to be installed.  Some Certificate Authorities
+don't provide Certificate Revocation Lists.  This creates a
+potential security hole, since there's no way to revoke a compromised
+certificate.  This requires the B<-UNSAFE> option.
+
+If a CA issues only short-term certificates, the lack of a CRL isn't
+necessarily a problem.  For these CAs, the B<-allow-missing-crl> option
+isn't required.  These CAs are indicated by the B<ALLOW_MISSING_CRL>
+option in the F<*.cadesc> file.
+
+=item B<expire-crl> I<time>
+
+Remove a CRL that will expire within I<time>.  The time is expressed as
+a number followed by 's' (seconds), 'm' (minutes), 'h' (hours), or 'd'
+(days); it should be slightly longer than the interval of the cron job.
+By default, expiring CRLs are left in place.
+
+Removing an expiring CRL means that all certificates issued by the CA
+will potentially be accepted, even if they've been revoked; this is a
+potential security issue.  Leaving an expired CRL in place causes all
+certificates issued by the CA to be rejected.  The proper solution
+is to make sure that a current CRL is always available; this is the
+responsibility of the CA administrators.
+
+This option requires the b<-UNSAFE> option.
+
+=item B<-warn-crl> I<time>
+
+Issue an e-mail warning message if the CRL will expire within the
+specified time.  Regardless of this option, a warning will also be
+issued if the CRL has used more than 90% of its lifetime.
+
+=item B<-force>
+
+Force file updates.  This applies to certificate and signing_policy files.
+
+=item B<-ignore-disable>
+
+Certain CAs are disabled by default, as indicated by the B<DISABLE>
+attribute in the F<*.cadesc> file.  Ths option overrides that attribute
+and allows the CA to be used.  This requires the B<-UNSAFE> option.
+
+=item B<-email>
+
+Send e-amil to the configured B<ADMIN_EMAIL> address on errors.
+This is set by default; use B<-noemail> to disable e-mail messages.
+
+=item B<-verbose>
+
+Print verbose messages.
+
+=item B<-debugging>
+
+Enable debugging output.  Not recommended.
+
+=head1 FILES
+
+The B<gx-ca-update> command uses information in a set of CA
+description files installed in the F<etc/ca-config> subdirectory
+under the B<gx-map> installation directory.  Currently, there are
+configuration files for 88 different CAs.
+
+Each CA certificate has an 8-digit hexadecimal hash value associated
+with it.  The files maintained by B<gx-ca-update> have names based on
+this hash value.  For example, the SDSC CA's hash value is 3deda549;
+the corresponding files are:
+
+3deda549.0, the signing certificate
+
+3deda549.signing_policy, the signing policy file.
+
+3deda549.r0, the certificate revocation list
+
+Since the certificate is updated only rarely, B<gx-ca-update>
+normally only installs it once; it doesn't attempt to re-install
+it unless the B<-force> option is specified.
+
+The signing_policy file is generated by B<gx-ca-update>, even if a copy
+is available from the CA's web site.  This allows for a consistent
+format for all installed signing_policy files.  There are also some
+changes that need to be made for some files for compatibility with
+different versions of Globus; the files distributed by the CAs don't
+always have these changes.
+
+The CRL typically has a relatively short lifetime; it's typically
+re-issued both periodically and immediately when a certificate is
+revoked.  B<gx-ca-update> checks the CRL each time, and downloads
+and installs it if it's been updated.
+
+=head1 SECURITY
+
+Incorrectly installed CA files can open 
+
+=head1 SEE ALSO
+
+    gx-map(1)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc> subdirectory.
