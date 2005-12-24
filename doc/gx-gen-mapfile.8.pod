@@ -1,0 +1,21 @@
+# $Id: gx-gen-mapfile.8.pod,v 1.1 2005-12-23 18:28:13-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
+
+=head1 NAME
+
+gx-gen-mapfile - Generate a grid-mapfile
+
+=head1 SYNOPSIS
+
+S<gx-gen-mapfile -help>
+
+S<gx-gen-mapfile [options]>
+
+=head1 DESCRIPTION
+
+B<gx-gen-mapfile>, part of the B<gx-map> system, is the third of
+the three phases used to generate the Globus grid-mapfile.
+
+B<gx-gen-mapfile> is normally run from a cron job.  It reads
+the F<requests.log> file and generates a new F<grid-mapfile>
+from scratch.
