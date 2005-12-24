@@ -1,0 +1,24 @@
+# $Id: gx-request.1.pod,v 1.1 2005-12-23 18:28:14-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
+
+=head1 NAME
+
+gx-request - Request a grid-mapfile update
+
+=head1 SYNOPSIS
+
+S<gx-request -help>
+
+S<gx-request -interactive>
+
+S<gx-request -long-help>
+
+=head1 DESCRIPTION
+
+B<gx-request> is the client program for the B<gx-map> system.
+It's used to submit a request for an update to the Globus grid-mapfile.
+
+B<gx-request> is normally run in interactive mode, with the
+I<-interactive> option.  Options can also be specified on the
+command line; use the I<-long-help> option to display the full
+set of options.
