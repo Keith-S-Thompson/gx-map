@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.1 2005-12-23 19:17:14-08 kst Exp $
+# $Id: gx-map.7.pod,v 1.2 2005-12-24 17:56:18-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =head1 NAME
@@ -44,7 +44,7 @@ to the F<grid-mapfile> will be lost on the next update.
 =head1 CA FILE MAINTENANCE
 
 The B<gx-ca-update> command maintains the certificate, CRL, and
-signing_policy files used by Globus.  See the B<gx-ca-update(8)
+signing_policy files used by Globus.  See the B<gx-ca-update(8)>
 man page for details.
 
 =head1 GUARANTEES
