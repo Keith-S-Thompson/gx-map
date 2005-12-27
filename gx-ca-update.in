@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.91 2005-12-22 19:57:56-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.92 2005-12-26 22:10:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -840,6 +840,12 @@ sub Update_Certificate($) {
             $ref->{_CACHED_CERT_FILE} = $cache_result->{filename};
             # Debug "_CACHED_CERT_FILE = \"$cache_file\"\n";
             my $cert_info = Certificate_Info $cache_result->{filename};
+            if (not defined $cert_info) {
+                Error $ref, 'no_cert_info',
+                            Gridmap_Utils::Get_mtime $cache_result->{filename},
+                            "Can't get certificate information";
+                return;
+            }
             if (defined $cert_info->{enddate}) {
                 if ($cert_info->{enddate} < $now) {
                     Error $ref, 'cert_expired',
