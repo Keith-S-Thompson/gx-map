@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.8 2005-04-17 02:43:32-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.9 2005-12-26 20:52:06-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -7,11 +7,13 @@ CONTACT             hartem@moon.yerphi.am
 HASH                d0c2a341
 SUBJECT             /C=AM/O=ArmeSFo/CN=ArmeSFo CA
 MAY_SIGN            /C=AM/O=ArmeSFo/*
-CERTIFICATE_MD5     63:B3:08:9F:57:76:4A:B0:FC:D2:3D:26:15:14:CA:E7
-CERTIFICATE_SHA1    9A:C4:99:EE:D5:73:3B:77:0D:04:72:69:70:66:BE:20:7F:C0:9E:01
+CERTIFICATE_MD5     FC:C0:EB:91:32:4B:7E:E8:36:F4:CF:28:78:E4:73:C9
+CERTIFICATE_SHA1    F8:68:D4:B5:3D:FB:BE:A9:46:D4:B7:D6:C4:F8:5A:7D:A7:98:00:21
 CERTIFICATE_URL     http://www.escience.am/ca/cacert.pem
-SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/d0c2a341.signing_policy
+SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/d0c2a341.signing_policy
 CRL_URL             http://www.escience.am/ca/crl.pem
-CERT_EXPIRES        Dec  1 23:29:21 2006 GMT
+CERT_EXPIRES        Dec  1 23:29:21 2008 GMT
 
-# MD5 and SHA1 fingerprints from d0c2a341.0 downloaded 2005-03-29
+# A previous version of the certificate expired Dec  1 23:29:21 2006 GMT
+
+# MD5 and SHA1 fingerprints from d0c2a341.0 downloaded Mon 2005-12-26
