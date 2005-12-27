@@ -1,4 +1,4 @@
-# $Id: b2cb8d2c.nasa-old.cadesc,v 1.4 2005-04-17 02:43:28-07 kst Exp $
+# $Id: b2cb8d2c.nasa-old.cadesc,v 1.5 2005-12-26 20:51:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b2cb8d2c.nasa-old.cadesc,v $
 
 CA_NAME             NASA CA (old)
@@ -17,4 +17,8 @@ DISABLE             yes
 
 # The certificate expired 2002-08-22.
 
-# MD5 and SHA1 fingerprints from b2cb8d2c.0 downloaded 2005-03-29
+# As of Mon 2005-12-26, the certificate's subject name differs from
+# what's listed here.  Since the certificate has expired, I'm not going
+# to bother tracking this down or correcting it.
+
+# MD5 and SHA1 fingerprints from b2cb8d2c.0 downloaded Mon 2005-12-26
