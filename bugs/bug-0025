@@ -1,4 +1,4 @@
-# $Id: bug-0025,v 1.2 2005-05-10 18:22:46-07 kst Exp $
+# $Id: bug-0025,v 1.3 2005-12-26 22:08:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0025,v $
 
 gx-map bug 0025
@@ -6,7 +6,7 @@ Date: Fri 2005-05-06
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.3
-Status: Open
+Status: Fixed 0.5.0c7
 Title: Get information on AusGrid CA
 
 Summary:
@@ -28,3 +28,11 @@ Suggested fix:
 Update gx-ca-update to support grabbing tarballs and extracting
 specified files from them.  Define a new syntax for the argument
 to Cache_File.  Almost certainly not worth the effort.
+
+Actual fix:
+Found the c1421828.0 and c1421828.signing_policy files at
+epp.ph.unimelb.edu.au.  (They're also available on rocksclusters.org.)
+
+Fixed:
+ca/c1421828.ausgrid.cadesc 1.6
+gx-map release 0.5.0c7
