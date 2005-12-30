@@ -1,0 +1,43 @@
+# $Id: gx-map-cadesc.5.pod,v 1.1 2005-12-29 18:34:01-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-map-cadesc.5.pod,v $
+
+=head1 NAME
+
+gx-map cadesc - The cadesc file format used by B<gx-map>
+
+=head1 DESCRIPTION
+
+A F<cadesc> file is a plain text file containing the information
+needed for the B<gx-ca-update> command to work with a CA (Certificate
+Authority).
+
+The F<cadesc> files are installed under the F<etc/ca-config> directory
+of the B<gx-map> installation directory.  A number of these files
+are provided with the B<gx-map> distribution.  Users can also create
+their own F<cadesc> files (and are encouraged to send them to the
+author for inclusion in future B<gx-map> releases).
+
+The name of each file is of the form
+F<E<lt>hashE<gt>>.F<E<lt>nameE<gt>>.F<cadesc>, where F<E<lt>hashE<gt>>
+is the 8-digit hexadecimal hash value that identifies the CA's
+signing certificate, and F<E<lt>nameE<gt>> is a brief name for the CA.
+For example, the description file for the SDSC Certificate Authority
+is F<3deda549.sdsc.cadesc>.
+
+A F<cadesc> file is a plain text file where each line contains an
+attribute name followed by the corresponding attribute value.
+
+More details to follow when I update this man page.
+
+=head1 SEE ALSO
+
+gx-map(7), gx-ca-update<8>
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc> subdirectory.
