@@ -1,9 +1,9 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.1 2005-12-23 18:28:13-08 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.2 2005-12-29 18:34:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =head1 NAME
 
-gx-gen-mapfile - Generate a grid-mapfile
+gx-gen-mapfile - Generate a F<grid-mapfile>
 
 =head1 SYNOPSIS
 
