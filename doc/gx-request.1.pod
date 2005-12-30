@@ -1,9 +1,9 @@
-# $Id: gx-request.1.pod,v 1.1 2005-12-23 18:28:14-08 kst Exp $
+# $Id: gx-request.1.pod,v 1.2 2005-12-29 18:34:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =head1 NAME
 
-gx-request - Request a grid-mapfile update
+gx-request - Request a F<grid-mapfile> update
 
 =head1 SYNOPSIS
 
