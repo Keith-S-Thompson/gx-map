@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.16 2005-12-08 17:54:41-08 kst Exp $
+# $Id: make-release,v 1.17 2005-12-30 00:30:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -60,6 +60,14 @@ try cd bugs
 ls ../../../bugs | grep '^bug-....$' | \
     while read file ; do
         try cp -p ../../../bugs/$file .
+    done
+try cd ..
+
+try mkdir doc
+try cd doc
+ls ../../../doc | grep '\.pod$' | \
+    while read file ; do
+	try cp -p ../../../doc/$file .
     done
 try cd ..
 
