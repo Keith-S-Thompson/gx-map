@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.34 2005-11-30 20:38:34-08 kst Exp $
+# $Id: configure-gx-map,v 1.35 2005-12-30 00:28:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -60,6 +60,8 @@ sub Home_Dir($);
 sub Command_Exists($$);
 sub Get_Version();
 sub Check_Admin($$);
+sub Pod2Man_Command();
+sub Make_Man_Pages();
 sub Usage(@);
 
 my $Program_Name = File::Basename::basename $0;
@@ -267,6 +269,8 @@ foreach my $in_file (@in_files) {
     chmod $mode, $out_file;
 }
 
+Make_Man_Pages;
+
 if (defined $Prereq_Error) {
     print ">>> $Prereq_Error, proceed with caution\n";
 }
@@ -343,6 +347,69 @@ sub Check_Admin($$) {
         }
     }
 } # Check_Admin
+
+# ----------------------------------------------------------------------
+
+sub Pod2Man_Command() {
+    my %checked = ();
+
+    my $perl_command = $Config{PERL};
+    while (defined $perl_command and -l $perl_command) {
+        $perl_command = readlink $perl_command;
+    }
+
+    my @dirs = ();
+    if (defined $perl_command) {
+        push @dirs, File::Basename::dirname $perl_command;
+    }
+    push @dirs, split(/:/, $Config{PATH});
+    push @dirs, split(/:/, $ENV{PATH});
+
+    DIR:
+    foreach my $dir (@dirs) {
+        next DIR if $checked{$dir}++;
+        if (-x "$dir/pod2man") {
+            return "$dir/pod2man";
+        }
+    }
+    die "pod2man command not found\n";
+} # Pod2Man_Command
+
+# ----------------------------------------------------------------------
+
+sub Make_Man_Pages() {
+    my %center = ( 1 => 'User Commands',
+                   5 => 'File Formats',
+                   7 => 'Miscellaneous Information',
+                   8 => 'Administrative Commands' );
+
+    opendir my $Doc, 'doc' or die "doc: $!\n";
+    my @pods = grep /\.pod$/, sort readdir $Doc;
+    closedir $Doc;
+
+    my $pod2man = Pod2Man_Command();
+    print "Using $pod2man ...\n";
+    my $max_len = 0;
+    foreach my $pod (@pods) {
+        $max_len = length "doc/$pod" if length "doc/$pod" > $max_len;
+    }
+    foreach my $pod (@pods) {
+        if ($pod =~ /^(.*)\.(\d)\.pod$/) {
+            my($name, $section) = ($1, $2);
+            my $man_page = "$name.$section";
+            my @command = ( $pod2man,
+                            '--section', $section,
+                            '--release', "'gx-map $version'",
+                            '--center', "'$center{$section}'",
+                            '--name', $name,
+                            "doc/$pod" );
+            printf "%-${max_len}s --> %s\n", "doc/$pod", "doc/$man_page";
+            system "@command > doc/$man_page";
+        }
+    }
+
+
+} # Make_Man_Pages
 
 # ----------------------------------------------------------------------
 
