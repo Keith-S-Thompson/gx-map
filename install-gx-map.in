@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.48 2005-12-30 00:30:02-08 kst Exp $
+# $Id: install-gx-map.in,v 1.49 2005-12-30 00:38:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -128,7 +128,7 @@ for file in $ETC_FILES ; do
 done
 for section in 1 5 7 8 ; do
     for file in doc/*.$section ; do
-        verbosey cp -f $file $MAN_DIR/man$section/.
+        verbosely cp -f $file $MAN_DIR/man$section/.
     done
 done
 #
