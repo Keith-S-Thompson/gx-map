@@ -1,4 +1,4 @@
-# $Id: bug-0061,v 1.1 2005-12-30 21:02:33-08 kst Exp $
+# $Id: bug-0061,v 1.2 2005-12-30 21:45:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0061,v $
 
 gx-map bug 0061
@@ -6,7 +6,7 @@ Date: Fri 2005-12-30
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0c7
-Status: Open
+Status: Fixed 0.5.0c8
 Title: gx-ca-update won't install cert if CRL is about to expire
 
 Summary:
@@ -17,3 +17,7 @@ the certificate.
 
 A CRL that's about to expire should be treated as a warning, not as
 an error.
+
+Fixed:
+gx-ca-update.in 1.93
+gx-map release 0.5.0c8
