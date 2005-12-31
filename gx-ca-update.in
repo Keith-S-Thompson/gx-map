@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.92 2005-12-26 22:10:11-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.93 2005-12-30 21:45:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1192,7 +1192,8 @@ sub Update_And_Install_CRL($) {
                         Error $ref, 'crl_will_expire',
                                     $crl_info->{next_update},
                                     "CRL will expire at $expiration_string " .
-                                    "($how_long from now)";
+                                    "($how_long from now)",
+                                    'warning';
                     }
                     else {
                         Vprint "CRL will expire at $expiration_string " .
