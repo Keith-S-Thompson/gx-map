@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.4 2005-12-29 18:34:25-08 kst Exp $
+# $Id: gx-map.7.pod,v 1.5 2005-12-30 18:21:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =head1 NAME
@@ -18,7 +18,7 @@ and a B<-version> option to display the current software version.
 
 F<grid-mapfile> maintenance is done in three phases.
 
-Phase one is the client program, B<gx-requests>.  Using this command,
+Phase one is the client program, B<gx-request>.  Using this command,
 an unprivileged user can request an update to the F<grid-mapfile>.  The
 update will be automatically propagated as needed.  The B<gx-request>
 command creates a request file in a world-writable directory.
