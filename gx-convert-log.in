@@ -1,12 +1,12 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.26 2005-10-18 20:58:08-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.27 2006-01-02 23:01:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2005 The Regents of the University of California. All
+# Copyright (c) 2006 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -122,7 +122,7 @@ if (@missing_accounts) {
     Usage "Missing account$s: @missing_accounts\n";
 }
 
-my $Rev = '$Revision: 1.26 $';
+my $Rev = '$Revision: 1.27 $';
 $Rev =~ s/^\\s*//;
 $Rev =~ s/\s*\$$//;
 
