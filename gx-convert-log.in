@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-convert-log.in,v 1.27 2006-01-02 23:01:10-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.28 2006-01-03 02:11:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -121,10 +121,6 @@ if (@missing_accounts) {
     my $s = ( scalar @missing_accounts == 1 ? '' : 's' );
     Usage "Missing account$s: @missing_accounts\n";
 }
-
-my $Rev = '$Revision: 1.27 $';
-$Rev =~ s/^\\s*//;
-$Rev =~ s/\s*\$$//;
 
 Usage "Can't read file $Input_Log\n" if not -r $Input_Log;
 
