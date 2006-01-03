@@ -1,14 +1,12 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.14 2005-12-21 01:07:00-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.15 2006-01-02 23:01:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
-
-use strict;
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2005 The Regents of the University of California. All
+# Copyright (c) 2006 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -50,6 +48,8 @@ use strict;
 # Developed by Keith Thompson <kst@sdsc.edu>
 # TGCDB interface provided by Michael Shapiro <mshapiro@ncsa.uiuc.edu>
 ########################################################################
+
+use strict;
 
 use File::Basename ();
 use Getopt::Long ();
