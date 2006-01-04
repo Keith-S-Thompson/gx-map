@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.94 2006-01-02 23:01:09-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.95 2006-01-03 19:54:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -848,12 +848,12 @@ sub Update_Certificate($) {
             }
             if (defined $cert_info->{enddate}) {
                 if ($cert_info->{enddate} < $now) {
+                    my $when = Gridmap_Utils::Time_Image $cert_info->{enddate};
+                    my $how_long
+                        = Seconds_To_String($now - $cert_info->{enddate});
                     Error $ref, 'cert_expired',
                                 $cert_info->{enddate},
-                                "Certificate expired " .
-                                 Seconds_To_String
-                                     ($now - $cert_info->{enddate}) .
-                                 " ago";
+                                "Certificate expired at $when ($how_long ago)";
                 }
             }
             else {
