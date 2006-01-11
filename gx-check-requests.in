@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.77 2006-01-10 17:05:56-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.78 2006-01-10 17:10:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -439,7 +439,10 @@ sub Get_Request_Info($) {
     #
     my @multiple = ();
     foreach my $key (keys %$result) {
-        if ($key ne 'comment' and ref $result->{$key} eq 'ARRAY') {
+        if ($key ne 'comment' and
+            $key ne 'ERRORS' and
+            ref $result->{$key} eq 'ARRAY')
+        {
             push @multiple, $key;
         }
     }
