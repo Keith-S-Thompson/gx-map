@@ -1,0 +1,145 @@
+# $Id: gx-map-gridmap-utils.3.pod,v 1.1 2006-01-11 15:30:55-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/Attic/gx-map-gridmap-utils.3.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+Gridmap_Utils - A utility module for the B<gx-map> system
+
+=head1 DESCRIPTION
+
+The B<Gridmap_Utils> module is part of the B<gx-map> system.
+The module is installed in F<lib/Gridmap_Utils.pm> under the B<gx-map>
+installation directory.
+
+This module is not intended to be used outside the B<gx-map>
+system itself.  All interfaces are subject to change without notice.
+The definitive documentation is the source; each function is described
+there (at least briefly) in a comment block.  A few features can be
+described here.
+
+=head1 TIMESTAMPS
+
+The B<gx-map> system depends on high-precision timestamps to determine
+the order in which mapping requests are to be applied.  Most timestamps
+are stored as raw Unix timestamps (seconds since 1970-01-01 00:00:00
+GMT).  This may be annotated with a human-readable string of the form
+S<Ddd YYYY-MM-DD HH:MM:SS UTC>, but this is ignored by the software.
+
+For some purposes, a timestamp is stored in microsecond resolution,
+using Perl's B<Time::HiRes> module.
+
+See the source, F<Gridmap_Utils.pm>, for more details.
+
+=head1 READING AND WRITING RECORDS
+
+Internally, B<gx-map> stores most of its data in records implemented
+as Perl hashes, or as references to Perl hashes, where the keys and
+values are field names and values, respectively.
+
+These records can be read and written to a files as plain text.
+For example, this is how the F<requests.log> file is generated;
+see the B<gx-map-requests-log> man page for details on the format.
+
+A slightly different external format can be used for a single record
+rather than for a list of records.  The '{' and '}' delimiters are
+omitted.
+
+The C<Read_Records()> and C<Write_Records()> functions are used to
+convert between the internal format using hash references and the
+external plain-text format.
+
+=HEAD1 CACHING MECHANISM
+
+The B<gx-map> system, especially the B<gx-check-requests> command, uses
+files downloaded from ftp or web servers.  Rather than re-downloading
+the files each time they're used, the C<Cache_File()> function
+implements a caching mechanism.  Cached copies of downloaded files
+are stored under the F<var/cache/> subdirectory.  The name of each
+cache file is derived from the URL; the mapping is similar to the
+quoted-printable encoding.
+
+The C<Cache_File()> function takes a single argument, a URL.
+It returns a record (a hash reference) which includes the name of the
+cached copy of the specified file as well as some status information.
+If the file can't be downloaded, the client can use a previously
+cached copy.  Additionial information is tracked to avoid reporting
+the same error multiple times.
+
+All downloads are peformed using the B<curl> command.  The <curl>
+command is first used to check the modification time of the remote
+file; if this matches that of a previously downloaded copy, it's not
+downloaded again.
+
+The B<curl> command is invoked with the C<"--insecure"> option, which
+causes it to ignore any server certificates for an B<https> URL.
+This is necessary (or at least convenient) for web servers that
+use unrecognized certificates.  Since B<gx-ca-update> validates
+the checksums and signatures for all the files it downloads, this
+shouldn't create a security problem.
+
+See the source, F<Gridmap_Utils.pm>, for more details.
+
+=head1 ET CETERA
+
+The B<Gridmap_Utils> module provides a number of other utility
+functions dealing with user accounts, file timestamps, distinguished
+name formats, e-mail notification, and error handling.
+
+=head1 SEE ALSO
+
+gx-request(1), gx-check-requests(8), gx-gen-mapfile(8), gx-ca-update(8), gx-map-requests-log(5)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc> subdirectory.
