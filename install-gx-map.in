@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.53 2006-01-11 15:33:01-08 kst Exp $
+# $Id: install-gx-map.in,v 1.54 2006-01-11 20:40:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -83,6 +83,7 @@ for dir in $INSTALL_DIR \
            $ETC_DIR/ca-config \
            $MAN_DIR \
            $MAN_DIR/man1 \
+           $MAN_DIR/man3 \
            $MAN_DIR/man5 \
            $MAN_DIR/man7 \
            $MAN_DIR/man8 \
