@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.35 2006-01-05 16:31:54-08 kst Exp $
+# $Id: gx-request.in,v 1.36 2006-01-12 19:27:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -176,12 +176,12 @@ if ($PW->{uid} != $<) {
 }
 
 #
-# $Globus_Admin is true if the user running the command is an authorized
-# Globus administrator and has not specified the "-no-admin" command-line
+# $Is_Admin is true if the user running the command is an authorized
+# gx-map administrator and has not specified the "-no-admin" command-line
 # option.
 #
-my $Globus_Admin = (not $User_Opt->{'no-admin'} and
-                    Gridmap_Utils::Is_Admin_Account $PW->{name});
+my $Is_Admin = (not $User_Opt->{'no-admin'} and
+                Gridmap_Utils::Is_Admin_Account $PW->{name});
 my $Options  = {};
 
 if ($User_Opt->{interactive}) {
@@ -217,7 +217,7 @@ if (( $Options->{operation} eq 'add' or
       $Options->{operation} eq 'set' )
     and not defined $Options->{username})
 {
-    if ($Globus_Admin) {
+    if ($Is_Admin) {
         Usage "No username specified\n";
     }
     else {
@@ -274,10 +274,10 @@ if ($Options->{operation} ne 'remove-dn') {
     }
     else {
         #
-        # Note: For an ordinary user, I need to validate the passwd information.
-        # If a Globus administrator runs this command, it may be for an
-        # account that doesn't exist on this machine; it may not be possible
-        # to determine the uid.
+        # Note: For an ordinary user, I need to validate the passwd
+        # information.  If a gx-map administrator runs this command,
+        # it may be for an account that doesn't exist on this machine;
+        # it may not be possible to determine the uid.
         #
         $requested_pw = Gridmap_Utils::Get_PW $Options->{username};
         if (defined $requested_pw and
@@ -700,7 +700,7 @@ EOF
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
 
-    if ($Globus_Admin) {
+    if ($Is_Admin) {
         while (not defined $Options->{directory}) {
             print "Data directory (default is $Default_Data_Dir): ";
             chomp($response = scalar <STDIN>);
@@ -725,7 +725,7 @@ EOF
         $Options->{directory} = $Default_Data_Dir;
     }
 
-    if ($Globus_Admin) {
+    if ($Is_Admin) {
         undef $response;
         while (not defined $response) {
             print "Source (default is none): ";
@@ -751,7 +751,7 @@ EOF
         TRY:
         while (1) {
             print "\n";
-            if ($Globus_Admin) {
+            if ($Is_Admin) {
                 print Strip <<"EOF";
                 > (d) Remove all mappings for a specified DN
                 > (u) Remove all mappings for a specified user name
@@ -769,7 +769,7 @@ EOF
                 print "Remove? [umx] ";
             }
             chomp($response = lc scalar <STDIN>);
-            if ($Globus_Admin and $response =~ /^d/) {
+            if ($Is_Admin and $response =~ /^d/) {
                 $OP = $Options->{operation} = 'remove-dn';
                 last TRY;
             }
@@ -830,7 +830,7 @@ EOF
         # Get user name if needed
         #
         my $need_user_name = 0;
-        if ($Globus_Admin and $OP ne 'remove-dn') {
+        if ($Is_Admin and $OP ne 'remove-dn') {
             $need_user_name = 1;
         }
         else {
@@ -1054,11 +1054,11 @@ sub Get_Options_From_Command_Line() {
     $Options->{force}      = 1 if $User_Opt->{quiet} or $User_Opt->{force};
 
     if (defined $User_Opt->{directory}) {
-        if ($Globus_Admin) {
+        if ($Is_Admin) {
             $Options->{directory} = $User_Opt->{directory};
         }
         else {
-            Usage "Only a Globus administrator may specify a data directory\n"
+            Usage "Only a gx-map administrator may specify a data directory\n"
         }
     }
     else {
@@ -1070,14 +1070,14 @@ sub Get_Options_From_Command_Line() {
     }
 
     if (defined $User_Opt->{source}) {
-        if ($Globus_Admin) {
+        if ($Is_Admin) {
             if ($User_Opt->{source} !~ /^[A-Za-z0-9._-]+$/) {
                 Usage "Invalid argument to \"-source\" option\n";
             }
             $Options->{source} = $User_Opt->{source};
         }
         else {
-            Usage "Only a Globus administrator may specify a source\n"
+            Usage "Only a gx-map administrator may specify a source\n"
         }
     }
     #
@@ -1085,12 +1085,12 @@ sub Get_Options_From_Command_Line() {
     # It will be set to "user" or "admin" by gx-check-requests.
     #
 
-    if ($OP eq 'remove-dn' and not $Globus_Admin) {
-        Usage "Only a Globus administrator may use the \"-remove-dn\" option\n";
+    if ($OP eq 'remove-dn' and not $Is_Admin) {
+        Usage "Only a gx-map administrator may use the \"-remove-dn\" option\n";
     }
 
     if (defined $User_Opt->{username}) {
-        if (not $Globus_Admin and $User_Opt->{username} ne $PW->{name}) {
+        if (not $Is_Admin and $User_Opt->{username} ne $PW->{name}) {
             Usage "You may not specify a user name other than your own\n";
         }
         $Options->{username} = $User_Opt->{username};
@@ -1208,7 +1208,7 @@ Option names may be abbreviated.
     -help         : Show this message and exit.
     -version      : Show version information and exit.
     -long-help    : Show long usage message (recommended only for
-                    Globus administrators and masochists)
+                    gx-map administrators and masochists)
     -interactive  : Run interactively (recommended)
                     In interactive mode, other options will be ignored.
 EOF
@@ -1228,11 +1228,11 @@ Option names may be abbreviated.
                               The "set" operation is not currently
                               available in interactive mode.
     -long-help              : Show this long usage message (recommended
-                              only for Globus administrators and masochists).
+                              only for gx-map administrators and masochists).
     -add                    : Add the specified mapping.
     -remove                 : Remove the specified mapping.
     -remove-dn              : Remove all mappings for the specified
-                              distinguished name.  For use only by Globus
+                              distinguished name.  For use only by gx-map
                               administrators.
     -remove-user            : Remove all mappings for the specified user.
     -set                    : Set mappings for the specified user,
@@ -1254,11 +1254,11 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -quiet                  : Work silently.
                               Implies -force.
     -force                  : Apply mapping without prompting.
-                              Default is to ask for verification before
+                              Default is to ask for confirmation before
                               proceeding.
-    -no-admin               : Assume the user is not a Globus administrator.
+    -no-admin               : Assume the user is not a gx-map administrator.
                               Intended for testing only; has no effect if
-                              you're not already a Globus administrator.
+                              you're not already a gx-map administrator.
     -dn "string"            : Distinguished name.
                               Default is extracted from ~/.globus/usercert.pem
     -proxy                  : Extract DN from proxy certificate.
@@ -1275,10 +1275,10 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
     -force-dn               : Normally, gx-map (minimally) checks the DN for
                               proper syntax; this option overrides that check.
     -username name          : Unix user name to map.
-                              This option is for use by Globus
+                              This option is for use by gx-map
                               administrators only.
     -directory dir          : Specify an alternate data directory.
-                              This option is for use by Globus administrators
+                              This option is for use by gx-map administrators
                               only.
                               The default data directory is
                               $Default_Data_Dir .
@@ -1291,7 +1291,7 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               Argument may consist only of letters, digits,
                               underscore, period, and hyphen characters
                               ([A-Za-z0-9_.-]).
-                              This option is for use by Globus administrators
+                              This option is for use by gx-map administrators
                               only.
     -debugging              : Enable debugging output.
 Note: If this help message has scrolled off the top of your screen, try
