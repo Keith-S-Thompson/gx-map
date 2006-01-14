@@ -1,4 +1,4 @@
-# $Id: 16da7552.nikhef.cadesc,v 1.8 2005-04-17 02:43:21-07 kst Exp $
+# $Id: 16da7552.nikhef.cadesc,v 1.9 2006-01-13 17:07:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/16da7552.nikhef.cadesc,v $
 
 CA_NAME             DutchGrid Medium-Security Certification Authority
@@ -14,7 +14,7 @@ CERTIFICATE_SHA1    E5:FA:C3:3B:44:8F:26:1B:3D:D1:DE:BA:5F:EC:ED:35:A9:3F:23:21
 CERTIFICATE_URL     http://certificate.nikhef.nl/medium/cacert.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/16da7552.signing_policy
 CRL_URL             http://certificate.nikhef.nl/medium/cacrl.pem
-CERT_EXPIRES        Feb  9 00:00:00 2021 GMT
+CERT_EXPIRES        Tue 2021-02-09 00:00:00 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (16da7552.0) downloaded 2005-03-29
 
