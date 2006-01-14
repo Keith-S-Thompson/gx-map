@@ -1,4 +1,4 @@
-# $Id: 6fee79b0.iucc.cadesc,v 1.8 2005-04-17 02:43:26-07 kst Exp $
+# $Id: 6fee79b0.iucc.cadesc,v 1.9 2006-01-13 17:07:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6fee79b0.iucc.cadesc,v $
 
 CA_NAME             IUCC CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    0E:91:CA:65:47:26:1F:40:88:E2:8C:AA:83:44:0A:D3:57:43:D6:38
 CERTIFICATE_URL     http://certificate.iucc.ac.il/ca/cacert.pem
 SIGNING_POLICY_URL  http://certificate.iucc.ac.il/ca/6fee79b0.signing_policy
 CRL_URL             http://certificate.iucc.ac.il/ca/cacrl.pem
-CERT_EXPIRES        Jun 22 07:05:41 2009 GMT
+CERT_EXPIRES        Mon 2009-06-22 07:05:41 UTC
 
 #
 # Warning: The distributed 6fee79b0.signing_policy file specifies 
