@@ -1,4 +1,4 @@
-# $Id: 67e8acfa.purdue-tg-ra.cadesc,v 1.9 2005-04-17 02:43:25-07 kst Exp $
+# $Id: 67e8acfa.purdue-tg-ra.cadesc,v 1.10 2006-01-13 17:07:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/67e8acfa.purdue-tg-ra.cadesc,v $
 
 CA_NAME             Purdue TeraGrid Registration Authority
@@ -13,6 +13,6 @@ CERTIFICATE_SHA1    51:30:DF:D1:EF:97:6F:5D:29:59:91:07:31:5E:61:C9:5B:02:2C:EC
 CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/67e8acfa.0
 SIGNING_POLICY_URL  http://tg-ca.purdue.teragrid.org:8080/67e8acfa.signing_policy
 CRL_URL             http://tg-ca.purdue.teragrid.org:8080/67e8acfa.r0
-CERT_EXPIRES        Sep  6 13:28:31 2014 GMT
+CERT_EXPIRES        Sat 2014-09-06 13:28:31 UTC
 
 # MD5 and SHA1 fingerprints from 67e8acfa.0 downloaded 2005-03-29
