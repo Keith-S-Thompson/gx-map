@@ -1,4 +1,4 @@
-# $Id: 411204bc.thaigrid.cadesc,v 1.9 2005-04-17 02:43:23-07 kst Exp $
+# $Id: 411204bc.thaigrid.cadesc,v 1.10 2006-01-13 17:07:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/411204bc.thaigrid.cadesc,v $
 
 CA_NAME             ThaiGrid CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    1A:30:D7:B3:0F:E7:78:CD:68:38:E4:15:F6:F0:1A:DE:D6:03:0A:BB
 CERTIFICATE_URL     http://osl.cpe.ku.ac.th/pub/thaigrid/CA/411204bc.0
 SIGNING_POLICY_URL  http://osl.cpe.ku.ac.th/pub/thaigrid/CA/411204bc.signing_policy
 CRL_URL             ?
-CERT_EXPIRES        Jun 23 07:40:07 2008 GMT
+CERT_EXPIRES        Mon 2008-06-23 07:40:07 UTC
 
 #
 # I've been unable to find a CRL
