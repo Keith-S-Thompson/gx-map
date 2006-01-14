@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.9 2005-12-26 20:52:06-08 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.10 2006-01-13 17:07:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    F8:68:D4:B5:3D:FB:BE:A9:46:D4:B7:D6:C4:F8:5A:7D:A7:98:00:21
 CERTIFICATE_URL     http://www.escience.am/ca/cacert.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/d0c2a341.signing_policy
 CRL_URL             http://www.escience.am/ca/crl.pem
-CERT_EXPIRES        Dec  1 23:29:21 2008 GMT
+CERT_EXPIRES        Mon 2008-12-01 23:29:21 UTC
 
 # A previous version of the certificate expired Dec  1 23:29:21 2006 GMT
 
