@@ -1,4 +1,4 @@
-# $Id: 41380387.lip.cadesc,v 1.8 2005-04-17 02:43:23-07 kst Exp $
+# $Id: 41380387.lip.cadesc,v 1.9 2006-01-13 17:07:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/41380387.lip.cadesc,v $
 
 CA_NAME             LIP Certification Authority
@@ -12,6 +12,6 @@ CERTIFICATE_SHA1    16:F7:4B:34:BD:86:B9:A3:DE:B1:BA:FF:CC:B6:51:D5:8F:79:0D:57
 CERTIFICATE_URL     http://www.lip.pt/ca/41380387.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.lip.pt/ca/lip-crl.pem
-CERT_EXPIRES        Mar 21 20:15:40 2007 GMT
+CERT_EXPIRES        Wed 2007-03-21 20:15:40 UTC
 
 # MD5 and SHA1 fingerprints from 41380387.0 downloaded 2005-03-29
