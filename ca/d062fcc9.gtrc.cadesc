@@ -1,4 +1,4 @@
-# $Id: d062fcc9.gtrc.cadesc,v 1.4 2005-04-17 02:43:31-07 kst Exp $
+# $Id: d062fcc9.gtrc.cadesc,v 1.5 2006-01-13 17:07:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d062fcc9.gtrc.cadesc,v $
 
 CA_NAME             Grid Technology Research Center CA
@@ -12,6 +12,6 @@ CERTIFICATE_SHA1    9F:44:C0:5F:26:D7:0D:B8:48:69:ED:B4:AA:FA:55:62:75:E2:3F:D5
 CERTIFICATE_URL     https://sf280.hpcc.jp/CA/d062fcc9.0
 SIGNING_POLICY_URL  https://sf280.hpcc.jp/CA/d062fcc9.signing_policy
 CRL_URL             https://sf280.hpcc.jp/CA/d062fcc9.r0
-CERT_EXPIRES        Jun 18 03:14:42 2006 GMT
+CERT_EXPIRES        Sun 2006-06-18 03:14:42 UTC
 
 # MD5 and SHA1 fingerprints from d062fcc9.0 downloaded 2005-03-29
