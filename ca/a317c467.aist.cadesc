@@ -1,4 +1,4 @@
-# $Id: a317c467.aist.cadesc,v 1.1 2005-09-13 17:22:41-07 kst Exp $
+# $Id: a317c467.aist.cadesc,v 1.2 2006-01-13 17:07:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a317c467.aist.cadesc,v $
 
 CA_NAME             AIST GRID CA
@@ -12,6 +12,6 @@ CERTIFICATE_SHA1    67:7F:8A:AD:3F:3E:CF:84:3D:F7:47:8B:E6:39:A4:F5:67:2D:CD:BA
 CERTIFICATE_URL     https://www.apgrid.org/CA/AIST/Production/a317c467.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/AIST/Production/a317c467.signing_policy
 CRL_URL             https://www.apgrid.org/CA/AIST/Production/a317c467.r0
-CERT_EXPIRES        Oct 18 10:28:35 2009 GMT
+CERT_EXPIRES        Sun 2009-10-18 10:28:35 UTC
 
 # MD5 and SHA1 fingerprints from a317c467.0, downloaded 2005-09-13
