@@ -1,4 +1,4 @@
-# $Id: f4cacd1f.anu.cadesc,v 1.6 2005-12-21 22:11:48-08 kst Exp $
+# $Id: f4cacd1f.anu.cadesc,v 1.7 2006-01-13 17:07:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f4cacd1f.anu.cadesc,v $
 
 CA_NAME             Australian National University Simple CA (expired)
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    26:52:3E:51:89:FF:18:A2:24:38:05:A1:6A:62:2B:CA:A6:DF:B9:F3
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/f4cacd1f.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/f4cacd1f.signing_policy
 CRL_URL             ?
-CERT_EXPIRES        Aug 14 05:41:51 2003 GMT
+CERT_EXPIRES        Thu 2003-08-14 05:41:51 UTC
 DISABLE             yes
 
 # There is no CRL.  If this is acceptable, use the
