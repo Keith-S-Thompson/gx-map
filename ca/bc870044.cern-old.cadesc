@@ -1,4 +1,4 @@
-# $Id: bc870044.cern-old.cadesc,v 1.4 2005-04-17 02:43:29-07 kst Exp $
+# $Id: bc870044.cern-old.cadesc,v 1.5 2006-01-13 17:07:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc870044.cern-old.cadesc,v $
 
 CA_NAME             CERN CA (old)
@@ -17,7 +17,7 @@ CERTIFICATE_SHA1    50:01:3F:DE:8E:75:F1:AF:4A:D9:B9:56:E5:34:37:80:E5:27:CF:AA
 CERTIFICATE_URL     http://globus.home.cern.ch/globus/ca/bc870044.0
 SIGNING_POLICY_URL  http://globus.home.cern.ch/globus/ca/bc870044.signing_policy
 CRL_URL             http://globus.home.cern.ch/globus/ca/bc870044.r0
-CERT_EXPIRES        Nov 30 12:00:00 2003 GMT
+CERT_EXPIRES        Sun 2003-11-30 12:00:00 UTC
 DISABLE             yes
 
 # MD5 and SHA1 fingerprints from bc870044.0 downloaded 2005-03-29
