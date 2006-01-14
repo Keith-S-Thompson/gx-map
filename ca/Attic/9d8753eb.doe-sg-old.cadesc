@@ -1,4 +1,4 @@
-# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.17 2005-04-17 02:43:27-07 kst Exp $
+# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.18 2006-01-13 17:07:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/9d8753eb.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -14,7 +14,7 @@ CERTIFICATE_SHA1    3D:33:6F:05:53:A0:B9:C1:BC:8E:4C:59:D4:16:F1:33:8E:56:F6:A4
 CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/9d8753eb.0
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
-CERT_EXPIRES        Jan 10 23:48:37 2004 GMT
+CERT_EXPIRES        Sat 2004-01-10 23:48:37 UTC
 DISABLE             yes
 
 # The certificate expired 2004-01-10.
