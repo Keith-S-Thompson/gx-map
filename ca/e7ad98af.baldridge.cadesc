@@ -1,4 +1,4 @@
-# $Id: e7ad98af.baldridge.cadesc,v 1.5 2005-12-21 16:53:37-08 kst Exp $
+# $Id: e7ad98af.baldridge.cadesc,v 1.6 2006-01-13 17:07:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e7ad98af.baldridge.cadesc,v $
 
 CA_NAME             Baldridge group CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    88:3A:50:F2:13:98:6E:F0:F8:B3:DB:AE:F1:BB:D2:F3:09:63:33:10
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/e7ad98af.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/e7ad98af.signing_policy
 CRL_URL             ?
-CERT_EXPIRES        Aug 24 11:00:50 2009 GMT
+CERT_EXPIRES        Mon 2009-08-24 11:00:50 UTC
 
 # There is no CRL.  If this is acceptable, use the
 # "-UNSAFE -allow-missing-crl" options to gx-ca-update.
