@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.36 2006-01-12 19:27:23-08 kst Exp $
+# $Id: gx-request.in,v 1.37 2006-01-13 16:42:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -1248,7 +1248,7 @@ Option names may be abbreviated.
                               useful if you already have a certificate and
                               get a new account on a machine.
 Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
-      "-remove-user", and "-update"
+      "-remove-user", "-set", and "-update"
       (or "-help", "-usage", or -long-usage) must be specified.
 ------------------------------------------------------------------------
     -quiet                  : Work silently.
@@ -1260,7 +1260,8 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               Intended for testing only; has no effect if
                               you're not already a gx-map administrator.
     -dn "string"            : Distinguished name.
-                              Default is extracted from ~/.globus/usercert.pem
+                              Default is extracted from
+                              \$X509_USER_CERT or \$HOME/.globus/usercert.pem
     -proxy                  : Extract DN from proxy certificate.
     -certificate-file file  : Name of file from which to extract DN.
                               If neither "-dn", "-proxy", nor
@@ -1272,8 +1273,9 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               from stdin.  This cannot be used with other
                               DN options (-dn, -proxy, -certificate-file),
                               or with any operation other than "-set".
-    -force-dn               : Normally, gx-map (minimally) checks the DN for
-                              proper syntax; this option overrides that check.
+    -force-dn               : Normally, gx-request (minimally) checks
+                              the DN for proper syntax; this option
+                              overrides that check.
     -username name          : Unix user name to map.
                               This option is for use by gx-map
                               administrators only.
