@@ -1,4 +1,4 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.16 2005-12-08 18:42:03-08 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.17 2006-01-13 17:07:22-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
@@ -18,7 +18,7 @@ CERTIFICATE_SHA1    18:B9:75:4F:1D:61:AB:07:0A:8E:9B:1E:4F:A7:44:92:88:FA:D0:96
 CERTIFICATE_URL     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
 SIGNING_POLICY_URL  http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.signing_policy
 CRL_URL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
-CERT_EXPIRES        Jan 10 08:00:00 2008 GMT
+CERT_EXPIRES        Thu 2008-01-10 08:00:00 UTC
 
 #
 # Due to a bug on the pki1.doegrids.org web server, the
