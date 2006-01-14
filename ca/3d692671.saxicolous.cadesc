@@ -1,4 +1,4 @@
-# $Id: 3d692671.saxicolous.cadesc,v 1.4 2005-04-17 02:43:23-07 kst Exp $
+# $Id: 3d692671.saxicolous.cadesc,v 1.5 2006-01-13 17:07:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3d692671.saxicolous.cadesc,v $
 
 CA_NAME             saxicolous.sdsc.edu Simple CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    AB:98:29:A0:5F:7D:2F:E0:1F:9B:66:56:FF:59:FD:CF:36:AF:20:BA
 CERTIFICATE_URL     http://cvs.rocksclusters.org/viewcvs/viewcvs.cgi/*checkout*/pragma/grid-security/certificates/3d692671.0
 SIGNING_POLICY_URL  http://cvs.rocksclusters.org/viewcvs/viewcvs.cgi/*checkout*/pragma/grid-security/certificates/3d692671.signing_policy
 CRL_URL             ?
-CERT_EXPIRES        Aug  8 23:15:57 2009 GMT
+CERT_EXPIRES        Sat 2009-08-08 23:15:57 UTC
 
 # There is no CRL.
 
