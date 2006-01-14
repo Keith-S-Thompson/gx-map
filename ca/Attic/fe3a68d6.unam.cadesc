@@ -1,4 +1,4 @@
-# $Id: fe3a68d6.unam.cadesc,v 1.6 2005-12-21 22:11:48-08 kst Exp $
+# $Id: fe3a68d6.unam.cadesc,v 1.7 2006-01-13 17:07:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/fe3a68d6.unam.cadesc,v $
 
 CA_NAME             UNAM
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    76:16:42:96:A3:16:C3:37:E9:AC:0A:A5:BF:70:42:74:9A:F2:5B:F6
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/fe3a68d6.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/fe3a68d6.signing_policy
 CRL_URL             ?
-CERT_EXPIRES        Sep 15 20:47:03 2008 GMT
+CERT_EXPIRES        Mon 2008-09-15 20:47:03 UTC
 
 # There is no CRL.  If this is acceptable, use the
 # "-UNSAFE -allow-missing-crl" options to gx-ca-update.
