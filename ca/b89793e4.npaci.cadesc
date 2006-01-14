@@ -1,4 +1,4 @@
-# $Id: b89793e4.npaci.cadesc,v 1.11 2005-04-17 02:43:28-07 kst Exp $
+# $Id: b89793e4.npaci.cadesc,v 1.12 2006-01-13 17:07:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b89793e4.npaci.cadesc,v $
 
 CA_NAME             NPACI CA
@@ -13,7 +13,7 @@ CERTIFICATE_URL     http://www.npaci.edu/CA/b89793e4.0
 SIGNING_POLICY_URL  http://www.npaci.edu/CA/b89793e4.signing_policy
 CRL_URL             http://www.npaci.edu/CA/b89793e4.r0
 INDEX               http://www.npaci.edu/CA/ca.db.index
-CERT_EXPIRES        Oct 11 20:50:16 2020 GMT
+CERT_EXPIRES        Sun 2020-10-11 20:50:16 UTC
 
 # This CA is not issuing any new certificates, but some certificates
 # it has issued are still valid.  SDSC users should obtain certificates
