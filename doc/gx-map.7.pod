@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.6 2006-01-06 15:25:52-08 kst Exp $
+# $Id: gx-map.7.pod,v 1.7 2006-01-17 15:59:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =for comment
@@ -53,21 +53,29 @@ gx-map - A system for maintaining Globus F<grid-mapfile>s and F<CRL>s
 
 =head1 DESCRIPTION
 
-The B<gx-map> package is a set of programs, implemented in Perl,
+The B<gx-map> system is a set of programs, implemented in Perl,
 designed to automate the maintenance of the F<grid-mapfile> and the
 various CA files used by Globus.
 
 All commands accept a B<-help> option to print a brief usage message
 and a B<-version> option to display the current software version.
 
+If you're looking for the gx-map command, its name has been changed
+to B<gx-request>; see the B<gx-request(1)> man page for more information.
+
 =head1 GRID-MAPFILE MAINTENANCE
+
+A F<grid-mapfile> is a plain text file used for user authorization
+by the B<Globus> toolkit.  Each line maps a I<distinguished name>
+(also known as a I<DN> or I<subject name> to a Unix account name.
 
 F<grid-mapfile> maintenance is done in three phases.
 
 Phase one is the client program, B<gx-request>.  Using this command,
 an unprivileged user can request an update to the F<grid-mapfile>.  The
 update will be automatically propagated as needed.  The B<gx-request>
-command creates a request file in a world-writable directory.
+command creates a request file in a world-writable directory.  See
+the B<gx-request(1)> man page.
 
 (In previous releases, the B<gx-request> command was called B<gx-map>,
 but using the same name for the client command and the package as a
@@ -79,23 +87,25 @@ Phase two is the B<gx-check-requests> program.  This is normally
 executed from a cron job.  This checks for new request files generated
 by B<gx-request>.  Any new request files are validated; if this is
 successful, the request file is appended, with annotations, to the
-F<requests.log> file.
+F<requests.log> file.  See the B<gx-check-requests(8)> man page.
 
 Phase three is the B<gx-gen-mapfile> command.  This is normally
 executed from a cron job.  This reads the F<requests.log> file and
 generates a new F<grid-mapfile> as needed.  The F<grid-mapfile> is
 regenerated from scratch whenever necessary, so any manual changes
-to the F<grid-mapfile> will be lost on the next update.
+to the F<grid-mapfile> will be lost on the next update.  See the
+B<gx-gen-mapfile(8)> man page.
 
 =head1 CA FILE MAINTENANCE
 
 The B<gx-ca-update> command maintains the certificate, CRL, and
-signing_policy files used by Globus.  See the B<gx-ca-update(8)>
+signing_policy files used by Globus.  These are normally stored in
+the F</etc/grid-security> directory.  See the B<gx-ca-update(8)>
 man page for details.
 
 =head1 GUARANTEES
 
-None.  I believe the B<gx-map> package is reasonably robust, but if
+None.  I believe the B<gx-map> system is reasonably robust, but if
 you install this software and it breaks your system, it's your own
 fault for trusting me.
 
