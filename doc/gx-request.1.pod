@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.3 2006-01-06 15:25:52-08 kst Exp $
+# $Id: gx-request.1.pod,v 1.4 2006-01-17 15:59:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -68,3 +68,186 @@ B<gx-request> is normally run in interactive mode, with the
 I<-interactive> option.  Options can also be specified on the
 command line; use the I<-long-help> option to display the full
 set of options.
+
+The B<gx-request> command creates a request file in the
+F<var/new-requests> directory under the B<gx-map> installaton
+directory.  This directory is world-writable, so the B<gx-request>
+command requires no special privileges.  The request file is later
+validated and processed by the B<gx-check-requests> command.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a brief usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-long-help>
+
+Display a complete usage message and exit.  The usage message contains
+descriptions of all command-line options, and is likely to be more
+correct than this man page.
+
+=item B<-interactive>
+
+Run interactively.  Other options will be ignored.
+
+=back
+
+=head1 INTERACTIVE MODE
+
+End users should normally use B<gx-request> in interactive mode
+by entering the command S<C<gx-request -interactive>> (which may be
+abbrevated to S<C<gx-request -int>>.
+
+In this mode, the B<gx-request> command interactively prompts
+the user to enter all the required information.  This information
+includes the kind of request (add, remove, etc.), the DN (which may
+be entered directly or extracted from a certificate or proxy file),
+an optional e-mail address, and an optional comment.  If B<gx-request>
+is executed in interactive mode by an administrator, it may prompt
+for additional information.
+
+Once all the necessary information has been collected, B<gx-request>
+will ask for confirmation before submitting the request.
+
+=head1 MORE OPTIONS
+
+If you don't want to run the B<gx-request> command in interactive
+mode, you can specify all required information on the command line.
+This is recommended only for administrative use, such as in a script
+performing multiple updates in batch mode.
+
+Exactly one of the following options may be specified:
+B<"-interactive">, B<"-add">, B<"-remove">, B<"-remove-dn">,
+B<"-remove-user">, B<"-set">, B<"-update">, B<"-help">, B<"-usage">,
+B<"-long-usage">.
+
+=over
+
+=item B<-add>
+
+Request a mapping to be added to the F<grid-mapfile>.
+
+=item B<-remove>
+
+Request a mapping to be reomved from the F<grid-mapfile>.
+
+=item B<-remove-dn>
+
+Request that all mappings for a specified distinguished name be
+removed.  Only a gx-map administrator may use this option.
+
+=item B<-remove-user>
+
+Request that all mappings for a specified user be removed.
+
+=item B<-set>
+
+Set mappings for a specified user.  Zero or more distinguished
+names may be specified.  This is equivalent to a B<"remove-user">
+request followed by zero or more B<"add"> requests.
+
+The B<-proxy> and B<-certificate-file> options may not be used with B<-set>.
+
+This option is not currently available in interactive mode.
+
+=item B<-update>
+
+Request an update of all F<grid-mapfile>s.  Normally, the system
+detects when an update is required, so this option is not usually
+necessary.
+
+=item B<-quiet>
+
+Work silently.  This implies the B<-force> option.
+
+=item B<-force>
+
+Apply the request without prompting for confirmation.  By default,
+B<gx-request> will ask for confirmation before proceeding.
+
+=item B<-no-admin>
+
+Assume the user is not a gx-map administrator.  This is intended for
+developer testing only.  This has no effect for a non-administrator
+
+=item B<-dn "string">
+
+Specify a distinguished name (also known as a subject name).
+By default, this is extracted from your user certificate,
+F<$HOME/.globus/usercert.pem>, if it exists.
+
+=item B<-proxy>
+
+Extract the distinguished name from a proxy certificate, either
+B<$X509_USER_PROXY> or F</tmp/x509up_uNNN>, where NNN is a numeric
+user id.
+
+=item B<-certificate-file file>
+
+Extract the distinguished name from the specified X509 certificate
+file.
+
+If none of B<"-dn">, B<"-proxy">, or B<"-certificate-file"> is
+specified, the distinguished name (if needed) is extracted from
+B<$X509_USER_CERT> or F<$HOME/.globus/usercert.pem>.
+
+=item B<-force-dn>
+
+Normally B<gx-request> does some minimal syntax checks on the
+distinguished name; this option overrides those checks.
+
+=item B<-username name>
+
+Unix user name to map or unmap.  This option is for use by gx-map
+administrators only.
+
+=item B<-directory dir>
+
+Specify an alternate data directory.  This option is for use by
+gx-map administrators only, and is not recommended.  The default data
+directory is the F<var> subdirectory of the B<gx-map> installation
+(which is a symbolic link to the directory specified by the B<DATA_DIR>
+option in the installation configuration file).
+
+=item B<-email addr>
+
+Your contact e-mail address (optional).  This is stored in the
+F<requests.log> file.  It may be used to contact you if there's a
+problem with your certificate.
+
+=item B<-no-email>
+
+This option is ignored.  It's provided for compatibility with B<gx-map>
+release 0.3.  It may be removed in a future release.
+
+=item B<-comment "string">
+
+A comment to be added to the F<requests.log> file.  This is optional.
+
+=item B<-source string>
+
+Specify the source of the mapping.  This option is for use by gx-map
+administrators only.  The argument may consist only of letters,
+digits, underscore, period, and hyphen characters ([A-Za-z0-9_.-]).
+It is intended to indicate where the mapping came from.  See the
+B<gx-propagate(8)> man page for more information.
+
+=item B<-debugging>
+
+Enable debugging output.  This is intended for developer testing only.
+
+=back
