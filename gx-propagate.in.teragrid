@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.16 2006-01-05 16:31:54-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.17 2006-01-17 15:57:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -373,10 +373,10 @@ a cross-site user database.
 
     -help           Show this message and exit.
     -version        Show version information and exit.
-    -add            Add a mapping.
-    -source         The source attribute of the mapping.
+    -source name    The source attribute of the mapping.
                     Mandatory.
                     If this is "TGCDB", it's ignored.
+    -add            Add a mapping.
     -remove         Remove a mapping.
     -remove-dn      Remove all mappings for a DN.
     -remove-user    Remove all mappings for a user.
