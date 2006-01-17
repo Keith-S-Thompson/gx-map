@@ -1,4 +1,4 @@
-# $Id: gx-propagate.8.pod,v 1.1 2006-01-13 18:31:58-08 kst Exp $
+# $Id: gx-propagate.8.pod,v 1.2 2006-01-17 15:59:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-propagate.8.pod,v $
 
 =for comment
@@ -60,4 +60,97 @@ S<gx-propagate [options]>
 =head1 DESCRIPTION
 
 B<gx-propagate>, part of the B<gx-map> system, is an optional plug-in
-command invoked by the B<gx-check-requests> command.
+command invoked by the B<gx-check-requests> command.  Two versions are
+provided in the B<gx-map> distribution: a TeraGrid-specific version
+that communicates with the B<TGCDB> (TeraGrid Central DataBase), and a
+dummy test version that merely logs its arguments to F<var/gx-propagate.log>
+under the B<gx-map> installation directory.
+
+The TeraGrid-specific version of the B<gx-propagate> command adds
+the specified information to the B<TGCDB>.  This information is then
+propagated across all TeraGrid sites, and the B<gx-request> command
+is automatically invoked at the other sites so that the mapping will
+appear on all systems where the user has an account.
+
+The same person may have different Unix user names at different sites.
+Conversely, the same Unix user name may be owned by different people
+at different site.  The B<TGCDB> is responsible both for passing the
+information from site to site and for resolving site-specific Unix
+user names.
+
+The B<gx-propagate> interface was designed with the TeraGrid in mind,
+but it's intended to be flexible enough so that it can be used for
+other similar systems.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-source name>
+
+Specify the source attribute of the mapping request.  This is a short
+string specifying to the origin of the mapping.  For the TeraGrid
+version of the B<gx-propagate> command, specifying S<C<-source TGCDB>>
+indicates that the mapping originated from the TeraGrid Central
+DataBase; such mappings are not propagated (to avoid an infinite loop).
+
+This is mandatory.
+
+=item B<-add>
+
+Propagate an "add" request, adding a mapping for a specified
+DN (Distinguished Name) and user account.
+
+=item B<-remove>
+
+Propagate a "remove" request, removing a mapping for a specified
+DN and user account.
+
+=item B<-remove-dn>
+
+Propagate a "remove-dn" request, removing all mappings for a specified DN.
+
+=item B<-remove-user>
+
+Propagate a "remove-user" request, removing all mappings for a
+specified user.
+
+=item B<-username name>
+
+Specify the user name (not necessary for a B<-remove-dn> request).
+
+=item B<-dn "string">
+
+Specify the DN (Distinguished Name) (not necessary for a
+B<-remove-user> request).
+
+=item B<-dryrun>
+
+Don't actually do the database transaction.  This is intended for
+developer testing only.
+
+=item B<-debugging>
+
+Enable debugging output.  This is intended for developer testing only.
+
+=back
+
+In the TeraGrid-specific version, the B<-remove-dn> and B<-remove-user>
+requests are implemented by searching the existing F<requests.log>
+file and individually removing each mapping that matches the specified
+criterion.
