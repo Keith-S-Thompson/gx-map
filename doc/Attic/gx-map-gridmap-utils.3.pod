@@ -1,4 +1,4 @@
-# $Id: gx-map-gridmap-utils.3.pod,v 1.1 2006-01-11 15:30:55-08 kst Exp $
+# $Id: gx-map-gridmap-utils.3.pod,v 1.2 2006-01-17 20:30:15-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/Attic/gx-map-gridmap-utils.3.pod,v $
 
 =for comment
@@ -94,7 +94,7 @@ The C<Read_Records()> and C<Write_Records()> functions are used to
 convert between the internal format using hash references and the
 external plain-text format.
 
-=HEAD1 CACHING MECHANISM
+=head1 CACHING MECHANISM
 
 The B<gx-map> system, especially the B<gx-check-requests> command, uses
 files downloaded from ftp or web servers.  Rather than re-downloading
