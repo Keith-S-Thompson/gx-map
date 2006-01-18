@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.37 2006-01-05 16:31:53-08 kst Exp $
+# $Id: configure-gx-map,v 1.38 2006-01-17 20:29:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -379,6 +379,7 @@ sub Pod2Man_Command() {
 
 sub Make_Man_Pages() {
     my %center = ( 1 => 'User Commands',
+                   3 => 'Functions',
                    5 => 'File Formats',
                    7 => 'Miscellaneous Information',
                    8 => 'Administrative Commands' );
