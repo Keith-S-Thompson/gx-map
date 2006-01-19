@@ -1,4 +1,4 @@
-# $Id: bug-0030,v 1.5 2005-07-07 01:11:09-07 kst Exp $
+# $Id: bug-0030,v 1.6 2006-01-18 17:25:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0030,v $
 
 gx-map bug 0030
@@ -6,7 +6,7 @@ Date: Thu 2005-06-23
 Severity: High
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed 0.5.1
 Title: Cross-site propagation
 
 Summary:
@@ -114,3 +114,19 @@ The name "replace" for the new request type won't work well for
 "gx-request -interactive", since it starts with the same letter as
 "remove".  Instead, I'm going to call it "set" (which is probably
 more descriptive, since there may not be any mappings to replace).
+
+Fix description:
+
+The new request type is called "set" rather than "replace".  This is
+actually just a new option to gx-request; it's expanded into a
+"remove-user" request and zero or more "add" requests.
+
+The plug-in command is called gx-propagate.  Two versions are provided
+with the distribution, a TeraGrid-specific one and a dummy version
+that simply logs its arguments.
+
+See bug-0033 for more information about local vs. global mappings.
+
+Fixed:
+gx-map release 0.5.1
+(many files)
