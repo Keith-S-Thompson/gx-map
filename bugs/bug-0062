@@ -1,0 +1,44 @@
+# $Id: bug-0062,v 1.1 2006-01-18 17:19:44-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0062,v $
+
+gx-map bug 0062
+Date: Wed 2006-01-18
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Interaction between gx-propagate and remote requests.log
+
+Summary:
+As of release 0.4.X, gx-map supported limited propagation
+using requests.log files downloaded from remote servers.
+The Gridmap_Valid_Mappings.pm module (removed in release 0.5.X)
+theoretically allowed remapping of requests from other sites (differing
+NAMESPACE), but this was never really used apart from some experimental
+propagation from SDSC to NCSA.
+
+SDSC currently uses gx-map 0.4.1, with DataStar and the IA-64
+clusters reading the requests.log file from the reference systems
+via ftp.sdsc.edu.  This provides propagation in one direction only;
+requests entered on DataStar or the IA-64 cluster are not propagated
+back to the reference systems.
+
+When gx-map 0.5.1 is deployed, this mechanism will no longer
+be used.  Instead, all systems will use a shared data directory
+on /projects/misc/gx-map, which will be mounted on all systems.
+(Previously, there was no such shared filesystem).
+
+In addition, the new gx-propagate mechanism will be used to propagate
+mappings into the TGCDB.  Because of a limitation in the available
+forms of AMIE packets, this will require re-scanning the local
+requests.log file to determine what information actually needs to
+be propagated.
+
+If a system uses gx-propagate *and* reads a remote requests.log
+file, the remote file will not be re-scanned.  This could result in
+inconsistencies (I haven't analyzed the possibilities).
+
+Workaround: Don't use gx-propagate and remote log files together.
+
+Consider removing or deprecating the ability to use remote log files,
+or even log files other than the default one.
