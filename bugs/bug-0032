@@ -1,4 +1,4 @@
-# $Id: bug-0032,v 1.1 2005-06-24 08:46:31-07 kst Exp $
+# $Id: bug-0032,v 1.2 2006-01-18 17:25:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0032,v $
 
 gx-map bug 0032
@@ -6,9 +6,18 @@ Date: Fri 2005-06-24
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.5
-Status: Open
+Status: Fixed 0.5.1
 Title: Man pages
 
 Summary:
 Documentation is currently scattered through a number of README files.
 Write a coherent set of man pages.
+
+Fix description:
+A number of man pages are provided with the release.  They're actually
+written as POD documents, which are converted to nroff form during
+configuration.  At this writing, the man pages are a work in progress.
+
+Fix:
+gx-map release 0.5.1
+Imany files)
