@@ -1,0 +1,38 @@
+# $Id: bug-0063,v 1.1 2006-01-20 18:49:38-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0063,v $
+
+gx-map bug 0063
+Date: Fri 2006-01-20
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Feature: Quick CA revocation
+
+Summary:
+If a CA is compromised, there's currently no good way to disable it
+across multiple sites.  Each site can remove the signing certificate
+file from each system.  Sites using gx-ca-update also need to update
+the gx-ca-update cron job or the list file; otherwise the files will
+be automatically reinstalled.  This has to be done manually at each
+site, which could be a problem if a compromised is discovered late
+at night or over a weekend or holiday.
+
+Bill Link and I recently discussed one partial solution: have the
+affected CA revoke its own signing certificate.  Assuming Globus
+recognizes such a revocation (i.e., assuming that it checks the CRL
+before trying to use the CA certificate itself),  This obviously isn't
+a complete solution, since it relies on the compromised CA itself,
+but it's probably a good idea to do this anyway (if possible).
+
+Another possible solution is to add a new option to gx-ca-update.  The
+argument would be the URL for a file containing status information for
+CAs.  If a CA is compromised, this file could be updated with an entry
+for that CA, indicating that it's not to be trusted.  If gx-ca-update
+sees such an entry, it would remove all files associated with that CA
+(*.0, *.r0, *.signing_policy) and refuse to reinstall them.
+
+This is basically a crude form of CRL.  It would (probably) not
+be signed; gx-ca-update would just trust whatever it finds at the
+specified URL.  (Or, with extra work, a mechanism could be implemented
+to cryptographically sign it.)
