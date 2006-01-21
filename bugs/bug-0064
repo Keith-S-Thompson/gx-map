@@ -1,0 +1,42 @@
+# $Id: bug-0064,v 1.1 2006-01-20 18:49:38-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
+
+gx-map bug 0064
+Date: Fri 2006-01-20
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Feature: Require user to prove he owns a certificate
+
+Summary:
+Currently, the gx-map system allows a user to map any arbitrary DN to
+his own Unix account name.  This isn't necessarily a security hole
+as long as a user can't map his own DN to someone else's account,
+but it could cause some problems.  For one, a user could map someone
+else's DN to his own account; this could deny the victim access
+to his own account (while simultaneously giving the victim access
+to the attacker's account, so it's not a very effective attack).
+For another, it could create problems for any software that treats
+the grid-mapfile as a mapping from user names to DNs, rather than
+just DNs to user names.
+
+Consider requiring the user running gx-request to prove that he
+owns, or at least can use, the certificate with the requested DN.
+For example, require the user to specify a certificate file (or use
+the default $HOME/.globus/usercert.pem) and prompt for its passphrase.
+
+Since gx-request is not privileged, validation is non-trivial.
+Presumably, once the user enters a passphrase, it could use the user's
+certificate to cryptographically sign a file, storing the signed
+file along with a copy of the certificate (*not* the private key)
+in the request file.  gx-check-requests could then confirm that the
+file in the request was actually signed by the certificate, and that
+the certificate was signed by a recognized CA (so the system on which
+gx-check-requests runs has to have its /etc/grid-security/certificates
+directory set up properly).
+
+A gx-map administrator could still request mappings without confirming
+the certificate, as is done currently.
+
+Obviously this requires more though and work.
