@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.1 2006-01-20 18:49:38-08 kst Exp $
+# $Id: bug-0064,v 1.2 2006-01-23 17:46:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -39,4 +39,4 @@ directory set up properly).
 A gx-map administrator could still request mappings without confirming
 the certificate, as is done currently.
 
-Obviously this requires more though and work.
+Obviously this requires more thought and work.
