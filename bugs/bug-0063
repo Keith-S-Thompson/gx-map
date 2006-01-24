@@ -1,4 +1,4 @@
-# $Id: bug-0063,v 1.1 2006-01-20 18:49:38-08 kst Exp $
+# $Id: bug-0063,v 1.2 2006-01-23 17:48:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0063,v $
 
 gx-map bug 0063
@@ -19,9 +19,10 @@ site, which could be a problem if a compromised is discovered late
 at night or over a weekend or holiday.
 
 Bill Link and I recently discussed one partial solution: have the
-affected CA revoke its own signing certificate.  Assuming Globus
-recognizes such a revocation (i.e., assuming that it checks the CRL
-before trying to use the CA certificate itself),  This obviously isn't
+affected CA revoke its own signing certificate.  This assumes that
+Globus recognizes such a revocation (i.e., that it checks the CRL
+before trying to use the CA certificate itself).  (Preliminary testing
+with Globus 2.4.3 indicates that it does.)  This obviously isn't
 a complete solution, since it relies on the compromised CA itself,
 but it's probably a good idea to do this anyway (if possible).
 
