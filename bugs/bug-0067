@@ -1,0 +1,30 @@
+# $Id: bug-0067,v 1.1 2006-01-25 18:13:01-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0067,v $
+
+gx-map bug 0067
+Date: Wed 2006-01-25
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Think about DoS attacks on new-requests directory
+
+Summary:
+The var/new-requests directory is world-writable.  This opens the
+possibility of a denial-of-service attack.  A malicious user (or a
+buggy program) could fill the directory with huge files, or with huge
+numbers of files.
+
+gx-check-requests currently only looks at files with names ending in
+".request".  Consider checking for *all* files (the only other valid
+file name is ".update").  Automatically removing them might be a bad
+idea, but it could at least send an e-mail message.
+
+Also, treat any request file over a certain size as a bad request
+file.  It will still be moved to the bad_requests directory (which
+means it will take up just as much space), but it will result in an
+e-mail warning.  The largest request file I've seen "in the wild"
+is 509 bytes, so 2 Kbytes should be a reasonable upper bound.
+
+I might consider having gx-request die if the generated request file
+is too big, but that's probably not worth the effort.
