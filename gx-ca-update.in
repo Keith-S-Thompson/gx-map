@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.97 2006-01-25 18:18:09-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.98 2006-01-25 21:23:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -172,7 +172,6 @@ if ($User_Opt->{'all-cas'}
 }
 
 my $Data_Dir = "$Install_Dir/var";
-my $lock_file = "$Data_Dir/.gx-ca-update.lock";
 
 my $ca_conf_dir = "$Install_Dir/etc/ca-config";
 my @ca_list_all;
@@ -341,17 +340,7 @@ if ($User_Opt->{debugging}) {
 
 Gridmap_Utils::Use_Commands 'openssl';
 
-if (-e $lock_file) {
-    my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
-    my $delta = $Now - $lock_time;
-    die "Locked since ",
-        Gridmap_Utils::Time_Image $lock_time,
-        " ($delta second(s))\n";
-}
-open my $Lock, '>', $lock_file or die "$lock_file: $!\n";
-print $Lock "$Program_Name (gx-map $Gridmap_Utils::VERSION) ",
-            "PID=$$ on $Hostname\n";
-close $Lock;
+Gridmap_Utils::Get_Lock $Program_Name;
 
 CA:
 foreach my $ref (@ca_info) {
@@ -402,7 +391,7 @@ Check_Dependencies if $Certificate_Installed;
 
 Notify;
 
-unlink $lock_file;
+Gridmap_Utils::Release_Lock $Program_Name;
 
 ########################################################################
 
