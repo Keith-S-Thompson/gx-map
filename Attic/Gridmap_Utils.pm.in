@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.140 2006-01-17 16:00:28-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.141 2006-01-25 21:23:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -96,6 +96,7 @@ BEGIN {
     use Cwd ();
     use Time::Local ();
     use Time::HiRes ();
+    use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
     eval { require Net::Domain };
     $Have_Net_Domain_Module = ( $@ eq '' );
 }
@@ -154,6 +155,9 @@ sub DN_List($);
 sub Strip_Proxy_Info($);
 
 sub Send_Email($$$);
+
+sub Get_Lock($);
+sub Release_Lock($);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
@@ -1995,6 +1999,54 @@ sub Send_Email($$$) {
         last;
     }
 } # Send_Email
+
+# ----------------------------------------------------------------------
+
+#
+# Get a lock; the name should be the program name.
+# Attempt to create the file; use sysopen so the attempt fails
+# if the file already exists.
+# If no lock exists, create it and write a line of information
+# to it.  (This information is not currently used.)
+# If the lock does exist, die.
+#
+sub Get_Lock($) {
+    my($name) = @_;
+    my $lock_file
+        = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    if (sysopen my $Lock, $lock_file, O_WRONLY | O_EXCL | O_CREAT) {
+        my $hostname = Gridmap_Utils::Get_Hostname;
+        print $Lock "$name (gx-map $Gridmap_Utils::VERSION) ",
+                    "PID=$$ on $hostname\n";
+        close $Lock;
+    }
+    else {
+        my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
+        my $delta = time - $lock_time;
+        my $message = "Locked since " .
+                      Gridmap_Utils::Time_Image $lock_time .
+                      " ($delta second(s))\n";
+        my $lock_info = undef;
+        if (open my $Old_Lock, '<', $lock_file) {
+            $lock_info = scalar <>;
+            chomp $lock_info;
+            $message .= "$lock_info\n";
+        }
+        die $message;
+    }
+} # Get_Lock
+
+# ----------------------------------------------------------------------
+
+#
+# Delete the lock file created by Get_Lock().
+#
+sub Release_Lock($) {
+    my($name) = @_;
+    my $lock_file
+        = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    unlink $lock_file or die "$lock_file: $!\n";
+} # Release_Lock
 
 # ----------------------------------------------------------------------
 
