@@ -1,0 +1,41 @@
+# $Id: bug-0066,v 1.1 2006-01-25 18:13:00-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0066,v $
+
+gx-map bug 0066
+Date: Wed 2006-01-25
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Race conditon creating lock file
+
+Summary:
+Both gx-check-requests and gx-ca-update create lock files in the
+var directory to prevent two simultaneous instances of the program
+from interfering with each other.  Currently, the both do something
+like this:
+
+    if lock file exists
+	print a message and exit
+    create lock file
+    do some work
+    remove lock file
+
+If another instance of the program runs at just the right time,
+both could execute simultaneously:
+
+    Instance 1				Instance 2
+    Does lock file exist?  No.
+					Does lock file exist?  No.
+    Create lock file
+					Create lock file
+    Do stuff				Do stuff
+    Remove lock file			Remove lock file
+
+The problem is that we check for the file's existence and create it
+in two separate steps.  Perl's open() function doesn't provide a way
+to do this, but sysopen() does:
+
+    sysopen my $Lock, $lock_file, O_WRONLY | O_EXCL | O_CREAT;
+
+Put this into a function in Gridmap_Utils.
