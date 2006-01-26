@@ -1,4 +1,4 @@
-# $Id: bug-0066,v 1.1 2006-01-25 18:13:00-08 kst Exp $
+# $Id: bug-0066,v 1.2 2006-01-25 21:22:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0066,v $
 
 gx-map bug 0066
@@ -6,7 +6,7 @@ Date: Wed 2006-01-25
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
-Status: Open
+Status: Fixed 0.5.0d1
 Title: Race conditon creating lock file
 
 Summary:
@@ -39,3 +39,9 @@ to do this, but sysopen() does:
     sysopen my $Lock, $lock_file, O_WRONLY | O_EXCL | O_CREAT;
 
 Put this into a function in Gridmap_Utils.
+
+Fix:
+Gridmap_Utils.pm.in 1.141
+gx-ca-update.in 1.98
+gx-check-requests.in 180
+gx-map release 0.5.0d1
