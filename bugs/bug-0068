@@ -1,0 +1,20 @@
+# $Id: bug-0068,v 1.1 2006-01-25 18:13:01-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0068,v $
+
+gx-map bug 0068
+Date: Wed 2006-01-25
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Clearer error message when var directory doesn't exist
+
+Summary:
+The var subdirectory is always a symbolic link to some other directory.
+It might not exist for any of a number of reasons, even when the
+installation directory does.  Most commands ignore this possiblity
+and die on the first attempt to access a file or directory under
+the var directory.  Instead, each program should explcitly check
+the existence of the var directory on startup; if it doesn't exist,
+die with a more detailed error message, including the location of
+the installation directory and where the symlink points.
