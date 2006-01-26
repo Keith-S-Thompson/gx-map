@@ -1,0 +1,34 @@
+# $Id: bug-0065,v 1.1 2006-01-25 18:13:00-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0065,v $
+
+gx-map bug 0065
+Date: Wed 2006-01-25
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: Automatically remove stale locks
+
+Summary:
+Both gx-check-requests and gx-ca-update create lock files in the var
+directory to prevent two simultaneous instances of the program from
+interfering with each other.  If a machine crashes while one of these
+commands is running, or if the program itself crashes, the lock file
+is left in place, preventing the program from running again until
+the lock is manually removed.
+
+Consider some mechanism for automatically removing lock files.  A lock
+file that's older than the most recent system start can be removed
+(is there a portable way to determine this?).  I've just added code
+to write the process ID to the lock file; if that process isn't
+running, the lock file can *probably* be removed.  (Both of these
+can be checked only on the same host where the lock file was created.)
+
+Be careful not to remove a lock that shouldn't be removed.  For
+example, if a lock is left in place because the program crashed, it's
+best to track down the cause of the crash before removing the lock.
+
+An intermediate solution might be to provide a new tool (gx-unlock?)
+that checks for lock files, prints its best guess about whether they
+can be safely removed, and asks whether to remove them (or goes ahead
+and removes them with a "-force" option).
