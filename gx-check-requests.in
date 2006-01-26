@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.79 2006-01-17 15:57:23-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.80 2006-01-25 21:23:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -122,7 +122,6 @@ my $errors_log       = "$Data_Dir/errors.log";
 my $new_request_dir  = "$Data_Dir/new-requests";
 my $good_request_dir = "$Data_Dir/good-requests";
 my $bad_request_dir  = "$Data_Dir/bad-requests";
-my $lock_file        = "$Data_Dir/.gx-check-requests.lock";
 
 my $dir_error = Gridmap_Utils::Dir_Error $new_request_dir;
 die "$dir_error\n" if defined $dir_error;
@@ -134,16 +133,7 @@ if (not -d $bad_request_dir) {
     mkdir $bad_request_dir, 0700 or die "mkdir $bad_request_dir: $!\n";
 }
 
-if (-e $lock_file) {
-    my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
-    my $delta = $Now - $lock_time;
-    die "Locked since ",
-        Gridmap_Utils::Time_Image $lock_time,
-        " ($delta second(s))\n";
-}
-open my $Lock, '>', $lock_file or die "$lock_file: $!\n";
-print $Lock "$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
-close $Lock;
+Gridmap_Utils::Get_Lock $Program_Name;
 
 my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
@@ -184,7 +174,7 @@ if (not @good_requests and not @bad_requests) {
     #
     # No requests seen.  Bail out.
     #
-    unlink $lock_file;
+    Gridmap_Utils::Release_Lock $Program_Name;
     exit;
 }
 
@@ -376,7 +366,7 @@ if (@bad_request_files) {
     Gridmap_Utils::Send_Email $recipient, $subject, $body;
 }
 
-unlink $lock_file;
+Gridmap_Utils::Release_Lock $Program_Name;
 
 ########################################################################
 
