@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.37 2006-01-13 16:42:49-08 kst Exp $
+# $Id: gx-request.in,v 1.38 2006-01-27 02:16:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -154,6 +154,8 @@ if ($User_Opt->{version}) {
 }
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+
+Gridmap_Utils::Check_Data_Dir;
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
