@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.78 2006-01-05 16:31:54-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.79 2006-01-27 02:16:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -103,6 +103,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+
+Gridmap_Utils::Check_Data_Dir;
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
