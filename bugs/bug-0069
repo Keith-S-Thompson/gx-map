@@ -1,0 +1,34 @@
+# $Id: bug-0069,v 1.1 2006-01-27 01:53:57-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0069,v $
+
+gx-map bug 0069
+Date: Thu 2006-01-26
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d0
+Status: Open
+Title: More checking of DN syntax
+
+Summary:
+Examination of the Globus source file
+gsi/gss_assist/source/gridmap.c indicates that the syntax
+of a grid-mapfile isn't as well-defined as one might hope.
+See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=4180>.
+
+Aspects relevant to gx-map are:
+
+The DN may contain backslash-escaped character sequences:
+
+    \\ --> \
+    \xff is interpreted as hexadecimal
+    \? --> ? for any character '?' (including \" --> "
+
+The grid-mapfile is read using fgets() with a 1024-byte buffer,
+with no explicit provision for long lines.  A line longer than 1024
+characters would be treated as two separate lines.
+
+Suggested fix:
+Disallow \ characters in DNs.  (Consider re-enabling them if there's
+ever a decent specification of the syntax.)  Disallow DNs longer than,
+say, 900 characters.  In gx-gen-mapfile, don't generate lines longer
+than 1000 characters.
