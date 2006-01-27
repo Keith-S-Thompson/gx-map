@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.141 2006-01-25 21:23:55-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.142 2006-01-27 02:16:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -108,6 +108,8 @@ BEGIN {
 # release.
 #
 # sub Get_Config($);
+
+sub Check_Data_Dir();
 
 # sub Is_Tainted($);
 # sub Check_Tainting($$);
@@ -221,6 +223,23 @@ sub Debugf(@);
 #     close $Config;
 #     die @errors if @errors;
 # } Get_Config
+
+# ----------------------------------------------------------------------
+
+#
+# Check that the data directory exists.
+# Die with an error message if it doesn't.
+#
+sub Check_Data_Dir() {
+   my $install_dir = $Gridmap_Utils::Config{INSTALL_DIR};
+   my $data_dir    = $Gridmap_Utils::Config{DATA_DIR};
+    if (-l "$install_dir/var" and not -d "$install_dir/var/.") {
+        die "$install_dir/var\n" .
+            "is as symbol link to\n" .
+            "$data_dir\n" .
+            "which doesn't exist\n";
+    }
+} # Check_Data_Dir
 
 # ----------------------------------------------------------------------
 
