@@ -1,4 +1,4 @@
-# $Id: bug-0068,v 1.1 2006-01-25 18:13:01-08 kst Exp $
+# $Id: bug-0068,v 1.2 2006-01-27 02:15:54-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0068,v $
 
 gx-map bug 0068
@@ -6,7 +6,7 @@ Date: Wed 2006-01-25
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
-Status: Open
+Status: Fixed 0.5.0d1
 Title: Clearer error message when var directory doesn't exist
 
 Summary:
@@ -18,3 +18,11 @@ the var directory.  Instead, each program should explcitly check
 the existence of the var directory on startup; if it doesn't exist,
 die with a more detailed error message, including the location of
 the installation directory and where the symlink points.
+
+Fixed:
+Gridmap_Utils.pm.in 1.142
+gx-ca-update.in 1.99
+gx-check-requests.in 1.81
+gx-gen-mapfile.in 1.79
+gx-request.in 1.38
+gx-map release 0.5.0d1
