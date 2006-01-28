@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.81 2006-01-27 02:16:53-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.82 2006-01-27 17:45:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -148,7 +148,7 @@ my %is_valid_key       = map { $_ => 1 } @valid_keys;
 my %is_valid_operation = map { $_ => 1 } @valid_operations;
 
 opendir my $Dir, $new_request_dir or die "$new_request_dir: $!\n";
-my @files = grep /\.request$/, sort readdir $Dir;
+my @files = sort readdir $Dir;
 closedir $Dir;
 
 foreach my $file (@files) {
@@ -160,7 +160,10 @@ my @good_request_files = ();
 my @bad_requests = ();
 my @bad_request_files = ();
 
+my %ignore = map { $_ => 1 } qw(. .. .update);
+
 foreach my $file (@files) {
+    next if $ignore{$file};
     my $request = Get_Request_Info "$new_request_dir/$file";
     if (defined $request->{ERRORS}) {
         push @bad_requests, $request;
@@ -387,6 +390,28 @@ sub Get_Request_Info($) {
     my $result;
 
     Debug "Get_Request_Info $filename\n";
+
+    my $error_message = undef;
+
+    if ($filename !~ /\.request$/) {
+        $error_message = 'Bad file name';
+    }
+    elsif (-s $filename > 2048) {
+        $error_message = 'Request file is too large';
+    }
+    elsif (not -f $filename) {
+        $error_message = 'Not a regular file';
+    }
+    elsif (not -r $filename) {
+        $error_message = 'File is not readable';
+    }
+
+    if (defined $error_message) {
+        return { REQUEST_FILE => $request_file,
+                 PROCESSED    => $processed,
+                 ERRORS       => [ $error_mesage ] };
+    }
+
     eval {
         $result = Gridmap_Utils::Read_Records '-single', $filename;
     };
