@@ -1,4 +1,4 @@
-# $Id: bug-0069,v 1.1 2006-01-27 01:53:57-08 kst Exp $
+# $Id: bug-0069,v 1.2 2006-01-27 19:42:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0069,v $
 
 gx-map bug 0069
@@ -6,7 +6,7 @@ Date: Thu 2006-01-26
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
-Status: Open
+Status: Fixed 0.5.0d1
 Title: More checking of DN syntax
 
 Summary:
@@ -32,3 +32,23 @@ Disallow \ characters in DNs.  (Consider re-enabling them if there's
 ever a decent specification of the syntax.)  Disallow DNs longer than,
 say, 900 characters.  In gx-gen-mapfile, don't generate lines longer
 than 1000 characters.
+
+Fix summary:
+Reject a DN for any of the following:
+
+Length exceeds 900 characters.
+Contains a '"' character.
+Contains a '\' character.
+Contains anything other than a 7-bit ASCII printing character (we
+were already doing this).
+
+We might need to relax some of these restrictions once a syntax
+description is available.
+
+Check DNs for validity in both gx-request and gx-check-requests.
+
+Fixed:
+Gridmap_Utils.pm.in 1.143
+gx-check-requests.in 1.84
+gx-request.in 1.38  1.39
+gx-map release 0.5.0d1
