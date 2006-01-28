@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.38 2006-01-27 02:16:53-08 kst Exp $
+# $Id: gx-request.in,v 1.39 2006-01-27 19:43:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -67,7 +67,6 @@ sub Long_Usage();
 sub Strip($);
 sub Get_Options_Interactively();
 sub Get_Options_From_Command_Line();
-sub Is_Valid_DN($);
 sub Request_Update();
 sub Get_DN_From_Certificate($);
 sub Get_DNs_From_List_File($);
@@ -242,8 +241,13 @@ if ( $Options->{operation} eq 'add' or
 {
     my @errors = ();
     foreach my $dn (@{$Options->{dn}}) {
-        if (not Is_Valid_DN $dn) {
-            push @errors, "Invalid DN \"$dn\"\n"
+        my @args = ();
+        push @args, '-check-syntax' if not defined $Options->{'force-dn'};
+        push @args, $dn;
+        my $dn_error = Gridmap_Utils::DN_Error @args;
+        if (defined $dn_error) {
+            push @errors, "Invalid DN \"$dn\"\n";
+            push @errors, $dn_error;
         }
     }
     Usage @errors if @errors;
