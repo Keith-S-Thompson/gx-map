@@ -1,4 +1,4 @@
-# $Id: bug-0067,v 1.1 2006-01-25 18:13:01-08 kst Exp $
+# $Id: bug-0067,v 1.2 2006-01-27 17:56:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0067,v $
 
 gx-map bug 0067
@@ -6,7 +6,7 @@ Date: Wed 2006-01-25
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
-Status: Open
+Status: Fixed 0.5.0d1
 Title: Think about DoS attacks on new-requests directory
 
 Summary:
@@ -28,3 +28,18 @@ is 509 bytes, so 2 Kbytes should be a reasonable upper bound.
 
 I might consider having gx-request die if the generated request file
 is too big, but that's probably not worth the effort.
+
+Fix summary:
+Reject a request for any of the following:
+    File name doesn't end in '.request'.
+    File size exceeds 2048 bytes.
+    File is not a regular file.
+    File is not readable.
+
+Some of these may make it impossible to move the file into the
+bad-requests directory; in that case, an e-mail error message will
+be sent repeatedly until the file is removed manually.
+
+Fixed:
+gx-check-requests.in 1.82
+gx-map release 0.5.0d1
