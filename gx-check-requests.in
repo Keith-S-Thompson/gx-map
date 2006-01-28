@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.82 2006-01-27 17:45:19-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.83 2006-01-27 18:02:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -356,12 +356,16 @@ if (@bad_request_files) {
 
     if (@rename_errors) {
         if (scalar @rename_errors == 1) {
-            $body .= "(Possible error renaming a file)\n";
+            $body .= "Possible error renaming a file\n" .
+                     "You may need to remove the file from\n" .
+                     "$Data_Dir/new-requests/\n";
         }
         else {
-            $body .= "(Possible errors renaming " .
+            $body .= "Possible errors renaming " .
                      scalar @rename_errors .
-                     " files)\n";
+                     " files\n" .
+                     "You may need to remove the files from\n" .
+                     "$Data_Dir/new-requests/\n";
         }
     }
 
