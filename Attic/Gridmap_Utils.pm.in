@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.142 2006-01-27 02:16:53-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.143 2006-01-27 19:43:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -151,6 +151,7 @@ sub Cache_File($);
 # sub Read_User_Map($;$);
 # sub Read_Admin_List($);
 
+sub DN_Error(@);
 sub GT2_Subject($);
 sub GT4_Subject($);
 sub DN_List($);
@@ -1928,6 +1929,93 @@ sub Cache_File($) {
 #     close $Map_File;
 #     return $Map;
 # } # Read_Admin_List
+
+# ----------------------------------------------------------------------
+
+#
+# Check whether a DN is valid.  If check fails, return a brief error 
+# message.  If it's valid, return undef.
+# 
+# Always reject non-printable characters and '"' and '\' characters.
+#
+# If "-quoted" option is specified, require leading and trailing '"'
+# characters.
+#
+# If "-check-syntax" option is specified, do a minimal syntax check.
+#
+sub DN_Error(@) {
+    my $dn = undef;
+    my $check_syntax = 0;
+    my $quoted = 0;
+    foreach my $arg (@_) {
+        if ($arg eq '-check-syntax') {
+            $check_syntax = 1;
+        }
+        elsif ($arg eq '-quoted') {
+            $quoted = 1;
+        }
+        elsif (not defined $dn) {
+            $dn = $arg;
+        }
+        else {
+            die "Internal error: Is_Valid_DN @_\n";
+        }
+    }
+    if (not defined $dn) {
+        die "Internal error: missing DN, Is_Valid_DN @_\n";
+    }
+
+    if ($quoted) {
+        if ($dn =~ /^"(.*)"$/) {
+            $dn = $1;
+        }
+        else {
+            return 'Missing quotation marks in DN';
+        }
+    }
+
+    #
+    # Disallow a DN longer than 900 characters.
+    # Long DNs could cause problems parsing the grid-mapfile.
+    # See bug-0069 and Globus Bugzilla #4180 for more details.
+    #
+    if (length $dn > 900) {
+        return 'DN is too long';
+    }
+
+    #
+    # Disallow non-printing characters.  For now, we allow only printable
+    # 7-bit ASCII characters; consider allowing, e.g., accented letters.
+    #
+    if ($dn !~ /^[ -~]*$/) {
+        return 'DN contains non-printing characters';
+    }
+
+    #
+    # Disallow '"' and '\' characters.  These should be allowed if escaped
+    # with a backslash, but we're going to disallow them until there's
+    # a clear specification of the grid-mapfile syntax.  See bug-0069
+    # and Globus Bugzilla #4180 for more details.
+    # 
+    if ($dn =~ /"/) {
+        return "DN may not contain '\"' characters";
+    }
+    if ($dn =~ /\\/) {
+        return "DN may not contain '\\' characters";
+    }
+
+    #
+    # Do some minimal syntax checking if requested.
+    # 
+    if ($check_syntax and $dn !~ m<^(/[^/=]+=[^=]+)+$>) {
+        return 'Syntax error in DN (use "gx-request -force-dn" to override)';
+    }
+
+    #
+    # All done, no errors found
+    #
+    return undef;
+} # DN_Error
 
 # ----------------------------------------------------------------------
 
