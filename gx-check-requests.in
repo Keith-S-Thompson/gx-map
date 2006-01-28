@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.83 2006-01-27 18:02:49-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.84 2006-01-27 19:43:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -413,7 +413,7 @@ sub Get_Request_Info($) {
     if (defined $error_message) {
         return { REQUEST_FILE => $request_file,
                  PROCESSED    => $processed,
-                 ERRORS       => [ $error_mesage ] };
+                 ERRORS       => [ $error_message ] };
     }
 
     eval {
@@ -509,10 +509,13 @@ sub Get_Request_Info($) {
 
     #
     # A DN (as stored in the log file) must start and end with a '"'
-    # character, and have no other '"' characters.
+    # character; the string between the quotation marks must be valid.
     #
-    if (defined $result->{dn} and $result->{dn} !~ /^"[^"]+"$/) {
-        push @{$result->{ERRORS}}, "Invalid DN (quote error)";
+    if (defined $result->{dn}) {
+        my $dn_error = Gridmap_Utils::DN_Error '-quoted', $result->{dn};
+        if (defined $dn_error) {
+            push @{$result->{ERRORS}}, $dn_error;
+        }
     }
 
     my $new_timestamp = Gridmap_Utils::Timestamp_Of $result->{timestamp};
