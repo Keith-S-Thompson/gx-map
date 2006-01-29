@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.144 2006-01-27 19:51:07-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.145 2006-01-28 17:21:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2121,6 +2121,7 @@ sub Get_Lock($) {
     my($name) = @_;
     my $lock_file
         = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    Gridmap_Utils::Untaint $lock_file;
     if (sysopen my $Lock, $lock_file, O_WRONLY | O_EXCL | O_CREAT) {
         my $hostname = Gridmap_Utils::Get_Hostname;
         print $Lock "$name (gx-map $Gridmap_Utils::VERSION) ",
