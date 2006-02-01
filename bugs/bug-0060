@@ -1,4 +1,4 @@
-# $Id: bug-0060,v 1.1 2005-12-16 16:02:15-08 kst Exp $
+# $Id: bug-0060,v 1.2 2006-01-31 19:19:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0060,v $
 
 gx-map bug 0060
@@ -13,7 +13,7 @@ Summary:
 gx-gen-mapfile checks the modification times of its input and
 output files, and doesn't update any file that doesn't appear to
 need updating.  Add a "-force" option to force an update regardless
-of any timetstamps.
+of any timestamps.
 
 Fixed:
 gx-gen-mapfile.in 1.75
