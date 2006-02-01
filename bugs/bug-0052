@@ -1,4 +1,4 @@
-# $Id: bug-0052,v 1.4 2005-12-13 00:02:10-08 kst Exp $
+# $Id: bug-0052,v 1.5 2006-01-31 19:19:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0052,v $
 
 gx-map bug 0052
@@ -37,7 +37,7 @@ UID.
 Installing gx-map and running gx-check-requests as root is not
 recommended anyway; see bug-0053.
 
-I think I'm actually going to leave this un-corrected for now.
+I think I'm actually going to leave this uncorrected for now.
 If there's any good reason to support running as root, I can fix it
 later; if not, the code will go away anyway.
 
