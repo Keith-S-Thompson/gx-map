@@ -1,0 +1,22 @@
+# $Id: bug-0070,v 1.1 2006-01-31 18:50:37-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0070,v $
+
+gx-map bug 0070
+Date: Fri 2006-01-27
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0a1
+Status: Fixed 0.5.0d1
+Title: gx-request "-force-dn" option is reversed
+
+Summary:
+The "-force-dn" option to gx-request is intended to disable some syntax
+checking for DNs.  In fact, the checking is disabled by default, and
+the "-force-dn" option enables it.  This logic error was introduced
+in gx-request.in revision 1.12, when it was modified to reject DNs
+with control characters.
+
+Fixed:
+Gridmap_Utils.pm.in 1.143
+gx-request.in 1.39
+gx-map release 0.5.0d1
