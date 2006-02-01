@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.2 2006-01-23 17:46:08-08 kst Exp $
+# $Id: bug-0064,v 1.3 2006-01-31 19:34:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -25,6 +25,8 @@ Consider requiring the user running gx-request to prove that he
 owns, or at least can use, the certificate with the requested DN.
 For example, require the user to specify a certificate file (or use
 the default $HOME/.globus/usercert.pem) and prompt for its passphrase.
+
+Or make it a configuration option.
 
 Since gx-request is not privileged, validation is non-trivial.
 Presumably, once the user enters a passphrase, it could use the user's
