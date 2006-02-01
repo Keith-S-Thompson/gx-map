@@ -1,4 +1,4 @@
-# $Id: bug-0068,v 1.2 2006-01-27 02:15:54-08 kst Exp $
+# $Id: bug-0068,v 1.3 2006-01-31 19:19:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0068,v $
 
 gx-map bug 0068
@@ -12,9 +12,9 @@ Title: Clearer error message when var directory doesn't exist
 Summary:
 The var subdirectory is always a symbolic link to some other directory.
 It might not exist for any of a number of reasons, even when the
-installation directory does.  Most commands ignore this possiblity
+installation directory does.  Most commands ignore this possibility
 and die on the first attempt to access a file or directory under
-the var directory.  Instead, each program should explcitly check
+the var directory.  Instead, each program should explicitly check
 the existence of the var directory on startup; if it doesn't exist,
 die with a more detailed error message, including the location of
 the installation directory and where the symlink points.
