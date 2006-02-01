@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.79 2006-01-27 02:16:53-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.80 2006-01-31 18:29:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -253,11 +253,8 @@ EOF
 #
 # Now traverse the Mappings hash, sorted by DN, and generate a mapfile
 #
+DN:
 foreach my $dn (sort keys %$Mappings) {
-    my @dn_list = ( $dn );
-    if ($User_Opt->{compatible}) {
-        @dn_list = Gridmap_Utils::DN_List $dn;
-    }
     my $mapping = $Mappings->{$dn};
     #
     # $mapping is a reference to a hash:
@@ -268,27 +265,49 @@ foreach my $dn (sort keys %$Mappings) {
     # mapping appears first (and is the default).
     #
     my @names = sort { $mapping->{$b} cmp $mapping->{$a} } keys %$mapping;
+    next DN if not @names;
 
-    if (@names) {
+    #
+    # With the "-compatible" option, we may have more than one
+    # DN to handle here.
+    #
+    my @dn_list;
+    if ($User_Opt->{compatible}) {
+        @dn_list = Gridmap_Utils::DN_List $dn;
+    }
+    else {
+        @dn_list = ( $dn );
+    }
+
+    foreach my $listed_dn (@dn_list) {
+        my $output_line = "$listed_dn " . join(',', @names);
+
         if ($User_Opt->{'real-name'}) {
             my @real_names = ();
             foreach my $name (@names) {
                 my $real_name = User_Real_Name $name;
                 push @real_names, ( defined $real_name ? $real_name : '?' );
             }
-            foreach my $listed_dn (@dn_list) {
-                print $Out "$listed_dn ",
-                           join(',', @names),
-                           " # ",
-                           join(',', @real_names),
-                           "\n";
-            }
+            #
+            # Be sure there's a space before the '#' character.  The
+            # grid-mapfile doesn't really support end-of-line comments;
+            # everything after the username list is just ignored.
+            #
+            $output_line .= " # " . join(", ", @real_names);
         }
-        else {
-            foreach my $listed_dn (@dn_list) {
-                print $Out "$listed_dn ", join(',', @names), "\n";
-            }
+
+        #
+        # Globus doesn't cleanly handle grid-mapfile lines longer than
+        # about 1024 characters; see Globus Bugzilla #4180.  Such a
+        # line probably indicates an error anyway, so treat it as one.
+        # To be cautious, limit the length to 1000.
+        #
+        if (length $output_line >= 1000) {
+            die "Error: Generated grid-mapfile entry is too long:\n",
+                "$output_line\n";
         }
+
+        print $Out $output_line, "\n";
     }
 }
 close $Out;
