@@ -1,4 +1,4 @@
-# $Id: bug-0040,v 1.4 2005-12-13 00:02:06-08 kst Exp $
+# $Id: bug-0040,v 1.5 2006-01-31 19:19:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0040,v $
 
 gx-map bug 0040
@@ -11,7 +11,7 @@ Title: Add "-merge" option to gx-gen-mapfile
 
 Summary:
 Add a "-merge" option to gx-gen-mapfile.  The argument is an externally
-generaged grid-mapfile whose contents are merged into the generated
+generated grid-mapfile whose contents are merged into the generated
 grid-mapfile.  (To do: decide how to determine the order of user names
 if the same DN appears in requests.log and the external grid-mapfile;
 there will be no timestamp information.)
