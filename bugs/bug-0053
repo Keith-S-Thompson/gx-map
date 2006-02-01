@@ -1,4 +1,4 @@
-# $Id: bug-0053,v 1.3 2005-12-13 00:02:10-08 kst Exp $
+# $Id: bug-0053,v 1.4 2006-01-31 19:19:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0053,v $
 
 gx-map bug 0053
@@ -31,7 +31,7 @@ Check during execution of gx-check-requests: bail out with an error
 message if running as root.
 
 We could also do some checking that the installed files, at least
-the data files, are owned by an admininistrative account.
+the data files, are owned by an administrative account.
 
 See also bug-0011, "Refactor GLOBUS_ADMINS".
 
