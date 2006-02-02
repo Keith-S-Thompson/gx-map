@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.149 2006-01-31 19:35:21-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.150 2006-02-01 20:18:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -235,9 +235,9 @@ sub Check_Data_Dir() {
    my $install_dir = $Gridmap_Utils::Config{INSTALL_DIR};
    my $data_dir    = $Gridmap_Utils::Config{DATA_DIR};
     if (-l "$install_dir/var" and not -d "$install_dir/var/.") {
-        die "$install_dir/var\n" .
-            "is as symbol link to\n" .
-            "$data_dir\n" .
+        die "    $install_dir/var\n" .
+            "is a symbolic link to\n" .
+            "    $data_dir\n" .
             "which doesn't exist\n";
     }
 } # Check_Data_Dir
