@@ -1,0 +1,99 @@
+# $Id: gx-map-security.7.pod,v 1.1 2006-02-06 16:32:28-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+gx-map-security - Security considerations in B<gx-map>
+
+=head1 DESCRIPTION
+
+The B<gx-map> system has to major parts: a set of programs
+used to maintain a Globus F<grid-mapfile>, and a program to
+maintain a Globus F<certificates> directory (both located under the
+F</etc/grid-security/> directory by default).  Both components address
+important security concerns, and a serious bug in either could allow
+an attacker to compromise a system.
+
+This man page discusses the security aspects of both subsystems.
+
+=head1 GRID_MAPFILE MAINTENANCE
+
+As discussed in the B<gx-map(7)> man page, F<grid-mapfile> maintenance
+is performed in three phases.  The B<gx-request> client program
+allows an end user or an administrator to submit a request for a
+F<grid-mapfile> update.  The B<gx-check-requests> program, executed
+from a privileged account, validates any new requests and appends
+any valid ones, with annotations, to a log file, F<requests.log>.
+The B<gx-gen-mapfile> program reads the F<requests.log> file and
+generates a new F<grid-mapfile> as necessary.
+
+=head2 gx-request
+
+The B<gx-request> command ...
+
+=head2 gx-check-requests
+
+The B<gx-check-requests> command ...
+
+=head2 gx-gen-mapfile
+
+The B<gx-gen-mapfile> command ...
+
+=head1 SEE ALSO
+
+gx-request(1), gx-check-requests(8), gx-gen-mapfile(8), gx-ca-update(8), gx-map-requests-log(5)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc> subdirectory.
