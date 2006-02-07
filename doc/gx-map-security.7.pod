@@ -1,4 +1,4 @@
-# $Id: gx-map-security.7.pod,v 1.1 2006-02-06 16:32:28-08 kst Exp $
+# $Id: gx-map-security.7.pod,v 1.2 2006-02-07 03:07:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
 
 =for comment
@@ -62,7 +62,7 @@ an attacker to compromise a system.
 
 This man page discusses the security aspects of both subsystems.
 
-=head1 GRID_MAPFILE MAINTENANCE
+=head1 GRID-MAPFILE MAINTENANCE
 
 As discussed in the B<gx-map(7)> man page, F<grid-mapfile> maintenance
 is performed in three phases.  The B<gx-request> client program
@@ -73,17 +73,154 @@ any valid ones, with annotations, to a log file, F<requests.log>.
 The B<gx-gen-mapfile> program reads the F<requests.log> file and
 generates a new F<grid-mapfile> as necessary.
 
-=head2 gx-request
+The B<gx-map> system allows a user to request an update to the
+F<grid-mapfile>, and applies the update automatically, without operator
+intervention.  The worst-case scenario would be a bug that allows a
+user to map an arbitrary DN (Distringuished Name) to an account other
+than his own; this would allow unauthorized access to the account.
 
-The B<gx-request> command ...
+A user is allowed to map an arbitrary DN to his own account, but may
+not map a DN to any other account.  No checking is done to confirm
+that the user can use the certificate corresponding to the DN.
+This does allow a possible denial-of-service attack: an attacker
+could deliberately map a victim's DN to his the attacker's account,
+denying the victim access to his own account.  But this would give
+the victim access to the attacker's account.
 
-=head2 gx-check-requests
+If an attacker manages to break into a victim's account (by stealing
+a password, exploiting an operating system bug, or even using an
+unattended terminal), he'll be able to run the B<gx-request> command
+on the victim's behalf.  The B<gx-map> system doesn't validate the
+user beyond confirming that the command is run by the user; it doesn't
+prompt for the user's password.
 
-The B<gx-check-requests> command ...
+All transactions are logged.  In fact, a transaction log (the
+F<var/requests.log> file) is the central data structure for the system.
+If an attacker does manage to create a bogus mapping, the log will
+record the time of the request and the name of the host on which it
+was done.
 
-=head2 gx-gen-mapfile
+=head2 B<gx-request>
 
-The B<gx-gen-mapfile> command ...
+The B<gx-request> command is unprivileged.  It runs under the
+user's account, and it creates a request file in the world-writable
+F<var/new-requests> subdirectory under the B<gx-map> installation
+directory.  A user could easily grab a copy of the B<gx-request> script
+and modify it, or manually create a bogus request file.  Therefore the
+B<gx-map> system does not depend on B<gx-request> operating properly.
+The information in the request file is not trusted; it's validated
+by the B<gx-check-requests> command.
+
+=head2 B<gx-check-requests>
+
+The B<gx-check-requests> command checks for new request files in
+the F<var/new-requests> directory.  This is a privileged (but not
+setuid) command, to be executed only by the owner of the B<gx-map>
+installation.  The F<requests.log> file is owned by the B<gx-map>
+owner, and cannot be modified by ayone else.
+
+For an "add" or "remove" request, the request file specifies the
+distinguished name and the Unix user name to which it is to be mapped
+or unmapped.
+
+For a request submitted by a non-administrative user,
+B<gx-check-requests> confirms that the specified Unix user name matches
+the account that owns the request file.  For an administrative request,
+it confirms that the file is owned by a B<gx-map> administrator
+(this is typically the "globus" account).
+
+Most Unix filesystems do not allow non-root users to use chown.
+The B<gx-map> security model depends on this.  If non-root chown
+were allowed, a user could create a bogus request file mapping his
+own DN to another user, and then change the file's ownership to the
+target account.
+
+Some Unix systems do allow non-root chown, either by default or via
+a configuration option.  The B<gx-check-requests> command checks for
+this (by attempting to chown a temporary file) and refuses to run if
+non-root chown is allowed.
+
+=head2 B<gx-gen-mapfile>
+
+The B<gx-gen-mapfile> command generates a new F<grid-mapfile>
+from the F<var/requests.log> file created by B<gx-check-requests>.
+No special privileges are required, other than the ability to read
+the input file.
+
+If B<gx-gen-mapfile> wrote directly to the F<grid-mapfile>, there
+would be some danger of a program seeing a partially constructed
+F<grid-mapfile>.  To avoid this, B<gx-gen-mapfile> writes to
+a temporary file in the same directory, then renames the file.
+This should make it impossible for any program to see a partial
+F<grid-mapfile>.
+
+By default, B<gx-gen-mapfile> checks the generated F<grid-mapfile>
+into an RCS directory.  This provides a history of any changes.
+
+B<gx-gen-mapfile> writes the generated F<grid-mapfile> to a location
+specified  on the command line.  Typically the location is the
+F</etc/grid-security> directory, or F</etc/grid-security/grid-mapfile>
+can be set up as a symbolic link to the target location.  If you
+prefer, you can generate the F<grid-mapfile> in a separate directory,
+and copy it to F</etc/grid-security/grid-mapfile> only after confirming
+that it's correct.  This "paranoid mode" avoids any possible bugs
+in B<gx-map>, at the expense of not updating the F<grid-mapfile>
+automatically.
+
+=head1 CA CERTIFICATES
+
+The B<gx-ca-update> command maintains files in the F<certificates>
+directory, normally F</etc/grid-security/certificates>.  This directory
+contains two or three files for each supported CA (Certificate
+Authority): the signing certificate F<xxxxxxxx.0>, the signing_policy
+file F<xxxxxxxx.signing_policy>, and the (optional) CRL (Certificate
+Revocation List) F<xxxxxxxx.r0>.  (F<xxxxxxxx> is replaced by the
+8-digit hexadecimal hash value for the CA.)
+
+The worst-case scenario would be allowing an attacker to install
+bogus CA files.  It would be fairly straightforward to generate a
+bogus signing certificate with the same subject name as a recognized
+CA, and use it to issue a bogus user certificate.  If the forged CA
+certificate can be installed in F</etc/grid-security/certificates>,
+Globus will accept it.
+
+For each CA, the B<gx-map> system includes a cadesc file,
+F<etc/ca-config/xxxxxxxx.name.cadesc>, containing information about
+the CA.  This information includes the URLs from which the required
+files can be downloaded, the MD5 and SHA1 fingerprints of the signing
+certificate, and several other things.
+
+B<gx-ca-update> normally installs the F<xxxxxxxx.0> and
+F<xxxxxxxx.signing_policy> files only once, on the initial run.
+The F<xxxxxxxx.0> file is downloaded from the specified URL nd checked
+against the MD5 and SHA1 fingerprints specified in the cadesc file.
+(This should guard against an attacker hacking the web server and
+substituting a bogus certificate).  The signing_policy file is not
+downloaded; it's generated from information in the cadesc file.
+This allows for a more restrictive signing policy than specified by
+the CA; it also ensures that the installed signing_policy file works
+with all version of Globus from GT2 to GT4.
+
+The F<xxxxxxxx.r0> file (the Certificate Revocation List) is
+downloaded and installed whenever it's updated.  This is actually
+the main reason for the existence of the B<gx-ca-update> command.
+The CRL is downloaded from the URL specified in the cadesc file.
+B<gx-ca-update> then confirms that the CRL was cryptographically
+signed by the corresponding CA certificate before installing it.
+
+If a current CRL is installed, Globus will reject any certificate
+listed in the CRL.  If the CRL has expired, all certificates issued
+by the CA will be rejected.  If the CRL is removed, all certificates
+issued by the CA will be accepted (including certificates that have
+been revoked).
+
+By default, if an up-to-date CRL is not available (e.g., because
+the web server is down), B<gx-ca-update> will leave the expired CRL
+in place.  It can optionally remove the CRL just before it expires;
+this allows continued use of certificates, but it's insecure.
+B<gx-ca-update> has a number of command-line options to control its
+behavior; those that might compromise security require the user of
+an explicit "-UNSAFE" option.
 
 =head1 SEE ALSO
 
