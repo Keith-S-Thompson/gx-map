@@ -1,4 +1,4 @@
-# $Id: gx-map-security.7.pod,v 1.2 2006-02-07 03:07:49-08 kst Exp $
+# $Id: gx-map-security.7.pod,v 1.3 2006-02-17 19:20:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
 
 =for comment
@@ -76,7 +76,7 @@ generates a new F<grid-mapfile> as necessary.
 The B<gx-map> system allows a user to request an update to the
 F<grid-mapfile>, and applies the update automatically, without operator
 intervention.  The worst-case scenario would be a bug that allows a
-user to map an arbitrary DN (Distringuished Name) to an account other
+user to map an arbitrary DN (Distinguished Name) to an account other
 than his own; this would allow unauthorized access to the account.
 
 A user is allowed to map an arbitrary DN to his own account, but may
@@ -117,7 +117,7 @@ The B<gx-check-requests> command checks for new request files in
 the F<var/new-requests> directory.  This is a privileged (but not
 setuid) command, to be executed only by the owner of the B<gx-map>
 installation.  The F<requests.log> file is owned by the B<gx-map>
-owner, and cannot be modified by ayone else.
+owner, and cannot be modified by anyone else.
 
 For an "add" or "remove" request, the request file specifies the
 distinguished name and the Unix user name to which it is to be mapped
