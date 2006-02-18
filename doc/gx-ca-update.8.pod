@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.4 2006-01-17 15:59:34-08 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.5 2006-02-17 19:20:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -186,12 +186,12 @@ Force file updates.  This applies to certificate and signing_policy files.
 =item B<-ignore-disable>
 
 Certain CAs are disabled by default, as indicated by the B<DISABLE>
-attribute in the F<*.cadesc> file.  Ths option overrides that attribute
+attribute in the F<*.cadesc> file.  This option overrides that attribute
 and allows the CA to be used.  This requires the B<-UNSAFE> option.
 
 =item B<-email>
 
-Send e-amil to the configured B<ADMIN_EMAIL> address on errors.
+Send e-mail to the configured B<ADMIN_EMAIL> address on errors.
 This is set by default; use B<-noemail> to disable e-mail messages.
 
 =item B<-verbose>
