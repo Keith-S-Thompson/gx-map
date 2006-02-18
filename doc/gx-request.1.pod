@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.4 2006-01-17 15:59:35-08 kst Exp $
+# $Id: gx-request.1.pod,v 1.5 2006-02-17 19:20:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -70,7 +70,7 @@ command line; use the I<-long-help> option to display the full
 set of options.
 
 The B<gx-request> command creates a request file in the
-F<var/new-requests> directory under the B<gx-map> installaton
+F<var/new-requests> directory under the B<gx-map> installation
 directory.  This directory is world-writable, so the B<gx-request>
 command requires no special privileges.  The request file is later
 validated and processed by the B<gx-check-requests> command.
@@ -110,7 +110,7 @@ Run interactively.  Other options will be ignored.
 
 End users should normally use B<gx-request> in interactive mode
 by entering the command S<C<gx-request -interactive>> (which may be
-abbrevated to S<C<gx-request -int>>.
+abbreviated to S<C<gx-request -int>>.
 
 In this mode, the B<gx-request> command interactively prompts
 the user to enter all the required information.  This information
@@ -143,7 +143,7 @@ Request a mapping to be added to the F<grid-mapfile>.
 
 =item B<-remove>
 
-Request a mapping to be reomved from the F<grid-mapfile>.
+Request a mapping to be removed from the F<grid-mapfile>.
 
 =item B<-remove-dn>
 
