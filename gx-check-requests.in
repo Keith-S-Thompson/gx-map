@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.84 2006-01-27 19:43:27-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.85 2006-02-21 20:56:13-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -160,10 +160,11 @@ my @good_request_files = ();
 my @bad_requests = ();
 my @bad_request_files = ();
 
-my %ignore = map { $_ => 1 } qw(. .. .update);
-
 foreach my $file (@files) {
-    next if $ignore{$file};
+    next if $file eq '.' or
+            $file eq '..' or
+            $file eq '.update' or
+            $file =~ /\.request\.tmp$/;
     my $request = Get_Request_Info "$new_request_dir/$file";
     if (defined $request->{ERRORS}) {
         push @bad_requests, $request;
