@@ -1,4 +1,4 @@
-# $Id: bug-0071,v 1.2 2006-02-21 20:56:21-08 kst Exp $
+# $Id: bug-0071,v 1.3 2006-02-21 22:29:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0071,v $
 
 gx-map bug 0071
@@ -26,12 +26,10 @@ gx-request had already renamed it.
 
 This bug was introduced in gx-check-requests.in 1.82, release 0.5.0d1.
 
-Proposed fix: Ignore files whose names end in ".request.tmp".
-This could enable a denial-of-service attack in which an attacker
-creates a huge file whose name ends in ".request.tmp".  Consider
-checking for ".request.tmp" files over a certain age (a few minutes
-should suffice).
+Proposed fix: Ignore any file whose name ends in ".request.tmp", but
+only if its modification time is within 60 seconds of the current time
+(the timestamp check avoids a potential denial-of-service attack).
 
 Fixed:
-gx-check-requests.in 1.85
+gx-check-requests.in 1.86
 gx-map release 0.5.0d6
