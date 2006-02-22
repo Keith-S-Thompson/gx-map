@@ -1,0 +1,28 @@
+# $Id: bug-0071,v 1.1 2006-02-21 20:51:23-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0071,v $
+
+gx-map bug 0071
+Date: Tue 2006-02-21
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d1
+Status: Open
+Title: Spurious complaint about bad request.file
+
+Summary:
+gx-request creates a temporary file with a name of the form
+*_request.tmp, then renames it by removing the ".tmp" suffix.
+This was intended to prevent gx-check-requests from seeing
+a partially constructed request file.
+
+The problem: I recently changed gx-check-reqests so it complains about
+any file in the new-requests directory whose name doesn't end in
+".request" (other than ".", "..", and ".update").  If gx-request
+and gx-check-requests happen to be running simultaneously,
+gx-check-requests can see and complain about the temporary file.
+In the one case where I saw this symptom, gx-check-requests also
+complained that it was unable to rename the file, presumably because
+gx-request had already renamed it.
+
+This bug was introduced in gx-check-requests.in 1.82, release 0.5.0d1.
+
