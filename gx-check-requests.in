@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.85 2006-02-21 20:56:13-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.86 2006-02-21 22:19:41-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -163,8 +163,21 @@ my @bad_request_files = ();
 foreach my $file (@files) {
     next if $file eq '.' or
             $file eq '..' or
-            $file eq '.update' or
-            $file =~ /\.request\.tmp$/;
+            $file eq '.update';
+    if ($file =~ /\.request\.tmp$/) {
+        #
+        # gx-request creates a temporary *.request.tmp file and
+        # immediately renames it to *.request once it's been written.
+        # Ignore any *.request.tmp file as long as its timestamp is within
+        # 60 seconds of the current time.  If we're unable to stat the
+        # file, or if it's older or from the future, we'll treat it as
+        # an error (Get_Request_Info will see the invalid name).
+        #
+        my $mtime = Gridmap_Utils::Get_mtime $file;
+        next if defined $mtime and
+                $mtime > $Now - 60 and
+                $mtime < $Now + 60;
+    }
     my $request = Get_Request_Info "$new_request_dir/$file";
     if (defined $request->{ERRORS}) {
         push @bad_requests, $request;
