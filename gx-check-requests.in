@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.86 2006-02-21 22:19:41-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.87 2006-02-23 15:50:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -306,7 +306,7 @@ if (@propagation_failures) {
     $body
         .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
 
-    Gridmap_Utils::Send_Email $recipient, $subject, $body;
+    Gridmap_Utils::Send_Email $Program_Name, $recipient, $subject, $body;
 }
 
 #
@@ -386,7 +386,7 @@ if (@bad_request_files) {
     $body
         .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
 
-    Gridmap_Utils::Send_Email $recipient, $subject, $body;
+    Gridmap_Utils::Send_Email $Program_Name, $recipient, $subject, $body;
 }
 
 Gridmap_Utils::Release_Lock $Program_Name;
