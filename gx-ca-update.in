@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.99 2006-01-27 02:16:53-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.100 2006-02-22 19:26:54-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -108,7 +108,6 @@ my @Opts = ( $User_Opt,
                  UNSAFE!
                  ca=s@
                  ca-list=s@
-                 all-cas!
                  list-cas!
                  target-dir=s
                  permissions=s
@@ -152,8 +151,7 @@ foreach my $opt (qw(U UN UNS UNSA UNSAF)) {
 
 if (not $User_Opt->{UNSAFE}) {
     my @errors = ();
-    foreach my $opt ( qw( all-cas
-                          allow-missing-crl
+    foreach my $opt ( qw( allow-missing-crl
                           expire-crl
                           ignore-disable ) )
     {
@@ -165,19 +163,10 @@ if (not $User_Opt->{UNSAFE}) {
     Usage @errors if @errors;
 }
 
-if ($User_Opt->{'all-cas'}
-    and
-    (defined $User_Opt->{ca} or defined $User_Opt->{'ca-list'}))
-{
-    Usage "The \"-all-cas\" options may not be used " .
-          "with \"-ca\" or \"-ca-list\"\n";
-}
-
 my $Data_Dir = "$Install_Dir/var";
 
 my $ca_conf_dir = "$Install_Dir/etc/ca-config";
 my @ca_list_all;
-my $requested_all = undef; # true if user specified "-all-cas"
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
@@ -201,8 +190,7 @@ if ($User_Opt->{'list-cas'}) {
     exit 0;
 }
 
-if (not $User_Opt->{'all-cas'} and
-    not defined $User_Opt->{ca} and
+if (not defined $User_Opt->{ca} and
     not defined $User_Opt->{'ca-list'})
 {
     Usage "No CA specified\n"
@@ -293,22 +281,17 @@ Debug "\@requested_ca_list = ( @requested_ca_list )\n";
 
 my @mismatches = ();
 
-if ($User_Opt->{'all-cas'}) {
-    %selected = map { $_ => 1 } @ca_list_all;
-}
-else {
-    foreach my $requested_ca (@requested_ca_list) {
-        my $match = 0;
-        foreach my $ca (@ca_list_all) {
-            if (Match_CA_Name $requested_ca, $ca) {
-                $selected{$ca} = 1;
-                $match = 1;
-                last;
-            }
+foreach my $requested_ca (@requested_ca_list) {
+    my $match = 0;
+    foreach my $ca (@ca_list_all) {
+        if (Match_CA_Name $requested_ca, $ca) {
+            $selected{$ca} = 1;
+            $match = 1;
+            last;
         }
-        if (not $match) {
-            push @mismatches, $requested_ca;
-        }
+    }
+    if (not $match) {
+        push @mismatches, $requested_ca;
     }
 }
 
@@ -348,7 +331,7 @@ CA:
 foreach my $ref (@ca_info) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     if (Disabled $ref) {
-        if ($requested_all or $User_Opt->{'ignore-disable'}) {
+        if ($User_Opt->{'ignore-disable'}) {
             Vprint "CA is disabled\n";
         }
         else {
@@ -1537,7 +1520,6 @@ Usage: $Program_Name [options]
                        problems are disabled.  You can use the
                        "-UNSAFE" option (case-sensitive) to enable
                        them.  The "unsafe" options are:
-                            -all-cas
                             -allow-missing-crl
                             -expire-crl time
                             -ignore-disable
@@ -1553,8 +1535,6 @@ Usage: $Program_Name [options]
                        "-ca" option.
                        Multiple "-ca-list" options may be given.
                        The "-ca" and "-ca-list" options may be combined.
-    -all-cas           Use all available CAs.
-                       Requires "-UNSAFE".
     -list-cas          List available CAs and exit.
     -target-dir dir    Target directory.
     -permissions perm  Specify permissions for installed files (in octal);
