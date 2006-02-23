@@ -1,0 +1,24 @@
+# $Id: bug-0072,v 1.1 2006-02-23 15:34:30-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0072,v $
+
+gx-map bug 0072
+Date: Thu 2006-02-23
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d7
+Status: Open
+Title: Possible loss of e-mail messages
+
+Summary:
+The gx-ca-update and gx-check-requests commands sometimes attempt to
+send e-mail messages for significant error conditions.  This is done
+using the Gridmap_Utils::Send_Email function, which attempts to use
+"mailx" if it exists, falling back to "mail".  E-mail delivery is
+generally not 100% reliable, and some systems aren't able to send
+e-mail.  Most of the errors that trigger e-mail messages are logged
+anyway, but it can be difficult to find them among the bulk of less
+severe messages.
+
+Proposed fix:
+Log all e-mail messages to a file in the data directory.  To avoid
+collisions, use a separate log for each program.
