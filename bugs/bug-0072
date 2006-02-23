@@ -1,4 +1,4 @@
-# $Id: bug-0072,v 1.1 2006-02-23 15:34:30-08 kst Exp $
+# $Id: bug-0072,v 1.2 2006-02-23 15:50:46-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0072,v $
 
 gx-map bug 0072
@@ -6,7 +6,7 @@ Date: Thu 2006-02-23
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d7
-Status: Open
+Status: Fixed 0.5.0d8
 Title: Possible loss of e-mail messages
 
 Summary:
@@ -22,3 +22,9 @@ severe messages.
 Proposed fix:
 Log all e-mail messages to a file in the data directory.  To avoid
 collisions, use a separate log for each program.
+
+Fixed:
+Gridmap_Utils.pm.in 1.154
+gx-ca-update.in 1.101
+gx-check-requests.in 1.87
+gx-map release 0.5.0d8
