@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.153 2006-02-22 20:23:33-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.154 2006-02-23 15:50:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -80,7 +80,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.0d7';
+    $VERSION = '0.5.0d8';
 
     $Debugging = undef;
     %Config = ( PERL                     => '%PERL%',
@@ -157,7 +157,7 @@ sub GT4_Subject($);
 sub DN_List($);
 sub Strip_Proxy_Info($);
 
-sub Send_Email($$$);
+sub Send_Email($$$$);
 
 sub Get_Lock($);
 sub Release_Lock($);
@@ -2089,12 +2089,31 @@ sub DN_List($) {
 
 #
 # (Attempt to) send an e-mail message.
-# Arguments are recipient, subject, body.
+# Arguments are program_name, recipient, subject, body.
 # Use the "mailx" command if it exists; otherwise use "mail".
 # Failures are quietly ignored.
+# In addition, all messages are logged to mail.log in the data directory.
 #
-sub Send_Email($$$) {
-    my($recipient, $subject, $body) = @_;
+sub Send_Email($$$$) {
+    my($program_name, $recipient, $subject, $body) = @_;
+    my $data_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var";
+    my $mail_log = "$data_dir/$program_name-mail.log";
+
+    my $current_time = Time_Image time;
+    my $hostname = Get_Hostname;
+    open my $log, '>>', $mail_log or die "$mail_log: $!\n";
+    print $log <<"EOF";
+$current_time
+Sending e-mail message from $hostname
+Recipient: $recipient
+Subject: $subject
+
+$body
+[end of message]
+
+EOF
+    close $log;
+
     foreach my $mail_program (qw(mailx mail)) {
         eval { Gridmap_Utils::Use_Commands $mail_program };
         next if $@;
