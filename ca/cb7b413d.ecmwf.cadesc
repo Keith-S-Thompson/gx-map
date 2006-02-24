@@ -1,0 +1,22 @@
+# $Id: cb7b413d.ecmwf.cadesc,v 1.1 2006-02-24 11:51:28-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/cb7b413d.ecmwf.cadesc,v $
+
+CA_NAME             European Centre for Medium-Range Weather Forecasts CA
+HOMEPAGE            https://w3cert.ecmwf.int/
+CONTACT             calldesk@ecmwf.int
+HASH                cb7b413d
+SIGNED_BY           /C=EU/ST=Europe/L=Reading/O=European Centre for Medium-Range Weather Forecasts/OU=CA/CN=ECMWF CA/emailAddress=ecmwf.ca@ecmwf.int
+SUBJECT             /C=EU/ST=Europe/L=Reading/O=European Centre for Medium-Range Weather Forecasts/OU=CA/CN=ECMWF CA/emailAddress=ecmwf.ca@ecmwf.int
+MAY_SIGN            ?
+CERTIFICATE_MD5     96:B0:44:29:B1:76:A9:F7:70:7F:2D:65:99:50:AD:BA
+CERTIFICATE_SHA1    50:23:A7:5C:21:2D:68:DA:F2:29:7E:24:6D:92:64:5B:CD:97:53:E0
+CERTIFICATE_URL     https://w3cert.ecmwf.int/fcgi-bin/Cert.fpl?action=uloadca
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
+CERT_EXPIRES        Mon 2008-11-17 11:24:11 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from cb7b413d.0 downloaded 2006-02-23
+
+# I have so far been unable to find a CRL or signing_policy for this CA.
+# I've marked the CA as DISABLED until that's resolved.
