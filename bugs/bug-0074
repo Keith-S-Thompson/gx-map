@@ -1,0 +1,29 @@
+# $Id: bug-0074,v 1.1 2006-02-28 17:51:15-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0074,v $
+
+gx-map bug 0074
+Date: Tue 2006-02-28
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d8
+Status: Open
+Title: Race condition in check for *.request.tmp files
+
+Summary:
+gx-request creates a *.request.tmp file, then immediately renames
+it to *.request.  To fix bug-0071, gx-check-requests ignores any
+*.request.tmp file whose timestamp is within 60 seconds of the
+current time.  This fix created a race condition:
+
+1. gx-request creates foo.request.tmp
+2.			gx-check-requests sees foo.request.tmp
+3. gx-request renames foo.request.tmp to foo.request
+4.			gx-check-requests tries to stat foo.request.tmp
+			to determine its timestamp.  When it fails,
+			it treats it as an error.  It also attempts to
+			rename the file (to move it into the bad-requests
+			directory; when this fails, it writes an error
+			message to stderr.
+
+Proposed solution:
+If stat() fails on a *.request.tmp file, ignore it.
