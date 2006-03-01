@@ -1,0 +1,19 @@
+# $Id: bug-0073,v 1.1 2006-02-28 16:24:53-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0073,v $
+
+gx-map bug 0073
+Date: Tue 2006-02-28
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d8
+Status: Open
+Title: Consider group ownership for data files
+
+Summary:
+The GX_MAP_OWNER and REQUESTS_LOG_PERMISSIONS configuration options
+allow you to specify the owner and permissions of the requests.log
+file.  By default, the file has permissions 444; it can be set to
+440 or 400 if desired.  For mode 440, the group ownership will be
+the default group for the GX_MAP_OWNER account.  Consider allowing an
+optional group name to be specified (the GX_MAP_OWNER account would
+have to be a member of that group).
