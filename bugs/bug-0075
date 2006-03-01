@@ -1,4 +1,4 @@
-# $Id: bug-0075,v 1.1 2006-02-28 18:10:26-08 kst Exp $
+# $Id: bug-0075,v 1.2 2006-02-28 18:11:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0075,v $
 
 gx-map bug 0075
@@ -6,7 +6,7 @@ Date: Tue 2006-02-28
 Severity: High
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d8
-Status: Open
+Status: Fixed 0.5.0d9
 Title: Tainted mail log file name
 
 Summary:
@@ -17,3 +17,7 @@ This results in the following error message from gx-check-requests:
 
 Insecure dependency in open while running with -T switch at \
 [...]/gx-map-0.5.0d8/lib/Gridmap_Utils.pm line 2104.
+
+Fixed:
+Gridmap_Utils.pm.in 1.156
+gx-map release 0.5.0d9
