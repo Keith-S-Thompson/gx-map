@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.155 2006-02-23 15:51:48-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.156 2006-02-28 18:11:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2098,6 +2098,8 @@ sub Send_Email($$$$) {
     my($program_name, $recipient, $subject, $body) = @_;
     my $data_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var";
     my $mail_log = "$data_dir/$program_name-mail.log";
+
+    Untaint $mail_log;
 
     my $current_time = Time_Image time;
     my $hostname = Get_Hostname;
