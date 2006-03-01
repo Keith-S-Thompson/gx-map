@@ -1,4 +1,4 @@
-# $Id: bug-0071,v 1.3 2006-02-21 22:29:28-08 kst Exp $
+# $Id: bug-0071,v 1.4 2006-02-28 18:00:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0071,v $
 
 gx-map bug 0071
@@ -15,7 +15,7 @@ gx-request creates a temporary file with a name of the form
 This was intended to prevent gx-check-requests from seeing
 a partially constructed request file.
 
-The problem: I recently changed gx-check-reqests so it complains about
+The problem: I recently changed gx-check-requests so it complains about
 any file in the new-requests directory whose name doesn't end in
 ".request" (other than ".", "..", and ".update").  If gx-request
 and gx-check-requests happen to be running simultaneously,
