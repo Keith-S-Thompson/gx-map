@@ -1,4 +1,4 @@
-# $Id: bug-0009,v 1.6 2005-12-13 00:01:59-08 kst Exp $
+# $Id: bug-0009,v 1.7 2006-02-28 18:00:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0009,v $
 
 gx-map bug 0009
@@ -33,7 +33,7 @@ Alternative: Use the Carp module instead (needs study).
 
 Fixed:
 Gridmap_Utils.pm.in 1.59
-gx-check-requsts.in 1.41
+gx-check-requests.in 1.41
 gx-gen-mapfile.in 1.46
 gx-map.in 1.41
 gx-map release 0.4.2
