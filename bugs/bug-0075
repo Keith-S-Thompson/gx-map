@@ -1,0 +1,19 @@
+# $Id: bug-0075,v 1.1 2006-02-28 18:10:26-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0075,v $
+
+gx-map bug 0075
+Date: Tue 2006-02-28
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d8
+Status: Open
+Title: Tainted mail log file name
+
+Summary:
+This bug was introduced in the fix for bug-0072.
+
+I forgot to untaint the mail log file name in Gridmap_Utils::Send_Email.
+This results in the following error message from gx-check-requests:
+
+Insecure dependency in open while running with -T switch at \
+[...]/gx-map-0.5.0d8/lib/Gridmap_Utils.pm line 2104.
