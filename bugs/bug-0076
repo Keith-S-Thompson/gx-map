@@ -1,0 +1,36 @@
+# $Id: bug-0076,v 1.1 2006-03-01 20:26:27-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0076,v $
+
+gx-map bug 0076
+Date: Wed 2006-03-01
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d9
+Status: Open
+Title: Tainted permissions for chmod
+
+Summary:
+The "-permissions" option to gx-gen-mapfile and gx-ca-update sets the
+specified permissions for any created files.  The default permissions
+are 444.
+
+If this option is specified, the permissions value are derived from
+the command-line argument and are therefore tainted.  This results
+in an error message:
+
+Insecure dependency in chmod while running with -T switch at \
+    [...]/gx-map-0.5.0d9/sbin/gx-gen-mapfile line 368.
+Traceback:
+    [...]/gx-map-0.5.0d9/sbin/gx-gen-mapfile:368
+
+Insecure dependency in chmod while running with -T switch at \
+    [...]/gx-map-0.5.0d9/sbin/gx-ca-update line 1093.
+Traceback:
+    [...]/gx-map-0.5.0d9/sbin/gx-ca-update:1093 in main::Update_And_Install_CRL
+    [...]/gx-map-0.5.0d9/sbin/gx-ca-update:357
+
+If the option is not specified, the permissions value come from a
+constant in the code and is therefore not tainted.
+
+Proposed fix:
+Untaint the value derived from the command-line option.
