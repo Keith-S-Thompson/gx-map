@@ -1,4 +1,4 @@
-# $Id: bug-0076,v 1.1 2006-03-01 20:26:27-08 kst Exp $
+# $Id: bug-0076,v 1.2 2006-03-01 20:27:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0076,v $
 
 gx-map bug 0076
@@ -22,6 +22,8 @@ Insecure dependency in chmod while running with -T switch at \
     [...]/gx-map-0.5.0d9/sbin/gx-gen-mapfile line 368.
 Traceback:
     [...]/gx-map-0.5.0d9/sbin/gx-gen-mapfile:368
+
+or:
 
 Insecure dependency in chmod while running with -T switch at \
     [...]/gx-map-0.5.0d9/sbin/gx-ca-update line 1093.
