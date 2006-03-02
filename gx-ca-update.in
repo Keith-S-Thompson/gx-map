@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.101 2006-02-23 15:50:32-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.102 2006-03-01 20:34:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -212,6 +212,7 @@ elsif (not -w $User_Opt->{'target-dir'}) {
 if ($User_Opt->{permissions} !~ /^[0-7][0-7][0-7]$/) {
     Usage "Permissions must be a 3-digit octal number\n";
 }
+Gridmap_Utils::Untaint $User_Opt->{permissions};
 #
 # $Octal_Permissions is a string representing the permissions
 # in octal, suitable for display.
