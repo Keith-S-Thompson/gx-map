@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.80 2006-01-31 18:29:39-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.81 2006-03-01 20:34:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -183,6 +183,7 @@ foreach my $file (@Output_Files) {
 if ($User_Opt->{permissions} !~ /^[0-7][0-7][0-7]$/) {
     Usage "Permissions must be a 3-digit octal number\n";
 }
+Gridmap_Utils::Untaint $User_Opt->{permissions};
 #
 # $Octal_Permissions is a string representing the permissions
 # in octal, suitable for display.
