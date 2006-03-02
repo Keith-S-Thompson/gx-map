@@ -1,4 +1,4 @@
-# $Id: bug-0076,v 1.2 2006-03-01 20:27:50-08 kst Exp $
+# $Id: bug-0076,v 1.3 2006-03-01 20:35:53-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0076,v $
 
 gx-map bug 0076
@@ -6,7 +6,7 @@ Date: Wed 2006-03-01
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d9
-Status: Open
+Status: Fixed 0.5.0e0
 Title: Tainted permissions for chmod
 
 Summary:
@@ -36,3 +36,8 @@ constant in the code and is therefore not tainted.
 
 Proposed fix:
 Untaint the value derived from the command-line option.
+
+Fixed:
+gx-ca-update.in 1.102
+gx-gen-mapfile.in 1.81
+gx-map release 0.5.0e0
