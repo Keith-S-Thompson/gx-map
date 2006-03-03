@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.157 2006-02-28 18:33:15-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.158 2006-03-02 18:12:18-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1525,7 +1525,7 @@ sub Cache_File($) {
         }
         close $Info;
     }
-    unlink $info_file;
+    unlink $info_file or die "$info_file: $!\n";
 
     if (defined $server_mtime and
         $cached_file_exists and
@@ -1536,8 +1536,10 @@ sub Cache_File($) {
         # timestamps match.  Use the cached copy; no need to
         # download it again.
         # 
-        rmdir $temp_dir;
-        unlink $error_file if -e $error_file;
+        rmdir $temp_dir or die "$temp_dir: $!\n";
+        if (-e $error_file) {
+            unlink $error_file or die "$error_file: $!\n";
+        }
         return { status    => 'cached',
                  filename  => $cached_file,
                  timestamp => $cached_mtime };
@@ -1564,8 +1566,8 @@ sub Cache_File($) {
     # an error).
     #
     if ($curl_result != 0 or not -e $temp_file or -z $temp_file) {
-        unlink $temp_file;
-        rmdir $temp_dir;
+        unlink $temp_file or die "$temp_file: $!\n";
+        rmdir  $temp_dir  or die "$temp_dir: $!\n";;
         my $message = "curl failed";
         if ($curl_result != 0) {
             $message = 'curl failed';
@@ -1593,7 +1595,9 @@ sub Cache_File($) {
             $message = 'curl, unknown failure';
         }
         if ($cached_file_exists) {
-            unlink $error_file if -e $error_file;
+            if (-e $error_file) {
+                unlink $error_file or die "$error_file: $!\n";
+            }
             return { status    => 'old',
                      filename  => $cached_file,
                      error     => $message,
@@ -1610,25 +1614,15 @@ sub Cache_File($) {
     # The download was succeessful.
     # Rename the temporary file into the cache and return its name.
     #
-    if (rename $temp_file, $cached_file) {
-        rmdir $temp_dir or warn "$temp_dir: $!\n";
-        unlink $error_file if -e $error_file;
-        return { status    => 'new',
-                 filename  => $cached_file,
-                 timestamp => $cached_mtime };
+    rename $temp_file, $cached_file
+        or die "rename $temp_file, $cached_file: $!\n";
+    rmdir $temp_dir or die "$temp_dir: $!\n";
+    if (-e $error_file) {
+        unlink $error_file or die "$error_file: $!\n";
     }
-    else {
-        #
-        # Something has gone badly wrong.
-        #
-        my $timestamp = Gridmap_Utils::Get_mtime $temp_file;
-        $timestamp = 0 if not defined $timestamp;
-        unlink $temp_file;
-        rmdir $temp_dir;
-        return { status    => 'failed',
-                 error     => 'Failed to rename temp file',
-                 timestamp => $timestamp };
-    }
+    return { status    => 'new',
+             filename  => $cached_file,
+             timestamp => $cached_mtime };
 } # Cache_File
 
 # ----------------------------------------------------------------------
