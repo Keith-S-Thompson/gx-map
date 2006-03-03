@@ -1,4 +1,4 @@
-# $Id: fa9c3452.usc-kerberos-v2.cadesc,v 1.5 2006-01-13 17:07:29-08 kst Exp $
+# $Id: fa9c3452.usc-kerberos-v2.cadesc,v 1.6 2006-03-02 18:50:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa9c3452.usc-kerberos-v2.cadesc,v $
 
 CA_NAME             USC Kerberos Certification Authority v2
@@ -15,10 +15,12 @@ SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/fa9c3452.signing_po
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
 CERT_EXPIRES        Thu 2006-03-02 22:57:34 UTC
+DISABLE             yes
 
-#
 # There is no CRL for this CA.  Since it only issues short-term
 # credentials, a CRL is considered unnecessary.
-#
+
+# This certificate has expired.  It has been replaced by a new certificate
+# with hash b57985f0; see b57985f0.usc-kerberos-v3.cadesc.
 
 # MD5 and SHA1 fingerprints from certificate downloaded 2005-03-29
