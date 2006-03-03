@@ -1,4 +1,4 @@
-# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.7 2006-01-13 17:07:23-08 kst Exp $
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.8 2006-03-03 01:54:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -9,23 +9,13 @@ SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern C
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     32:2A:0F:13:54:D0:6E:4D:DC:8D:0A:CB:AD:7C:80:48
 CERTIFICATE_SHA1    9B:E3:5C:B9:DD:64:3A:54:F7:2C:97:C9:FB:0A:A8:9A:18:F4:4C:A5
-CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/2ca73e82.0
-SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2ca73e82.signing_policy
-CRL_URL             http://www.usc.edu/isd/services/authx/CA/2ca73e82.r0
+CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/USC-PKI-Lite-CA.crt
+SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/USC-PKI-Lite-CA.signing_policy
+CRL_URL             http://www.usc.edu/isd/services/authx/CA/USC-PKI-Lite-CA.crl
 CERT_EXPIRES        Sat 2011-01-01 22:06:57 UTC
 
-# MD5 and SHA1 fingerprints from certificate downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from certificate downloaded Fri 2006-03-03
 
 # The certificate replaces two older deprecated certificates, still
-# available at <http://www.usc.edu/isd/services/authx/CA/deprecated.html>,
-# with the following characteristics (see 2c7969d0.usc-pki-lite-old.cadesc):
-
-# HASH              2c7969d0
-# SUBJECT           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
-# CERTIFICATE_MD5   03:46:00:F5:77:3E:9E:89:B1:0A:53:04:E9:44:27:F6
-# CERT_EXPIRES      Jan  9 01:45:20 2005 GMT
-
-# HASH              2c7969d0
-# SUBJECT           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
-# CERTIFICATE_MD5   B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E
-# CERT_EXPIRES      Jan  1 21:47:56 2011 GMT
+# available at <http://www.usc.edu/isd/services/authx/CA/deprecated.html>.
+# See 2c7969d0.usc-pki-lite-old.cadesc
