@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.159 2006-03-02 18:51:23-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.160 2006-03-02 19:11:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1525,7 +1525,9 @@ sub Cache_File($) {
         }
         close $Info;
     }
-    unlink $info_file or die "$info_file: $!\n";
+    if (-e $info_file) {
+        unlink $info_file or die "$info_file: $!\n";
+    }
 
     if (defined $server_mtime and
         $cached_file_exists and
@@ -1566,7 +1568,9 @@ sub Cache_File($) {
     # an error).
     #
     if ($curl_result != 0 or not -e $temp_file or -z $temp_file) {
-        unlink $temp_file or die "$temp_file: $!\n";
+        if (-e $temp_file) {
+            unlink $temp_file or die "$temp_file: $!\n";
+        }
         rmdir  $temp_dir  or die "$temp_dir: $!\n";;
         my $message = "curl failed";
         if ($curl_result != 0) {
