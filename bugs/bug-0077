@@ -1,0 +1,33 @@
+# $Id: bug-0077,v 1.1 2006-03-02 17:39:12-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0077,v $
+
+gx-map bug 0077
+Date: Thu 2006-03-02
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0d9
+Status: Open
+Title: Unknown error, Cache_File temporary directory
+
+Summary:
+I've seen this error once on tg-login1.sdsc.teragrid.org running
+gx-ca-update, gx-map release 0.5.0d9:
+
+/users/globus/local/apps/gx-map-0.5.0d9/var/cache/tmp-1141331847-10973: File exists
+Traceback:
+    /users/globus/local/apps/gx-map-0.5.0d9/lib/Gridmap_Utils.pm:1495 in Gridmap_Utils::Cache_File
+    /users/globus/local/apps/gx-map-0.5.0d9/sbin/gx-ca-update:964 in main::Update_And_Install_CRL
+    /users/globus/local/apps/gx-map-0.5.0d9/sbin/gx-ca-update:357
+
+It appears that the problem occurred because a previous call
+to Cache_File in the same invocation of the gx-ca-update program
+failed to remove the temporary directory.  As far as I can tell,
+the Cache_File function should always remove the temporary directory
+(i.e., this shouldn't happen), but the rmdir calls aren't checked.
+
+Proposed action:
+Watch for this error to occur again.  Add error checking on unlink and
+rmdir calls in Cache_File function so the error can be caught sooner.
+Possible kludge: use a different name for the temporary directory
+on each call to Cache_File so this won't crash the program if it
+occurs again.
