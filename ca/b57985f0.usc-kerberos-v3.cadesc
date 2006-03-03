@@ -1,0 +1,22 @@
+# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.1 2006-03-02 18:46:05-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/b57985f0.usc-kerberos-v3.cadesc,v $
+
+CA_NAME             USC Kerberos Certification Authority v3
+HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/index.html
+CONTACT             authx@usc.edu
+HASH                b57985f0
+SIGNED_BY           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
+SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/CN=University of Southern California KCA v3/emailAddress=nmiadmin@usc.edu
+MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/OU=University of Southern California KCA v3/emailAddress=nmiadmin@usc.edu/*
+CERTIFICATE_MD5     39:CA:B3:3C:9E:ED:20:4C:E8:D2:67:CD:8D:DF:E2:FF
+CERTIFICATE_SHA1    52:21:FE:B2:66:49:97:40:8E:1C:E9:F2:34:DE:CE:2C:17:41:94:09
+CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/USCKCA.crt
+SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/USCKCA.signing_policy
+CRL_URL             ?
+ALLOW_MISSING_CRL   yes
+CERT_EXPIRES        Fri 2007-03-02 20:18:02 UTC
+
+# There is no CRL for this CA.  Since it only issues short-term
+# credentials, a CRL is considered unnecessary.
+
+# MD5 and SHA1 fingerprints from certificate downloaded Thu 2006-03-02
