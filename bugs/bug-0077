@@ -1,4 +1,4 @@
-# $Id: bug-0077,v 1.1 2006-03-02 17:39:12-08 kst Exp $
+# $Id: bug-0077,v 1.2 2006-03-02 18:12:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0077,v $
 
 gx-map bug 0077
@@ -31,3 +31,9 @@ rmdir calls in Cache_File function so the error can be caught sooner.
 Possible kludge: use a different name for the temporary directory
 on each call to Cache_File so this won't crash the program if it
 occurs again.
+
+Partial fix:
+Gridmap_Utils.pm.in 1.158
+gx-map release 0.5.0e0
+(I still don't know the underlying cause, but this change should give
+better diagnostics if it recurrs.)
