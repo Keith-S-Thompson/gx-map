@@ -1,4 +1,4 @@
-# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.1 2006-03-02 18:46:05-08 kst Exp $
+# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.2 2006-03-06 17:06:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b57985f0.usc-kerberos-v3.cadesc,v $
 
 CA_NAME             USC Kerberos Certification Authority v3
@@ -18,5 +18,7 @@ CERT_EXPIRES        Fri 2007-03-02 20:18:02 UTC
 
 # There is no CRL for this CA.  Since it only issues short-term
 # credentials, a CRL is considered unnecessary.
+
+# This CA replaces an earlier CA; see fa9c3452.usc-kerberos-v2.cadesc.
 
 # MD5 and SHA1 fingerprints from certificate downloaded Thu 2006-03-02
