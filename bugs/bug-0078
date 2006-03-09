@@ -1,0 +1,32 @@
+# $Id: bug-0078,v 1.1 2006-03-09 13:32:59-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0078,v $
+
+gx-map bug 0078
+Date: Thu 2006-03-09
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0e1
+Status: Open
+Title: More robust configuration
+
+Summary:
+On one system I've tried (BeleniX, an x86 Solaris live CD), the
+"whoami" command doesn't exist.  The install-gx-map.in script depends
+on this command to determine whether the installer is the configured
+GX_MAP_OWNER.
+
+That same system had Perl, but didn't have the pod2man command
+installed.  The algorithm for finding the pod2man command is fairly
+complex and may be error-prone even on systems that provide it.
+If the pod2man command is missing, the installation fails.
+
+Proposed solution:
+If the "whoami" command doesn't exist, try "who am i", filtering
+the output through sed (another dependency) to remove everything
+after the first blank.  If that fails, look at $LOGNAME, then $USER
+(potentially insecure, but that's ok; anyone wanting to bypass the
+check could easily modify the install-gx-map script).
+
+Create a new "doc" (or "pod"?) directory, and install the *.pod
+files there directly.  If the pod2man command can't be found, print
+a warning; create the man directory tree but don't populate it.
