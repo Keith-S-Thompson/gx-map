@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.54 2006-01-11 20:40:20-08 kst Exp $
+# $Id: install-gx-map.in,v 1.55 2006-03-09 13:41:15-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -63,6 +63,21 @@ MAN_DIR=$INSTALL_DIR/man
 DATA_DIR=%DATA_DIR%
 GX_MAP_OWNER=%GX_MAP_OWNER%
 
+whoami=`whoami`
+if [ "$whoami" = "" ] ; then
+    whoami=`who am i | sed 's/ .*$//'`
+fi
+if [ "$whoami" = "" ] ; then
+    whoami="$LOGNAME"
+fi
+if [ "$whoami" = "" ] ; then
+    whoami="$USER"
+fi
+if [ "$whoami" = "" ] ; then
+    echo ">>> Can't determine user name" 1>&2
+    echo '    (tried whoami, who am i, $USER, $LOGNAME)' 1>&2
+    exit 1
+fi
 if [ `whoami` != "$GX_MAP_OWNER" ] ; then
     echo ">>> Installation must be done by the GX_MAP_OWNER ($GX_MAP_OWNER)" 1>&2
     exit 1
