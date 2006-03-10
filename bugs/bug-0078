@@ -1,4 +1,4 @@
-# $Id: bug-0078,v 1.1 2006-03-09 13:32:59-08 kst Exp $
+# $Id: bug-0078,v 1.2 2006-03-09 18:01:13-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0078,v $
 
 gx-map bug 0078
@@ -6,7 +6,7 @@ Date: Thu 2006-03-09
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0e1
-Status: Open
+Status: Fixed 0.5.0e2
 Title: More robust configuration
 
 Summary:
@@ -30,3 +30,8 @@ check could easily modify the install-gx-map script).
 Create a new "doc" (or "pod"?) directory, and install the *.pod
 files there directly.  If the pod2man command can't be found, print
 a warning; create the man directory tree but don't populate it.
+
+Fixed:
+configure-gx-map 1.39
+install-gx-map.in 1.55, 1.56
+gx-map release 0.5.0e2
