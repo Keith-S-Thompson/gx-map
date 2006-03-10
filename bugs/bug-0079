@@ -1,0 +1,20 @@
+# $Id: bug-0079,v 1.1 2006-03-10 03:20:59-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0079,v $
+
+gx-map bug 0079
+Date: Fri 2006-03-10
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0e2
+Status: Open
+Title: Insecure $PATH in Net::Domain
+
+Summary:
+The Net::Domain module may invoke external commands.  On at least one
+system I've tried (BeleniX, an x86 Solaris live CD, with Perl 5.8.4,
+Net::Domain 2.19) this resulted in:
+    Insecure $ENV{PATH} while running with -T switch at
+    /usr/perl5/5.8.4/lib/Net/Domain.pm line 172.
+
+Proposed solution:
+Call Use_Commands (with no arguments) before calling Net::Domain::hostfqdn.
