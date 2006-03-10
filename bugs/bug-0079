@@ -1,4 +1,4 @@
-# $Id: bug-0079,v 1.1 2006-03-10 03:20:59-08 kst Exp $
+# $Id: bug-0079,v 1.2 2006-03-10 03:27:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0079,v $
 
 gx-map bug 0079
@@ -6,7 +6,7 @@ Date: Fri 2006-03-10
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0e2
-Status: Open
+Status: Fixed 0.5.0e3
 Title: Insecure $PATH in Net::Domain
 
 Summary:
@@ -18,3 +18,7 @@ Net::Domain 2.19) this resulted in:
 
 Proposed solution:
 Call Use_Commands (with no arguments) before calling Net::Domain::hostfqdn.
+
+Fixed:
+Gridmap_Utils.pm 1.163
+gx-map release 0.5.0e3
