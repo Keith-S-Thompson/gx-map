@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.55 2006-03-09 13:41:15-08 kst Exp $
+# $Id: install-gx-map.in,v 1.56 2006-03-09 17:59:41-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -59,6 +59,7 @@ BIN_DIR=$INSTALL_DIR/bin
 SBIN_DIR=$INSTALL_DIR/sbin
 LIB_DIR=$INSTALL_DIR/lib
 ETC_DIR=$INSTALL_DIR/etc
+DOC_DIR=$INSTALL_DIR/doc
 MAN_DIR=$INSTALL_DIR/man
 DATA_DIR=%DATA_DIR%
 GX_MAP_OWNER=%GX_MAP_OWNER%
@@ -96,6 +97,7 @@ for dir in $INSTALL_DIR \
            $LIB_DIR \
            $ETC_DIR \
            $ETC_DIR/ca-config \
+           $DOC_DIR \
            $MAN_DIR \
            $MAN_DIR/man1 \
            $MAN_DIR/man3 \
@@ -142,9 +144,14 @@ done
 for file in $ETC_FILES ; do
     verbosely cp -f $file  $ETC_DIR/.
 done
+for file in doc/*.pod ; do
+    verbosely cp -p $file $DOC_DIR/.
+done
 for section in 1 3 5 7 8 ; do
     for file in doc/*.$section ; do
-        verbosely cp -f $file $MAN_DIR/man$section/.
+        if [ -f "$file" ] ; then
+            verbosely cp -f $file $MAN_DIR/man$section/.
+        fi
     done
 done
 #
