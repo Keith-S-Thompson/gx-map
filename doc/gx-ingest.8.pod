@@ -1,4 +1,4 @@
-# $Id: gx-ingest.8.pod,v 1.1 2006-03-10 19:30:38-08 kst Exp $
+# $Id: gx-ingest.8.pod,v 1.2 2006-03-10 19:51:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ingest.8.pod,v $
 
 =for comment
@@ -75,11 +75,14 @@ generated script.
 
 Be sure to examine the generated script carefully before running it.
 
-=head1 USAGE:
+=head1 USAGE
 
 S<< gx-ingest <DIR>/grid-mapfile > ingest.sh >>
+
 S<chmod +x ingest.sh>
+
 S<vi ingest.sh # make sure the script is correct>
+
 S<./ingest.sh>
 
 =head1 OPTIONS
