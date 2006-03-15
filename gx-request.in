@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.39 2006-01-27 19:43:27-08 kst Exp $
+# $Id: gx-request.in,v 1.40 2006-03-14 16:03:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -247,7 +247,7 @@ if ( $Options->{operation} eq 'add' or
         my $dn_error = Gridmap_Utils::DN_Error @args;
         if (defined $dn_error) {
             push @errors, "Invalid DN \"$dn\"\n";
-            push @errors, $dn_error;
+            push @errors, "$dn_error\n";
         }
     }
     Usage @errors if @errors;
