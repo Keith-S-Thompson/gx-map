@@ -1,4 +1,4 @@
-# $Id: 5aba75cb.ncsa-old.cadesc,v 1.13 2006-01-13 17:07:24-08 kst Exp $
+# $Id: 5aba75cb.ncsa-old.cadesc,v 1.14 2006-03-16 13:28:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5aba75cb.ncsa-old.cadesc,v $
 
 CA_NAME             NCSA CA (old)
@@ -13,10 +13,9 @@ CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/5aba75cb.0
 SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/5aba75cb.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Wed 2006-03-22 06:00:00 UTC
+DISABLE             yes
 
 # There appears to be no CRL for this CA.
-# It is superseded by the new NCSA CA (4a6cd8b1.ncsa.cadesc), but
-# the signing certificate doesn't expire until 2006-03-22, and
-# there are still valid certificates issued by this CA.
+# It is superseded by the new NCSA CA (4a6cd8b1.ncsa.cadesc).
 
 # MD5 and SHA1 fingerprints from 5aba75cb.0 downloaded 2005-03-29
