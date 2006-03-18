@@ -1,4 +1,4 @@
-# $Id: d8501632.ocikbserver1.cadesc,v 1.5 2005-12-21 22:11:47-08 kst Exp $
+# $Id: d8501632.ocikbserver1.cadesc,v 1.6 2006-03-17 20:40:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/d8501632.ocikbserver1.cadesc,v $
 
 CA_NAME             ?
@@ -12,7 +12,6 @@ CERTIFICATE_SHA1    ?
 CERTIFICATE_URL     ?
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
-INDEX               ?
 CERT_EXPIRES        ?
 DISABLE             yes
 
