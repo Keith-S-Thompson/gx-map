@@ -1,4 +1,4 @@
-# $Id: INSTALL,v 1.4 2005-11-30 20:36:36-08 kst Exp $
+# $Id: INSTALL,v 1.5 2006-03-21 01:39:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
 Installation instructions for gx-map.
@@ -14,11 +14,15 @@ Installation instructions for gx-map.
     This must be done from the administrative account that will own
     the installed files (typically "globus").
 
+3a. Optionally run
+	make clean
+    to clean up temporary intallation files.
+
 4.  Set up cron jobs to be executed by the installation account
     (words in all-caps will need to be substituted).
 
     4a. Check for new requests:
-	    DIR/sbin/gx-check-requests -namespace NAMESPACE
+	    DIR/sbin/gx-check-requests
 
     4b. Regenerate the grid-mapfile when necessary:
 	    DIR/sbin/gx-gen-mapfile MAPFILE
@@ -34,10 +38,13 @@ Installation instructions for gx-map.
 5.  If you want to use gx-ca-update to maintain CA certificates,
     CRLs, and signing_policy files, set up a cron job:
 
-    DIR/gx-ca-update -ca b89793e4 \
-		     -ca a7792cdb \
-		     -target-dir /etc/grid-security/certificates
+    DIR/gx-ca-update -target-dir /etc/grid-security/certificates \
+		     -ca-list /etc/grid-security/certificates/.list
+
+    where the ".list" file contains a list of the 8-digit hashes
+    of the CAs you want to recognize.
 
     Run "gx-ca-update -help" for a complete list of options.
-    Please read README.CA and README.CA_SECURITY before using
+
+    Please read the gx-map-security(7) man page before using
     gx-ca-update.
