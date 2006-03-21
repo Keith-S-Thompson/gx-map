@@ -1,0 +1,154 @@
+# $Id: gx-cleanup-logs.8.pod,v 1.1 2006-03-20 17:57:55-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-cleanup-logs.8.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+gx-cleanup-logs - Clean up the F<requests.log> file
+
+=head1 SYNOPSIS
+
+S<gx-cleanup-logs -help>
+
+S<gx-cleanup-logs -version>
+
+S<gx-cleanup-logs [options] [files]>
+
+=head1 DESCRIPTION
+
+B<gx-cleanup-logs>, part of the B<gx-map> system, is an administrative
+command.  It reads one or more existing F<requests.log> files (or
+stdin if no file name is specified).  It writes to stdout a merged
+F<requests.log> file with redundant requests commented out or deleted.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-merge-only>
+
+Merge and sort input records; don't delete anything.
+
+=item B<-delete>
+
+Delete redundant requests (the default is to comment them out).
+
+=item B<-sdsc>
+
+Delete requests for SDSC certificates without SOURCE=SDSC-CA.  This is
+specific to the San Diego Supercomputer Center.
+
+=item B<-debugging>
+
+Enable debugging output.
+
+=back
+
+=head1 USAGE
+
+The F<requests.log> file can grow very large over time.  Each request,
+entered either by a user or automatically, is appended to the
+F<requests.log> file, which must be re-processed every time a new
+F<grid-mapfile> needs to be generated.
+
+In many cases, the F<requests.log> file contains redundant information.
+For example, if a mapping is added and then removed, the "add" and
+"remove" requests could both be deleted.
+
+The B<gx-cleanup-logs> command is designed to remove redundant
+information from a F<requests.log> file.  It should delete (or comment
+out) all "remove", "remove-user", and "remove-dn" requests, leaving
+only those "add" requests that are currently active.
+
+The B<gx-cleanup-logs> command should be considered I<experimental>.
+
+There is currently no mechanism for applying this command
+automatically.  If the size of the F<requests.log> file hasn't become
+a problem, I recommend leaving it alone.  If it does become a problem
+(i.e., your system is spending an inordinate amount of time re-scanning
+the file), you can B<carefully> do the following:
+
+1. Suspend the cron jobs (you don't want the system trying to
+perform updates while you're working on it).
+
+2. Save copies of your existing F<requests.log> file and of your
+F<grid-mapfile>.  Note the ownership and permissions for the existing
+F<requests.log> file.  Consider also saving a copy of a F<grid-mapfile>
+generated by "B<gx-gen-mapfile -all>".
+
+3. Use B<gx-cleanup-logs> to generate a new, smaller F<requests.log>
+file from your existing one.  You can use the B<-delete> option if you
+want the resulting F<requests.log> file to be as small as possible.
+By default, redundant information will be commented out; this should
+still save significant time, and the information can be valuable as
+an audit trail.
+
+4. Use B<gx-gen-mapfile> to generate a new B<grid-mapfile>, and compare
+it to your previous one.  You can also use B<"gx-gen-mapfile -all>"
+if you saved a copy of the output of that command.  If the "before"
+and "after" files are inconsistent, something went wrong.  If it's a
+problem with the B<gx-cleanup-logs> command, please contact the author.
+
+5. If everything worked properly, make sure the new requests.log file
+has the same ownership and permissions as the old one and re-enable
+the cron jobs.
