@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.7 2006-01-17 15:59:35-08 kst Exp $
+# $Id: gx-map.7.pod,v 1.8 2006-03-21 01:37:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =for comment
@@ -103,15 +103,60 @@ signing_policy files used by Globus.  These are normally stored in
 the F</etc/grid-security> directory.  See the B<gx-ca-update(8)>
 man page for details.
 
+=head1 COMPONENTS
+
+The B<gx-map> system consists of two major components: F<grid-mapfile>
+maintenance (consisting of the B<gx-request>, B<gx-check-requests>,
+and B<gx-gen-mapfile> commands) and CA certificate updating (the
+B<gx-ca-update> command).  It is not required to use both of these
+components.  For example, if you have another solution for maintaining
+your F<grid-mapfile>, you can install the B<gx-map> system and use
+only the B<gx-ca-update> command; conversely, if you don't want to
+use B<gx-ca-update> to maintain your certificates directory, you can
+use use the F<grid-mapfile> maintenance component.
+
+You can also install and run the B<gx-map> system without letting it
+directly affect your system, for testing purposes.  See the discussion
+of "paranoid mode" in the B<gx-map-security(7)> man page.
+
+There are no options to install only part of the B<gx-map> system.
+If you don't want to use B<gx-map> for F<grid-mapfile> maintenance, you
+might consider replacing the B<gx-request> command with a script that
+prints an error message (and deleting the B<gx-map> symbolic link).
+
 =head1 GUARANTEES
 
 None.  I believe the B<gx-map> system is reasonably robust, but if
 you install this software and it breaks your system, it's your own
 fault for trusting me.
 
+More seriously, the B<gx-map> system has no known security-related
+bugs.  A very small number of such bugs have been found and corrected
+in the past.  But, as always, the statement that
+
+B<There are no known security-related bugs.>
+
+is semantically equivalent to
+
+B<All the security-related bugs are unknown ones.>
+
+B<< #include <stddisclaimer.h> >>
+
+See also the B<gx-map-security(7)> man page.
+
 =head1 SEE ALSO
 
-gx-request(1), gx-check-requests(8), gx-gen-mapfile(8), gx-ca-update(8), gx-map-requests-log(5)
+Commands:
+gx-request(1), gx-check-requests(8), gx-propagate(8), gx-gen-mapfile(8), gx-ca-update(8)
+
+Auxiliary commands:
+gx-ingest(8)
+
+Modules and file formats:
+gx-map-gridmap-utils(3), gx-map-cadesc(5), gx-map-requests-log(5)
+
+Security considerations:
+gx-map-security(7)
 
 =head1 AUTHOR
 
