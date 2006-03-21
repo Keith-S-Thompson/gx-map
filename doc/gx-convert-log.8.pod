@@ -1,4 +1,4 @@
-# $Id: gx-convert-log.8.pod,v 1.2 2006-03-21 01:37:36-08 kst Exp $
+# $Id: gx-convert-log.8.pod,v 1.3 2006-03-21 02:01:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-convert-log.8.pod,v $
 
 =for comment
@@ -88,7 +88,7 @@ Display the software version number and exit.
 =item B<-old-admins name,name>
 
 Specify a list of Unix accounts treated as administrators in the
-input log.  (See B<gx-admins(8).)
+input log.  (See B<gx-admins(8)>.)
 
 =item <-new-admin name>
 
@@ -96,7 +96,7 @@ The administrative account for the output log (only one may be specified).
 
 =item <-force>
 
-The arguments to the B<-old-admins and B<-new-admin> options must be
+The arguments to the B<-old-admins> and B<-new-admin> options must be
 existing accounts on the system; B<-force> overrides that check.
 
 =back
