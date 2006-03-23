@@ -1,0 +1,40 @@
+# $Id: bug-0080,v 1.1 2006-03-23 02:17:59-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0080,v $
+
+gx-map bug 0080
+Date: Thu 2006-03-23
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0e5
+Status: Open
+Title: gx-gen-mapfile chokes on incomplete requests.log
+
+Summary:
+The gx-check-requests command appends information to the requests.log
+file.  The intent is that, if gx-gen-mapfile reads requests.log as
+it's being written, and sees an incomplete final record, the lat
+record will be silently ignored.
+
+It turns out that if the incomplete final records ends in an incomplete
+line, it can cause the Read_Records function to report an error.
+
+This produced the following error message:
+Syntax error at line 44750 of /projects/globus/globus/solaris/apps/gx-map-0.5.0e5/var/requests.log
+Traceback:
+    /projects/globus/globus/solaris/apps/gx-map-0.5.0e5/lib/Gridmap_Utils.pm:987 in Gridmap_Utils::Read_Records
+    /projects/globus/globus/solaris/apps/gx-map-0.5.0e5/lib/Gridmap_Utils.pm:1135 in Gridmap_Utils::Gen_Mappings
+    /projects/globus/globus/solaris/apps/gx-map-0.5.0e5/sbin/gx-gen-mapfile:216
+
+(The line numbers refer to Gridmap_Utils.pm.in 1.166 and
+gx-gen-mapfile.in 1.81.)
+
+The line in requests.log was:
+        requested_by_name  globus
+Probably on the field name was there when gx-gen-mapfile tried to
+read it.  The problem went away when I re-ran gx-gen-mapfile.
+
+Proposed solution:
+Don't report syntax errors within records.  Instead, set an ad-hoc
+attribute in the record, and report the error only if the attribute
+is set on reaching the closing '}' (i.e., on completing the record).
+If the record is never completed, ignore the error.
