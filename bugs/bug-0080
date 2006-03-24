@@ -1,4 +1,4 @@
-# $Id: bug-0080,v 1.1 2006-03-23 02:17:59-08 kst Exp $
+# $Id: bug-0080,v 1.2 2006-03-23 18:27:47-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0080,v $
 
 gx-map bug 0080
@@ -6,7 +6,7 @@ Date: Thu 2006-03-23
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0e5
-Status: Open
+Status: Fixed 0.5.0e6
 Title: gx-gen-mapfile chokes on incomplete requests.log
 
 Summary:
@@ -38,3 +38,10 @@ Don't report syntax errors within records.  Instead, set an ad-hoc
 attribute in the record, and report the error only if the attribute
 is set on reaching the closing '}' (i.e., on completing the record).
 If the record is never completed, ignore the error.
+
+Actually, there's no need for an ad-hoc attribute; just use a local
+variable.
+
+Fixed:
+Gridmap_Utils.pm.in 1.167
+gx-map release 0.5.0e6
