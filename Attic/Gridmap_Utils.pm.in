@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.166 2006-03-21 01:47:03-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.167 2006-03-23 18:26:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -902,6 +902,14 @@ sub Read_Records(@) {
     }
 
     #
+    # If we see a syntax error while reading a record, report it only
+    # if the record is completed by a closing brace.  If we read the
+    # file while it's being written to, we want to quietly ignore any
+    # trailing partial line or record.  See bug-0080.
+    #
+    my $syntax_error = undef;
+
+    #
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
     my $File = undef;
@@ -967,6 +975,9 @@ sub Read_Records(@) {
         elsif ($context eq 'record') {
             # '{'
             if ($multiple and $_ eq '}') {
+                if (defined $syntax_error) {
+                    die $syntax_error;
+                }
                 push @result, $ref;
                 undef $ref;
                 $context = 'none';
@@ -984,7 +995,7 @@ sub Read_Records(@) {
                 }
             }
             else {
-                die "Syntax error at line $. of $filename\n";
+                $syntax_error = "Syntax error at line $. of $filename\n";
             }
         }
         else {
