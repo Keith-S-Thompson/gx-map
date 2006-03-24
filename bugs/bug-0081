@@ -1,0 +1,35 @@
+# $Id: bug-0081,v 1.1 2006-03-23 19:39:43-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0081,v $
+
+gx-map bug 0081
+Date: Thu 2006-03-23
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.0e5
+Status: Open
+Title: Investigate behavior of lock files under NFS
+
+Summary:
+The Gridmap_Utils::Get_Lock function uses a lock file to prevent two
+copies of the same program from interfering with each other.  It uses
+sysopen() with the O_WRONLY | O_EXCL | O_CREAT flags.  This is used
+by gx-ca-update and gx-check-requests.
+
+This may not work reliably on an NFS filesystem.
+
+Quoting the Linux man page for open(2):
+
+    O_EXCL When used with O_CREAT, if the file already	exists	it
+	   is  an error  and the open will fail. In this context, a
+	   symbolic link exists, regardless of where its points to.
+	   O_EXCL is broken on NFS  file  systems,  programs  which
+	   rely on it for performing locking tasks will contain a
+	   race condition.  The solution  for performing  atomic
+	   file locking using a lockfile is to create a unique file
+	   on the same fs (e.g.,  incorporating  hostname  and pid),
+	   use	link(2)  to  make a link to the lockfile. If link()
+	   returns 0, the lock is successful.  Otherwise, use  stat(2)
+	   on the  unique file to check if its link count has increased
+	   to 2, in which case the lock is also successful.
+
+Consider re-implementing this as suggested.
