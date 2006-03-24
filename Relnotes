@@ -1,12 +1,24 @@
-# $Id: Relnotes,v 1.9 2005-09-01 21:30:18-07 kst Exp $
+# $Id: Relnotes,v 1.10 2006-03-24 14:34:18-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
 
 ========================================================================
 TODO:
-Update this for release 0.5.x
+Finish updating this for release 0.5.1
+Search for "TDB"
 ========================================================================
+
+Release 0.5.1, date TBD
+
+    This is a new major release.  File formats have changed.
+
+    Man pages have finally been added.  (The documentation is written
+    in Perl's "POD" format and automatically converted to man page
+    format during configuration.)
+
+
+
 
 Release 0.4.5, 2005-05-07
 
