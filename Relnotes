@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.10 2006-03-24 14:34:18-08 kst Exp $
+# $Id: Relnotes,v 1.11 2006-03-24 20:38:28-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -11,14 +11,149 @@ Search for "TDB"
 
 Release 0.5.1, date TBD
 
-    This is a new major release.  File formats have changed.
+    This is a new major release.  Some file formats have changed.
 
-    Man pages have finally been added.  (The documentation is written
+    This release changes the name of the "gx-map" client program to
+    "gx-request".  For backward compatibility, it's still available as
+    "gx-map", but that may be removed in a future release.  The idea
+    is to avoid confusion between the name of the client program and
+    the name of the package as a whole.  (Ths change was actually
+    made in release 0.4.5.)
+
+    The gx-cleanup-logs command is new.
+
+    The optional gx-propagate command is new.
+
+    New command-line options for gx-request:
+	-set		    Set mappings for the specified user, giving
+			    zero or more DNs which replace all existing
+			    DNs for that user.
+	-proxy		    Extract a DN from the user's current grid
+			    proxy certificate.
+	-dn-list-file       Read a list of DNs from a specified text file.
+		            Used only with the "-set" option.
+    The "-secondary" option has been removed.
+
+    New command-line options for gx-check-requests:
+	-[no]propagate	    Invoke gx-propagate as appropriate.
+			    Has no effect if gx-propagate is not installed.
+	-dryrun		    Passed to the gx-propagate command.
+			    Has no effect if gx-propagate is not installed.
+    The "-namespace" option has been removed.
+
+    New command-line options for gx-gen-mapfile:
+	-compatible	    Generate a grid-mapfile compatible with both
+			    GT2 and GT3/GT4.  (This was the default
+			    behavior in earlier gx-map releases.)
+			    By default, the grid-mapfile is compatible
+			    only with GT3/GT4.
+	-merge-file file    Merge an existing grid-mapfile into the
+			    generated grid-mapfile
+	-[no]rcs	    Check the generated grid-mapfile into RCS.
+			    The default is "-rcs"; use "-norcs"
+			    to disable.
+	-force		    Force an update regardless of the timestamps
+			    of the input and output files.
+    New command-line options for gx-ca-update:
+	-ca-list            Specify a text file containing a list of CAs.
+	-permissions	    Specify octal permissions for installed files;
+			    default is 444.
+    The "-all-cas" option has been removed.
+
+    A number of minor bugs have been corrected (none of them are
+    serious security flaws).  See the "bugs" subdirectory for details.
+
+    A new subsystem for propagating grid-mapfile information
+    across sites has been implemented.  The optional "gx-propagate"
+    command acts as a plug-in for the "gx-check-requests' command.
+    A version is provided that's designed specifically to work on the
+    TeraGrid, using the TGCDB (TeraGrid Central Database) to propagate
+    information from one TeraGrid site to another.  The interface is
+    intended to be extensible (it remains to be seen whether it lives
+    up the intent).  See the gx-propagate(8) man page for details.
+
+    Man pages have finally been added.  The documentation is written
     in Perl's "POD" format and automatically converted to man page
-    format during configuration.)
+    format during configuration.  The raw *.pod files are also
+    installed in the "doc" subdirectory.  The gx-map(7) man page
+    provides an overview of the system.  The gx-map-security(7) man
+    page discusses security considerations Other man pages document
+    individual commands and file formats.
 
+    The information provided in the installation configuration file
+    has been modified.  The old GLOBUS_ADMINS attribute has been
+    replaced by GX_MAP_OWNER and ADDITIONAL_ADMINS (it is recommended
+    that ADDITIONAL_ADMINS should be empty).  The string %VERSION%
+    is expanded to the current version number in the installation
+    directory.  See "sample.conf" for details.
 
+    The format of the CA description files (*.cadesc) has been updated.
+    The INDEX attribute has been deleted.
 
+    A number of *.cadesc files have been added or updated.
+
+    CA certificates that are not self-signed are checked using
+    "openssl verify".
+
+    Permissions for generated files are managed more carefully.
+
+    Better defense against attacks on the world-writable new-requests
+    directory.
+
+    The gx-map installation must be owned by, and the gx-check-requests
+    and gx-ca-update commands must be executed by, the GX_MAP_OWNER
+    account (see sample.conf).  The GX_MAP_OWNER may not be root.
+
+    All downloads are done using the "curl" command; the "ncftp" and
+    "wget" commands are no longer used.
+
+    The customizable Gridmap_Valid_Mappings Perl module has been
+    dropped.  Its functionality has been incorporated into the
+    Gridmap_Utils module.  Gridmap_Valid_Mappings was designed to
+    support cross-site propagation; this has been re-implemented
+    using gx-propagate.
+
+    Timestamps are stored in microsecond resolution (using the
+    Time::HiRes Perl module).
+
+    All distinguished names are handled internally using the GT4
+    format rather than the GT2 format (i.e., using "/UID=" rather
+    than "/USERID=", and "/emailAddress=" rather than "/Email=").
+    A GT2-compatible grid-mapfile is not generated by default; use the
+    "-compatible" option if necessary.
+
+    Error checking is more rigorous.  More errors, including transient
+    network errors that can be handled by falling back to a cached
+    copy of a file, are both logged and reported by e-mail.
+
+    All e-mail messages are logged.
+
+    The system attempts to keep track of reported errors.  For example,
+    if a CA web site is down, an e-mail notification will only be sent
+    once, not every time gx-ca-update is run.  If the web site comes
+    back up and then goes down again, another message will be sent.
+
+    Dropped the idea of "secondary" mappings.  A grid-mapfile entry
+    can map a single DN to multiple user names, separated by commas:
+	"/O=Foo/OU=Bar/CN=John Doe" jdoe,johnd,sys123
+    In gx-map 0.4.X, this was handled by requiring the user to treat
+    some mappings as "secondary", a feature that turned out to be
+    extremely error-prone.  Now the most recently added mapping
+    goes first.  To change the order, re-add another mapping.
+
+    If the data directory doesn't exist (e.g., because an NFS
+    filesystem isn't mounted), the commands will bail out with a
+    clear error message, rather than dying obscurely on the first
+    attempt to access something in the data directory.
+
+    Generated grid-mapfiles are (optionally) checked into RCS.
+
+    In gx-request, a "set" request specifies the complete set of DNs
+    for the user; it's equivalent to a "remove-user" request followed
+    zero or more "add" requests.  This is designed for interaction
+    with the TGCDB.  This option is not available in interactive mode.
+
+    Internal code cleanup.
 
 Release 0.4.5, 2005-05-07
 
