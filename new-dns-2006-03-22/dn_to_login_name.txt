@@ -1,5 +1,3 @@
-/C=US/O=National Center for Supercomputing Applications/CN=Nathan Baker U14831
-/C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nbaker/USERID=nbaker/Email=nbaker@PSC.EDU U14831
 /C=US/O=National Center for Supercomputing Applications/CN=Phillip A. Cheeseman aaichsmn
 /C=US/O=National Center for Supercomputing Applications/CN=Amy Apon aapon
 /C=US/O=National Center for Supercomputing Applications/CN=Aarati Khobare aarati
