@@ -3943,7 +3943,6 @@
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=dickens/USERID=dickens/Email=dickens@PSC.EDU ux454783
 /C=US/O=National Center for Supercomputing Applications/CN=Anthony Tong ux454784
 /C=US/O=National Center for Supercomputing Applications/CN=Nathan Stone ux454786
-/C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification ux454786
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nstone/USERID=nstone/EMAIL=nstone@PSC.EDU ux454786
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nstone/USERID=nstone/Email=nstone@PSC.EDU ux454786
 /C=US/O=National Center for Supercomputing Applications/CN=Jiahua He ux454809
