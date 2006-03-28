@@ -3482,7 +3482,7 @@
 /C=US/O=National Center for Supercomputing Applications/CN=Nicholas Wright ux452075
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nwright2/UID=nwright2/emailAddress=nwright2@PSC.EDU ux452075
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nwright2/USERID=nwright2/Email=nwright2@PSC.EDU ux452075
-/C=US/O=SDSC/CN=Nicholas Wright ux452075
+/C=US/O=SDSC/OU=SDSC/CN=Nicholas Wright/UID=nwright ux452075
 /C=US/O=National Center for Supercomputing Applications/CN=Brent Krueger ux452076
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=kruegerb/USERID=kruegerb/Email=kruegerb@PSC.EDU ux452076
 /C=US/O=National Center for Supercomputing Applications/CN=Michelle Povinelli ux452193
