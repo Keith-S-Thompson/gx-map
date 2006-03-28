@@ -3181,7 +3181,7 @@
 /C=US/O=National Center for Supercomputing Applications/CN=Gregor von Laszewski ux421105
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=laszewsk/USERID=laszewsk/Email=laszewsk@PSC.EDU ux421105
 /C=US/O=National Center for Supercomputing Applications/CN=David Anderson 0 ux421114
-/C=US/O=NPACI/OU=SDSC/CN=Nicholas Karonis/userid=ux421134 ux421134
+/C=US/O=NPACI/OU=SDSC/CN=Nicholas Karonis/USERID=ux421134 ux421134
 /C=US/O=National Center for Supercomputing Applications/CN=Nicholas Karonis ux421134
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=karonis/UID=karonis/emailAddress=karonis@PSC.EDU ux421134
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=karonis/USERID=karonis/Email=karonis@PSC.EDU ux421134
