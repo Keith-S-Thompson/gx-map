@@ -4141,7 +4141,6 @@
 /C=US/O=National Center for Supercomputing Applications/CN=Felipe Espinoza ux455139
 /C=US/O=National Center for Supercomputing Applications/CN=Xiaolin Ren ux455140
 /C=US/O=National Center for Supercomputing Applications/CN=Dylan Stark ux455141
-/C=US/O=National Center for Supercomputing Applications/CN=Dylan Stark/CN=proxy ux455141
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=dstark/UID=dstark/emailAddress=dstark@PSC.EDU ux455141
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=dstark/USERID=dstark/Email=dstark@PSC.EDU ux455141
 /C=US/O=National Center for Supercomputing Applications/CN=Robert Engel ux455142
