@@ -1225,7 +1225,6 @@
 /C=US/O=National Center for Supercomputing Applications/CN=Michael Kalafatis kalafati
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=mkalafat/UID=mkalafat/emailAddress=mkalafat@PSC.EDU kalafati
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=mkalafat/USERID=mkalafat/Email=mkalafat@PSC.EDU kalafati
-$DnList[$i] kalpanak
 /C=US/O=National Center for Supercomputing Applications/CN=Kalpana Katti kalpanak
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=kkatti/UID=kkatti/emailAddress=kkatti@PSC.EDU kalpanak
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=kkatti/USERID=kkatti/Email=kkatti@PSC.EDU kalpanak
