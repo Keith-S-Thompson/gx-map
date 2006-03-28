@@ -2411,7 +2411,6 @@
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=tgviz/USERID=tgviz/Email=tgviz@PSC.EDU tgviz
 /C=US/O=National Center for Supercomputing Applications/CN=Tharaka Devadithya tharaka
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=tharaka/USERID=tharaka/Email=tharaka@PSC.EDU tharaka
-/C=US/O=SDSC/OU=SDSC/CN=Tharaka Devadithya tharaka
 /C=US/O=National Center for Supercomputing Applications/CN=Thomas A. Hauser thauser
 /C=US/O=National Center for Supercomputing Applications/CN=Devarajan Thirumalai thirum
 /C=US/O=National Center for Supercomputing Applications/CN=Thomas Moore thomoore
