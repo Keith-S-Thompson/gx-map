@@ -1833,7 +1833,7 @@
 /C=US/O=National Center for Supercomputing Applications/CN=Nicholas Wright nwright
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nwright2/UID=nwright2/emailAddress=nwright2@PSC.EDU nwright
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=nwright2/USERID=nwright2/Email=nwright2@PSC.EDU nwright
-/C=US/O=SDSC/CN=Nicholas Wright nwright
+/C=US/O=SDSC/OU=SDSC/CN=Nicholas Wright/UID=nwright nwright
 /C=US/O=National Center for Supercomputing Applications/CN=Naoki Yoshida nyoshida
 /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/CN=yoshida/USERID=yoshida/Email=yoshida@PSC.EDU nyoshida
 /C=US/O=National Center for Supercomputing Applications/CN=Octavio Valenzuela octaviov
