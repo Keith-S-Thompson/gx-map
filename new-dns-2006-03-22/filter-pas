@@ -1,0 +1,22 @@
+#!/usr/bin/perl -w
+
+# $Id: filter-pas,v 1.1 2006-03-28 20:46:19-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/new-dns-2006-03-22/filter-pas,v $
+
+use strict;
+
+my %in_pas = ();
+my $pas = '/sdsc/local/generic/sdscbin/PAS/data/master_accnts.db';
+open PAS, $pas or die "${pas}: $!\n";
+while (<PAS>) {
+    chomp;
+    s/[-:].*$//;
+    $in_pas{$_} = 1;
+}
+close PAS;
+
+while (<>) {
+    my($dn, $user) = /^(.*) (\S*)$/;
+    next if not $in_pas{$user};
+    print;
+}
