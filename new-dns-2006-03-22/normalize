@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+
+# $Id: normalize,v 1.1 2006-03-28 19:14:08-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/new-dns-2006-03-22/normalize,v $
+
+use strict;
+
+my %map = ();
+
+while (<>) {
+    my($dn, $user) = /^(.*) (\S*)$/;
+    $dn =~ s(/EMAIL=)(/emailAddress=);
+    $dn =~ s(/Email=)(/emailAddress=);
+    $dn =~ s(/USERID=)(/UID=);
+
+    $map{$dn}->{$user} = 1;
+}
+
+foreach my $dn (sort keys %map) {
+    my @users = sort keys %{$map{$dn}};
+    foreach my $user (@users) {
+	print "$dn $user\n";
+    }
+}
