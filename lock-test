@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: lock-test,v 1.4 2006-04-04 21:48:41-07 kst Exp $
+# $Id: lock-test,v 1.5 2006-04-04 23:43:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/lock-test,v $
 
 use strict;
@@ -16,18 +16,25 @@ sub Release_Lock();
 
 my $interval = 5;
 
-my $hostname = Net::Domain::hostfqdn;
+my $hostname;
+{
+    local($SIG{__WARN__}) = sub { };
+    $hostname = Net::Domain::hostfqdn;
+}
 
 my $Me = time . ' ' . Net::Domain::hostfqdn() . ".$$";
 
 $| = 1;
 
-while (1) {
-    my ($sec, $usec) = Time::HiRes::gettimeofday;
-    my $remaining = ($interval - $sec % $interval) * 1e6 - $usec;
-    Time::HiRes::usleep $remaining;
+sleep 300 - time % 300;
+my $end_time = time + 120;
+while (time < $end_time) {
+    # my ($sec, $usec) = Time::HiRes::gettimeofday;
+    # my $remaining = ($interval - $sec % $interval) * 1e6 - $usec;
+    # Time::HiRes::usleep $remaining;
+    # Time::HiRes::usleep 10_000;
     if (Get_Lock) {
-        sleep 1;
+        # Time::HiRes::usleep 10_000;
         Release_Lock;
     }
 }
