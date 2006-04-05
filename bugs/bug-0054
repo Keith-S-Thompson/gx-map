@@ -1,4 +1,4 @@
-# $Id: bug-0054,v 1.1 2005-10-15 03:35:22-07 kst Exp $
+# $Id: bug-0054,v 1.2 2006-04-04 17:29:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0054,v $
 
 gx-map bug 0054
@@ -19,3 +19,12 @@ $GLOBUS_LOCATION/var and the gx-map var directory.
 
 A quick experiment indicates that it mostly works, but some problems
 may remain.
+
+Possible conflicts:
+    Several files in etc (create etc/gx-map?)
+    The var directory (rename to gx-map-data?)
+
+Everything else look ok (bin, doc, lib, man, sbin).
+
+Or just require gx-map to be installed in its own directory, possibly
+$GLOBUS_LOCATION/gx-map-<version>.
