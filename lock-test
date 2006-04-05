@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: lock-test,v 1.6 2006-04-05 02:13:34-07 kst Exp $
+# $Id: lock-test,v 1.7 2006-04-05 03:01:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/lock-test,v $
 
 use strict;
@@ -32,9 +32,9 @@ while (time < $end_time) {
     # my ($sec, $usec) = Time::HiRes::gettimeofday;
     # my $remaining = ($interval - $sec % $interval) * 1e6 - $usec;
     # Time::HiRes::usleep $remaining;
-    Time::HiRes::usleep 10_000;
+    Time::HiRes::usleep rand 20_000;
     if (Get_Lock) {
-        Time::HiRes::usleep 10_000;
+        Time::HiRes::usleep rand 20_000;
         Release_Lock;
     }
 }
