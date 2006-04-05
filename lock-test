@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: lock-test,v 1.1 2006-04-04 20:18:47-07 kst Exp $
+# $Id: lock-test,v 1.2 2006-04-04 20:21:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/lock-test,v $
 
 use strict;
@@ -25,7 +25,7 @@ while (1) {
     my $remaining = ($interval - $sec % $interval) * 1e6 - $usec;
     Time::HiRes::usleep $remaining;
     Get_Lock;
-    Time::HiRes::sleep 1.5;
+    sleep 1;
     Release_Lock;
 }
 
@@ -34,7 +34,7 @@ while (1) {
 sub Trace($) {
     my($sec, $usec) = Time::HiRes::gettimeofday;
     my $timestamp = sprintf "%010d.%06d", $sec, $usec;
-    printf "%010d.%06d %s %8d %s\n", $sec, $usec, $hostname, $$, "@_";
+    printf "%010d.%06d %-32s %8d %s\n", $sec, $usec, $hostname, $$, "@_";
 } # Trace
 
 # ----------------------------------------------------------------------
@@ -52,7 +52,7 @@ sub Get_Lock() {
         my $hostname = Net::Domain::hostfqdn();
         print $Lock "PID=$$ on $hostname\n";
         close $Lock;
-	Trace "got lock";
+        Trace "got lock";
     }
     else {
         Trace "failed to get lock: $!";
@@ -66,10 +66,10 @@ sub Get_Lock() {
 #
 sub Release_Lock() {
     if (unlink $Lock_File) {
-	Trace "released lock";
+        Trace "released lock";
     }
     else {
-	Trace "failed to release lock: $!";
+        Trace "failed to release lock: $!";
     }
 } # Release_Lock
 
