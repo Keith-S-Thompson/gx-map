@@ -1,4 +1,4 @@
-# $Id: bug-0054,v 1.2 2006-04-04 17:29:16-07 kst Exp $
+# $Id: bug-0054,v 1.3 2006-04-05 21:26:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0054,v $
 
 gx-map bug 0054
@@ -28,3 +28,22 @@ Everything else look ok (bin, doc, lib, man, sbin).
 
 Or just require gx-map to be installed in its own directory, possibly
 $GLOBUS_LOCATION/gx-map-<version>.
+
+Fix:
+Rename "etc" to "etc/gx-map".
+Rename "var" to "gx-map-data".
+All installed files are now vanishingly unlikely to conflict with
+anything else.
+(Of course, gx-map can still be installed in its own directory if
+desired.)
+
+Fixed:
+Gridmap_Utils.pm.in 1.168
+configure-gx-map 1.39
+gx-ca-update.in 1.103
+gx-check-requests.in 1.88
+gx-gen-mapfile.in 1.81
+gx-map.conf.in 1.5
+gx-request.in 1.40
+install-gx-map.in 1.57
+gx-map release 0.5.0e6
