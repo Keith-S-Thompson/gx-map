@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.17 2006-01-17 15:57:59-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.18 2006-04-06 00:47:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -167,7 +167,7 @@ my $Mappings = undef;
 # Database transactions produce trace output on stderr.
 # Log this output to a file.
 #
-my $logfile = "$Install_Dir/var/tgcdb.log";
+my $logfile = "$Install_Dir/gx-map-data/tgcdb.log";
 open LOG, ">>$logfile" || die "${logfile}: $!\n";
 print LOG "\n", Gridmap_Utils::Time_Image time, "\n";
 print LOG "$Program_Name ", Quote(@SAVED_ARGV), "\n";
@@ -249,9 +249,9 @@ sub Get_TGCDB_Config($) {
 sub Init_Mappings() {
     if (not defined $Mappings) {
         Debug "Calling Gridmap_Utils::Gen_Mappings ",
-              "-all, $Install_Dir/var/requests.log\n";
+              "-all, $Install_Dir/gx-map-data/requests.log\n";
         $Mappings = Gridmap_Utils::Gen_Mappings
-                        '-all', "$Install_Dir/var/requests.log";
+                        '-all', "$Install_Dir/gx-map-data/requests.log";
     }
 } # Init_Mappings
 
