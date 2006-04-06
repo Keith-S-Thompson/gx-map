@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.103 2006-03-17 20:39:10-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.104 2006-04-05 21:23:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -163,9 +163,9 @@ if (not $User_Opt->{UNSAFE}) {
     Usage @errors if @errors;
 }
 
-my $Data_Dir = "$Install_Dir/var";
+my $Data_Dir = "$Install_Dir/gx-map-data";
 
-my $ca_conf_dir = "$Install_Dir/etc/ca-config";
+my $ca_conf_dir = "$Install_Dir/etc/gx-map/ca-config";
 my @ca_list_all;
 
 Gridmap_Utils::Install_Die_Handler;
@@ -1396,8 +1396,8 @@ sub Error($$$$;$) {
 #
 # Send an error notification by e-mail.
 # Log messages to log file.
-# Error files in the var/reported-errors directory are used to track
-# which errors have already been reported by e-mail; all errors are
+# Error files in the gx-map-data/reported-errors directory are used to
+# track which errors have already been reported by e-mail; all errors are
 # logged regardless.  Some classes of errors are not currently recorded
 # in error files; these are treated as new errors and can potentially
 # be reported by e-mail repeatedly.
@@ -1470,7 +1470,7 @@ sub Notify() {
 
     $log_message_body .= "\n";
 
-    my $log_file = "$Install_Dir/var/$Program_Name.log";
+    my $log_file = "$Install_Dir/gx-map-data/$Program_Name.log";
     Gridmap_Utils::Untaint $log_file;
     open my $Log, '>>', $log_file;
     print $Log $log_message_body;
