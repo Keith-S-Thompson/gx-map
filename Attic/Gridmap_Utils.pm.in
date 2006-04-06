@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.168 2006-04-05 20:58:11-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.169 2006-04-05 21:23:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -234,8 +234,10 @@ sub Debugf(@);
 sub Check_Data_Dir() {
    my $install_dir = $Gridmap_Utils::Config{INSTALL_DIR};
    my $data_dir    = $Gridmap_Utils::Config{DATA_DIR};
-    if (-l "$install_dir/var" and not -d "$install_dir/var/.") {
-        die "    $install_dir/var\n" .
+    if (    -l "$install_dir/gx-map-data" and
+	not -d "$install_dir/gx-map-data/.")
+    {
+        die "    $install_dir/gx-map-data\n" .
             "is a symbolic link to\n" .
             "    $data_dir\n" .
             "which doesn't exist\n";
@@ -1470,7 +1472,7 @@ sub Cache_File($) {
 
     my $is_ftp = $url =~ /^ftp:/;
 
-    my $cache_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var/cache";
+    my $cache_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/cache";
     my $filename = QP_Encode $url;
 
     my $cached_file = "$cache_dir/$filename";
@@ -2110,7 +2112,7 @@ sub DN_List($) {
 #
 sub Send_Email($$$$) {
     my($program_name, $recipient, $subject, $body) = @_;
-    my $data_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/var";
+    my $data_dir = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data";
     my $mail_log = "$data_dir/$program_name-mail.log";
 
     Untaint $mail_log;
@@ -2155,7 +2157,8 @@ EOF
 sub Get_Lock($) {
     my($name) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname;
-    my $lock_file = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    my $lock_file
+	= "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
     Gridmap_Utils::Untaint $lock_file;
     Gridmap_Utils::Untaint $unique_lock_file;
@@ -2220,7 +2223,8 @@ sub Get_Lock($) {
 sub Release_Lock($) {
     my($name) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname;
-    my $lock_file = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    my $lock_file
+	= "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
 
     Untaint $lock_file;
