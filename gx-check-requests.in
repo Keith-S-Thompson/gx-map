@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.88 2006-02-28 18:12:51-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.89 2006-04-05 21:23:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -73,7 +73,7 @@ my $Program_Name = File::Basename::basename $0;
 my $Now = time;
 
 my $Hostname = Gridmap_Utils::Get_Hostname;
-my $Default_Data_Dir = "$Install_Dir/var";
+my $Default_Data_Dir = "$Install_Dir/gx-map-data";
 
 my $User_Opt = { propagate => 1 };
 my @Opts = ( $User_Opt,
@@ -294,7 +294,7 @@ if (@propagation_failures) {
                ".\n\n";
 
     $body .= "Please check the logs in the directory\n" .
-             "    $Install_Dir/var\n";
+             "    $Install_Dir/gx-map-data\n";
     $body .= "You may need to resubmit " .
              ($count == 1 ? "this request" : "these requests") .
              "\n\n";
