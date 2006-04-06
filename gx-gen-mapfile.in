@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.81 2006-03-01 20:34:38-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.82 2006-04-05 21:23:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -74,7 +74,7 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
-my $Data_Dir             = "$Install_Dir/var";
+my $Data_Dir             = "$Install_Dir/gx-map-data";
 my $Default_Requests_Log = "$Data_Dir/requests.log";
 my $Dot_Update           = "$Data_Dir/new-requests/.update";
 
