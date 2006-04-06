@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.test,v 1.8 2006-01-17 15:57:59-08 kst Exp $
+# $Id: gx-propagate.in.test,v 1.9 2006-04-06 00:47:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 ########################################################################
@@ -100,7 +100,7 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-my $logfile = "$Install_Dir/var/gx-propagate.log";
+my $logfile = "$Install_Dir/gx-map-data/gx-propagate.log";
 open my $Log, ">>$logfile" or die "${logfile}: $!\n";
 print $Log "\n", Gridmap_Utils::Time_Image time, "\n";
 print $Log "$Program_Name ", Quote(@SAVED_ARGV), "\n";
