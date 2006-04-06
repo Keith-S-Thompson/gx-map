@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.5 2005-10-18 20:55:15-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.6 2006-04-05 21:23:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -46,7 +46,7 @@ INSTALL_DIR     UNDEF  # Do not edit this line
 
 #
 # The default directory containing data for the gx-map system.
-# On installation, INSTALL_DIR/var will be created as a symlink
+# On installation, INSTALL_DIR/gx-map-data will be created as a symlink
 # to this directory.
 # This must be set during configuration and installation.
 #
