@@ -1,4 +1,4 @@
-# $Id: bug-0081,v 1.1 2006-03-23 19:39:43-08 kst Exp $
+# $Id: bug-0081,v 1.2 2006-04-05 20:58:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0081,v $
 
 gx-map bug 0081
@@ -6,7 +6,7 @@ Date: Thu 2006-03-23
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0e5
-Status: Open
+Status: Fixed, 0.5.0e6
 Title: Investigate behavior of lock files under NFS
 
 Summary:
@@ -33,3 +33,19 @@ Quoting the Linux man page for open(2):
 	   to 2, in which case the lock is also successful.
 
 Consider re-implementing this as suggested.
+
+Testing with the old locking code shows sporadic failures, cases where
+two processes running on different machines (tg-login1 and tg-login2)
+both appear to have successfully obtained the same lock simultaneously.
+Testing with new locking code doesn't appear to have this problem.
+
+One open issue: According to the description, if the link() call fails,
+the lock is still successful as long as the link count of the unique
+file has increased to 2.  It's not at all clear (to me) how this can
+happen, why the link() call would have failed, and whether the lock
+file then actually exists.  (Presumably it must; otherwise another
+process could also get a lock.)
+
+Fixed:
+Gridmap_Utils.pm.in 1.168
+gx-map release 0.5.0e6
