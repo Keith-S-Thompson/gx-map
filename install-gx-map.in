@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.57 2006-03-10 18:53:40-08 kst Exp $
+# $Id: install-gx-map.in,v 1.58 2006-04-05 21:23:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -58,7 +58,7 @@ INSTALL_DIR=%INSTALL_DIR%
 BIN_DIR=$INSTALL_DIR/bin
 SBIN_DIR=$INSTALL_DIR/sbin
 LIB_DIR=$INSTALL_DIR/lib
-ETC_DIR=$INSTALL_DIR/etc
+ETC_DIR=$INSTALL_DIR/etc/gx-map
 DOC_DIR=$INSTALL_DIR/doc
 MAN_DIR=$INSTALL_DIR/man
 DATA_DIR=%DATA_DIR%
@@ -181,8 +181,8 @@ if [ ! -f $DATA_DIR/new-requests/.update ] ; then
     verbosely chmod 666 $DATA_DIR/new-requests/.update 
 fi
 
-if [ ! -h $INSTALL_DIR/var ] ; then
-    verbosely ln -s -f $DATA_DIR $INSTALL_DIR/var
+if [ ! -h $INSTALL_DIR/gx-map-data ] ; then
+    verbosely ln -s -f $DATA_DIR $INSTALL_DIR/gx-map-data
 fi
 
 verbosely cd $BIN_DIR
