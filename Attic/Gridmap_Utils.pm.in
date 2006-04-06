@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.167 2006-03-23 18:26:39-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.168 2006-04-05 20:58:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2146,49 +2146,87 @@ EOF
 
 #
 # Get a lock; the name should be the program name.
-# Attempt to create the file; use sysopen so the attempt fails
-# if the file already exists.
-# If no lock exists, create it and write a line of information
-# to it.  (This information is not currently used.)
-# If the lock does exist, die.
+# Create a uniquely named lock file, then attempt to create
+# the actual lock file as a hard link to it.  If this succeeds,
+# we have the lock; otherwise check the link count.
+#
+# See bugs/bug-0081 for details.
 #
 sub Get_Lock($) {
     my($name) = @_;
-    my $lock_file
-        = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    my $hostname = Gridmap_Utils::Get_Hostname;
+    my $lock_file = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    my $unique_lock_file = "$lock_file.$hostname.$$";
     Gridmap_Utils::Untaint $lock_file;
-    if (sysopen my $Lock, $lock_file, O_WRONLY | O_EXCL | O_CREAT) {
-        my $hostname = Gridmap_Utils::Get_Hostname;
-        print $Lock "$name (gx-map $Gridmap_Utils::VERSION) ",
-                    "PID=$$ on $hostname\n";
-        close $Lock;
+    Gridmap_Utils::Untaint $unique_lock_file;
+
+    open my $lock, '>', $unique_lock_file or die "$unique_lock_file: $!\n";
+    print $lock "$name (gx-map $Gridmap_Utils::VERSION) ",
+                "PID=$$ on $hostname\n";
+    close $lock;
+    if (link $unique_lock_file, $lock_file) {
+        #
+        # Got lock
+        #
+        return;
     }
     else {
-        my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
-        my $delta = time - $lock_time;
-        my $message = "Locked since " .
-                      Gridmap_Utils::Time_Image($lock_time) .
-                      " ($delta second(s))\n";
-        if (open my $Old_Lock, '<', $lock_file) {
-            my $lock_info = scalar <$Old_Lock>;
-            chomp $lock_info;
-            $message .= "$lock_info\n";
+        my $link_error = $!;
+        my @stat = stat $unique_lock_file;
+        if (@stat and $stat[3] == 2) {
+            #
+            # Got lock, but link failed.
+            #
+            # I'm not sure how this can happen, but the Linux open(2)
+            # man page claims this indicates the lock was successful.
+            #
+            return;
         }
-        die $message;
+        else {
+            #
+            # Lock failed, most likeley because the lock file already
+            # exists.
+            #
+            my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
+            my $message;
+            if (defined $lock_time) {
+                my $delta = time - $lock_time;
+                $message = "Locked since " .
+                           Gridmap_Utils::Time_Image($lock_time) .
+                           " ($delta second(s))\n";
+                if (open my $old_lock, '<', $lock_file) {
+                    my $lock_info = scalar <$old_lock>;
+                    if (defined $lock_info) {
+                        chomp $lock_info;
+                        $message .= "$lock_info\n";
+                    }
+                    close $old_lock;
+                }
+            }
+            else {
+                $message = "Failed to get lock: $link_error\n";
+            }
+            unlink $unique_lock_file;
+            die $message;
+        }
     }
 } # Get_Lock
 
 # ----------------------------------------------------------------------
 
 #
-# Delete the lock file created by Get_Lock().
+# Delete the lock file(s) created by Get_Lock().
 #
 sub Release_Lock($) {
     my($name) = @_;
-    my $lock_file
-        = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    my $hostname = Gridmap_Utils::Get_Hostname;
+    my $lock_file = "$Gridmap_Utils::Config{INSTALL_DIR}/var/.$name.lock";
+    my $unique_lock_file = "$lock_file.$hostname.$$";
+
     Untaint $lock_file;
+    Untaint $unique_lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
+    unlink $unique_lock_file or die "$unique_lock_file: $!\n";
 } # Release_Lock
 
 # ----------------------------------------------------------------------
