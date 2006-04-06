@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.12 2006-04-05 21:14:08-07 kst Exp $
+# $Id: Relnotes,v 1.13 2006-04-05 21:27:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -79,6 +79,14 @@ Release 0.5.1, date TBD
     provides an overview of the system.  The gx-map-security(7) man
     page discusses security considerations Other man pages document
     individual commands and file formats.
+
+    Some subdirectories of the installation directory have been renamed:
+	"etc" --> "etc/gx-map"
+	"var" --> "gx-map-data"
+	    (this is still a symlink to a separate directory)
+    This allows gx-map to be installed directly under $GLOBUS_LOCATION
+    or another installation directory if desired.  Of course, it can
+    still be installed in its own directory.
 
     The information provided in the installation configuration file
     has been modified.  The old GLOBUS_ADMINS attribute has been
