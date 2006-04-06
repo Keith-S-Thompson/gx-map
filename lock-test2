@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: lock-test2,v 1.1 2006-04-05 13:28:27-07 kst Exp $
+# $Id: lock-test2,v 1.2 2006-04-05 18:13:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/lock-test2,v $
 
 use strict;
@@ -9,6 +9,7 @@ use Time::HiRes ();
 use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
 
 sub Trace($);
+sub Timestamp();
 sub Get_Hostname();
 sub Get_Lock();
 sub Release_Lock();
@@ -45,6 +46,13 @@ sub Trace($) {
 
 # ----------------------------------------------------------------------
 
+sub Timestamp() {
+    my($sec, $usec) = Time::HiRes::gettimeofday;
+    return sprintf "%010d.%06d", $sec, $usec;
+} # Timestamp
+
+# ----------------------------------------------------------------------
+
 sub Get_Hostname() {
     local($SIG{__WARN__}) = sub { };
     return Net::Domain::hostfqdn;
@@ -63,6 +71,8 @@ sub Get_Hostname() {
 sub Get_Lock() {
     open my $lock, '>', $Local_Lock_File
         or die "$Local_Lock_File: $!\n";
+    my $timestamp = Timestamp;
+    print $lock, "Locked by $hostname PID $$ at $timestamp\n";
     close $lock;
 
     if (link $Local_Lock_File, $Lock_File) {
@@ -78,6 +88,7 @@ sub Get_Lock() {
         }
         else {
             Trace "Failed to get lock: $link_error";
+            unlink $Local_Lock_File;
             return 0;
         }
     }
