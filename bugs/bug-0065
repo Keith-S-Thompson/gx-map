@@ -1,4 +1,4 @@
-# $Id: bug-0065,v 1.1 2006-01-25 18:13:00-08 kst Exp $
+# $Id: bug-0065,v 1.2 2006-04-06 03:07:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0065,v $
 
 gx-map bug 0065
@@ -6,7 +6,7 @@ Date: Wed 2006-01-25
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
-Status: Open
+Status: Fixed 0.5.0e8
 Title: Automatically remove stale locks
 
 Summary:
@@ -32,3 +32,10 @@ An intermediate solution might be to provide a new tool (gx-unlock?)
 that checks for lock files, prints its best guess about whether they
 can be safely removed, and asks whether to remove them (or goes ahead
 and removes them with a "-force" option).
+
+Fix:
+Created gx-remove-locks tool (interactive).
+
+Fixed:
+gx-remove-locks.in 1.1
+gx-map release 0.5.0e8
