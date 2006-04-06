@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.40 2006-03-14 16:03:44-08 kst Exp $
+# $Id: gx-request.in,v 1.41 2006-04-05 21:23:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -60,7 +60,7 @@ BEGIN {
 }
 use Gridmap_Utils ();
 
-my $Default_Data_Dir = "$Install_Dir/var";
+my $Default_Data_Dir = "$Install_Dir/gx-map-data";
 
 sub Usage(@);
 sub Long_Usage();
