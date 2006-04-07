@@ -1,4 +1,4 @@
-# $Id: bug-0065,v 1.2 2006-04-06 03:07:24-07 kst Exp $
+# $Id: bug-0065,v 1.3 2006-04-06 23:50:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0065,v $
 
 gx-map bug 0065
@@ -7,7 +7,7 @@ Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
 Status: Fixed 0.5.0e8
-Title: Automatically remove stale locks
+Title: Remove stale locks
 
 Summary:
 Both gx-check-requests and gx-ca-update create lock files in the var
@@ -36,6 +36,12 @@ and removes them with a "-force" option).
 Fix:
 Created gx-remove-locks tool (interactive).
 
+The original title of this bug was "Automatically remove stale locks".
+On further thought, I've decided that *automatically* removing stale
+locks is a bad idea.  If a stale lock exists, it's likely to be
+because the program that created it crashed; a human should track
+down the cause before re-enabling the system.
+
 Fixed:
-gx-remove-locks.in 1.1
+gx-remove-locks.in 1.2
 gx-map release 0.5.0e8
