@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.13 2006-04-05 21:27:55-07 kst Exp $
+# $Id: Relnotes,v 1.14 2006-04-07 00:13:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -21,6 +21,8 @@ Release 0.5.1, date TBD
     made in release 0.4.5.)
 
     The gx-cleanup-logs command is new.
+
+    The gx-remove-locks command is new.
 
     The optional gx-propagate command is new.
 
