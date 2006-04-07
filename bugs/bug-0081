@@ -1,4 +1,4 @@
-# $Id: bug-0081,v 1.2 2006-04-05 20:58:33-07 kst Exp $
+# $Id: bug-0081,v 1.3 2006-04-06 23:50:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0081,v $
 
 gx-map bug 0081
@@ -45,6 +45,9 @@ file has increased to 2.  It's not at all clear (to me) how this can
 happen, why the link() call would have failed, and whether the lock
 file then actually exists.  (Presumably it must; otherwise another
 process could also get a lock.)
+
+See also the "Lock files on NFS" thread on comp.unix.programmer,
+starting Thu 2006-04-06.
 
 Fixed:
 Gridmap_Utils.pm.in 1.168
