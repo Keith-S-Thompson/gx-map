@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.58 2006-04-05 21:23:59-07 kst Exp $
+# $Id: install-gx-map.in,v 1.59 2006-04-06 23:51:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -82,10 +82,10 @@ if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
 fi
 
 BIN_FILES="gx-request"
-SBIN_FILES="gx-check-requests gx-cleanup-logs gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins"
+SBIN_FILES="gx-check-requests gx-cleanup-logs gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins gx-remove-locks"
 OPTIONAL_SBIN_FILES="gx-propagate"
 LIB_FILES="Gridmap_Utils.pm"
-ETC_FILES="LICENSE README README.CA README.CA-Security README.Cross-Site README.TeraGrid README.Upgrade Relnotes gx-map.odp gx-map.ppt gx-map.pdf"
+ETC_FILES="LICENSE README README.CA README.CA-Security README.Cross-Site README.TeraGrid README.Upgrade Relnotes"
 # CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
