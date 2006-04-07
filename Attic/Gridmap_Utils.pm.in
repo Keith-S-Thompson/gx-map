@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.171 2006-04-06 00:55:06-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.172 2006-04-06 18:13:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -235,7 +235,7 @@ sub Check_Data_Dir() {
    my $install_dir = $Gridmap_Utils::Config{INSTALL_DIR};
    my $data_dir    = $Gridmap_Utils::Config{DATA_DIR};
     if (    -l "$install_dir/gx-map-data" and
-	not -d "$install_dir/gx-map-data/.")
+        not -d "$install_dir/gx-map-data/.")
     {
         die "    $install_dir/gx-map-data\n" .
             "is a symbolic link to\n" .
@@ -2158,7 +2158,7 @@ sub Get_Lock($) {
     my($name) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname;
     my $lock_file
-	= "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
+        = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
     Gridmap_Utils::Untaint $lock_file;
     Gridmap_Utils::Untaint $unique_lock_file;
@@ -2171,18 +2171,20 @@ sub Get_Lock($) {
         #
         # Got lock
         #
-        return;
+        unlink $unique_lock_file;
     }
     else {
         my $link_error = $!;
         my @stat = stat $unique_lock_file;
         if (@stat and $stat[3] == 2) {
             #
-            # Got lock, but link failed.
+            # Got lock, but link failed.  This can happen due to
+            # NFS latencies; I'm not 100% sure of the details.
+            # See the Linux open(2) man page; see also the
+            # "Lock files on NFS" thread on comp.unix.programmer,
+            # starting Thu 2006-04-06.
             #
-            # I'm not sure how this can happen, but the Linux open(2)
-            # man page claims this indicates the lock was successful.
-            #
+            unlink $unique_lock_file;
             return;
         }
         else {
@@ -2218,19 +2220,15 @@ sub Get_Lock($) {
 # ----------------------------------------------------------------------
 
 #
-# Delete the lock file(s) created by Get_Lock().
+# Delete the lock file created by Get_Lock().
 #
 sub Release_Lock($) {
     my($name) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname;
     my $lock_file
-	= "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
-    my $unique_lock_file = "$lock_file.$hostname.$$";
-
+        = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
     Untaint $lock_file;
-    Untaint $unique_lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
-    unlink $unique_lock_file or die "$unique_lock_file: $!\n";
 } # Release_Lock
 
 # ----------------------------------------------------------------------
