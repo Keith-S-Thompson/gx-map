@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-remove-locks.in,v 1.1 2006-04-06 03:09:32-07 kst Exp $
+# $Id: gx-remove-locks.in,v 1.2 2006-04-06 23:49:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-remove-locks.in,v $
 
 ########################################################################
@@ -78,64 +78,76 @@ if ($User_Opt->{version}) {
 
 my $Data_Dir = "$Install_Dir/gx-map-data";
 
+$| = 1;
+
 Gridmap_Utils::Check_Data_Dir;
 Gridmap_Utils::Require_Owner $Program_Name;
 
-opendir my $Dir_Handle, $Data_Dir or die "$Data_Dir: $!\n";
-my @lock_files = sort grep /^\..*\.lock$/, readdir $Dir_Handle;
-closedir $Dir_Handle;
+my @lock_files = qw( .gx-ca-update.lock
+                     .gx-check-requests.lock );
 
-if (not @lock_files) {
-    print "No lock files in $Data_Dir\n";
-    exit 0;
-}
+my $found_lock_file = 0;
 
-my @lock_info = ();
 my $now = time;
 foreach my $lock_file (@lock_files) {
-    $lock_file = "$Data_Dir/$lock_file";
-    my $ref = {};
-    my $mtime = Gridmap_Utils::Get_mtime $lock_file;
+    my $lock_file_path = "$Data_Dir/$lock_file";
+    next if not -e $lock_file_path;
+    $found_lock_file = 1;
+
+    my $mtime = Gridmap_Utils::Get_mtime $lock_file_path;
+    my $modified = undef;
     my $line = undef;
-    $ref->{name} = $lock_file;
     if (defined $mtime) {
         my $delta = $now - $mtime;
-        $ref->{modified} = "Modified at " .
-                           Gridmap_Utils::Time_Image($mtime) .
-                           " ($delta second(s) ago)\n";
+        my $s = ($delta == 1 ? '' : 's');
+        $modified = "Modified at " .
+                    Gridmap_Utils::Time_Image($mtime) .
+                    " ($delta second$s ago)";
     }
-    if (open my $handle, '<', $lock_file) {
-        my $line = scalar <$handle>;
-        if (defined $line) {
-            chomp $line;
-            $ref->{line} = $line;
-        }
+    if (open my $handle, '<', $lock_file_path) {
+        $line = scalar <$handle>;
+        chomp $line if defined $line;
         close $handle;
     }
-    push @lock_info, $ref;
-}
 
-$| = 1;
+    print "$lock_file_path:\n";
+    if (defined $line) {
+        print "$line\n";
+    }
+    else {
+        print "[Unable to determine contents of lock file]\n";
+    }
+    if (defined $modified) {
+        print "$modified\n";
+    }
+    else {
+        print "[Unable to determine age of lock file]\n";
+    }
 
-foreach my $ref (@lock_info) {
-    print "$ref->{name}:\n";
-    if (defined $ref->{line}) {
-        print "$ref->{line}\n";
-    }
-    if (defined $ref->{modified}) {
-        print "$ref->{modified}\n";
-    }
-    print "\n";
-    print "Remove? [yn] ";
-    my $response = scalar <STDIN>;
-    if ($response =~ /^y/i) {
-        if (unlink $ref->{name}) {
-            print "Removed.\n";
+    TRY:
+    while (1) {
+        print "Remove? [yn] ";
+        my $response = scalar <STDIN>;
+        if ($response =~ /^y/i) {
+            if (unlink $lock_file_path) {
+                print "Removed.\n";
+            }
+            else {
+                warn "$lock_file_path: $!\n";
+            }
+            last TRY;
+        }
+        elsif ($response =~ /^n/i) {
+            last TRY;
         }
         else {
-            warn "$ref->{name}: $!\n";
+            print "Unrecognized response\n";
         }
     }
+}
+
+if (not $found_lock_file) {
+    print "No lock files found in $Data_Dir\n";
 }
 
 ########################################################################
@@ -147,8 +159,9 @@ Usage: $Program_Name [options] [files]
     -help              : Display this message and exit.
     -version           : Display version information and exit.
 
-Check the status of any lock files in the gx-map data directory,
-and remove them on request.
+Check the status of any lock files in the gx-map data directory.
+For each lock file found, ask whether to remove it.
+Non-interactive use is not supported.
 EOF
     exit 1;
 }
