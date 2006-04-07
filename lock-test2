@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: lock-test2,v 1.2 2006-04-05 18:13:17-07 kst Exp $
+# $Id: lock-test2,v 1.3 2006-04-06 17:21:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/lock-test2,v $
 
 use strict;
@@ -69,6 +69,8 @@ sub Get_Hostname() {
 # If the lock does exist, die.
 #
 sub Get_Lock() {
+    my $result;
+
     open my $lock, '>', $Local_Lock_File
         or die "$Local_Lock_File: $!\n";
     my $timestamp = Timestamp;
@@ -77,21 +79,22 @@ sub Get_Lock() {
 
     if (link $Local_Lock_File, $Lock_File) {
         Trace "got lock";
-        return 1;
+        $result = 1;
     }
     else {
         my $link_error = $!;
         my @stat = stat $Local_Lock_File;
         if (@stat and $stat[3] == 2) {
             Trace "got lock (but link failed: $link_error)";
-            return 1;
+            $result = 1;
         }
         else {
             Trace "Failed to get lock: $link_error";
-            unlink $Local_Lock_File;
-            return 0;
+            $result = 0;
         }
     }
+    unlink $Local_Lock_File;
+    return $result;
 } # Get_Lock
 
 # ----------------------------------------------------------------------
@@ -100,20 +103,10 @@ sub Get_Lock() {
 # Delete the lock file created by Get_Lock().
 #
 sub Release_Lock() {
-    my $message;
-    if (unlink $Local_Lock_File) {
-        $message = "deleted local lock";
-    }
-    else {
-        $message = "failed to delete local lock: $!";
-    }
-
     if (unlink $Lock_File) {
-        $message .= ", released lock";
+        Trace "released lock";
     }
     else {
-        $message .= ", failed to release lock: $!";
+        Trace "failed to release lock: $!";
     }
-
-    Trace $message;
 } # Release_Lock
