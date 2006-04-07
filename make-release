@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.17 2005-12-30 00:30:31-08 kst Exp $
+# $Id: make-release,v 1.18 2006-04-07 00:16:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -73,3 +73,4 @@ try cd ..
 
 try cd ..
 try tar zcf gx-map-$num.tar.gz gx-map-$num
+try rm -rf gx-map-$num
