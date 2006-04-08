@@ -1,4 +1,4 @@
-# $Id: bug-0082,v 1.1 2006-04-07 20:32:56-07 kst Exp $
+# $Id: bug-0082,v 1.2 2006-04-08 15:17:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0082,v $
 
 gx-map bug 0082
@@ -36,15 +36,15 @@ Proposed fix:
 Ideally, I'd like the argument to the "-certificate-file" option to
 be optional, but that's not practical.
 
-Add another option, "-my-certificate", to specify the user's
-default certificate.
-
-And add yet another option, "-default-dn" that's equivalent to
-"-proxy" if a proxy exists, or to "-my-certificate" if it doesn't.
-In fact, consider dropping the "-proxy" and "-my-certificate" options
-altogether, and using just "-default-dn"; you can always specify a
+And a new option, "-default-dn" that's equivalent to "-proxy" if
+a proxy exists, or to "-my-certificate" if it doesn't.  Drop the
+"-proxy", and using just "-default-dn"; you can always specify a
 certificate file my name anyway (K.I.S.S.).
 
 The simplest usage would then be:
     gx-request -add -default-dn
 which could be recommended for most users rather than interactive mode.
+
+In fact, add these options:
+    gx-request -quick-add    (equivalent to -add -default-dn)
+    gx-request -quick-remove (equivalent to -remove -default-dn)
