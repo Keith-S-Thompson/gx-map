@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.42 2006-04-09 00:19:08-07 kst Exp $
+# $Id: gx-request.in,v 1.43 2006-04-09 00:38:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -174,9 +174,9 @@ if (defined $User_Opt->{'quick-add'} or
     }
     my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add' : 'quick-remove';
     my $conflict = 0;
-    foreach my $other_opt ( qw( add remove remove-dn remove-user set
-                                update default-dn certificate-file
-                                dn-list-file ) )
+    foreach my $other_opt ( qw( interactive add remove remove-dn
+                                remove-user set update default-dn
+                                certificate-file dn-list-file ) )
     {
         if (defined $User_Opt->{$other_opt}) {
             $conflict = 1;
