@@ -1,4 +1,4 @@
-# $Id: gx-map-security.7.pod,v 1.4 2006-02-22 20:22:43-08 kst Exp $
+# $Id: gx-map-security.7.pod,v 1.5 2006-04-09 00:40:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
 
 =for comment
@@ -95,7 +95,7 @@ user beyond confirming that the command is run by the user; it doesn't
 prompt for the user's password.
 
 All transactions are logged.  In fact, a transaction log (the
-F<var/requests.log> file) is the central data structure for the system.
+F<gx-map-data/requests.log> file) is the central data structure for the system.
 If an attacker did manage to create a bogus mapping, the log would
 record the time of the request and the name of the host on which it
 was done.
@@ -104,7 +104,7 @@ was done.
 
 The B<gx-request> command is unprivileged.  It runs under the
 user's account, and it creates a request file in the world-writable
-F<var/new-requests> subdirectory under the B<gx-map> installation
+F<gx-map-data/new-requests> subdirectory under the B<gx-map> installation
 directory.  A user could easily grab a copy of the B<gx-request> script
 and modify it, or manually create a bogus request file.  Therefore the
 B<gx-map> system does not depend on B<gx-request> operating properly.
@@ -113,8 +113,8 @@ by the B<gx-check-requests> command.
 
 =head2 B<gx-check-requests>
 
-The B<gx-check-requests> command checks for new request files in
-the F<var/new-requests> directory.  This is a privileged (but not
+The B<gx-check-requests> command checks for new request files in the
+F<gx-map-data/new-requests> directory.  This is a privileged (but not
 setuid) command, to be executed only by the owner of the B<gx-map>
 installation.  The F<requests.log> file is owned by the B<gx-map>
 owner, and cannot be modified by anyone else.
@@ -142,8 +142,8 @@ non-root chown is allowed.
 
 =head2 B<gx-gen-mapfile>
 
-The B<gx-gen-mapfile> command generates a new F<grid-mapfile>
-from the F<var/requests.log> file created by B<gx-check-requests>.
+The B<gx-gen-mapfile> command generates a new F<grid-mapfile> from
+the F<gx-map-data/requests.log> file created by B<gx-check-requests>.
 No special privileges are required, other than the ability to read
 the input file.
 
