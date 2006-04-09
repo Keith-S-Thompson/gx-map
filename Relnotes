@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.14 2006-04-07 00:13:46-07 kst Exp $
+# $Id: Relnotes,v 1.15 2006-04-09 14:31:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -27,39 +27,45 @@ Release 0.5.1, date TBD
     The optional gx-propagate command is new.
 
     New command-line options for gx-request:
-	-set		    Set mappings for the specified user, giving
-			    zero or more DNs which replace all existing
-			    DNs for that user.
-	-proxy		    Extract a DN from the user's current grid
-			    proxy certificate.
-	-dn-list-file       Read a list of DNs from a specified text file.
-		            Used only with the "-set" option.
+    (The -quick-add and -quick-remove options are intended to replace
+    most of the need for the -interactive option.)
+        -quick-add          Add a mapping for the user's current proxy
+                            or user certificate.
+        -quick-remove       Remove a mapping for the user's current proxy
+                            or user certificate.
+        -set                Set mappings for the specified user, giving
+                            zero or more DNs which replace all existing
+                            DNs for that user.
+        -default-dn         Extract a DN from the user's current proxy
+                            or user certificate.
+        -dn-list-file       Read a list of DNs from a specified text file.
+                            Used only with the "-set" option.
     The "-secondary" option has been removed.
 
     New command-line options for gx-check-requests:
-	-[no]propagate	    Invoke gx-propagate as appropriate.
-			    Has no effect if gx-propagate is not installed.
-	-dryrun		    Passed to the gx-propagate command.
-			    Has no effect if gx-propagate is not installed.
+        -[no]propagate      Invoke gx-propagate as appropriate.
+                            Has no effect if gx-propagate is not installed.
+        -dryrun             Passed to the gx-propagate command.
+                            Has no effect if gx-propagate is not installed.
     The "-namespace" option has been removed.
 
     New command-line options for gx-gen-mapfile:
-	-compatible	    Generate a grid-mapfile compatible with both
-			    GT2 and GT3/GT4.  (This was the default
-			    behavior in earlier gx-map releases.)
-			    By default, the grid-mapfile is compatible
-			    only with GT3/GT4.
-	-merge-file file    Merge an existing grid-mapfile into the
-			    generated grid-mapfile
-	-[no]rcs	    Check the generated grid-mapfile into RCS.
-			    The default is "-rcs"; use "-norcs"
-			    to disable.
-	-force		    Force an update regardless of the timestamps
-			    of the input and output files.
+        -compatible         Generate a grid-mapfile compatible with both
+                            GT2 and GT3/GT4.  (This was the default
+                            behavior in earlier gx-map releases.)
+                            By default, the grid-mapfile is compatible
+                            only with GT3/GT4.
+        -merge-file file    Merge an existing grid-mapfile into the
+                            generated grid-mapfile
+        -[no]rcs            Check the generated grid-mapfile into RCS.
+                            The default is "-rcs"; use "-norcs"
+                            to disable.
+        -force              Force an update regardless of the timestamps
+                            of the input and output files.
     New command-line options for gx-ca-update:
-	-ca-list            Specify a text file containing a list of CAs.
-	-permissions	    Specify octal permissions for installed files;
-			    default is 444.
+        -ca-list            Specify a text file containing a list of CAs.
+        -permissions        Specify octal permissions for installed files;
+                            default is 444.
     The "-all-cas" option has been removed.
 
     A number of minor bugs have been corrected (none of them are
@@ -83,9 +89,9 @@ Release 0.5.1, date TBD
     individual commands and file formats.
 
     Some subdirectories of the installation directory have been renamed:
-	"etc" --> "etc/gx-map"
-	"var" --> "gx-map-data"
-	    (this is still a symlink to a separate directory)
+        "etc" --> "etc/gx-map"
+        "var" --> "gx-map-data"
+            (this is still a symlink to a separate directory)
     This allows gx-map to be installed directly under $GLOBUS_LOCATION
     or another installation directory if desired.  Of course, it can
     still be installed in its own directory.
@@ -145,7 +151,7 @@ Release 0.5.1, date TBD
 
     Dropped the idea of "secondary" mappings.  A grid-mapfile entry
     can map a single DN to multiple user names, separated by commas:
-	"/O=Foo/OU=Bar/CN=John Doe" jdoe,johnd,sys123
+        "/O=Foo/OU=Bar/CN=John Doe" jdoe,johnd,sys123
     In gx-map 0.4.X, this was handled by requiring the user to treat
     some mappings as "secondary", a feature that turned out to be
     extremely error-prone.  Now the most recently added mapping
