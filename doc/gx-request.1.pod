@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.5 2006-02-17 19:20:08-08 kst Exp $
+# $Id: gx-request.1.pod,v 1.6 2006-04-09 00:40:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -64,13 +64,12 @@ S<gx-request -long-help>
 B<gx-request> is the client program for the B<gx-map> system.
 It's used to submit a request for an update to the Globus grid-mapfile.
 
-B<gx-request> is normally run in interactive mode, with the
-I<-interactive> option.  Options can also be specified on the
-command line; use the I<-long-help> option to display the full
-set of options.
+B<gx-request> may be run either in interactive mode, with the
+I<-interactive> option, or with all options specified on the command
+line.  Use the I<-long-help> option to display the full set of options.
 
 The B<gx-request> command creates a request file in the
-F<var/new-requests> directory under the B<gx-map> installation
+F<gx-map-data/new-requests> directory under the B<gx-map> installation
 directory.  This directory is world-writable, so the B<gx-request>
 command requires no special privileges.  The request file is later
 validated and processed by the B<gx-check-requests> command.
@@ -94,6 +93,20 @@ Display a brief usage message and exit.
 
 Display the software version number and exit.
 
+=item B<-quick-add>
+
+Add a mapping for your current certificate.  The DN is determined
+by examining your current proxy certificate (B<$X509_USER_PROXY> or
+F</tmp/x509up_uNNN>, where F<NNN> is your numeric UID), or, if you
+don't have a current proxy, your user certificate (B<$X509_USER_CERT>
+or F<$HOME/.globus/usercert.pem>).  Asks for verification before
+submitting the request (unless the B<-quiet> or B<-force> option
+is specified).
+
+=item B<-quick-remove>
+
+Remove the mapping for your current certificate.
+
 =item B<-long-help>
 
 Display a complete usage message and exit.  The usage message contains
@@ -108,15 +121,16 @@ Run interactively.  Other options will be ignored.
 
 =head1 INTERACTIVE MODE
 
-End users should normally use B<gx-request> in interactive mode
-by entering the command S<C<gx-request -interactive>> (which may be
-abbreviated to S<C<gx-request -int>>.
+The most common operations can be performed with the B<-add-quick>
+and B<-add-remove> options.  For more complex operations, interactive
+mode is recommended.  This is done by executing S<C<gx-request
+-interactive>> (which may be abbreviated to S<C<gx-request -int>>.
 
-In this mode, the B<gx-request> command interactively prompts
-the user to enter all the required information.  This information
-includes the kind of request (add, remove, etc.), the DN (which may
-be entered directly or extracted from a certificate or proxy file),
-an optional e-mail address, and an optional comment.  If B<gx-request>
+In this mode, the B<gx-request> command interactively prompts the user
+to enter all the required information.  This information includes the
+kind of request (add, remove, etc.), the DN (which may be entered
+directly or extracted from a proxy or user certificate file), an
+optional e-mail address, and an optional comment.  If B<gx-request>
 is executed in interactive mode by an administrator, it may prompt
 for additional information.
 
@@ -131,9 +145,9 @@ This is recommended only for administrative use, such as in a script
 performing multiple updates in batch mode.
 
 Exactly one of the following options may be specified:
-B<"-interactive">, B<"-add">, B<"-remove">, B<"-remove-dn">,
-B<"-remove-user">, B<"-set">, B<"-update">, B<"-help">, B<"-usage">,
-B<"-long-usage">.
+B<-interactive>, B<-add-quick>, B<-remove-quick>, B<-add>, B<-remove>,
+B<-remove-dn>, B<-remove-user>, B<-set>, B<-update>, B<-help>,
+B<-usage>, B<-long-usage>.
 
 =over
 
@@ -160,7 +174,8 @@ Set mappings for a specified user.  Zero or more distinguished
 names may be specified.  This is equivalent to a B<"remove-user">
 request followed by zero or more B<"add"> requests.
 
-The B<-proxy> and B<-certificate-file> options may not be used with B<-set>.
+The B<-default-dn> and B<-certificate-file> options may not be used
+with B<-set>.
 
 This option is not currently available in interactive mode.
 
@@ -182,28 +197,26 @@ B<gx-request> will ask for confirmation before proceeding.
 =item B<-no-admin>
 
 Assume the user is not a gx-map administrator.  This is intended for
-developer testing only.  This has no effect for a non-administrator
+developer testing only.  This has no effect for a non-administrator.
 
 =item B<-dn "string">
 
 Specify a distinguished name (also known as a subject name).
-By default, this is extracted from your user certificate,
-F<$HOME/.globus/usercert.pem>, if it exists.
 
-=item B<-proxy>
+=item B<-default-dn>
 
-Extract the distinguished name from a proxy certificate, either
-B<$X509_USER_PROXY> or F</tmp/x509up_uNNN>, where NNN is a numeric
-user id.
+Extract the distinguished name from your current certificate.
+
+If you have a current proxy certificate (either B<$X509_USER_PROXY> or
+F</tmp/x509up_uNNN>, where NNN is your numeric UID), it will use that.
+Otherwise, if you have a user certificate (either B<$X509_USER_CERT>
+or F<$HOME/.globus/usercert.pem>), it will use that.  Otherwise,
+you will need to specify the DN in some other way.
 
 =item B<-certificate-file file>
 
 Extract the distinguished name from the specified X509 certificate
 file.
-
-If none of B<"-dn">, B<"-proxy">, or B<"-certificate-file"> is
-specified, the distinguished name (if needed) is extracted from
-B<$X509_USER_CERT> or F<$HOME/.globus/usercert.pem>.
 
 =item B<-force-dn>
 
@@ -218,10 +231,10 @@ administrators only.
 =item B<-directory dir>
 
 Specify an alternate data directory.  This option is for use by
-gx-map administrators only, and is not recommended.  The default data
-directory is the F<var> subdirectory of the B<gx-map> installation
-(which is a symbolic link to the directory specified by the B<DATA_DIR>
-option in the installation configuration file).
+gx-map administrators only, and is not recommended.  The default
+data directory is the F<gx-map-data> subdirectory of the B<gx-map>
+installation (which is a symbolic link to the directory specified by
+the B<DATA_DIR> option in the installation configuration file).
 
 =item B<-email addr>
 
