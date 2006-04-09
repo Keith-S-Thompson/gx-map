@@ -1,4 +1,4 @@
-# $Id: gx-map-gridmap-utils.3.pod,v 1.3 2006-02-17 19:20:08-08 kst Exp $
+# $Id: gx-map-gridmap-utils.3.pod,v 1.4 2006-04-09 00:40:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/Attic/gx-map-gridmap-utils.3.pod,v $
 
 =for comment
@@ -100,9 +100,9 @@ The B<gx-map> system, especially the B<gx-check-requests> command, uses
 files downloaded from ftp or web servers.  Rather than re-downloading
 the files each time they're used, the C<Cache_File()> function
 implements a caching mechanism.  Cached copies of downloaded files
-are stored under the F<var/cache/> subdirectory.  The name of each
-cache file is derived from the URL; the mapping is similar to the
-quoted-printable encoding.
+are stored under the F<gx-map-data/cache/> subdirectory.  The name
+of each cache file is derived from the URL; the mapping is similar
+to the quoted-printable encoding.
 
 The C<Cache_File()> function takes a single argument, a URL.
 It returns a record (a hash reference) which includes the name of the
