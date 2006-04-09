@@ -1,4 +1,4 @@
-# $Id: gx-propagate.8.pod,v 1.3 2006-03-21 01:37:36-08 kst Exp $
+# $Id: gx-propagate.8.pod,v 1.4 2006-04-09 00:40:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-propagate.8.pod,v $
 
 =for comment
@@ -60,11 +60,12 @@ S<gx-propagate [options]>
 =head1 DESCRIPTION
 
 B<gx-propagate>, part of the B<gx-map> system, is an optional plug-in
-command invoked by the B<gx-check-requests> command.  Two versions are
-provided in the B<gx-map> distribution: a TeraGrid-specific version
-that communicates with the B<TGCDB> (TeraGrid Central DataBase), and a
-dummy test version that merely logs its arguments to F<var/gx-propagate.log>
-under the B<gx-map> installation directory.
+command invoked by the B<gx-check-requests> command.  Two versions
+are provided in the B<gx-map> distribution: a TeraGrid-specific
+version that communicates with the B<TGCDB> (TeraGrid Central
+DataBase), and a dummy test version that merely logs its arguments
+to F<gx-map-data/gx-propagate.log> under the B<gx-map> installation
+directory.
 
 The TeraGrid-specific version of the B<gx-propagate> command adds
 the specified information to the B<TGCDB>.  This information is then
