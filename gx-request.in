@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.41 2006-04-05 21:23:59-07 kst Exp $
+# $Id: gx-request.in,v 1.42 2006-04-09 00:19:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -70,8 +70,8 @@ sub Get_Options_From_Command_Line();
 sub Request_Update();
 sub Get_DN_From_Certificate($);
 sub Get_DNs_From_List_File($);
-sub User_Cert_File_Name();
 sub Proxy_File_Name();
+sub User_Cert_File_Name();
 sub Gen_Request_File_Name($);
 sub Clone($);
 sub Unique(@);
@@ -82,8 +82,12 @@ sub Debugf(@);
 my $Program_Name = File::Basename::basename $0;
 my $hostname;
 my $Now = Gridmap_Utils::Get_Time_Of_Day;
-my $proxy_file = Proxy_File_Name;
-my $user_cert_file = User_Cert_File_Name;
+my $proxy_file        = Proxy_File_Name;
+my $user_cert_file    = User_Cert_File_Name;
+my $default_cert_file =
+    defined $proxy_file     ? $proxy_file     :
+    defined $user_cert_file ? $user_cert_file :
+    undef;
 
 if ($Program_Name eq 'gx-request') {
     # ok
@@ -130,12 +134,13 @@ my $User_Opt = { dn => [] };
 my @Opts = ( $User_Opt,
              qw( help long-help version
                  interactive
+                 quick-add quick-remove
                  add
                  remove remove-dn remove-user
                  set
                  update
                  quiet force no-admin
-                 dn=s@ certificate-file=s proxy dn-list-file=s
+                 dn=s@ certificate-file=s default-dn dn-list-file=s
                  username=s
                  directory=s
                  email=s
@@ -153,6 +158,44 @@ if ($User_Opt->{version}) {
 }
 
 $Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+
+#
+# The -quick-add option is mapped to -add -default-dn
+# The -quick-remove option is mapped to -remove -default-dn
+#
+if (defined $User_Opt->{'quick-add'} or
+    defined $User_Opt->{'quick-remove'})
+{
+    if (defined $User_Opt->{'quick-add'} and
+        defined $User_Opt->{'quick-remove'})
+    {
+        Usage "The -quick-add and -quick-remove options " .
+              "cannot be used together\n";
+    }
+    my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add' : 'quick-remove';
+    my $conflict = 0;
+    foreach my $other_opt ( qw( add remove remove-dn remove-user set
+                                update default-dn certificate-file
+                                dn-list-file ) )
+    {
+        if (defined $User_Opt->{$other_opt}) {
+            $conflict = 1;
+        }
+    }
+    if (scalar @{$User_Opt->{dn}} > 0) {
+        $conflict = 1;
+    }
+    if ($conflict) {
+        Usage "The $opt option cannot be used with other options\n";
+    }
+    $User_Opt->{'default-dn'} = 1;
+    if ($opt eq 'quick-add') {
+        $User_Opt->{add} = 1;
+    }
+    else {
+        $User_Opt->{remove} = 1;
+    }
+}
 
 Gridmap_Utils::Check_Data_Dir;
 
@@ -553,8 +596,11 @@ sub User_Cert_File_Name() {
     if (defined $ENV{X509_USER_CERT} and -r $ENV{X509_USER_CERT}) {
         return $ENV{X509_USER_CERT};
     }
-    else {
+    elsif (-r "$ENV{HOME}/.globus/usercert.pem") {
         return "$ENV{HOME}/.globus/usercert.pem";
+    }
+    else {
+        return undef;
     }
 } # User_Cert_File_Name
 
@@ -1032,13 +1078,14 @@ sub Get_Options_From_Command_Line() {
 
     my $dn_count = scalar @dn_list +
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
-                   (defined $User_Opt->{proxy} ? 1 : 0);
+                   (defined $User_Opt->{'default-dn'} ? 1 : 0);
 
     if ($OP eq 'set' and
         ( defined $User_Opt->{'certificate-file'} or
-          defined $User_Opt->{proxy} ))
+          defined $User_Opt->{'default-dn'} ))
     {
-        Usage "Do not use \"-certificate-file\" or \"-proxy\" with \"-set\"\n";
+        Usage "Do not use \"-certificate-file\" or \"-default-dn\" " .
+              "with \"-set\"\n";
     }
     elsif ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
         Usage "Do not specify a user name with \"-$OP\"\n";
@@ -1113,12 +1160,12 @@ sub Get_Options_From_Command_Line() {
         }
         else {
             my $cert_file;
-            if (defined $User_Opt->{proxy}) {
-                if (defined $proxy_file) {
-                    $cert_file = $proxy_file;
+            if (defined $User_Opt->{'default-dn'}) {
+                if (defined $default_cert_file) {
+                    $cert_file = $default_cert_file;
                 }
                 else {
-                    Usage "Cannot determine name of proxy certificate\n";
+                    Usage "Cannot determine name of default certificate\n";
                 }
             }
             elsif (defined $User_Opt->{'certificate-file'}) {
@@ -1211,12 +1258,17 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Program_Name [options]
 Option names may be abbreviated.
-    -help         : Show this message and exit.
-    -version      : Show version information and exit.
-    -long-help    : Show long usage message (recommended only for
-                    gx-map administrators and masochists)
-    -interactive  : Run interactively (recommended)
-                    In interactive mode, other options will be ignored.
+    -help            : Show this message and exit.
+    -version         : Show version information and exit.
+    -quick-add       : Add a mapping for your current certificate.
+                       Asks for verification before submitting request.
+    -quick-remove    : Remove the mapping for your current certificate.
+                       Asks for verification before submitting request.
+    -interactive     : Run interactively.
+                       In interactive mode, other options will be ignored.
+    -long-help       : Show long usage message, explaining all
+                       command-line options (recommended only for gx-map
+                       administrators and masochists).
 EOF
     exit 1;
 } # Usage
@@ -1230,11 +1282,16 @@ Usage: $Program_Name [options]
 Option names may be abbreviated.
     -help                   : Show a brief usage message and exit.
     -version                : Show version information and exit.
-    -interactive            : Run interactively (recommended).
+    -quick-add              : Add a mapping for your current certificate.
+                              Equivalent to -add -default-dn.
+    -quick-remove           : Remove the mapping for your current certificate.
+                              Equivalent to -remove -default-dn.
+    -interactive            : Run interactively.
                               The "set" operation is not currently
                               available in interactive mode.
-    -long-help              : Show this long usage message (recommended
-                              only for gx-map administrators and masochists).
+    -long-help              : Show long usage message, explaining all
+                              command-line options (recommended only
+                              for gx-map administrators and masochists).
     -add                    : Add the specified mapping.
     -remove                 : Remove the specified mapping.
     -remove-dn              : Remove all mappings for the specified
@@ -1246,16 +1303,16 @@ Option names may be abbreviated.
                               more DNs may be specified.  This is
                               equivalent to a "remove-user" request
                               followed by zero or more "add" requests.
-                              The "-proxy" and "-certificate-file" options
+                              The "-default-dn" and "-certificate-file" options
                               cannot be used with "-set".  This operation
                               is not available in "-interactive" mode.
     -update                 : Request an update of all grid-mapfiles.
                               This normally isn't necessary, but it can be
                               useful if you already have a certificate and
                               get a new account on a machine.
-Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
-      "-remove-user", "-set", and "-update"
-      (or "-help", "-usage", or -long-usage) must be specified.
+Note: Exactly one of -interactive, -quick-add, -quick-remove,
+      -add, -remove, -remove-dn, -remove-user, -set, and -update
+      (or -help, -usage, or -long-usage) must be specified.
 ------------------------------------------------------------------------
     -quiet                  : Work silently.
                               Implies -force.
@@ -1266,18 +1323,12 @@ Note: Exactly one of "-interactive", "-add", "-remove", "-remove-dn",
                               Intended for testing only; has no effect if
                               you're not already a gx-map administrator.
     -dn "string"            : Distinguished name.
-                              Default is extracted from
-                              \$X509_USER_CERT or \$HOME/.globus/usercert.pem
-    -proxy                  : Extract DN from proxy certificate.
+    -default-dn             : Extract DN from proxy or user certificate.
     -certificate-file file  : Name of file from which to extract DN.
-                              If neither "-dn", "-proxy", nor
-                              "-certificate-file" is specified,
-                              extract DN from \$X509_USER_CERT or
-                              \$HOME/.globus/usercert.pem .
     -dn-list-file file      : Read a list of DNs from a specified text file,
                               one DN per line.  Use "-dn-list-file -" to read
                               from stdin.  This cannot be used with other
-                              DN options (-dn, -proxy, -certificate-file),
+                              DN options (-dn, -default-dn, -certificate-file),
                               or with any operation other than "-set".
     -force-dn               : Normally, gx-request (minimally) checks
                               the DN for proper syntax; this option
