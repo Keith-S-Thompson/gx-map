@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.175 2006-04-09 14:33:15-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.176 2006-04-11 16:58:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -155,7 +155,7 @@ sub DN_Error(@);
 sub GT2_Subject($);
 sub GT4_Subject($);
 sub DN_List($);
-sub Strip_Proxy_Info($);
+sub Normalize_DN($);
 
 sub Send_Email($$$$);
 
@@ -2071,15 +2071,15 @@ sub GT4_Subject($) {
 #
 # Given a string, delete all trailing occurrences of "/CN=proxy" or
 # "/CN=[0-9]+", converting a DN for a proxy certificate to the DN for
-# the corresponding user certificate.
+# the corresponding user certificate, and convert to GT4 form.
 # 
-sub Strip_Proxy_Info($) {
+sub Normalize_DN($) {
     my($string) = @_;
     while ($string =~ m</CN=proxy$> or $string =~ m</CN=[0-9]+$>) {
         $string =~ s</[^/]*$><>;
     }
-    return $string;
-} # Strip_Proxy_Info
+    return GT4_Subject $string;
+} # Normalize_DN
 
 # ----------------------------------------------------------------------
 
