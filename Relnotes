@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.15 2006-04-09 14:31:01-07 kst Exp $
+# $Id: Relnotes,v 1.16 2006-04-12 02:02:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -17,7 +17,7 @@ Release 0.5.1, date TBD
     "gx-request".  For backward compatibility, it's still available as
     "gx-map", but that may be removed in a future release.  The idea
     is to avoid confusion between the name of the client program and
-    the name of the package as a whole.  (Ths change was actually
+    the name of the package as a whole.  (This change was actually
     made in release 0.4.5.)
 
     The gx-cleanup-logs command is new.
@@ -25,6 +25,14 @@ Release 0.5.1, date TBD
     The gx-remove-locks command is new.
 
     The optional gx-propagate command is new.
+
+    Man pages have finally been added.  The documentation is written
+    in Perl's "POD" format and automatically converted to man page
+    format during configuration.  The raw *.pod files are also
+    installed in the "doc" subdirectory.  The gx-map(7) man page
+    provides an overview of the system.  The gx-map-security(7) man
+    page discusses security considerations.  Other man pages document
+    individual commands and file formats.
 
     New command-line options for gx-request:
     (The -quick-add and -quick-remove options are intended to replace
@@ -79,14 +87,6 @@ Release 0.5.1, date TBD
     information from one TeraGrid site to another.  The interface is
     intended to be extensible (it remains to be seen whether it lives
     up the intent).  See the gx-propagate(8) man page for details.
-
-    Man pages have finally been added.  The documentation is written
-    in Perl's "POD" format and automatically converted to man page
-    format during configuration.  The raw *.pod files are also
-    installed in the "doc" subdirectory.  The gx-map(7) man page
-    provides an overview of the system.  The gx-map-security(7) man
-    page discusses security considerations Other man pages document
-    individual commands and file formats.
 
     Some subdirectories of the installation directory have been renamed:
         "etc" --> "etc/gx-map"
