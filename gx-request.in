@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.43 2006-04-09 00:38:14-07 kst Exp $
+# $Id: gx-request.in,v 1.44 2006-04-11 17:00:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -342,21 +342,10 @@ if ($Options->{operation} ne 'remove-dn') {
 # Translate the DN(s) to the proper form.
 # Strip trailing components from a proxy DN.
 # Translate to the newer GT3/GT4 form.
-# If the DN was modified, notify the user.
 #
-my $dn_was_modified = 0;        # True if DN was modified in any way
 my @new_dns = ();
 foreach my $dn (@{$Options->{dn}}) {
-    my $new_dn = Gridmap_Utils::Strip_Proxy_Info
-                      Gridmap_Utils::GT4_Subject
-                          $dn;
-    if ($new_dn ne $dn) {
-        $dn_was_modified = 1;
-    }
-    push @new_dns, $new_dn;
-}
-if ($dn_was_modified) {
-    $Options->{dn} = \@new_dns;
+    $dn = Gridmap_Utils::Normalize_DN $dn;
 }
 
 my @dn_list = Unique @{$Options->{dn}};
@@ -397,9 +386,6 @@ if (not $Options->{quiet}) {
     }
     elsif ($Options->{operation} eq 'remove-user') {
         print "$Removing all mappings for user $Options->{username}\n";
-    }
-    if ($dn_was_modified) {
-        print "The distinguished name was modified to a compatible format\n";
     }
 }
 if (not $Options->{force}) {
@@ -968,6 +954,7 @@ EOF
                     chomp($dn = scalar <STDIN>);
                     $dn =~ s/^"//;
                     $dn =~ s/"$//;
+                    $dn = Gridmap_Utils::Normalize_DN $dn;
                 }
                 elsif ($response =~ /^x/) {
                     exit 0;
@@ -979,6 +966,7 @@ EOF
                 if (defined $cert_file) {
                     $dn = Get_DN_From_Certificate $cert_file;
                     if ($dn =~ /^\//) {
+                        $dn = Gridmap_Utils::Normalize_DN $dn;
                         print "DN is \"$dn\"\n";
                     }
                     else {
@@ -999,10 +987,9 @@ EOF
         #
         print Strip <<"EOF";
         > 
-        > You are encouraged to provide your e-mail address.
+        > You may provide your e-mail address if you wish.
         > It will be recorded in the request log, and may be used
         > to contact you if there is a problem with your certificate.
-        > It will not be added to a mailing list without your consent.
 EOF
         print "E-mail address (<return> for none): ";
         chomp($response = scalar <STDIN>);
