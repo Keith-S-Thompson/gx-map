@@ -1,4 +1,4 @@
-# $Id: gx-map-security.7.pod,v 1.5 2006-04-09 00:40:55-07 kst Exp $
+# $Id: gx-map-security.7.pod,v 1.6 2006-04-12 02:05:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
 
 =for comment
@@ -53,7 +53,7 @@ gx-map-security - Security considerations in B<gx-map>
 
 =head1 DESCRIPTION
 
-The B<gx-map> system has to major parts: a set of programs
+The B<gx-map> system has two major parts: a set of programs
 used to maintain a Globus F<grid-mapfile>, and a program to
 maintain a Globus F<certificates> directory (both located under the
 F</etc/grid-security/> directory by default).  Both components address
@@ -95,10 +95,10 @@ user beyond confirming that the command is run by the user; it doesn't
 prompt for the user's password.
 
 All transactions are logged.  In fact, a transaction log (the
-F<gx-map-data/requests.log> file) is the central data structure for the system.
-If an attacker did manage to create a bogus mapping, the log would
-record the time of the request and the name of the host on which it
-was done.
+F<gx-map-data/requests.log> file) is the central data structure for
+the system.  If an attacker did manage to create a bogus mapping,
+the log would record the time of the request and the name of the host
+on which it was done.
 
 =head2 B<gx-request>
 
