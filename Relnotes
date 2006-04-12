@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.16 2006-04-12 02:02:35-07 kst Exp $
+# $Id: Relnotes,v 1.17 2006-04-12 02:03:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -269,7 +269,7 @@ Release 0.4.0, 2004-11-26
         gx-convert-log converts data from a previous gx-map
         installation for use with gx-map 0.4.
 
-        gx-admins reads an existing requests.log file and guesss which
+        gx-admins reads an existing requests.log file and guess which
         users are treated as administrators (useful when upgrading
         from gx-map 0.3).
 
