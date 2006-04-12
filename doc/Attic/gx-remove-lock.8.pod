@@ -1,4 +1,4 @@
-# $Id: gx-remove-lock.8.pod,v 1.1 2006-04-06 23:48:45-07 kst Exp $
+# $Id: gx-remove-lock.8.pod,v 1.2 2006-04-12 15:15:28-07 kst dead $
 # $Source: /home/kst/gx-map-redacted/doc/Attic/gx-remove-lock.8.pod,v $
 
 =for comment
