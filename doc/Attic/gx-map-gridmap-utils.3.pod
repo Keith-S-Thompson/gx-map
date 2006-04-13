@@ -1,4 +1,4 @@
-# $Id: gx-map-gridmap-utils.3.pod,v 1.4 2006-04-09 00:40:55-07 kst Exp $
+# $Id: gx-map-gridmap-utils.3.pod,v 1.5 2006-04-12 19:17:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/Attic/gx-map-gridmap-utils.3.pod,v $
 
 =for comment
@@ -142,4 +142,4 @@ Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
 =head1 COPYRIGHT AND LICENSE
 
 See the file F<LICENSE> in the B<gx-map> distribution, installed in
-the F<etc> subdirectory.
+the F<etc/gx-map> subdirectory.
