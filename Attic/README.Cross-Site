@@ -1,5 +1,11 @@
-# $Id: README.Cross-Site,v 1.3 2005-11-30 20:38:16-08 kst Exp $
+# $Id: README.Cross-Site,v 1.4 2006-04-12 19:19:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Cross-Site,v $
+
+***************************************************************
+* This file is obsolete, and is no longer distributed with    *
+* the gx-map release.  The information has been incorporated  *
+* into the INSTALL file.                                      *
+***************************************************************
 
 gx-map has some limited support for automatically propagating
 grid-mapfile information across sites.
