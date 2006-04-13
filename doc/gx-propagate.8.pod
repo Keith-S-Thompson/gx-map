@@ -1,4 +1,4 @@
-# $Id: gx-propagate.8.pod,v 1.5 2006-04-12 19:17:37-07 kst Exp $
+# $Id: gx-propagate.8.pod,v 1.6 2006-04-12 23:34:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-propagate.8.pod,v $
 
 =for comment
@@ -103,7 +103,7 @@ Display a usage message and exit.
 
 Display the software version number and exit.
 
-=item B<-source name>
+=item B<-source> I<name>
 
 Specify the source attribute of the mapping request.  This is a short
 string specifying to the origin of the mapping.  For the TeraGrid
@@ -132,11 +132,11 @@ Propagate a "remove-dn" request, removing all mappings for a specified DN.
 Propagate a "remove-user" request, removing all mappings for a
 specified user.
 
-=item B<-username name>
+=item B<-username> I<name>
 
 Specify the user name (not necessary for a B<-remove-dn> request).
 
-=item B<-dn "string">
+=item B<-dn> I<"string">
 
 Specify the DN (Distinguished Name) (not necessary for a
 B<-remove-user> request).
