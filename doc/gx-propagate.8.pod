@@ -1,4 +1,4 @@
-# $Id: gx-propagate.8.pod,v 1.4 2006-04-09 00:40:55-07 kst Exp $
+# $Id: gx-propagate.8.pod,v 1.5 2006-04-12 19:17:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-propagate.8.pod,v $
 
 =for comment
@@ -170,3 +170,17 @@ The B<-requests-log> option of B<gx-gen-mapfile> is part of an older
 and more limited mechanism for propagating information across systems
 within a single site.  Using this option together with B<gx-propagate>
 is not recommended.
+
+=head1 SEE ALSO
+
+gx-map(7), gx-request(1), gx-check-requests(8), gx-propagate(8),
+gx-gen-mapfile(8), gx-map-security(7)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
