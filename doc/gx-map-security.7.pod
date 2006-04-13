@@ -1,4 +1,4 @@
-# $Id: gx-map-security.7.pod,v 1.6 2006-04-12 02:05:14-07 kst Exp $
+# $Id: gx-map-security.7.pod,v 1.7 2006-04-12 19:17:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
 
 =for comment
@@ -62,6 +62,36 @@ an attacker to compromise a system.
 
 This man page discusses the security aspects of both subsystems.
 
+=head1 GENERAL SECURITY ISSUES
+
+The B<gx-map> system is designed to maintain the grid-mapfile and
+certificate files used by Globus.  These files are critical to the
+security of any system providing Globus services, and any errors
+in these files (deliberate or otherwise) can open security holes,
+either allowing a user to access another user's account, or allowing
+an outside attacker to gain access to the system.
+
+A single Unix account must be chosen to install, own, and run the
+B<gx-map> system.  If possible, this should be an account dedicated
+to the purpose (such as "gxmap").  Access to this account must be
+carefully secured.
+
+By installing, deploying, and using this software, you are trusting its
+author with the security of your system.  (You can limit this trust by
+using "paranoid mode"; see below.)  I promise that I have done my best
+to make this software as secure as possible.  I do not promise that I
+have succeeded.  See the F<LICENSE> file for the legalese.  (This isn't
+anything unusual; the same is true of most security-related software.)
+
+Historically, in the past several years that various versions of
+gx-map have been used at SDSC and other sites, there has been only one
+exploitable security hole that I'm aware of.  This hole only occurred
+in rare circumstances, was exploited exactly once (in my own testing
+with the permission of the target user), and was corrected in the
+following release.
+
+I<Be careful out there.>
+
 =head1 GRID-MAPFILE MAINTENANCE
 
 As discussed in the B<gx-map(7)> man page, F<grid-mapfile> maintenance
@@ -83,7 +113,7 @@ A user is allowed to map an arbitrary DN to his own account, but may
 not map a DN to any other account.  No checking is done to confirm
 that the user can use the certificate corresponding to the DN.
 This does allow a possible denial-of-service attack: an attacker
-could deliberately map a victim's DN to his the attacker's account,
+could deliberately map a victim's DN to the attacker's account,
 denying the victim access to his own account.  But this would give
 the victim access to the attacker's account.
 
@@ -104,12 +134,13 @@ on which it was done.
 
 The B<gx-request> command is unprivileged.  It runs under the
 user's account, and it creates a request file in the world-writable
-F<gx-map-data/new-requests> subdirectory under the B<gx-map> installation
-directory.  A user could easily grab a copy of the B<gx-request> script
-and modify it, or manually create a bogus request file.  Therefore the
-B<gx-map> system does not depend on B<gx-request> operating properly.
-The information in the request file is not trusted; it's validated
-by the B<gx-check-requests> command.
+F<gx-map-data/new-requests> subdirectory under the B<gx-map>
+installation directory.  A user could easily grab a copy of the
+B<gx-request> script and modify it, or manually create a bogus request
+file.  Therefore the B<gx-map> system does not depend on B<gx-request>
+operating properly.  The information in the request file is not
+trusted; it is carefully validated by the B<gx-check-requests> command.
+Bad requests are detected and separately logged.
 
 =head2 B<gx-check-requests>
 
@@ -127,7 +158,7 @@ For a request submitted by a non-administrative user,
 B<gx-check-requests> confirms that the specified Unix user name matches
 the account that owns the request file.  For an administrative request,
 it confirms that the file is owned by a B<gx-map> administrator
-(this is typically the "globus" account).
+(this is typically the "gxmap" or "globus" account).
 
 Most Unix filesystems do not allow non-root users to use chown.
 The B<gx-map> security model depends on this.  If non-root chown
@@ -155,7 +186,8 @@ This should make it impossible for any program to see a partial
 F<grid-mapfile>.
 
 By default, B<gx-gen-mapfile> checks the generated F<grid-mapfile>
-into an RCS directory.  This provides a history of any changes.
+into an RCS directory.  This provides a history of any changes,
+in addition to the information in the F<requests.log> file.
 
 B<gx-gen-mapfile> writes the generated F<grid-mapfile> to a location
 specified  on the command line.  Typically the location is the
@@ -182,24 +214,27 @@ bogus CA files.  It would be fairly straightforward to generate a
 bogus signing certificate with the same subject name as a recognized
 CA, and use it to issue a bogus user certificate.  If the forged CA
 certificate can be installed in F</etc/grid-security/certificates>,
-Globus will accept it.
+Globus will accept it.  The permissions on the F</etc/grid-security>
+and F</etc/grid-security/certificates> directories must not allow
+updates by untrusted users.  (The B<gx-map> system does not currently
+confirm this.)
 
 For each CA, the B<gx-map> system includes a cadesc file,
-F<etc/ca-config/xxxxxxxx.name.cadesc>, containing information about
-the CA.  This information includes the URLs from which the required
-files can be downloaded, the MD5 and SHA1 fingerprints of the signing
-certificate, and several other things.
+F<etc/gx-map/ca-config/xxxxxxxx.name.cadesc>, containing information
+about the CA.  This information includes the URLs from which the
+required files can be downloaded, the MD5 and SHA1 fingerprints of
+the signing certificate, and several other things.
 
 B<gx-ca-update> normally installs the F<xxxxxxxx.0> and
 F<xxxxxxxx.signing_policy> files only once, on the initial run.
 The F<xxxxxxxx.0> file is downloaded from the specified URL nd checked
 against the MD5 and SHA1 fingerprints specified in the cadesc file.
 (This should guard against an attacker hacking the web server and
-substituting a bogus certificate).  The signing_policy file is not
-downloaded; it's generated from information in the cadesc file.
-This allows for a more restrictive signing policy than specified by
-the CA; it also ensures that the installed signing_policy file works
-with all version of Globus from GT2 to GT4.
+substituting a bogus certificate).  The signing_policy file is
+not downloaded; instead, it is generated from information in the
+cadesc file.  This allows for a more restrictive signing policy than
+specified by the CA; it also ensures that the installed signing_policy
+file works with all version of Globus from GT2 to GT4.
 
 Certificate and CRL files are downloaded using the B<curl> command.
 The B<curl> command is invoked with the C<"--insecure"> option, which
@@ -217,7 +252,7 @@ B<gx-ca-update> then confirms that the CRL was cryptographically
 signed by the corresponding CA certificate before installing it.
 
 If a current CRL is installed, Globus will reject any certificate
-listed in the CRL.  If the CRL has expired, all certificates issued
+listed in the CRL.  If the CRL has expired, I<all> certificates issued
 by the CA will be rejected.  If the CRL is removed, all certificates
 issued by the CA will be accepted (including certificates that have
 been revoked).
@@ -227,7 +262,7 @@ the web server is down), B<gx-ca-update> will leave the expired CRL
 in place.  It can optionally remove the CRL just before it expires;
 this allows continued use of certificates, but it's insecure.
 B<gx-ca-update> has a number of command-line options to control its
-behavior; those that might compromise security require the user of
+behavior.  Those that might compromise security require the user of
 an explicit "-UNSAFE" option.
 
 =head1 SEE ALSO
@@ -241,4 +276,4 @@ Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
 =head1 COPYRIGHT AND LICENSE
 
 See the file F<LICENSE> in the B<gx-map> distribution, installed in
-the F<etc> subdirectory.
+the F<etc/gx-map> subdirectory.
