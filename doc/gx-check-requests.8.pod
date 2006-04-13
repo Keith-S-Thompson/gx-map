@@ -1,4 +1,4 @@
-# $Id: gx-check-requests.8.pod,v 1.5 2006-04-12 19:17:36-07 kst Exp $
+# $Id: gx-check-requests.8.pod,v 1.6 2006-04-12 23:34:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-check-requests.8.pod,v $
 
 =for comment
@@ -91,7 +91,7 @@ Display a usage message and exit.
 
 Display the software version number and exit.
 
-=item B<-copy file>
+=item B<-copy> I<file>
 
 Copy the F<requests.log> file to the specified location (e.g., to
 make it visible via a web server).  The file's mode is set to 444
