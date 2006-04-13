@@ -1,122 +1,52 @@
-# $Id: README.Upgrade,v 1.6 2005-05-07 03:52:11-07 kst Exp $
+# $Id: README.Upgrade,v 1.7 2006-04-12 19:24:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.Upgrade,v $
 
 As of release 0.4.5, the client command for the gx-map system has been
 renamed from "gx-map" to "gx-request".  For backward compatibility, the
 "gx-map" command is still available as a symbolic link to "gx-request".
 
-Upgrading from gx-map 0.4.X to 0.4.5.
+Upgrading to 0.5.1.
+===================
 
-The data files for all 0.4.* releases are compatible, but the
-installation procedure assumes that you want to create a new data
-directory.  For example, you should be able to install gx-map 0.4.5
-and then copy your 0.4.1 data directory, replacing the 0.4.5 data
-directory, but this has not yet been tested.  You might want to
-consider waiting for a new gx-map release, which should have a more
-sophisticated configuration and installation procedure.
+The data files (particularly the requests.log file) for gx-map 0.5.X
+are incompatible with the data files for gx-map 0.4.X.
 
-Upgrading from gx-map 0.3 to 0.4.5.
+Install gx-map 0.5.1 as described in INSTALL.  This will create an
+initial empty requests.log file.
 
-If you've been using gx-map 0.3, you'll have an existing gx-map
-data directory from which your current grid-mapfile is generated.
-The "var" subdirectory of the gx-map installation directory is a
-symlink to your data directory.
+You then need to feed your existing grid-mapfile entries into the
+new gx-map installation.  There are two ways to do this.
 
-The files you should have in your var directory are:
+1. Use the gx-ingest command on your existing grid-mapfile.  This will
+   generate a shell script that invokes gx-request for each entry.
+   Carefully check the script for accuracy, then run it.
 
-    bad-requests/
-        This directory should normally be empty.
+-- OR --
 
-    good-requests/
-        This directory contains an annotated version of each user
-        request.
+2. If you have an existing gx-map installation (release 0.3 or
+   later), you can translate your existing requests.log file using
+   the gx-convert-log command.  If you want to change the set of user
+   accounts that have administrative privileges, use the "-old-admins"
+   and "-new-admin" options.  Optionally run gx-cleanup-logs to delete
+   or comment out redundant requests (such as an add request followed
+   by a corresponding remove request).
 
-    ncsa-sdsc-user-map
-        This is obsolete; you can ignore it.
+   Install the generated requests.log file in the gx-map-data
+   directory.
 
-    new-requests/
-        New user requests are deposited here.  It should be empty;
-        if not, run "gx-check-requests" to clean it out.  It may also
-        contain a ".update" file, which can be ignored.
+If you have an existing gx-map installation, you may have entries for
+accounts that don't currently exist on your system.  These entries
+will not be included in the generated grid-mapfile, but you might
+want to keep them; they'll appear if the accounts are created later,
+or if they exist on other systems within your site.  If you translate
+the requests.log file (option 2), these entries will be included
+automatically.  If you instead process your existing grid-mapfile,
+consider using your old installation's "gx-gen-mapfile -all" command
+to generate a grid-mapfile that contains all the entries.
 
-    requests.log
-        This is the most important file in the data directory.  It is
-        a history of all the valid gx-map requests that have been
-        made since you installed the gx-map system; the grid-mapfile
-        is generated from this log.
-
-    RCS/requests.log,v
-        Every time the requests.log file is updated, it's checked
-        into RCS.  The RCS directory isn't used by the gx-map system,
-        but you can examine it to check the history.
-
-To upgrade from gx-map 0.3 to 0.4.5:
-
-1.  Create a new configuration file for your gx-map-0.4.5 installation.
-    Use "sample.conf" as a template.  The INSTALL_DIR and DATA_DIR
-    should be new directories; do not attempt to install gx-map-0.4.5
-    on top of your existing gx-map-0.3 installation.
-
-    When you create your configuration file, carefully consider
-    which user accounts should have administrative access (i.e.,
-    should be able to request mappings on behalf of other users).
-    I recommend using a single non-root non-human account for this,
-    either "globus" or a special account created for the purpose.
-    Using root can cause problems on NFS partitions where "root" is
-    mapped to "nobody".  Using a human account like, say, "jsmith" can
-    cause problems if the user in question leaves your organization;
-    if you remove "jsmith" from the set of administrators, some
-    existing transactions may no longer be recognized.  If you use a
-    generic account like "globus", you can control access by giving
-    your administrators access to that account.
-
-    Remember that access to an administrative account allows creation
-    of a grid-mapfile entry for any user, enabling access to that
-    account.  Guard it as closely as you guard your "root" account.
-
-    Install gx-map-0.4.3 in a new directory (not on top of your
-    existing gx-map-0.3 directory); see INSTALL for details.
-
-2.  Shut down the gx-check-requests and gx-gen-mapfile cron jobs.
-
-3.  Grab and save a tarball of your existing gx-map data directory
-    in case you need to refer to it later.
-
-4.  Use the gx-convert-log command to translate your old requests.log
-    file for use with gx-map 0.4.5.  The format is upward-compatible,
-    but gx-convert-log will add some new fields.
-
-    The gx-admins command scans a requests.log file and determines which
-    user accounts are treated as administrators.  The gx-convert-log
-    command can optionally translate the log to change the set of
-    administrators.  For example:
-
-        gx-convert-log -old-admins jsmith,jdoe -new-admin globus
-
-    Or you're free to continue with the same administrative accountsh
-    you've been using.
-
-    The installation procedure creates an empty requests.log file in
-    the var directory.  Once you've translated your old requests.log
-    file, install it in the var directory and set its permissions.
-
-5.  Modify your cron jobs to invoke the gx-map 0.4.5 commands
-    and re-enable them.  You should initially write the generated
-    grid-mapfile to a temporary directory and check it against your
-    existing one.  Note that gx-map-0.4.5 generates both GT2-style
-    and GT3/GT4-style grid-mapfile entries.  If you're using
-    expand-grid-mapfile along with gx-map-0.3, you can compare your
-    new grid-mapfile to a sorted copy of your existing one.  If not,
-    something like this should work:
-
-        egrep -v '/UID=|/Email=' new-grid-mapfile | \
-            diff /etc/grid-security/grid-mapfile -
-
-    The only differences should be the comment lines at the top.
-
-6.  Make the new gx-map package available to users, and disable
-    gx-map 0.3.
+There are also some TeraGrid-specific considerations; see
+README.TeraGrid for details.
 
 If you have any questions, please feel free to contact me.
 
-                -- Keith Thompson <kst@sdsc.edu> 2005-05-07
+                -- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
