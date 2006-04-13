@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.4 2006-04-12 19:17:36-07 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.5 2006-04-12 23:07:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -119,7 +119,7 @@ representations of certian fields in DNs.  The affected fields are:
 The B<-compatible> option causes duplicate entries to be generated
 for DNs containing these fields.
 
-=item B<-merge-file file.
+=item B<-merge-file file>
 
 Merge an existing grid-mapfile into the generated file.  This option
 may be given multiple times, e.g.:
