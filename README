@@ -1,19 +1,24 @@
-# $Id: README,v 1.25 2005-09-01 21:30:18-07 kst Exp $
+# $Id: README,v 1.26 2006-04-12 19:24:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
-========================================================================
-TODO:
-Update this for release 0.5.x
-========================================================================
-
 This is gx-map, a system for automated updates of Globus grid-mapfiles
-and CA files.
+and CA files.  The current release is 0.5.1.  The primary documentation
+is in the man pages (new in release 0.5.1) and on the gx-map web site,
+<http://users.sdsc.edu/~kst/gx-map/>.
 
-The "gx-request" command is used to request the addition or
-deletion of an entry in the grid-mapfile.  Users should normally run
-"gx-request -interactive" and follow the instructions.  (Prior to
-release 0.4.5, the "gx-request" command was called "gx-map"; it can
-still be invoked by that name.)
+The "gx-request" command is used to request the addition or deletion
+of an entry in the Globus grid-mapfile.  In the simplest case, users
+can run "gx-request -quick-add"; this will generate a request to add
+a mapping for the DN extracted from the user's default proxy or user
+certificate, asking for verification before submitting the request.
+"gx-request -quick-remove" generates a removal request.  For more
+complex actions, users can run "gx-request -interactive" and follow
+the instructions, or use other command-line options.  Run "gx-request
+-help" or see the gx-request(1) man page for details.
+
+(Prior to release 0.4.5, the "gx-request" command was called "gx-map";
+it can still be invoked by the old name, but it will be removed in
+a future release.)
 
 A user may map an arbitrary DN (distinguished name) to his own
 Unix account.  An administrator (as specified in the config file)
@@ -24,40 +29,30 @@ particular, certificates issued by the NPACI and SDSC certificate
 authorities (cacl) are automatically mapped to the corresponding
 user account.  This is handled by a separate tool (not included here)
 that watches for updates in the cacl index file and invokes gx-request.
-(This applies only to systems within the SDSC namespace.)
+This applies only to systems within the SDSC namespace.  Other sites
+may implement similar tools.
 
-All commands accept a "-help" option to print a brief usage
-message and a "-version" option to display the current version.
-The gx-gx-request command also accepts a "-long-help" option with
-information on non-interactive use.
+All commands accept a "-help" option to print a brief usage message and
+a "-version" option to display the current version.  The gx-request
+command also accepts a "-long-help" option with information on
+non-interactive use.
 
-Support for propagation of information across sites is still
-incomplete.  (The new SOURCE attribute is intended to enable tracking
-where each transaction was entered.)
+The 0.5.1 release adds support for propagation of information across
+sites, using the optional gx-propagate command.
 
 The gx-ca-update command (new in release 0.4.0) handles automated
 installation and maintenance of certificate, signing_policy, and CRL
 files for CAs (Certificate Authorities).
 
-Documentation is still somewhat lacking, but see the following files
-for information:
+
 
     README              This file, general information
-    README.CA           Information about the gx-ca-update command.
-    README.CA-SECURITY  Security-specific information about gx-ca-update .
     README.TeraGrid     TeraGrid-specific information (which may also
                         be of interest for non-TeraGrid sites).
     README.Upgrade      Upgrading from gx-map 0.3 to 0.4.X.
     README.Cross-Site   Using gx-map across multiple sites.
 
-I gave a brief presentation on gx-map at GlobusWorld 2004.  An expanded
-version of the PowerPoint slides from that presentation can be found
-in gx-map.ppt in this distribution; gx-map.pdf is the same presentation
-in PDF format.
+The README, README.*, and Relnotes files are installed in the
+etc/gx-map subdirectory when you install gx-map.
 
-The README, README.*, Relnotes, gx-map.ppt, and gx-map.pdf files are
-installed in the etc subdirectory when you install gx-map.
-
-Future releases will include man pages.
-
-                -- Keith Thompson <kst@sdsc.edu> 2005-05-07
+                -- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
