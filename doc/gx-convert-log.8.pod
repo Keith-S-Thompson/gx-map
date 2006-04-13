@@ -1,4 +1,4 @@
-# $Id: gx-convert-log.8.pod,v 1.3 2006-03-21 02:01:43-08 kst Exp $
+# $Id: gx-convert-log.8.pod,v 1.4 2006-04-12 19:17:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-convert-log.8.pod,v $
 
 =for comment
@@ -133,4 +133,13 @@ much of the audit trail information from the old F<requests.log> file.
 
 =head1 SEE ALSO
 
-gx-map(7), gx-admins(8) gx-cleanup-logs(8)
+gx-map(7), gx-map-requests-log(5), gx-cleanup-logs(8)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
