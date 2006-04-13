@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.10 2006-04-12 22:43:47-07 kst Exp $
+# $Id: gx-map.7.pod,v 1.11 2006-04-12 23:34:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =for comment
@@ -65,9 +65,9 @@ to B<gx-request>; see the B<gx-request(1)> man page for more information.
 
 =head1 GRID-MAPFILE MAINTENANCE
 
-A F<grid-mapfile> is a plain text file used for user authorization
-by the B<Globus> toolkit.  Each line maps a I<distinguished name>
-(also known as a I<DN> or I<subject name> to a Unix account name.
+A F<grid-mapfile> is a plain text file used for user authorization by
+the B<Globus> toolkit.  Each line maps a I<distinguished name> (also
+known as a I<DN> or I<subject name> to one or more Unix account names.
 
 F<grid-mapfile> maintenance is done in three phases.
 
@@ -122,7 +122,7 @@ of "paranoid mode" in the B<gx-map-security(7)> man page.
 There are no options to install only part of the B<gx-map> system.
 If you don't want to use B<gx-map> for F<grid-mapfile> maintenance, you
 might consider replacing the B<gx-request> command with a script that
-prints an error message (and deleting the B<gx-map> symbolic link).
+prints an error message.
 
 =head1 GUARANTEES
 
