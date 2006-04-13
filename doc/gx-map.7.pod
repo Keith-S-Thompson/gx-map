@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.9 2006-04-12 19:17:37-07 kst Exp $
+# $Id: gx-map.7.pod,v 1.10 2006-04-12 22:43:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =for comment
@@ -157,6 +157,8 @@ gx-map-gridmap-utils(3), gx-map-cadesc(5), gx-map-requests-log(5)
 
 Security considerations:
 gx-map-security(7)
+
+The B<gx-map> home page is <http://users.sdsc.edu/~kst/gx-map/>.
 
 =head1 AUTHOR
 
