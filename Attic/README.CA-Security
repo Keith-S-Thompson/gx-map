@@ -1,5 +1,11 @@
-# $Id: README.CA-Security,v 1.8 2005-04-17 16:25:36-07 kst Exp $
+# $Id: README.CA-Security,v 1.9 2006-04-12 19:19:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.CA-Security,v $
+
+***************************************************************
+* This file is obsolete, and is no longer distributed with    *
+* the gx-map release.  The information has been incorporated  *
+* into the gx-ca-update(8) and gx-map-security(7) man pages.  *
+***************************************************************
 
 The gx-ca-update program automatically installs signing certificates,
 CRLs (Certificate Revocation Lists), and signing_policy files for
