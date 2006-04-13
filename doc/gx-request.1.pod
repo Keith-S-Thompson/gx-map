@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.7 2006-04-12 19:17:37-07 kst Exp $
+# $Id: gx-request.1.pod,v 1.8 2006-04-12 23:34:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -199,7 +199,7 @@ B<gx-request> will ask for confirmation before proceeding.
 Assume the user is not a gx-map administrator.  This is intended for
 developer testing only.  This has no effect for a non-administrator.
 
-=item B<-dn "string">
+=item B<-dn> I<"string">
 
 Specify a distinguished name (also known as a subject name).
 
@@ -213,7 +213,7 @@ Otherwise, if you have a user certificate (either B<$X509_USER_CERT>
 or F<$HOME/.globus/usercert.pem>), it will use that.  Otherwise,
 you will need to specify the DN in some other way.
 
-=item B<-certificate-file file>
+=item B<-certificate-file> I<file>
 
 Extract the distinguished name from the specified X509 certificate
 file.
@@ -223,12 +223,12 @@ file.
 Normally B<gx-request> does some minimal syntax checks on the
 distinguished name; this option overrides those checks.
 
-=item B<-username name>
+=item B<-username> I<name>
 
 Unix user name to map or unmap.  This option is for use by gx-map
 administrators only.
 
-=item B<-directory dir>
+=item B<-directory> I<dir>
 
 Specify an alternate data directory.  This option is for use by
 gx-map administrators only, and is not recommended.  The default
@@ -236,7 +236,7 @@ data directory is the F<gx-map-data> subdirectory of the B<gx-map>
 installation (which is a symbolic link to the directory specified by
 the B<DATA_DIR> option in the installation configuration file).
 
-=item B<-email addr>
+=item B<-email> I<addr>
 
 Your contact e-mail address (optional).  This is stored in the
 F<requests.log> file.  It may be used to contact you if there's a
@@ -247,11 +247,11 @@ problem with your certificate.
 This option is ignored.  It's provided for compatibility with B<gx-map>
 release 0.3.  It may be removed in a future release.
 
-=item B<-comment "string">
+=item B<-comment> I<"string">
 
 A comment to be added to the F<requests.log> file.  This is optional.
 
-=item B<-source string>
+=item B<-source> I<string>
 
 Specify the source of the mapping.  This option is for use by gx-map
 administrators only.  The argument may consist only of letters,
