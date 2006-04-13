@@ -1,4 +1,4 @@
-# $Id: gx-convert-log.8.pod,v 1.4 2006-04-12 19:17:36-07 kst Exp $
+# $Id: gx-convert-log.8.pod,v 1.5 2006-04-12 23:34:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-convert-log.8.pod,v $
 
 =for comment
@@ -85,12 +85,12 @@ Display a usage message and exit.
 
 Display the software version number and exit.
 
-=item B<-old-admins name,name>
+=item B<-old-admins> I<name,name>
 
 Specify a list of Unix accounts treated as administrators in the
 input log.  (See B<gx-admins(8)>.)
 
-=item <-new-admin name>
+=item B<-new-admin> I<name>
 
 The administrative account for the output log (only one may be specified).
 
