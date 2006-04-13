@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.6 2006-04-12 19:24:00-07 kst Exp $
+# $Id: README.TeraGrid,v 1.7 2006-04-12 22:45:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here is a set of cron jobs for SDSC's TeraGrid system,
@@ -99,6 +99,46 @@ DNs to a temporary file and use the "-dn-list-file" option:
 
     gx-request -quiet -set -user USERNAME -dn-list TEMP_FILE
 
-Important note
+Initial Deployment Plan:
+========================
+
+One obvious way to deploy gx-map 0.5.1 across TeraGrid sites would
+be to install it, enable propagation via gx-propagate, and feed
+the existing grid-mapfiles into the system via gx-ingest (see the
+corresponding man pages for more information).  The problem with
+this is that it would create a huge flurry of AMIE packets (at least
+some of which need to be processed manually).
+
+So the plan (at least at SDSC) is:
+
+1. Install and deploy gx-map 0.5.1.  Use gx-convert-logs and
+   gx-cleanup-log to create a new requests.log file (bypassing
+   gx-check-requests and gx-propagate), so existing mappings
+   are not propagated through the TGCDB.
+
+2. Temporarily set up the cron job to invoke gx-check-requests with
+   the "-nopropagate" option, so new mappings are not yet propagated
+   either.
+
+3. Generate the new grid-mapfiles and CA files in a new directory,
+   *not* into /etc/grid-security.  Verify that the resulting
+   grid-mapfiles are consistent with existing ones.
+
+4. If everything seems to be working correctly, set up symlinks so that
+   the new grid-mapfiles appear in /etc/grid-security on each system.
+
+5. Meanwhile, test the propagation code.  Once that's reasonably well
+   verified, remove the "-nopropagate" argument to gx-check-requests.
+   From that point on, all new mappings should be propagated to
+   all sites.
+
+Teragrid sites other than SDSC can follow a similar procedure.
+
+Note that the grid-mapfile subsystem is separate from gx-ca-update;
+either can be deployed independently.  For example, if a site doesn't
+choose to use gx-map to maintain its grid-mapfiles, it can still use
+it to maintain its certificates directory, keeping CRLs up to date.
+
+If you have any questions, please feel free to contact me.
 
 		-- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
