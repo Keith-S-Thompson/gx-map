@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.6 2006-04-09 00:40:35-07 kst Exp $
+# $Id: gx-request.1.pod,v 1.7 2006-04-12 19:17:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -264,3 +264,17 @@ B<gx-propagate(8)> man page for more information.
 Enable debugging output.  This is intended for developer testing only.
 
 =back
+
+=head1 SEE ALSO
+
+gx-map(7), gx-check-requests(8), gx-propagate(8), gx-gen-mapfile(8),
+gx-map-security(7)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
