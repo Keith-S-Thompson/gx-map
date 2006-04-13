@@ -1,4 +1,4 @@
-# $Id: gx-map.7.pod,v 1.8 2006-03-21 01:37:36-08 kst Exp $
+# $Id: gx-map.7.pod,v 1.9 2006-04-12 19:17:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map.7.pod,v $
 
 =for comment
@@ -150,7 +150,7 @@ Commands:
 gx-request(1), gx-check-requests(8), gx-propagate(8), gx-gen-mapfile(8), gx-ca-update(8)
 
 Auxiliary commands:
-gx-ingest(8)
+gx-ingest(8), gx-admins(8), gx-convert-log(8), gx-cleanup-logs(8), gx-remove-locks(8)
 
 Modules and file formats:
 gx-map-gridmap-utils(3), gx-map-cadesc(5), gx-map-requests-log(5)
@@ -165,4 +165,4 @@ Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
 =head1 COPYRIGHT AND LICENSE
 
 See the file F<LICENSE> in the B<gx-map> distribution, installed in
-the F<etc> subdirectory.
+the F<etc/gx-map> subdirectory.
