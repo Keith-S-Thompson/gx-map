@@ -1,5 +1,11 @@
-# $Id: README.Prereqs,v 1.6 2005-12-13 00:08:31-08 kst Exp $
+# $Id: README.Prereqs,v 1.7 2006-04-12 19:19:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/README.Prereqs,v $
+
+***************************************************************
+* This file is obsolete, and is no longer distributed with    *
+* the gx-map release.  The information has been incorporated  *
+* into the INSTALL file.                                      *
+***************************************************************
 
 The gx-map system requires several Perl modules.
 Most of them are included in Perl by default, but some might have to
