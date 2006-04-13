@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.44 2006-04-11 17:00:19-07 kst Exp $
+# $Id: gx-request.in,v 1.45 2006-04-12 22:28:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -488,7 +488,7 @@ foreach my $request (@requests) {
 
 unless ($Options->{force} and $Options->{quiet}) {
     print "Mapping request submitted.\n";
-    print "The grid-mapfile(s) should be updated in a few minutes\n";
+    print "The grid-mapfile should be updated in a few minutes\n";
 }
 
 ########################################################################
@@ -643,7 +643,7 @@ sub Request_Update() {
     close $Request;
     if (not $Options->{quiet}) {
         print "Request processed.\n";
-        print "The grid-mapfiles should be updated within a few minutes.\n";
+        print "The grid-mapfile should be updated within a few minutes.\n";
     }
 } # Request_Update
 
@@ -835,9 +835,9 @@ EOF
     if ($Options->{operation} eq 'update') {
         print Strip <<"EOF";
         > 
-        > This will request an immediate update of all grid-mapfiles.
-        > Normally updates are handled automatically, so this is not
-        > usually necessary.
+        > This will request an update of all grid-mapfiles the next
+        > time gx-check-requests is run.  Normally updates are handled
+        > automatically, so this is not usually necessary.
         > 
 EOF
         while (1) {
