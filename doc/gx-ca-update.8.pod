@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.6 2006-04-12 19:17:36-07 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.7 2006-04-12 23:34:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -125,11 +125,6 @@ commas or blanks (in the latter case, the argument must be quoted).
 Name of a text file containing a list of CAs.  This option may be
 given multiple times.
 
-=item B<-all-cas>
-
-Use all available CAs.  There is rarely any good reason to do this.
-Requires the B<-UNSAFE> option.
-
 =item B<-list-cas>
 
 Show a list of available CAs and exit.
@@ -157,7 +152,7 @@ necessarily a problem.  For these CAs, the B<-allow-missing-crl> option
 isn't required.  These CAs are indicated by the B<ALLOW_MISSING_CRL>
 option in the F<*.cadesc> file.
 
-=item B<expire-crl> I<time>
+=item B<-expire-crl> I<time>
 
 Remove a CRL that will expire within I<time>.  The time is expressed as
 a number followed by 's' (seconds), 'm' (minutes), 'h' (hours), or 'd'
