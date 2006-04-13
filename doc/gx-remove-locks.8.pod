@@ -1,4 +1,4 @@
-# $Id: gx-remove-locks.8.pod,v 1.1 2006-04-12 15:15:01-07 kst Exp $
+# $Id: gx-remove-locks.8.pod,v 1.2 2006-04-12 19:17:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-remove-locks.8.pod,v $
 
 =for comment
@@ -98,4 +98,13 @@ Display the software version number and exit.
 
 =head1 SEE ALSO
 
-gx-map(7), gx-ca-update(5), gx-check-requests(8)
+gx-map(7), gx-check-requests(8), gx-ca-update(8)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
