@@ -1,7 +1,11 @@
-# $Id: INSTALL,v 1.5 2006-03-21 01:39:08-08 kst Exp $
+# $Id: INSTALL,v 1.6 2006-04-12 19:24:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
-Installation instructions for gx-map.
+Installation instructions for gx-map 0.5.1
+==========================================
+
+0.  Ensure all prerequisite software is available (see "Prerequisites",
+    below).
 
 1.  Create a configuration file.  See sample.conf in this directory
     for an outline.
@@ -12,7 +16,7 @@ Installation instructions for gx-map.
 3.  In this directory, run
         make install
     This must be done from the administrative account that will own
-    the installed files (typically "globus").
+    the installed files (typically "gxmap" or "globus").
 
 3a. Optionally run
 	make clean
@@ -26,9 +30,6 @@ Installation instructions for gx-map.
 
     4b. Regenerate the grid-mapfile when necessary:
 	    DIR/sbin/gx-gen-mapfile MAPFILE
-	If mapping are to be processed from multiple sources (including
-	web pages), use the "-req" option; for example:
-	    DIR/sbin/gx-gen-mapfile -req default -req URL MAPFILE
 
     4c. The gx-gen-mapfile command checks for updates to the /etc/passwd
 	file.  On systems where new user accounts do not cause the
@@ -38,13 +39,101 @@ Installation instructions for gx-map.
 5.  If you want to use gx-ca-update to maintain CA certificates,
     CRLs, and signing_policy files, set up a cron job:
 
-    DIR/gx-ca-update -target-dir /etc/grid-security/certificates \
-		     -ca-list /etc/grid-security/certificates/.list
+    DIR/gx-ca-update -target-dir TARGET/certificates \
+		     -ca-list TARGET/certificates/.list
 
-    where the ".list" file contains a list of the 8-digit hashes
-    of the CAs you want to recognize.
+    where the ".list" file contains a list of the 8-digit hashes of the
+    CAs you want to recognize.  TARGET can be /etc/grid-security if you
+    want to update the files directly, or you can write the files to a
+    separate directory and create symbolic links in /etc/grid-security.
 
     Run "gx-ca-update -help" for a complete list of options.
 
     Please read the gx-map-security(7) man page before using
     gx-ca-update.
+
+The subsytem that maintains the grid-mapfile (gx-request,
+gx-check-requests, gx-gen-mapfile) is separate from the command that
+maintains certificate files (gx-ca-update).  All commands are always
+installed, but you can run them separately; for example, you might
+use gx-ca-update to maintain your certificates directory, but use
+some other method to maintain the grid-mapfile.
+
+Prerequisites
+=============
+
+The gx-map system requires Perl (version 5.6.0 or higher) and cron.
+
+The required Perl modules are:
+
+    File::Basename  (standard)
+    File::Copy      (standard)
+    Getopt::Long    (standard)
+    Time::Local     (standard)
+    Cwd             (standard)
+
+    Net::Domain     (optional, can get along without it)
+
+    Time::HiRes     (standard in newer versions of Perl)
+
+    DBI             (needed by TeraGrid version of gx-propagate)
+    DBD::Pg         (needed by DBI)
+
+The following external commands are required:
+
+    hostname (used if the Net::Domain module is not available)
+    co, ci, rcs
+    curl
+    openssl
+    mail or mailx (optional)
+
+A secure Unix user account will need to be chosen to own the
+installation and to run the cron jobs.  Anyone with access to this
+account will be able to update security-critical files, so the
+account must be carefully guarded.  Ideally, a dedicated account
+should be used, such as "gxmap".  A good alternative is to use the
+"globus" account, especially if you choose to install gx-map under
+$GLOBUS_LOCATION.  Using a personal account is not recommended.
+
+The gx-map system may *not* be installed, and the cron jobs may not
+be executed, by root or by any account with UID 0.
+
+Cross-site propagation
+======================
+
+gx-map includes support for automatically propagating grid-mapfile
+information across sites.
+
+If you have two or more systems sharing a common user namespace
+(so that a given account name and numeric UID are guaranteed to be
+the same person on both sites), you can share the "requests.log"
+data between them.  It's easiest if they share a common writable
+(NFS?) filesystem; put the data directory on that filesystem, and let
+the systems share it.  Run gx-check-requests on one system (ideally
+one on which all users have accounts), and run gx-gen-mapfile on each
+system that needs a distinct grid-mapfile (e.g., if not all users
+have accounts on all systems).
+
+If there is no shared filesystem, each system can have its own
+data directory, and the requests.log files can be shared via http
+or anonymous ftp.  Use the "-copy" option of gx-check-requests to
+write a copy of the requests.log file to a directory that's made
+available by http or ftp, and use the "-req" option of gx-gen-mapfile
+to specify the URL of the remote requests.log file.  Until recently,
+this feature was used at SDSC to propagate information from SDSC's
+internal systems to SDSC's TeraGrid, Datastar, and Blue Gene systems
+(but not vice versa).  For a large number of systems, this scheme
+can become unwieldy.  I suggest using it only if it's not feasible
+to set up a shared data directory.
+
+The configurable Gridmap_Valid_Mappings.pm Perl module, and the "-dump"
+option to gx-gen-mapfile, are no longer supported in gx-map 0.5.X.
+These features were intended to allow information to be propagated
+across sites, but TeraGrid requirements led to a different mechanism
+being developed.
+
+The optional gx-propagate command is used to propagate mappings
+across sites, even when the sites don't share a common set of user
+account names.  This was developed for the TeraGrid, but is intended
+to be extensible to other systems.  See README.TeraGrid and the
+gx-propagate(8) man page for more information.
