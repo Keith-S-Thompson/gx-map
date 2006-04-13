@@ -1,49 +1,56 @@
-# $Id: README.TeraGrid,v 1.5 2005-05-07 03:52:11-07 kst Exp $
+# $Id: README.TeraGrid,v 1.6 2006-04-12 19:24:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
-Here's a suggested set of cron jobs for SDSC's TeraGrid system,
-tg-login1.sdsc.teragrid.org, running under the "globus" account.
+Here is a set of cron jobs for SDSC's TeraGrid system,
+tg-login2.sdsc.teragrid.org, running under the "gxmap" account.
 Other TeraGrid sites should modify the paths and the namespace
 argument.  Non-TeraGrid sites will require customization as well,
 but can use this as a template.
 
-Sorry about the long lines, but crontab doesn't seem to allow commands
-to be split.
+The lines are shown here with '\' continuation characters.  Crontab
+doesn't actualy allow this, so each command will need to be on a
+single line.
 
-TeraGrid is currently using gx-map-0.4.1; gx-map-0.4.5 has not yet
-been installed, but the cron jobs presented here assume that it has.
+Not all versions of crontab accept the "*/5" syntax.
 
 # minute hour mday month wday command
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/apps/gx-map-0.4.5/sbin/gx-check-requests -namespace SDSC ; /usr/local/apps/gx-map-0.4.5/sbin/gx-gen-mapfile -req default -req ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map-0.4.5/sdsc-data/requests.log /usr/local/apps/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/apps/gx-map-0.4.5/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/apps/grid-security/certificates
+*/5 * * * *   /usr/local/apps/gx-map-0.5.1/sbin/gx-gen-mapfile \
+	/usr/local/apps/grid-security/grid-mapfile
+15,45 * * * * /usr/local/apps/gx-map-0.5.1/sbin/gx-ca-update \
+	-target-dir /usr/local/apps/grid-security/certificates \
+	-ca-list /usr/local/apps/grid-security/certificates/.list
 
-The gx-check-requests command checks for new requests every 5 minutes;
-the requests are validated and appended to the requests.log file.
+The gx-check-requests command is run on an internal SDSC machine, so
+that command is not shown here; the data directory is shared between
+SDSC's internal and TeraGrid systems.
 
-The gx-gen-mapfile command runs after gx-check-requests, and
-generates (when necessary) a new grid-mapfile.  I assume here that
-it's written to the /usr/local/apps/grid-security directory; the
-file /etc/grid-security/grid-mapfile then needs to be a symlink to
-/usr/local/apps/grid-security/grid-mapfile.  The "-req" arguments
-are specific to SDSC; non-SDSC sites should omit them and use only
-the local requests.log file.  (The requests.log on ftp.sdsc.edu does
-not currently exist at the specified URL; contact me for support.)
-(The "ncsa-sdsc-user-map" file from gx-map 0.3 is no longer included
-in the release.  NCSA will need to add a number of entries to their
-local gx-map database; I can help with that.)
+The gx-gen-mapfile command generates (when necessary)
+a new grid-mapfile.  I assume here that it's written
+to the /usr/local/apps/grid-security directory; the file
+/etc/grid-security/grid-mapfile then needs to be a symlink to
+/usr/local/apps/grid-security/grid-mapfile.
 
-Finally, the gx-ca-update command runs every 30 minutes and checks
-for CRL (Certificate Revocation List) updates.  I recommend running
+The gx-ca-update command runs every 30 minutes and checks for
+CRL (Certificate Revocation List) updates.  I recommend running
 gx-ca-update once manually, with the "-verbose" option, to populate
 the certificates directory and see what messages are produced, before
-enabling the cron job.  The arguments to the "-ca" option specify
-the list of CA certificates to be installed.
+enabling the cron job.  The ".list" file contains a list of the CA
+certificates to be installed; each CA is specified by its 8-digit hash.
+This allows the set of supported CAs to be updated without modifying
+the cron job.
 
 For NCSA, the cron jobs might look like this:
 
 # minute hour mday month wday command
-0,5,10,15,20,25,30,35,40,45,50,55 * * * *       /usr/local/gx-map-0.4.5/sbin/gx-check-requests -namespace NCSA ; /usr/local/gx-map-0.4.5/sbin/gx-gen-mapfile /usr/local/grid-security/grid-mapfile
-15,45 * * * *    /usr/local/gx-map-0.4.1/sbin/gx-ca-update -ca 01621954 -ca 1c3f2ca8 -ca 2ca73e82 -ca 34a5e0db -ca 3deda549 -ca 4a6cd8b1 -ca 67e8acfa -ca 85ca9edc -ca 95009ddc -ca 9a1da9f9 -ca aa99c057 -ca b89793e4 -ca d1b603c3 -ca fa9c3452 -target-dir /usr/local/grid-security/certificates
+*/5 * * * *   /usr/local/gx-map-0.5.1/sbin/gx-check-requests ; \
+	/usr/local/gx-map-0.5.1/sbin/gx-gen-mapfile \
+	/usr/local/grid-security/grid-mapfile
+15,45 * * * * /usr/local/gx-map-0.5.1/sbin/gx-ca-update \
+	-target-dir /usr/local/grid-security/certificates \
+	-ca-list /usr/local/grid-security/certificates/.list
+
+Note the addition of the "gx-check-requests" command.  The "-namespace"
+option, required in gx-map release 0.4.X, is no longer required.
 
 By default, gx-ca-update will not install a certificate if there is
 no current corresponding CRL.  If a CRL expires and a new one is not
@@ -52,29 +59,46 @@ certificates issued by the CA.  This behavior is designed to prevent
 a revoked user or host certificate from being recognized (which is
 the whole point of being able to revoke a certificate), but at the
 cost of being unable to use potentially valid certificates in some
-circumstances.  If you wish to sacrifice security for convenience,
-you can invoke gx-ca-update with the "-allow-missing-crl" option,
-which allows a certificate to be installed with no CRL and/or with the
-"-expire-crl" potion, which removes a CRL that is about to expire
-within a specified time if no newer CRL is available.  Both of
-the options are allowed only if you also specify the "-UNSAFE"
-option; the option name is case-senstive and cannot be abbreviated.
-The additional arguments to the gx-ca-update command might then be:
+circumstances.
 
-    -UNSAFE -allow-missing-crl -expire-crl 45m
-
-(The PSC and USC Kerberos CAs issue only short-term certificates and
-don't have CRLs.  Their description files instruct gx-ca-update to
-permit this.)
+There are several options available if you wish to sacrifice security
+for convenience.  See the gx-ca-update(8) man page for details.
 
 The gx-ca-update command writes log messages to the file
-var/gx-ca-update.log under the gx-map installation directory.  In a
-future release, it may optionally use the syslog facility as well.
+gx-map-data/gx-ca-update.log under the gx-map installation directory.
+In a future release, it may optionally use the syslog facility as well.
 
-		-- Keith Thompson <kst@sdsc.edu> 2004-11-30
+Cross-Site Propagation:
+=======================
 
-Update: gx-map-0.4.1 is installed and has been running at SDSC and
-several other TeraGrid sites for some time.  The current release
-is gx-map-0.4.5.
+gx-map 0.5.1 includes support for cross-site propagation
+of grid-mapfile entries, via an optional plug-in program
+called "gx-propagate".  The TeraGrid-specific version is
+"gx-propagate.in.teragrid", which can be specified in the installation
+config file (see sample.conf).  By default, the gx-propagate command
+is invoked by gx-check-requests for each validated request; use
+"gx-check-requests -nopropagate" to disable this.  The gx-propagate
+command submits information to the TGCDB (TeraGrid Central Database).
+It requires a configuration file, "etc/gx-map/tgcdb.conf" to be
+installed with permissions 400; this specifies information about the
+database, including the password.
 
-		-- Keith Thompson <kst@sdsc.edu> 2005-05-07
+gx-propagate propagates mappings from the local gx-map system into the
+TGCDB.  In response to these updates, the TGCDB generates AMIE packets.
+In particular, a RUM packet (Request User Modify) specifies a user's
+Unix account name and a list of zero or more DNs.  The site-specific
+AMIE packet handler should invokes the gx-request command as follows:
+
+    gx-request -quiet -set -user USERNAME [ -dn "DN1" -dn "DN2" ... ]
+
+This effectively removes all mappings for the specified user, then
+adds a mapping for each specified DN.
+
+To avoid an excessively long command line, you can write a list of
+DNs to a temporary file and use the "-dn-list-file" option:
+
+    gx-request -quiet -set -user USERNAME -dn-list TEMP_FILE
+
+Important note
+
+		-- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
