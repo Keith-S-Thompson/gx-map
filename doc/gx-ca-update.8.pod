@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.5 2006-02-17 19:20:08-08 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.6 2006-04-12 19:17:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -206,10 +206,10 @@ Enable debugging output.  Not recommended.
 
 =head1 FILES
 
-The B<gx-ca-update> command uses information in a set of CA
-description files installed in the F<etc/ca-config> subdirectory
-under the B<gx-map> installation directory.  Currently, there are
-configuration files for 88 different CAs.
+The B<gx-ca-update> command uses information in a set of CA description
+files installed in the F<etc/gx-map/ca-config> subdirectory under the
+B<gx-map> installation directory.  Currently, there are configuration
+files for 88 different CAs.
 
 Each CA certificate has an 8-digit hexadecimal hash value associated
 with it.  The files maintained by B<gx-ca-update> have names based on
@@ -233,18 +233,20 @@ changes that need to be made for some files for compatibility with
 different versions of Globus; the files distributed by the CAs don't
 always have these changes.
 
-The CRL typically has a relatively short lifetime; it's typically
-re-issued both periodically and immediately when a certificate is
-revoked.  B<gx-ca-update> checks the CRL each time, and downloads
-and installs it if it's been updated.
+Typically, the CRL has a relatively short lifetime; it's re-issued
+both periodically and immediately when a certificate is revoked.
+B<gx-ca-update> checks the CRL each time it runs, and downloads and
+installs it if it's been updated.
 
 =head1 SECURITY
 
 Incorrectly installed CA files can open serious security holes.
 For example, an attacker could create a fake signing certificate
 with the same hash and subject name as an existing CA certificate,
-and then sign a user certificate matching an existing one, giving
-the attacker access to the target user's account.
+and then sign a user certificate matching an existing one, giving the
+attacker access to the target user's account.  (The 8-digit hash is
+computed from the certificate's subject name; it's a convenient way
+to identify the certificate, but it's not secure.)
 
 To prevent this, B<gx-ca-update> confirms the MD5 and SHA1 checksums
 of any downloaded certificate before installing it.  The checksums
@@ -267,7 +269,7 @@ your own fault for trusting me.
 
 =head1 SEE ALSO
 
-gx-map(7), gx-map-cadesc(5)
+gx-map(7), gx-map-security(7), gx-map-cadesc(5)
 
 =head1 AUTHOR
 
@@ -276,4 +278,4 @@ Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
 =head1 COPYRIGHT AND LICENSE
 
 See the file F<LICENSE> in the B<gx-map> distribution, installed in
-the F<etc> subdirectory.
+the F<etc/gx-map> subdirectory.
