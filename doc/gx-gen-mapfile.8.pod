@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.3 2006-01-06 15:25:51-08 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.4 2006-04-12 19:17:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -55,13 +55,128 @@ gx-gen-mapfile - Generate a F<grid-mapfile>
 
 S<gx-gen-mapfile -help>
 
-S<gx-gen-mapfile [options]>
+S<gx-gen-mapfile [options] [grid-mapfile ...]>
 
 =head1 DESCRIPTION
 
 B<gx-gen-mapfile>, part of the B<gx-map> system, is the third of
 the three phases used to generate the Globus grid-mapfile.
 
-B<gx-gen-mapfile> is normally run from a cron job.  It reads
-the F<requests.log> file and generates a new F<grid-mapfile>
-from scratch.
+B<gx-gen-mapfile> is normally run from a cron job.  It reads the
+F<requests.log> file and generates a new F<grid-mapfile> from scratch
+as needed.  If no file names are specified, a F<grid-mapfile> is
+written to stdout.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-requests-log file>
+
+Use specified requests log file.  This option may be given multiple times, e.g.,
+    -req file1 -req file2
+
+If not specified, use the default file, F<gx-map-data/requests.log>,
+which may also be specified explicitly as B<-req default> (the name
+"default" may not be abbreviated).  It should not normally be necessary
+to use this option.
+
+=item B<-permissions perm>
+
+Specify the permissions (in octal) of the generated grid-mapfile.
+The default is 444.  The argument must be a 3-digit octal number;
+it should I<not> allow untrusted users to modify the file.  This is
+ignored if the F<grid-mapfile> is written to stdout.
+
+=item B<-compatible>
+
+Generate a grid-mapfile compatible with both GT2 and GT3/GT4.
+By default, the generated grid-mapfile is *not* compatible with GT2
+for certain DNs.
+
+GT2 used an older version of OpenSSL, which used different text
+representations of certian fields in DNs.  The affected fields are:
+
+    /USERID=... --> /UID=...
+
+    /emailAddress=... --> /Email=...
+
+The B<-compatible> option causes duplicate entries to be generated
+for DNs containing these fields.
+
+=item B<-merge-file file.
+
+Merge an existing grid-mapfile into the generated file.  This option
+may be given multiple times, e.g.:
+
+    -merge file1 -merge file2
+
+Since the B<gx-map> system is designed to have complete control
+over the F<grid-mapfile>, this allows other mechanisms to be used
+along with B<gx-map>.  For example, if a site automatically issues
+certificates for all users, an external process might maintain a
+B<grid-mapfile> containing all those entries.  Using this option
+allows this information to be integrated into the F<grid-mapfile>,
+while also allowing users to add mappings for other certificates
+using B<gx-request>.  (Another option is to create a separate tool
+that invokes B<gx-request> automatically; for example, this is done
+at SDSC for certificates issued by the NPACI and SDSC CAs).
+
+=item B<-all>
+
+Include entries for accounts that don't exist on this system.  This is
+not normally recommended, since it makes the F<grid-mapfile> bigger
+than it needs to be, but it can be useful for testing purposes to
+see all the mappings that B<gx-map> knows about.
+
+=item B<-real-name>
+
+Include each user's real name (extracted from F</etc/passwd> or
+equivalent) as a comment on the corresponding F<grid-mapfile> entry.
+
+=item B<-[no]rcs>
+
+Check generated grid-mapfile(s) into RCS.  The RCS subdirectory
+is created if necessary.  The default is B<-rcs>; use B<-norcs> to
+disable this option.  The file checked into RCS will have a ".rcs"
+suffix appended to its name.  This has no effect if the B<grid-mapfile>
+is written to stdout.
+
+=item B<-force>
+
+Force an update regardless of the timestamps of the input and output
+files.  Normally the F<grid-mapfile> is not re-generated if it is
+newer than any of its input files (F</etc/passwd>, F<requests.log>).
+(B<gx-gen-mapfile> also checks the last modification time of a
+F<.update> file in the F<new-requests> directory; the command
+C<gx-request update> will force an update to this file.)
+
+=back
+
+=head1 SEE ALSO
+
+gx-map(7), gx-request(1), gx-check-requests(8), gx-map-security(7)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
