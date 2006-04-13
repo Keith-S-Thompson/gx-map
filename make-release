@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.19 2006-04-07 03:44:24-07 kst Exp $
+# $Id: make-release,v 1.20 2006-04-13 16:12:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -22,10 +22,9 @@ esac
 
 num=$1
 in_files=`ls *.in | grep -v gx-map.conf.in`
-other_files="INSTALL LICENSE Makefile README README.CA \
-             README.CA-Security README.Cross-Site README.Prereqs \
-             README.TeraGrid README.Upgrade Relnotes cleanup-gx-map \
-             configure-gx-map gx-check-prereqs gx-propagate.in.teragrid \
+other_files="INSTALL LICENSE Makefile README README.TeraGrid \
+             README.Upgrade Relnotes cleanup-gx-map configure-gx-map \
+             gx-check-prereqs gx-propagate.in.teragrid \
              gx-propagate.in.test sample.conf test-gx-map"
 
 # cadesc_files=`cd ca ; echo *.cadesc`
