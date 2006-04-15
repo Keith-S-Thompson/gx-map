@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.7 2006-04-12 22:45:21-07 kst Exp $
+# $Id: README.TeraGrid,v 1.8 2006-04-14 17:39:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here is a set of cron jobs for SDSC's TeraGrid system,
@@ -15,10 +15,10 @@ Not all versions of crontab accept the "*/5" syntax.
 
 # minute hour mday month wday command
 */5 * * * *   /usr/local/apps/gx-map-0.5.1/sbin/gx-gen-mapfile \
-	/usr/local/apps/grid-security/grid-mapfile
+        /usr/local/apps/grid-security/grid-mapfile
 15,45 * * * * /usr/local/apps/gx-map-0.5.1/sbin/gx-ca-update \
-	-target-dir /usr/local/apps/grid-security/certificates \
-	-ca-list /usr/local/apps/grid-security/certificates/.list
+        -target-dir /usr/local/apps/grid-security/certificates \
+        -ca-list /usr/local/apps/grid-security/certificates/.list
 
 The gx-check-requests command is run on an internal SDSC machine, so
 that command is not shown here; the data directory is shared between
@@ -43,11 +43,11 @@ For NCSA, the cron jobs might look like this:
 
 # minute hour mday month wday command
 */5 * * * *   /usr/local/gx-map-0.5.1/sbin/gx-check-requests ; \
-	/usr/local/gx-map-0.5.1/sbin/gx-gen-mapfile \
-	/usr/local/grid-security/grid-mapfile
+        /usr/local/gx-map-0.5.1/sbin/gx-gen-mapfile \
+        /usr/local/grid-security/grid-mapfile
 15,45 * * * * /usr/local/gx-map-0.5.1/sbin/gx-ca-update \
-	-target-dir /usr/local/grid-security/certificates \
-	-ca-list /usr/local/grid-security/certificates/.list
+        -target-dir /usr/local/grid-security/certificates \
+        -ca-list /usr/local/grid-security/certificates/.list
 
 Note the addition of the "gx-check-requests" command.  The "-namespace"
 option, required in gx-map release 0.4.X, is no longer required.
@@ -87,9 +87,9 @@ gx-propagate propagates mappings from the local gx-map system into the
 TGCDB.  In response to these updates, the TGCDB generates AMIE packets.
 In particular, a RUM packet (Request User Modify) specifies a user's
 Unix account name and a list of zero or more DNs.  The site-specific
-AMIE packet handler should invokes the gx-request command as follows:
+AMIE packet handler should invoke the gx-request command as follows:
 
-    gx-request -quiet -set -user USERNAME [ -dn "DN1" -dn "DN2" ... ]
+gx-request -quiet -source TGCDB -set -user <USERNAME> [ -dn "<DN1>" -dn "<DN2>" ... ]
 
 This effectively removes all mappings for the specified user, then
 adds a mapping for each specified DN.
@@ -97,7 +97,17 @@ adds a mapping for each specified DN.
 To avoid an excessively long command line, you can write a list of
 DNs to a temporary file and use the "-dn-list-file" option:
 
-    gx-request -quiet -set -user USERNAME -dn-list TEMP_FILE
+gx-request -quiet -source TGCDB -set -user <USERNAME> -dn-list <TEMP_FILE>
+
+The gx-request command must be invoked by a gx-map administrative
+account, one of the accounts specified by GX_MAP_OWNER or
+ADDITIONAL_ADMINS in the installation configuration file; this will
+typically be "gxmap" or "globus".  In particular, running this command
+as root will not work.
+
+The "-source TGCDB" argument is important; it marks the request as
+one that is not to be re-propagated to the TGCDB.  The argument is
+case-sensitive; specify exactly TGCDB, not tgcdb.
 
 Initial Deployment Plan:
 ========================
@@ -141,4 +151,4 @@ it to maintain its certificates directory, keeping CRLs up to date.
 
 If you have any questions, please feel free to contact me.
 
-		-- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
+                -- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
