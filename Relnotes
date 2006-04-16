@@ -1,15 +1,9 @@
-# $Id: Relnotes,v 1.17 2006-04-12 02:03:48-07 kst Exp $
+# $Id: Relnotes,v 1.18 2006-04-15 20:33:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
 
-========================================================================
-TODO:
-Finish updating this for release 0.5.1
-Search for "TDB"
-========================================================================
-
-Release 0.5.1, date TBD
+Release 0.5.1, 2006-04-15
 
     This is a new major release.  Some file formats have changed.
 
