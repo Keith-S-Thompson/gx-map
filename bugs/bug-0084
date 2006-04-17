@@ -1,0 +1,32 @@
+# $Id: bug-0084,v 1.1 2006-04-17 15:08:37-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0084,v $
+
+gx-map bug 0084
+Date: Mon 2006-04-17
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: tgcdb.conf: check mode, install in right directory, document
+
+Summary:
+The tgcdb.conf file is used by gx-propagate.teragrid.  It specifies
+information needed to access the database.
+
+There are several problems with the way this is handled.
+
+1. The file should have permissions 600 or 400, since it contains a
+   clear-text password.  This is not checked.  (By the time it can be
+   checked, it would be too late, but it's better than not checking
+   at all.)
+
+   (It would be nice to use something other than a clear-text password,
+   but I don't know how else it could be done.)
+
+2. gx-propagate looks for the tgcdb.conf file in the wrong directory.
+   It looks in etc rather than etc/gx-map.  When I moved everything
+   in etc into etc/gx-map (see bug-0054), I missed tgcdb.conf.
+
+3. The format of the tgcdb.conf file is not adequately documented.
+   Add a sample to README.TeraGrid, and consider either adding a man
+   page or adding the information to the gx-propagate(8) man page.
