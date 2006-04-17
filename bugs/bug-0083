@@ -1,0 +1,20 @@
+# $Id: bug-0083,v 1.1 2006-04-17 14:47:34-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0083,v $
+
+gx-map bug 0083
+Date: Mon 2006-04-17
+Severity: low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: "make clean" doesn't delete gx-map-gridmap-utils.3
+
+Summary:
+Running "./configure-gx-map foo.conf" creates man pages from the *.pod
+files in the doc directory.  "make clean" deletes most of the generated
+man pages, but leaves one in place; "doc/gx-map-gridmap-utils.3".
+
+The cause is a simple omission in cleanup-gx-map: the line
+    for file in doc/*.[1578] ; do
+needs to be
+    for file in doc/*.[13578] ; do
