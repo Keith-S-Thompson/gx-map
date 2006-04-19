@@ -1,0 +1,37 @@
+# $Id: bug-0086,v 1.1 2006-04-19 04:20:57-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0086,v $
+
+gx-map bug 0086
+Date: Wed 2006-04-19
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: More efficient handling of AMIE packets
+
+Summary:
+An AMIE RUM packet contains a user name and a list of zero or more DNs.
+Currently, this is expected to be handled by invoking "gx-request -set",
+which is equivalent to a "remove-user" request followed by zero or
+more "add" requests.  This can result in a great deal of redundant
+information in the requests.log file.  In fact, I suspect that AMIE
+packets can be generated whenever *any* information about a user is
+changed (a phone number, for example).
+
+The redundancy can be alleviated by using gx-cleanup-logs, but this
+is labor-intensive and probably too easy to get wrong.
+
+Instead, set up an auxiliary system similar to gx-map-cacl.  Call it
+gx-map-amie.  It maintains an index file containing all known DN
+information that has been received via AMIE packets.  (The index file
+is essentially a grid-mapfile.)  A command processes an AMIE packet
+and updates the index file.  A cron job watches for changes in the
+index file, and invokes gx-request to generate only the required add
+or remove requests.  (Consider un-implementing the "set" request.)
+
+Use the existing "SOURCE=TGCDB" mechanism to avoid re-propagating
+information.  The gx-propagate command stays as it is (but see
+bug-0087).
+
+Consider initializing the index file with information currently in
+the database (assuming they can get it cleaned up).
