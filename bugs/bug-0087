@@ -1,0 +1,25 @@
+# $Id: bug-0087,v 1.1 2006-04-19 04:20:58-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0087,v $
+
+gx-map bug 0087
+Date: Wed 2006-04-19
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: AMIE doesn't handle removals?
+
+Summary:
+According to a recent e-mail from Michael Shapiro
+<mshapiro@ncsa.uiuc.edu>, the TGCDB will no longer handle removals
+of mappings, only additions.  More information is needed.
+
+If this is the case, changes will have to be made in
+gx-propagate.in.teragrid so that remove requests are ignored; this
+should be simple as updating the TGCDB package (code recently provided
+by mshapiro) and stubbing out the Remove_Mapping function.
+
+Supposedly AMIE packets should be handled by adding all the specified
+DNs without removing any.  The new AMIE handling mechanism suggested
+in bug-0086 should handle this; it just means that nothing will be
+removed from the index file.
