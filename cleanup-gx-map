@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: cleanup-gx-map,v 1.7 2005-12-30 00:29:33-08 kst Exp $
+# $Id: cleanup-gx-map,v 1.8 2006-04-19 04:25:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/cleanup-gx-map,v $
 
 for file in *.in gx-propagate ; do
@@ -11,7 +11,7 @@ for file in *.in gx-propagate ; do
     fi
 done
 
-for file in doc/*.[1578] ; do
+for file in doc/*.[13578] ; do
     if [ -f $file ] ; then
         echo "rm -f $file"
         rm -f $file
