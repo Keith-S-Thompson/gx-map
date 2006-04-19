@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.19 2006-04-19 16:19:56-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.20 2006-04-19 16:22:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -181,6 +181,7 @@ Debug "new TGCDB\n";
 my $tg;
 if (not $User_Opt->{dryrun}) {
     $tg = new TGCDB (host   => $Config->{host},
+                     port   => $Config->{port},
                      db     => $Config->{db},
                      user   => $Config->{user},
                      passwd => $Config->{passwd});
@@ -238,7 +239,7 @@ sub Get_TGCDB_Config($) {
     #
     # To do: Give more detailed error messages.
     #
-    if ("@keys" ne 'db host namespace passwd resource user') {
+    if ("@keys" ne 'db host passwd port resource user') {
         die "Bad config file $config_file\n";
     }
     return $config;
