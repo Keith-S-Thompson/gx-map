@@ -1,4 +1,4 @@
-# $Id: bug-0083,v 1.1 2006-04-17 14:47:34-07 kst Exp $
+# $Id: bug-0083,v 1.2 2006-04-19 04:55:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0083,v $
 
 gx-map bug 0083
@@ -6,7 +6,7 @@ Date: Mon 2006-04-17
 Severity: low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: "make clean" doesn't delete gx-map-gridmap-utils.3
 
 Summary:
@@ -18,3 +18,7 @@ The cause is a simple omission in cleanup-gx-map: the line
     for file in doc/*.[1578] ; do
 needs to be
     for file in doc/*.[13578] ; do
+
+Fixed:
+cleanup-gx-map 1.8
+gx-map release 0.5.2
