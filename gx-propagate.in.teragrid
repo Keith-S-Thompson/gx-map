@@ -1,6 +1,6 @@
-#!%PERL% -wT
+!#%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.22 2006-04-19 18:43:17-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.23 2006-04-19 19:39:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -462,7 +462,7 @@ EOF
         die "passwd not defined" unless (defined $passwd);
 
         my($dsn) = "dbi:Pg:dbname=$db;host=$host";
-        $dsn .= ";$port" if (defined $port);
+        $dsn .= ";port=$port" if (defined $port);
         my($dbh) = DBI->connect($dsn, $user, $passwd,
                                   {AutoCommit=>1,
                                    RaiseError=>$raiseError,
@@ -473,23 +473,11 @@ EOF
 
     sub gxmap_add_dn
     {
-        my($self, $resource, $user, $dn) = @_;
-        $self->_gxmap_insert_dn_tbl($resource, $user, $dn, "add");
-    }
+	my($self, $resource, $user, $dn) = @_;
+	my($sql) = sprintf ("select gxmap.add_dn(%s,%s,%s)",
+			       $self->quote($resource, $user, $dn));
 
-    sub gxmap_remove_dn
-    {
-        my($self, $resource, $user, $dn) = @_;
-        $self->_gxmap_insert_dn_tbl($resource, $user, $dn, "remove");
-    }
-
-    sub _gxmap_insert_dn_tbl
-    {
-        my($self, $resource, $user, $dn, $action) = @_;
-        my($sql) = sprintf ("select gxmap.insert_dn_tbl(%s,%s,%s,%s)",
-                               $self->quote($resource, $user, $dn, $action));
-
-        $self->dbh->do ($sql);
+	$self->dbh->do ($sql);
     }
 
     sub dbh
