@@ -1,6 +1,6 @@
 !#%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.23 2006-04-19 19:39:06-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.24 2006-04-19 20:00:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -361,12 +361,20 @@ sub Remove_Mapping($$$) {
     my $message =
         "\$tg->gxmap_remove($Config->{resource}, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
-        print STDERR
-              "gxmap_remove_dn($Config->{resource}, $username, \"$dn\")\n";
+        print STDERR $message;
     }
     else {
-        Debug $message;
-        $tg->gxmap_remove_dn($Config->{resource}, $username, $dn);
+        Debug "# $message";
+        Debug "# (NOT CURRENTLY IMPLEMENTED)\n";
+        #
+        # If gxmap_remove_dn() were implemented, it would write trace
+        # output to STDERR, which is redirected to tgcdb.log.
+        # Write explicit trace messages to STDERR so they'll appear
+        # in tgcdb.log.
+        #
+        print STDERR "# $message";
+        print STDERR "# (NOT CURRENTLY IMPLEMENTED)\n";
+        # $tg->gxmap_remove_dn($Config->{resource}, $username, $dn);
     }
 } # Remove_Mapping
 
@@ -473,12 +481,25 @@ EOF
 
     sub gxmap_add_dn
     {
-	my($self, $resource, $user, $dn) = @_;
-	my($sql) = sprintf ("select gxmap.add_dn(%s,%s,%s)",
-			       $self->quote($resource, $user, $dn));
+        my($self, $resource, $user, $dn) = @_;
+        my($sql) = sprintf ("select gxmap.add_dn(%s,%s,%s)",
+                               $self->quote($resource, $user, $dn));
 
-	$self->dbh->do ($sql);
+        $self->dbh->do ($sql);
     }
+
+    #
+    # DN removal is not currently implemented.
+    # See bugs/bug-0087.
+    #
+#   sub gxmap_remove_dn
+#   {
+#       my($self, $resource, $user, $dn) = @_;
+#       my($sql) = sprintf ("select gxmap.remove_dn(%s,%s,%s)",
+#                              $self->quote($resource, $user, $dn));
+#
+#       $self->dbh->do ($sql);
+#   }
 
     sub dbh
     {
