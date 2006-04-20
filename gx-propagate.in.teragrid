@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.21 2006-04-19 17:06:43-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.22 2006-04-19 18:43:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -246,11 +246,11 @@ sub Get_TGCDB_Config($) {
     my $config = Gridmap_Utils::Read_Records '-single', $config_file;
     my @keys = sort keys %$config;
     my @required_keys = qw(host port db resource user passwd);
-    my %required_key = map { $_ => 1 }, @required_keys;
+    my %required_key = map { $_ => 1 } @required_keys;
     my @errors = ();
 
     my @missing = ();
-    my @extra = ();
+    my @unrecognized = ();
     foreach my $key (@required_keys) {
         if (not defined $config->{$key}) {
             push @missing, $key;
@@ -258,19 +258,19 @@ sub Get_TGCDB_Config($) {
     }
     foreach my $key (sort keys %$config) {
         if (not $required_key{$key}) {
-            push @extra, $key;
+            push @unrecognized, $key;
         }
     }
 
-    if (@missing or @extra) {
+    if (@missing or @unrecognized) {
         my $message = "Bad config file $config_file:\n";
         if (@missing) {
             my $s = scalar @missing == 1 ? '' : 's';
             $message .= "Missing key$s: @missing\n";
         }
-        if (@extra) {
-            my $s = scalar @extra == 1 ? '' : 's';
-            $message .= "Unrecognized key$s: @extra\n";
+        if (@unrecognized) {
+            my $s = scalar @unrecognized == 1 ? '' : 's';
+            $message .= "Unrecognized key$s: @unrecognized\n";
         }
         die $message;
 
