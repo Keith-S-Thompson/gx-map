@@ -1,0 +1,25 @@
+# $Id: bug-0088,v 1.1 2006-04-19 18:53:41-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0088,v $
+
+gx-map bug 0088
+Date: Wed 2006-04-19
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: Don't use clear-text password in tgcdb.conf
+
+Summary:
+The TeraGrid-specific version of gx-propagate depends on the
+etc/gx-map/tgcdb.conf file to obtain information about how to connect
+to the database.  This information includes a clear-text password.
+An attacker who obtained a copy of that file would be able to make
+modifications to the TGCDB.
+
+For now, the file is required to have permissions 400 or 600 (though
+the check is done too late), but I'd prefer to use a more secure
+mechanism.
+
+The problem is that this requires getting authentication information
+into the gx-propagate command, which is invoked by gx-propagate,
+which is executed by a cron job.  No good solution springs to mind.
