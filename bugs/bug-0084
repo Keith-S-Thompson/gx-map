@@ -1,4 +1,4 @@
-# $Id: bug-0084,v 1.1 2006-04-17 15:08:37-07 kst Exp $
+# $Id: bug-0084,v 1.2 2006-04-19 18:45:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0084,v $
 
 gx-map bug 0084
@@ -6,7 +6,7 @@ Date: Mon 2006-04-17
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: tgcdb.conf: check mode, install in right directory, document
 
 Summary:
@@ -30,3 +30,8 @@ There are several problems with the way this is handled.
 3. The format of the tgcdb.conf file is not adequately documented.
    Add a sample to README.TeraGrid, and consider either adding a man
    page or adding the information to the gx-propagate(8) man page.
+
+Fixed:
+gx-propagate.in.teragrid 1.19, 1.21, 1.22
+README.TeraGrid 1.9
+doc/gx-propagate.8.pod 1.7
