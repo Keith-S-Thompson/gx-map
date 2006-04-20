@@ -1,6 +1,6 @@
-!#%PERL% -wT
+#!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.24 2006-04-19 20:00:30-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.25 2006-04-19 20:13:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
