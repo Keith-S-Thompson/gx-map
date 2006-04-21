@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.182 2006-04-20 17:26:52-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.183 2006-04-20 17:32:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -162,7 +162,7 @@ sub Normalize_DN($);
 sub Send_Email($$$$);
 
 sub Get_Lock($$);
-sub Release_Lock($);
+sub Release_Lock($$);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
@@ -2259,11 +2259,10 @@ sub Get_Lock($$) {
 #
 # Delete the lock file created by Get_Lock().
 #
-sub Release_Lock($) {
-    my($name) = @_;
+sub Release_Lock($$) {
+    my($dir, $name) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname;
-    my $lock_file
-        = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
+    my $lock_file = "$dir/.$name.lock";
     Untaint $lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
 } # Release_Lock
