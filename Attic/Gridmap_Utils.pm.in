@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.180 2006-04-19 20:04:25-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.181 2006-04-20 17:21:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -159,7 +159,7 @@ sub Normalize_DN($);
 
 sub Send_Email($$$$);
 
-sub Get_Lock($);
+sub Get_Lock($$);
 sub Release_Lock($);
 
 sub Install_Die_Handler();
@@ -2147,18 +2147,20 @@ EOF
 # ----------------------------------------------------------------------
 
 #
-# Get a lock; the name should be the program name.
+# Get a lock.
+# Arguments:
+#     Data directory.
+#     Program name.
 # Create a uniquely named lock file, then attempt to create
 # the actual lock file as a hard link to it.  If this succeeds,
 # we have the lock; otherwise check the link count.
 #
 # See bugs/bug-0081 for details.
 #
-sub Get_Lock($) {
-    my($name) = @_;
+sub Get_Lock($$) {
+    my($dir, $name) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname;
-    my $lock_file
-        = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data/.$name.lock";
+    my $lock_file = "$dir/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
     Gridmap_Utils::Untaint $lock_file;
     Gridmap_Utils::Untaint $unique_lock_file;
@@ -2189,7 +2191,7 @@ sub Get_Lock($) {
         }
         else {
             #
-            # Lock failed, most likeley because the lock file already
+            # Lock failed, most likely because the lock file already
             # exists.
             #
             my $lock_time = Gridmap_Utils::Get_mtime $lock_file;
