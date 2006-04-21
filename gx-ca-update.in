@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.105 2006-04-20 17:21:22-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.106 2006-04-20 17:32:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -377,7 +377,7 @@ Check_Dependencies if $Certificate_Installed;
 
 Notify;
 
-Gridmap_Utils::Release_Lock $Program_Name;
+Gridmap_Utils::Release_Lock $Data_Dir, $Program_Name;
 
 ########################################################################
 
