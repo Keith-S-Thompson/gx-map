@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.181 2006-04-20 17:21:21-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.182 2006-04-20 17:26:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -133,6 +133,8 @@ sub Timestamp_Of($);
 sub Time_Image($);
 sub Long_Time_Image($);
 sub Time_Value($);
+
+sub Get_DNs_From_List_File($);
 
 sub Write_Records($$@);
 sub Read_Records(@);
@@ -689,6 +691,38 @@ sub Time_Value($) {
         return undef;
     }
 } # Time_Value
+
+# ----------------------------------------------------------------------
+
+#
+# Given a file name, reads a list of DNs listed in the file.
+#
+# Since the file is expected to be generated automatically, the format is
+# not fancy; one DN per line, no comments, no blank lines, no quotation
+# marks.  Each line must begin with a '/' and end with a non-whitespace
+# character.
+#
+sub Get_DNs_From_List_File($) {
+    my($file) = @_;
+    my $List_File;
+    if ($file eq '-') {
+        open $List_File, '<-' or die "stdin: $!\n";
+    }
+    else {
+        open $List_File, '<', $file or die "${file}: $!\n";
+    }
+    my @result = <$List_File>;
+    close $List_File;
+    chomp @result;
+
+    for (my $i = 0; $i <= $#result; $i ++) {
+        if ($result[$i] !~ m<^/.*\S$>) {
+            my $line_number = $i + 1;
+            die "Invalid DN, $file line $line_number\n";
+        }
+    }
+    return @result;
+} # Get_DNs_From_List_File
 
 # ----------------------------------------------------------------------
 
