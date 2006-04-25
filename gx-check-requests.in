@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.91 2006-04-20 17:32:54-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.92 2006-04-24 17:08:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -77,12 +77,13 @@ my $Default_Data_Dir = "$Install_Dir/gx-map-data";
 
 my $User_Opt = { propagate => 1 };
 my @Opts = ( $User_Opt,
-             qw( help
-                 version
+             qw( help!
+                 version!
                  copy=s
-                 dryrun
+                 dryrun!
+                 add-only!
                  propagate!
-                 debugging ) );
+                 debugging! ) );
              # directory=s
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -253,6 +254,7 @@ if (-x $propagate) {
         my @args = ();
         push @args, '-debugging' if $User_Opt->{debugging};
         push @args, '-dryrun'    if $User_Opt->{dryrun};
+        push @args, '-add-only'  if $User_Opt->{'add-only'};
         push @args, '-source', $request->{SOURCE};
         push @args, "-$request->{operation}";
         if ($request->{operation} ne 'remove-dn') {
@@ -762,6 +764,8 @@ Usage: $Program_Name [options]
                       Like the "-dryrun" options, the "-nopropagate"
                       option can cause requests to be permanently
                       bypassed; use with caution.
+    -add-only       : Passed to gx-propagate.  Indicates that only add
+                      requests will be propagated.
     -dryrun         : Passed to sbin/gx-propagate.
                       This is for testing purposes only; it can cause
                       requests to be permanently bypassed.
