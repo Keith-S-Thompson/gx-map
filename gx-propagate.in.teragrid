@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.25 2006-04-19 20:13:59-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.26 2006-04-24 17:08:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -90,7 +90,8 @@ my @Opts = ( $User_Opt,
                  remove-user
                  dn=s
                  username=s
-                 dryrun ) );
+                 dryrun
+                 add-only ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -124,6 +125,10 @@ elsif (scalar @operations == 1) {
 }
 else {
     Usage "Multiple operations specified\n";
+}
+
+if ($User_Opt->{'add-only'} and $Operation ne 'add') {
+    $User_Opt->{dryrun} = 1;
 }
 
 my $message = '';
@@ -359,22 +364,13 @@ sub Add_Mapping($$$) {
 sub Remove_Mapping($$$) {
     my($tg, $username, $dn) = @_;
     my $message =
-        "\$tg->gxmap_remove($Config->{resource}, $username, \"$dn\")\n";
+        "\$tg->gxmap_remove_dn($Config->{resource}, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
         print STDERR $message;
     }
     else {
-        Debug "# $message";
-        Debug "# (NOT CURRENTLY IMPLEMENTED)\n";
-        #
-        # If gxmap_remove_dn() were implemented, it would write trace
-        # output to STDERR, which is redirected to tgcdb.log.
-        # Write explicit trace messages to STDERR so they'll appear
-        # in tgcdb.log.
-        #
-        print STDERR "# $message";
-        print STDERR "# (NOT CURRENTLY IMPLEMENTED)\n";
-        # $tg->gxmap_remove_dn($Config->{resource}, $username, $dn);
+        Debug "$message";
+        $tg->gxmap_remove_dn($Config->{resource}, $username, $dn);
     }
 } # Remove_Mapping
 
@@ -426,6 +422,7 @@ a cross-site user database.
     -username name  Unix user name to map or unmap.
     -dn "string"    Distinguished name.
     -dryrun         Don't actually do the database transaction.
+    -add-only       Only "add" requests are supported.
     -debugging      Enable debugging output.
 
 EOF
@@ -492,14 +489,14 @@ EOF
     # DN removal is not currently implemented.
     # See bugs/bug-0087.
     #
-#   sub gxmap_remove_dn
-#   {
-#       my($self, $resource, $user, $dn) = @_;
-#       my($sql) = sprintf ("select gxmap.remove_dn(%s,%s,%s)",
-#                              $self->quote($resource, $user, $dn));
-#
-#       $self->dbh->do ($sql);
-#   }
+    sub gxmap_remove_dn
+    {
+        my($self, $resource, $user, $dn) = @_;
+        my($sql) = sprintf ("select gxmap.remove_dn(%s,%s,%s)",
+                               $self->quote($resource, $user, $dn));
+ 
+        $self->dbh->do ($sql);
+    }
 
     sub dbh
     {
