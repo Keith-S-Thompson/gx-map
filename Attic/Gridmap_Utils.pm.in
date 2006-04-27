@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.184 2006-04-20 18:26:45-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.185 2006-04-26 19:14:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2189,12 +2189,18 @@ EOF
 # the actual lock file as a hard link to it.  If this succeeds,
 # we have the lock; otherwise check the link count.
 #
+# If the data directory is undef, use INSTALL_DIR/gx-map-data
+# (this is used to determine whether to advise running gx-remove-locks).
+#
 # See bugs/bug-0081 for details.
 #
 sub Get_Lock($$) {
     my($dir, $name) = @_;
+    my $actual_dir = ( defined $dir
+                       ? $dir
+                       : "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data" );
     my $hostname = Gridmap_Utils::Get_Hostname;
-    my $lock_file = "$dir/.$name.lock";
+    my $lock_file = "$actual_dir/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
     Gridmap_Utils::Untaint $lock_file;
     Gridmap_Utils::Untaint $unique_lock_file;
@@ -2243,7 +2249,9 @@ sub Get_Lock($$) {
                     }
                     close $old_lock;
                 }
-                $message .= "Consider running gx-remove-locks\n";
+                if (not defined $dir) {
+                    $message .= "Consider running gx-remove-locks\n";
+                }
             }
             else {
                 $message = "Failed to get lock: $link_error\n";
@@ -2261,7 +2269,9 @@ sub Get_Lock($$) {
 #
 sub Release_Lock($$) {
     my($dir, $name) = @_;
-    my $hostname = Gridmap_Utils::Get_Hostname;
+    if (not defined $dir) {
+        $dir = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data";
+    }
     my $lock_file = "$dir/.$name.lock";
     Untaint $lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
