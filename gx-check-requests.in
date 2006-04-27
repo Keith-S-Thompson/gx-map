@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.92 2006-04-24 17:08:27-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.93 2006-04-26 19:14:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -136,7 +136,7 @@ if (not -d $bad_request_dir) {
     mkdir $bad_request_dir, 0700 or die "mkdir $bad_request_dir: $!\n";
 }
 
-Gridmap_Utils::Get_Lock $Data_Dir, $Program_Name;
+Gridmap_Utils::Get_Lock undef, $Program_Name;
 
 my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
@@ -199,7 +199,7 @@ if (not @good_requests and not @bad_requests) {
     #
     # No requests seen.  Bail out.
     #
-    Gridmap_Utils::Release_Lock $Data_Dir, $Program_Name;
+    Gridmap_Utils::Release_Lock undef, $Program_Name;
     exit;
 }
 
