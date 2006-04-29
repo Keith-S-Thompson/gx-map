@@ -1,0 +1,23 @@
+# $Id: bug-0089,v 1.1 2006-04-28 20:38:54-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0089,v $
+
+gx-map bug 0089
+Date: Fri 2006-04-28
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: Create dummy tgcdb.conf file
+
+Summary:
+The TeraGrid-specific version of gx-propagate depends on a tgcdb.conf
+file, which must be installed in the etc/gx-map subdirectory.  Since
+this file contains a plain-text password, it must be installed with
+permissions 400 or 600 -- but this isn't checked until gx-propagate
+tries to use it, at which point it may be too late.
+
+If the installation config file specifies gx-propagate.teragrid.in,
+create a dummy tgcdb.conf file with permissions 600, and tell the
+installer that it needs to be edited.  gx-propagate should bail out
+if the file exists and hasn't yet been updated (to avoid missing any
+required propagations).
