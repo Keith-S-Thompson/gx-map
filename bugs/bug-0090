@@ -1,0 +1,37 @@
+# $Id: bug-0090,v 1.1 2006-04-28 20:38:54-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0090,v $
+
+gx-map bug 0090
+Date: Fri 2006-04-28
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: Translate "/E=" and "/EMAIL=" to "/emailAddress="
+
+Summary:
+The DN attribute currently called "emailAddress" was called "Email"
+in GT2 and OpenSSL 0.9.6.  It turns out that "E" and "EMAIL" are
+also valid names for this attribute; in GT3, the pre-WS tools expect
+"/emailAddress=...", but the WS tools expect "/E=...".
+
+The GT2_Subject function currently translates "/emailAddress=..."
+to "/Email=..."; it should also translate both "/E=..." and
+"/EMAIL=..."  to "/Email=...".
+
+The GT4_Subject function currently translates "/Email=..."
+to "/emailAddress=..."; it should also translate both "/E=..." and
+"/EMAIL=..."  to "/emailAddress=...".
+
+A new GT3_Subject function should translate all these forms to
+"/E=..." (as well as doing the GT4-compatible translation for USERID
+vs. UID).
+
+A new command-line option for gx-gen-mapfile should generate DNs using
+the GT3-compatible form.  (I don't expect this will be used very often,
+since it applies *only* to GT3 WS code.)
+
+A similar command-line option for gx-ca-update should do the same
+thing for signing_policy files.
+
+See <http://www.globus.org/mail_archive/discuss/2004/04/msg00007.html>.
