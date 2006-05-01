@@ -1,4 +1,4 @@
-# $Id: bug-0090,v 1.1 2006-04-28 20:38:54-07 kst Exp $
+# $Id: bug-0090,v 1.2 2006-05-01 16:44:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0090,v $
 
 gx-map bug 0090
@@ -6,7 +6,7 @@ Date: Fri 2006-04-28
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: Translate "/E=" and "/EMAIL=" to "/emailAddress="
 
 Summary:
@@ -35,3 +35,9 @@ A similar command-line option for gx-ca-update should do the same
 thing for signing_policy files.
 
 See <http://www.globus.org/mail_archive/discuss/2004/04/msg00007.html>.
+
+Fixed:
+Gridmap_Utils.pm.in 1.187
+gx-ca-update.in 1.109
+gx-gen-mapfile.in 1.83
+gx-map release 0.5.2
