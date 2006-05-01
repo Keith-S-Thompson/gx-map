@@ -1,4 +1,4 @@
-# $Id: bug-0085,v 1.1 2006-04-19 04:05:37-07 kst Exp $
+# $Id: bug-0085,v 1.2 2006-05-01 16:44:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0085,v $
 
 gx-map bug 0085
@@ -6,10 +6,14 @@ Date: Wed 2006-04-19
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: gx-ca-update -force should update CRLs
 
 Summary:
 The "-force" option to gx-ca-update forces an update of the CA
 certificate and signing_policy files, but not of the CRLs.  It should
-force an update of CRLs as well.  (I think.)
+force an update of CRLs as well.
+
+Fixed:
+gx-ca-update.in 1.109
+gx-map release 0.5.2
