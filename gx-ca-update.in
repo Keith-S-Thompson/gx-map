@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.107 2006-04-26 19:14:36-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.108 2006-05-01 15:30:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -111,6 +111,7 @@ my @Opts = ( $User_Opt,
                  list-cas!
                  target-dir=s
                  permissions=s
+                 gt3-compatible!
                  allow-missing-crl!
                  expire-crl=s
                  warn-crl=s
@@ -485,7 +486,9 @@ sub Seconds_To_String($) {
 #
 # Given a reference to a CA description record, returns a multi-line
 # string suitable for use as a signing_policy, compatible with both GT2
-# and GT4 (and GT3).
+# and GT4 (and GT3 pre-WS).  If the "-gt3-compatible" command-line option
+# was specified, the generated signing_policy will also be compatible
+# with GT3 WS.
 #
 sub Signing_Policy($) {
     my($ref) = @_;
@@ -510,14 +513,23 @@ sub Signing_Policy($) {
                  "pos_rights     globus  CA:sign\n" .
                  "cond_subjects  globus  $cond_subjects\n";
 
-    my $gt2_body = Gridmap_Utils::GT2_Subject $body;
-    my $gt4_body = Gridmap_Utils::GT4_Subject $body;
+    my @bodies = ();
+    my %seen = ();
 
-    $result .= $gt2_body;
-    if ($gt4_body ne $gt2_body) {
-        $result .= "\n";
-        $result .= $gt4_body;
+    push @bodies, Gridmap_Utils::GT2_Subject $body;
+    if ($User_Opt->{'gt3-compatible'}) {
+        push @bodies, Gridmap_Utils::GT3_Subject $body
     }
+    push @bodies, Gridmap_Utils::GT4_Subject $body;
+
+    foreach my $body (@bodies) {
+        if (not $seen{$body}) {
+            $result .= "\n";
+            $result .= $body;
+            $seen{$body} = 1;
+        }
+    }
+
     return $result;
 } # Signing_Policy;
 
@@ -1541,6 +1553,11 @@ Usage: $Program_Name [options]
     -target-dir dir    Target directory.
     -permissions perm  Specify permissions for installed files (in octal);
                        default is 444
+    -gt3-compatible    Generate *.signing_policy files compatible with
+                       GT3 web services tools.  This should rarely
+                       be necessary or useful.  By default, generated
+                       *.signing_policy files are compatible with both
+                       GT2 and GT4, and with GT3 pre-WS.
     -allow-missing-crl Allow a CA with no CRL to be installed.
                        Requires "-UNSAFE".
     -expire-crl time   Remove a CRL that will expire within
@@ -1554,8 +1571,7 @@ Usage: $Program_Name [options]
                        within the specified time.  Regardless of this
                        option, a warning will also be issued if the CRL
                        has used more than 90% of its lifetime.
-    -force             Force file updates (applies to certificate and
-                       signing_policy files).
+    -force             Force file updates.
     -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
                        Requires "-UNSAFE".
     -email             Send e-mail to configured ADMIN_EMAIL address on errors.
