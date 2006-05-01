@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.82 2006-04-05 21:23:58-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.83 2006-05-01 16:40:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -90,7 +90,8 @@ my @Opts = ( $User_Opt,
                  debugging!
                  requests-log=s@
                  permissions=s
-                 compatible!
+                 gt2-compatible!
+                 gt3-compatible!
                  merge-file=s@
                  all!
                  real-name!
@@ -269,16 +270,14 @@ foreach my $dn (sort keys %$Mappings) {
     next DN if not @names;
 
     #
-    # With the "-compatible" option, we may have more than one
-    # DN to handle here.
+    # With the "-gt2-compatible" or "-gt3-compatible" option, we may
+    # have more than one DN to handle here.
     #
-    my @dn_list;
-    if ($User_Opt->{compatible}) {
-        @dn_list = Gridmap_Utils::DN_List $dn;
-    }
-    else {
-        @dn_list = ( $dn );
-    }
+    my @versions = ();
+    push @versions, 'GT2' if $User_Opt->{'gt2-compatible'};
+    push @versions, 'GT3' if $User_Opt->{'gt3-compatible'};
+    push @versions, 'GT4'; # do this unconditionally
+    my @dn_list = Gridmap_Utils::DN_List $dn, @versions;
 
     foreach my $listed_dn (@dn_list) {
         my $output_line = "$listed_dn " . join(',', @names);
@@ -560,10 +559,14 @@ Option names may be abbreviated.
                          name "default" (which may not be abbreviated.)
     -debugging         : Enable debugging output.
     -permissions perm  : Specify permissions (in octal); default is 444
-    -compatible        : Generate a grid-mapfile compatible with both
+    -gt2-compatible    : Generate a grid-mapfile compatible with both
                          GT2 and GT3/GT4.  By default, the generated
                          grid-mapfile is *not* compatible with GT2 for
                          certain DNs.
+    -gt3-compatible    : Generate a grid-mapfile compatible both with
+                         GT3 WS (Web Services) and with GT4.  This is
+                         rarely necessary.  This option can be used
+                         together with the "-compatible" option.
     -merge-file file   : Merge an existing grid-mapfile into the generated
                          file.  May be given multiple times, e.g.,
                              -merge file1 -merge file2
