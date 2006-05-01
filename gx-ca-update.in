@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.108 2006-05-01 15:30:48-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.109 2006-05-01 15:32:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -952,7 +952,7 @@ sub Update_And_Install_CRL($) {
     #     }
     # }
 
-    my $install_new_crl = 0;
+    my $install_new_crl = $User_Opt->{force};
 
     my $have_crl_url = $ref->{CRL_URL} =~ m<(https?|ftp)://>;
     if (not $have_crl_url) {
