@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.109 2006-05-01 15:32:29-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.110 2006-05-01 17:01:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1071,7 +1071,12 @@ sub Update_And_Install_CRL($) {
             if ($new_crl_info->{last_update} == $old_crl_info->{last_update} and
                 $new_crl_info->{next_update} == $old_crl_info->{next_update})
             {
-                Vprint "CRL update not needed\n";
+                if ($install_new_crl) {
+                    Vprint "CRL update not needed, updating anyway (-force)\n";
+                }
+                else {
+                    Vprint "CRL update not needed\n";
+                }
             }
             elsif ($new_crl_info->{last_update} <
                    $old_crl_info->{last_update})
