@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.110 2006-05-01 17:01:35-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.111 2006-05-01 17:51:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -507,11 +507,10 @@ sub Signing_Policy($) {
     if ($ref->{SIGNING_POLICY_URL} ne '?') {
         $result .= "# See also <$ref->{SIGNING_POLICY_URL}>\n";
     }
-    $result .= "\n";
 
-    my $body   = "access_id_CA   X509    '$ref->{SUBJECT}'\n" .
-                 "pos_rights     globus  CA:sign\n" .
-                 "cond_subjects  globus  $cond_subjects\n";
+    my $body = "access_id_CA   X509    '$ref->{SUBJECT}'\n" .
+               "pos_rights     globus  CA:sign\n" .
+               "cond_subjects  globus  $cond_subjects\n";
 
     my @bodies = ();
     my %seen = ();
