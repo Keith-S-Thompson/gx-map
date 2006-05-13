@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.27 2006-05-06 02:25:18-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.28 2006-05-12 19:57:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -140,7 +140,7 @@ if ($Operation ne 'remove-user' and not defined $User_Opt->{dn}) {
 }
 Usage $message if $message ne '';
 
-my $Config = Get_TGCDB_Config "$Install_Dir/etc/gx-map/tgcdb.conf";
+my $Config = Get_TGCDB_Config "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
 Debug "Configuration:\n";
 foreach my $key (sort keys %$Config) {
