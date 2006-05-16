@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.28 2006-05-12 19:57:12-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.29 2006-05-16 03:02:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -140,11 +140,11 @@ if ($Operation ne 'remove-user' and not defined $User_Opt->{dn}) {
 }
 Usage $message if $message ne '';
 
-my $Config = Get_TGCDB_Config "$Install_Dir/etc/gx-map/tgcdb.db-config";
+my $DB_Config = Get_TGCDB_Config "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
 Debug "Configuration:\n";
-foreach my $key (sort keys %$Config) {
-    my $value = $Config->{$key};
+foreach my $key (sort keys %$DB_Config) {
+    my $value = $DB_Config->{$key};
     if ($key eq 'password') {
         $value = '[not shown]';
     }
@@ -185,11 +185,11 @@ open STDERR, '>&LOG';
 Debug "new TGCDB\n";
 my $tg;
 if (not $User_Opt->{dryrun}) {
-    $tg = new TGCDB (host     => $Config->{host},
-                     port     => $Config->{port},
-                     dbname   => $Config->{dbname},
-                     user     => $Config->{user},
-                     password => $Config->{password});
+    $tg = new TGCDB (host     => $DB_Config->{host},
+                     port     => $DB_Config->{port},
+                     dbname   => $DB_Config->{dbname},
+                     user     => $DB_Config->{user},
+                     password => $DB_Config->{password});
 }
 
 Debug "\$tg->beginTransaction\n";
@@ -248,8 +248,8 @@ sub Get_TGCDB_Config($) {
             "Mode must be 400 (r--------) or 600 (rw-------)\n";
     }
 
-    my $config = Gridmap_Utils::Read_Records '-single', $config_file;
-    my @keys = sort keys %$config;
+    my $db_config = Gridmap_Utils::Read_Records '-single', $config_file;
+    my @keys = sort keys %$db_config;
     my @required_keys = qw(host port dbname resource_name user password);
     my %required_key = map { $_ => 1 } @required_keys;
     my @errors = ();
@@ -257,11 +257,11 @@ sub Get_TGCDB_Config($) {
     my @missing = ();
     my @unrecognized = ();
     foreach my $key (@required_keys) {
-        if (not defined $config->{$key}) {
+        if (not defined $db_config->{$key}) {
             push @missing, $key;
         }
     }
-    foreach my $key (sort keys %$config) {
+    foreach my $key (sort keys %$db_config) {
         if (not $required_key{$key}) {
             push @unrecognized, $key;
         }
@@ -281,7 +281,7 @@ sub Get_TGCDB_Config($) {
 
     }
 
-    return $config;
+    return $db_config;
 } # Get_TGCDB_Config
 
 # ----------------------------------------------------------------------
@@ -349,13 +349,13 @@ sub Get_DN_List($) {
 sub Add_Mapping($$$) {
     my($tg, $username, $dn) = @_;
     my $message =
-        "\$tg->gxmap_add_dn($Config->{resource_name}, $username, \"$dn\")\n";
+        "\$tg->gxmap_add_dn($DB_Config->{resource_name}, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
         print STDERR $message;
     }
     else {
         Debug $message;
-        $tg->gxmap_add_dn($Config->{resource_name}, $username, $dn);
+        $tg->gxmap_add_dn($DB_Config->{resource_name}, $username, $dn);
     }
 } # Add_Mapping
 
@@ -364,13 +364,13 @@ sub Add_Mapping($$$) {
 sub Remove_Mapping($$$) {
     my($tg, $username, $dn) = @_;
     my $message =
-        "\$tg->gxmap_remove_dn($Config->{resource_name}, $username, \"$dn\")\n";
+        "\$tg->gxmap_remove_dn($DB_Config->{resource_name}, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
         print STDERR $message;
     }
     else {
         Debug "$message";
-        $tg->gxmap_remove_dn($Config->{resource_name}, $username, $dn);
+        $tg->gxmap_remove_dn($DB_Config->{resource_name}, $username, $dn);
     }
 } # Remove_Mapping
 
