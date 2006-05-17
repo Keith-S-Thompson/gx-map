@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.62 2006-05-16 03:05:19-07 kst Exp $
+# $Id: install-gx-map.in,v 1.63 2006-05-17 16:59:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -63,6 +63,7 @@ DOC_DIR=$INSTALL_DIR/doc
 MAN_DIR=$INSTALL_DIR/man
 DATA_DIR=%DATA_DIR%
 GX_MAP_OWNER=%GX_MAP_OWNER%
+GX_PROPAGATE=%GX_PROPAGATE%
 
 whoami="`whoami`"
 if [ "$whoami" = "" ] ; then
@@ -131,14 +132,14 @@ done
 for file in $SBIN_FILES ; do
     verbosely cp -f $file $SBIN_DIR/.
 done
-for file in $RESTRICTED_SBIN_FILES ; do
-    if [ -f $SBIN_DIR/$file ] ; then
-        verbosely chmod 744 $SBIN_DIR/$file
-    fi
-done
 for file in $OPTIONAL_SBIN_FILES ; do
     if [ -f $file ] ; then
         verbosely cp -f $file $SBIN_DIR/.
+    fi
+done
+for file in $RESTRICTED_SBIN_FILES ; do
+    if [ -f $SBIN_DIR/$file ] ; then
+        verbosely chmod 744 $SBIN_DIR/$file
     fi
 done
 for file in $LIB_FILES ; do
