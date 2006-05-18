@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.46 2006-04-20 17:26:52-07 kst Exp $
+# $Id: gx-request.in,v 1.47 2006-05-17 20:12:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -136,10 +136,9 @@ my @Opts = ( $User_Opt,
                  quick-add quick-remove
                  add
                  remove remove-dn remove-user
-                 set
                  update
                  quiet force no-admin
-                 dn=s@ certificate-file=s default-dn dn-list-file=s
+                 dn=s@ certificate-file=s default-dn
                  username=s
                  directory=s
                  email=s
@@ -1242,8 +1241,6 @@ Option names may be abbreviated.
     -quick-remove           : Remove the mapping for your current certificate.
                               Equivalent to -remove -default-dn.
     -interactive            : Run interactively.
-                              The "set" operation is not currently
-                              available in interactive mode.
     -long-help              : Show long usage message, explaining all
                               command-line options (recommended only
                               for gx-map administrators and masochists).
@@ -1253,20 +1250,12 @@ Option names may be abbreviated.
                               distinguished name.  For use only by gx-map
                               administrators.
     -remove-user            : Remove all mappings for the specified user.
-    -set                    : Set mappings for the specified user,
-                              overriding any existing mappings.  Zero or
-                              more DNs may be specified.  This is
-                              equivalent to a "remove-user" request
-                              followed by zero or more "add" requests.
-                              The "-default-dn" and "-certificate-file" options
-                              cannot be used with "-set".  This operation
-                              is not available in "-interactive" mode.
     -update                 : Request an update of all grid-mapfiles.
                               This normally isn't necessary, but it can be
                               useful if you already have a certificate and
                               get a new account on a machine.
 Note: Exactly one of -interactive, -quick-add, -quick-remove,
-      -add, -remove, -remove-dn, -remove-user, -set, and -update
+      -add, -remove, -remove-dn, -remove-user, and -update
       (or -help, -usage, or -long-usage) must be specified.
 ------------------------------------------------------------------------
     -quiet                  : Work silently.
@@ -1280,11 +1269,6 @@ Note: Exactly one of -interactive, -quick-add, -quick-remove,
     -dn "string"            : Distinguished name.
     -default-dn             : Extract DN from proxy or user certificate.
     -certificate-file file  : Name of file from which to extract DN.
-    -dn-list-file file      : Read a list of DNs from a specified text file,
-                              one DN per line.  Use "-dn-list-file -" to read
-                              from stdin.  This cannot be used with other
-                              DN options (-dn, -default-dn, -certificate-file),
-                              or with any operation other than "-set".
     -force-dn               : Normally, gx-request (minimally) checks
                               the DN for proper syntax; this option
                               overrides that check.
@@ -1312,4 +1296,30 @@ Note: If this help message has scrolled off the top of your screen, try
     $Program_Name -long-help | $pager
 EOF
     exit 1;
+
+#
+# The "-set" option was added in release 0.5.1 and removed in 0.5.2.
+# For now, the code that supports it is still here, but the command-line
+# option is disabled.
+#
+
+#   -interactive            : Run interactively.
+#                             The "set" operation is not currently
+#                             available in interactive mode.
+# ...
+#   -set                    : Set mappings for the specified user,
+#                             overriding any existing mappings.  Zero or
+#                             more DNs may be specified.  This is
+#                             equivalent to a "remove-user" request
+#                             followed by zero or more "add" requests.
+#                             The "-default-dn" and "-certificate-file" options
+#                             cannot be used with "-set".  This operation
+#                             is not available in "-interactive" mode.
+# ...
+#   -dn-list-file file      : Read a list of DNs from a specified text file,
+#                             one DN per line.  Use "-dn-list-file -" to read
+#                             from stdin.  This cannot be used with other
+#                             DN options (-dn, -default-dn, -certificate-file),
+#                             or with any operation other than "-set".
+
 } # Long_Usage
