@@ -1,4 +1,4 @@
-# $Id: bug-0089,v 1.1 2006-04-28 20:38:54-07 kst Exp $
+# $Id: bug-0089,v 1.2 2006-05-17 21:04:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0089,v $
 
 gx-map bug 0089
@@ -21,3 +21,11 @@ create a dummy tgcdb.conf file with permissions 600, and tell the
 installer that it needs to be edited.  gx-propagate should bail out
 if the file exists and hasn't yet been updated (to avoid missing any
 required propagations).
+
+Note: the tgcdb.conf file has been renamed to tgcdb.db-config.
+
+Fixed:
+gx-propagate.in.teragrid 1.30
+gx-check-requests.in 1.94
+install-gx-map.in 1.64
+gx-map release 0.5.2
