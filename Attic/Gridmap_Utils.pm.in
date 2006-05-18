@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.191 2006-05-17 21:00:50-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.192 2006-05-17 22:20:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2421,7 +2421,7 @@ sub Get_TGCDB_Config($) {
         }
     }
 
-    if (@missing or @unrecognized) {
+    if (@missing or @unrecognized or @unset) {
         my $message = "Bad config file $config_file:\n";
         if (@missing) {
             my $s = scalar @missing == 1 ? '' : 's';
