@@ -1,4 +1,4 @@
-# $Id: bug-0089,v 1.2 2006-05-17 21:04:56-07 kst Exp $
+# $Id: bug-0089,v 1.3 2006-05-17 21:05:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0089,v $
 
 gx-map bug 0089
@@ -6,7 +6,7 @@ Date: Fri 2006-04-28
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: Create dummy tgcdb.conf file
 
 Summary:
