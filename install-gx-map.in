@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.63 2006-05-17 16:59:09-07 kst Exp $
+# $Id: install-gx-map.in,v 1.64 2006-05-17 19:23:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -148,6 +148,10 @@ done
 for file in $ETC_FILES ; do
     verbosely cp -f $file  $ETC_DIR/.
 done
+if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
+    verbosely cp -f tgcdb.db-config $ETC_DIR/.
+    verbosely chmod 600 $ETC_DIR/tgcdb.db-config
+fi
 for file in doc/*.pod ; do
     verbosely cp -p $file $DOC_DIR/.
 done
@@ -194,3 +198,13 @@ fi
 
 verbosely cd $BIN_DIR
 verbosely ln -s -f gx-request gx-map
+
+if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
+    cat <<"EOF"
+########################################################################
+IMPORTANT:
+You must edit $ETC_DIR/tgcdb.db-config
+before enabling gx-map's interaction with the TeraGrid Central Database.
+########################################################################
+EOF
+fi
