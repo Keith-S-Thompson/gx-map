@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.test,v 1.10 2006-04-24 17:08:35-07 kst Exp $
+# $Id: gx-propagate.in.test,v 1.11 2006-05-17 21:01:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 ########################################################################
@@ -164,6 +164,7 @@ to a log.
     -dryrun         Don't actually do the database transaction.
                     No effect in this version.
     -add-only       Only "add" requests are supported.
+    -test-config    Ignored.
     -debugging      Enable debugging output.
 
 EOF
