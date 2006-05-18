@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.42 2006-05-17 21:37:06-07 kst Exp $
+# $Id: configure-gx-map,v 1.43 2006-05-18 13:14:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -109,7 +109,7 @@ while (<CONFIG>) {
 
     if (/^(\w+)\s+(.*)$/) {
         my($name, $value) = ($1, $2);
-        eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
+        eval { $value =~ s/~([\w.-]+)/Home_Dir $1/eg; };
         if ($@) {
             chomp $@;
             push @errors, "$@, $Config_File line $.\n";
