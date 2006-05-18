@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.41 2006-05-17 21:35:31-07 kst Exp $
+# $Id: configure-gx-map,v 1.42 2006-05-17 21:37:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -73,7 +73,7 @@ my @Required_Var_Names
           INSTALL_DIR DATA_DIR
           REQUESTS_LOG_PERMISSIONS
           GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
-my @Var_Names = ( @Required_Var_Names 'GX_PROPAGATE' );
+my @Var_Names = ( @Required_Var_Names, 'GX_PROPAGATE' );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 
 if (scalar @ARGV == 1 and -e $ARGV[0]) {
