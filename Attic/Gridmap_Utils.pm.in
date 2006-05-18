@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.190 2006-05-16 03:12:39-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.191 2006-05-17 21:00:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -168,6 +168,13 @@ sub Release_Lock($$);
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
 sub Register_Handler_Function($);
+
+#
+# This function is TeraGrid-specific.
+# It should probably be in separate a TG-specific module, but we'll
+# leave it here for now.
+#
+sub Get_TGCDB_Config($);
 
 sub Debug(@);
 sub Debugf(@);
@@ -2157,15 +2164,15 @@ sub DN_List($@) {
 
     my %result = ();
     foreach my $arg (@_) {
-	if ($arg eq 'GT2') {
-	    $result{GT2_Subject $dn} = 1;
-	}
-	elsif ($arg eq 'GT3') {
-	    $result{GT3_Subject $dn} = 1;
-	}
-	elsif ($arg eq 'GT4') {
-	    $result{GT4_Subject $dn} = 1;
-	}
+        if ($arg eq 'GT2') {
+            $result{GT2_Subject $dn} = 1;
+        }
+        elsif ($arg eq 'GT3') {
+            $result{GT3_Subject $dn} = 1;
+        }
+        elsif ($arg eq 'GT4') {
+            $result{GT4_Subject $dn} = 1;
+        }
     }
     return sort keys %result;
 } # DN_List
@@ -2368,6 +2375,71 @@ sub Install_Warn_Handler() {
 sub Register_Handler_Function($) {
     $Gridmap_Utils::Registered_Handler_Function = $_[0];
 } # Register_Handler_Function
+
+# ----------------------------------------------------------------------
+
+#
+# This function is TeraGrid-specific.
+# It should probably be in separate a TG-specific module, but we'll
+# leave it here for now.
+#
+# Read database configuration information from the specified file
+# (typically "tgcdb.db-config").
+#
+sub Get_TGCDB_Config($) {
+    my($config_file) = @_;
+    Debug "Get_TGCDB_Config $config_file\n";
+
+    my @stat = stat $config_file;
+    die "$config_file: $!\n" if not @stat;
+    my $mode = $stat[2] & 0777;
+    if ($mode ne 0400 and $mode ne 0600) {
+        die "Bad mode for $config_file\n" .
+            "Mode must be 400 (r--------) or 600 (rw-------)\n";
+    }
+
+    my $db_config = Gridmap_Utils::Read_Records '-single', $config_file;
+    my @keys = sort keys %$db_config;
+    my @required_keys = qw(host port dbname resource_name user password);
+    my %required_key = map { $_ => 1 } @required_keys;
+    my @errors = ();
+
+    my @missing = ();
+    my @unrecognized = ();
+    my @unset = ();
+    foreach my $key (@required_keys) {
+        if (not defined $db_config->{$key}) {
+            push @missing, $key;
+        }
+    }
+    foreach my $key (sort keys %$db_config) {
+        if (not $required_key{$key}) {
+            push @unrecognized, $key;
+        }
+        if ($db_config->{$key} eq '-' or $db_config->{$key} eq '') {
+            push @unset, $key;
+        }
+    }
+
+    if (@missing or @unrecognized) {
+        my $message = "Bad config file $config_file:\n";
+        if (@missing) {
+            my $s = scalar @missing == 1 ? '' : 's';
+            $message .= "Missing key$s: @missing\n";
+        }
+        if (@unrecognized) {
+            my $s = scalar @unrecognized == 1 ? '' : 's';
+            $message .= "Unrecognized key$s: @unrecognized\n";
+        }
+        if (@unset) {
+            my $s = scalar @unset == 1 ? '' : 's';
+            $message .= "Unset key$s: @unset\n";
+        }
+        die $message;
+    }
+
+    return $db_config;
+} # Get_TGCDB_Config
 
 # ----------------------------------------------------------------------
 
