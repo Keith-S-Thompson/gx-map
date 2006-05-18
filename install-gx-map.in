@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.64 2006-05-17 19:23:26-07 kst Exp $
+# $Id: install-gx-map.in,v 1.65 2006-05-17 22:08:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -200,7 +200,7 @@ verbosely cd $BIN_DIR
 verbosely ln -s -f gx-request gx-map
 
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
-    cat <<"EOF"
+    cat <<EOF
 ########################################################################
 IMPORTANT:
 You must edit $ETC_DIR/tgcdb.db-config
