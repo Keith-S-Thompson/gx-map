@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.30 2006-05-17 21:01:32-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.31 2006-05-17 22:13:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -105,13 +105,6 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-if (defined $User_Opt->{source}) {
-    exit if $User_Opt->{source} eq 'TGCDB';
-}
-else {
-    Usage "Missing -source option\n";
-}
-
 #
 # On "-check-config" option, just check whether the DB config
 # file is ok.
@@ -122,6 +115,13 @@ if ($User_Opt->{'check-config'}) {
     # If we get here, it's ok.
     #
     exit 0;
+}
+
+if (defined $User_Opt->{source}) {
+    exit if $User_Opt->{source} eq 'TGCDB';
+}
+else {
+    Usage "Missing -source option\n";
 }
 
 my @operations = ();
@@ -368,6 +368,7 @@ sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
 Usage: $Program_Name -help|-version
+       $Program_Name -check-config
        $Program_Name <operation> -username <name> -dn "string"
 where <operation> is one of -add, -remove, -remove-dn, -remove-user
 
