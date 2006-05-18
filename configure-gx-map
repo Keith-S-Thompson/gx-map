@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.40 2006-04-05 21:23:58-07 kst Exp $
+# $Id: configure-gx-map,v 1.41 2006-05-17 21:35:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -67,13 +67,14 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 my $Config_File = undef;
 my %Config = ();
-my @Var_Names = qw( PERL PATH
-                    NAMESPACE
-                    INSTALL_DIR DATA_DIR
-                    REQUESTS_LOG_PERMISSIONS
-                    GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
+my @Required_Var_Names
+    = qw( PERL PATH
+          NAMESPACE
+          INSTALL_DIR DATA_DIR
+          REQUESTS_LOG_PERMISSIONS
+          GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
+my @Var_Names = ( @Required_Var_Names 'GX_PROPAGATE' );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
-$Valid_Var_Name{GX_PROPAGATE} = 1; # optional
 
 if (scalar @ARGV == 1 and -e $ARGV[0]) {
     $Config_File = $ARGV[0];
@@ -142,7 +143,7 @@ while (<CONFIG>) {
 }
 close CONFIG;
 
-foreach my $name (@Var_Names) {
+foreach my $name (@Required_Var_Names) {
     if (not defined $Config{$name}) {
         push @errors, "Missing definition for \"$name\" in $Config_File\n";
     }
