@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.31 2006-05-17 22:13:39-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.32 2006-05-19 18:30:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -186,7 +186,7 @@ my $Mappings = undef;
 # Database transactions produce trace output on stderr.
 # Log this output to a file.
 #
-my $logfile = "$Install_Dir/gx-map-data/tgcdb.log";
+my $logfile = "$Install_Dir/gx-map-data/gx-propagate.log";
 open LOG, ">>$logfile" || die "${logfile}: $!\n";
 print LOG "\n", Gridmap_Utils::Time_Image time, "\n";
 print LOG "$Program_Name ", Quote(@SAVED_ARGV), "\n";
