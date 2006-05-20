@@ -1,7 +1,70 @@
-# $Id: Relnotes,v 1.18 2006-04-15 20:33:56-07 kst Exp $
+# $Id: Relnotes,v 1.19 2006-05-19 23:06:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.5.2, 2006-05-??
+
+    This release is mostly intended to allow for some changes in the
+    TeraGrid Central Database (TGCDB).
+
+    The gx-request commands "-set" and "-dn-list-file" options have
+    been removed.
+
+    Handling for different forms of DNs has been enhanced.  Fields of
+    certain DNs can have different forms in GT2 (Globus Toolkit
+    release 2) vs. GT4.  Some fields have yet another form for the
+    web services portion of GT3.
+
+    The "-compatible" option of the gx-gen-mapfile command has been
+    removed, and is replaced by two new options:
+	-gt2-compatible    : Generate a grid-mapfile compatible with both
+			     GT2 and GT3/GT4.  By default, the generated
+			     grid-mapfile is *not* compatible with GT2
+			     for certain DNs.
+	-gt3-compatible    : Generate a grid-mapfile compatible
+			     both with GT3 WS (Web Services) and
+			     with GT4.	This is rarely necessary.
+			     This option can be used together with the
+			     "-compatible" option.
+
+    The gx-ca-update command has a new option:
+	-gt3-compatible    Generate *.signing_policy files compatible
+			   with GT3 web services tools.  This should
+			   rarely be necessary or useful.  By default,
+			   generated *.signing_policy files are
+			   compatible with both GT2 and GT4, and with
+			   GT3 pre-WS.
+
+    gx-ca-update's "-force" option now applies to CRLs as well as to
+    certificates and signing_policy files.
+
+    Some commands installed in the sbin directory are to be executed
+    only by the owner of the gx-map installation.  These commands now
+    have their permissions set to 744 (rwxr--r--) during installation.
+
+    Miscellaneous minor bug fixes.
+
+    TeraGrid-specific changes:
+
+    The name of the database configuration file has been changed from
+    "tgcdb.conf" to "tgcdb.db-config", and it is now installed in
+    the correct directory (etc/gx-map rather than etc).  The names
+    of some of the fields have been changed.
+
+    On installation, if the GX_PROPAGATE attribute is set to
+    "gx-propagate.in.teragrid" (i.e., if you're using the TeraGrid
+    specific database code), the etc/gx-map/tgcdb-db-config file is
+    created automatically.  You must manually edit this file before
+    using gx-ca-update.  The permissions on the tgcdb.db-config file
+    must be set to 400 (r--------) or 600 (rw-------).
+
+    The gx-propagate command has a new option:
+	-check-config   Check whether the tgcdb.db-config file is ok.
+			If not, silently exit with an error indication.
+    This is used by gx-check-requests to determine whether the
+    tgcdb.db-config file has been updated.  If not, it refuses to run
+    (unless you use "gx-check-requests -nopropagate").
 
 Release 0.5.1, 2006-04-15
 
