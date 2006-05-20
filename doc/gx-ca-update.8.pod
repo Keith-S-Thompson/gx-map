@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.7 2006-04-12 23:34:12-07 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.8 2006-05-19 22:41:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -176,7 +176,8 @@ issued if the CRL has used more than 90% of its lifetime.
 
 =item B<-force>
 
-Force file updates.  This applies to certificate and signing_policy files.
+Force file updates.  This applies to certificates, signing_policy
+files, and CRLs.
 
 =item B<-ignore-disable>
 
