@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.5 2006-04-12 23:07:25-07 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.6 2006-05-19 22:41:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -103,7 +103,7 @@ The default is 444.  The argument must be a 3-digit octal number;
 it should I<not> allow untrusted users to modify the file.  This is
 ignored if the F<grid-mapfile> is written to stdout.
 
-=item B<-compatible>
+=item B<-gt2-compatible>
 
 Generate a grid-mapfile compatible with both GT2 and GT3/GT4.
 By default, the generated grid-mapfile is *not* compatible with GT2
@@ -116,8 +116,19 @@ representations of certian fields in DNs.  The affected fields are:
 
     /emailAddress=... --> /Email=...
 
-The B<-compatible> option causes duplicate entries to be generated
+The B<-gt2-compatible> option causes duplicate entries to be generated
 for DNs containing these fields.
+
+=item B<-gt3-compatible>
+
+Generate a grid-mapfile compatible with GT3 WS.  The DNs differ from
+GT4-compatible DNs in that "/emailAddress=..." is represented as
+"/E=...".
+
+The B<-gt3-compatible> option causes duplicate entries to be generated
+for DNs containing this field.
+
+Since GT3 has been superseded by GT4, this option is rarely useful.
 
 =item B<-merge-file file>
 
