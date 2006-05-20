@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.9 2006-05-19 22:43:19-07 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.10 2006-05-19 22:43:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -145,7 +145,7 @@ default is 444; there is rarely any reason to use a different value.
 Generate *.signing_policy files compatible with GT3 web services tools.
 This should rarely be necessary or useful.  By default, generated
 *.signing_policy files are compatible with both GT2 and GT4, and with
-GT3 pre-WS.
+GT3 pre-WS (so no B<-gt2-compatible> option is needed).
 
 =item B<-allow-missing-crl>
 
