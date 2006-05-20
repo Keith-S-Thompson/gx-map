@@ -1,4 +1,4 @@
-# $Id: bug-0084,v 1.2 2006-04-19 18:45:15-07 kst Exp $
+# $Id: bug-0084,v 1.3 2006-05-19 21:34:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0084,v $
 
 gx-map bug 0084
@@ -30,6 +30,9 @@ There are several problems with the way this is handled.
 3. The format of the tgcdb.conf file is not adequately documented.
    Add a sample to README.TeraGrid, and consider either adding a man
    page or adding the information to the gx-propagate(8) man page.
+
+Note:
+As of gx-map release 0.5.1.008, the file is called "tgcdb.db-config".
 
 Fixed:
 gx-propagate.in.teragrid 1.19, 1.21, 1.22
