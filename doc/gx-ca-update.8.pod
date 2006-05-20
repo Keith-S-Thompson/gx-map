@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.8 2006-05-19 22:41:23-07 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.9 2006-05-19 22:43:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -139,6 +139,13 @@ F</etc/grid-security/certificates> is a symbolic link.
 
 Specify the permissions, in octal, for the installed files.  The
 default is 444; there is rarely any reason to use a different value.
+
+=item B<-gt3-compatible>
+
+Generate *.signing_policy files compatible with GT3 web services tools.
+This should rarely be necessary or useful.  By default, generated
+*.signing_policy files are compatible with both GT2 and GT4, and with
+GT3 pre-WS.
 
 =item B<-allow-missing-crl>
 
