@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.9 2006-04-19 18:40:42-07 kst Exp $
+# $Id: README.TeraGrid,v 1.10 2006-05-19 23:08:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 Here is a set of cron jobs for SDSC's TeraGrid system,
@@ -50,7 +50,7 @@ For NCSA, the cron jobs might look like this:
         -ca-list /usr/local/grid-security/certificates/.list
 
 Note the addition of the "gx-check-requests" command.  The "-namespace"
-option, required in gx-map release 0.4.X, is no longer required.
+option, required in gx-map release 0.4.X, no longer exists.
 
 By default, gx-ca-update will not install a certificate if there is
 no current corresponding CRL.  If a CRL expires and a new one is not
@@ -71,7 +71,7 @@ In a future release, it may optionally use the syslog facility as well.
 Cross-Site Propagation:
 =======================
 
-gx-map 0.5.1 includes support for cross-site propagation
+gx-map 0.5.2 includes support for cross-site propagation
 of grid-mapfile entries, via an optional plug-in program
 called "gx-propagate".  The TeraGrid-specific version is
 "gx-propagate.in.teragrid", which can be specified in the installation
@@ -79,54 +79,40 @@ config file (see sample.conf).  By default, the gx-propagate command
 is invoked by gx-check-requests for each validated request; use
 "gx-check-requests -nopropagate" to disable this.  The gx-propagate
 command submits information to the TGCDB (TeraGrid Central Database).
-It requires a configuration file, "etc/gx-map/tgcdb.conf" to be
-installed with permissions 400 or 600; this specifies information
-about the database, including the password.
+It requires a configuration file, "etc/gx-map/tgcdb.db-config" to
+be installed with permissions 400 or 600; this specifies information
+about the database, including the password.  A dummy version of this
+file is installed automatically.
 
 A sample tgcdb.conf file is:
 ================================
-host	  db-server.example.edu
-port	  9999
-db	  example-db-name
-resource  dtf.example.teragrid
-user	  gxmap
-passwd	  ********
+host           db-server.example.edu
+port           9999
+dbname         example-db-name
+resource_name  dtf.example.teragrid
+user           gxmap
+password       ********
 ================================
 Consult the TeraGrid accounting group for the specific values to use.
 
 gx-propagate propagates mappings from the local gx-map system into the
 TGCDB.  In response to these updates, the TGCDB generates AMIE packets.
 In particular, a RUM packet (Request User Modify) specifies a user's
-Unix account name and a list of zero or more DNs.
+Unix account name and a list of zero or more DNs.  There are two
+forms of this packet: RUM(replace), which specifies a list of DNs to
+be added, and RUM(delete), which specifies a list of DNs to be removed.
 
-IMPORTANT NOTE: The following is likely to change for release 0.5.2:
-] The site-specific AMIE packet handler should invoke the gx-request
-] command as follows:
-] 
-] gx-request -quiet -source TGCDB -set -user <USERNAME> [ -dn "<DN1>" -dn "<DN2>" ... ]
-] 
-] This effectively removes all mappings for the specified user, then
-] adds a mapping for each specified DN.
-] 
-] To avoid an excessively long command line, you can write a list of
-] DNs to a temporary file and use the "-dn-list-file" option:
-] 
-] gx-request -quiet -source TGCDB -set -user <USERNAME> -dn-list <TEMP_FILE>
-] 
-] The gx-request command must be invoked by a gx-map administrative
-] account, one of the accounts specified by GX_MAP_OWNER or
-] ADDITIONAL_ADMINS in the installation configuration file; this will
-] typically be "gxmap" or "globus".  In particular, running this command
-] as root will not work.
-] 
-] The "-source TGCDB" argument is important; it marks the request as
-] one that is not to be re-propagated to the TGCDB.  The argument is
-] case-sensitive; specify exactly TGCDB, not tgcdb.
+An auxiliary package, gx-map-tgcdb, is used to process information
+from the TGCDB.  It can either handle RUM packets as they come in,
+or periodically do a full query of the database, keeping track of
+changes and submitting requests to gx-map as needed.
+
+See the gx-map-tgcdb package itself for more information.
 
 Initial Deployment Plan:
 ========================
 
-One obvious way to deploy gx-map 0.5.1 across TeraGrid sites would
+One obvious way to deploy gx-map 0.5.2 across TeraGrid sites would
 be to install it, enable propagation via gx-propagate, and feed
 the existing grid-mapfiles into the system via gx-ingest (see the
 corresponding man pages for more information).  The problem with
@@ -135,7 +121,7 @@ some of which need to be processed manually).
 
 So the plan (at least at SDSC) is:
 
-1. Install and deploy gx-map 0.5.1.  Use gx-convert-logs and
+1. Install and deploy gx-map 0.5.2.  Use gx-convert-logs and
    gx-cleanup-log to create a new requests.log file (bypassing
    gx-check-requests and gx-propagate), so existing mappings
    are not propagated through the TGCDB.
