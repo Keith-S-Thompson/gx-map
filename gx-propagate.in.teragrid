@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.32 2006-05-19 18:30:37-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.33 2006-05-19 22:02:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -92,7 +92,6 @@ my @Opts = ( $User_Opt,
                  dn=s
                  username=s
                  dryrun
-                 add-only
                  check-config ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -139,10 +138,6 @@ elsif (scalar @operations == 1) {
 }
 else {
     Usage "Multiple operations specified\n";
-}
-
-if ($User_Opt->{'add-only'} and $Operation ne 'add') {
-    $User_Opt->{dryrun} = 1;
 }
 
 my $message = '';
@@ -387,7 +382,6 @@ a cross-site user database.
     -username name  Unix user name to map or unmap.
     -dn "string"    Distinguished name.
     -dryrun         Don't actually do the database transaction.
-    -add-only       Only "add" requests are supported.
     -check-config   Check whether the tgcdb.db-config file is ok.
                     If not, silently exit with an error indication.
     -debugging      Enable debugging output.
