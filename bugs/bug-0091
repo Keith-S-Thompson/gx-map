@@ -1,0 +1,26 @@
+# $Id: bug-0091,v 1.1 2006-05-19 18:39:38-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0091,v $
+
+gx-map bug 0091
+Date: Fri 2006-05-19
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1.007
+Status: Open
+Title: TG: Propagated requests are re-submitted
+
+Summary:
+This is TeraGrid-specific.
+
+With the new gx-propagate interface, requests made at one site are
+propagated into the TGCDB.  This causes AMIE packets to be sent out
+and/or causes the list of DNs in the database to be updated, which
+in turn causes the request to be submitted again.  (The first time,
+the SOURCE will be "user", "admin", or something else; the second
+request will have its SOURCE set to "TGCDB".)
+
+I don't know of a good solution to this.  Fortunately, it's not
+a serious problem.  Since the second request has its SOURCE set to
+"TGCDB", it will not be propagated again, so there won't be more than
+two occurrences.  The result is a minor inefficiency, not a Sorcerer's
+Apprentice phenomenon.
