@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.8 2006-04-12 23:34:12-07 kst Exp $
+# $Id: gx-request.1.pod,v 1.9 2006-05-19 22:15:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -144,10 +144,9 @@ mode, you can specify all required information on the command line.
 This is recommended only for administrative use, such as in a script
 performing multiple updates in batch mode.
 
-Exactly one of the following options may be specified:
-B<-interactive>, B<-add-quick>, B<-remove-quick>, B<-add>, B<-remove>,
-B<-remove-dn>, B<-remove-user>, B<-set>, B<-update>, B<-help>,
-B<-usage>, B<-long-usage>.
+Exactly one of the following options may be specified: B<-interactive>,
+B<-add-quick>, B<-remove-quick>, B<-add>, B<-remove>, B<-remove-dn>,
+B<-remove-user>, B<-update>, B<-help>, B<-usage>, B<-long-usage>.
 
 =over
 
@@ -167,17 +166,6 @@ removed.  Only a gx-map administrator may use this option.
 =item B<-remove-user>
 
 Request that all mappings for a specified user be removed.
-
-=item B<-set>
-
-Set mappings for a specified user.  Zero or more distinguished
-names may be specified.  This is equivalent to a B<"remove-user">
-request followed by zero or more B<"add"> requests.
-
-The B<-default-dn> and B<-certificate-file> options may not be used
-with B<-set>.
-
-This option is not currently available in interactive mode.
 
 =item B<-update>
 
