@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.test,v 1.11 2006-05-17 21:01:47-07 kst Exp $
+# $Id: gx-propagate.in.test,v 1.12 2006-05-19 22:02:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 ########################################################################
@@ -88,8 +88,7 @@ my @Opts = ( $User_Opt,
                  remove-user
                  dn=s
                  username=s
-                 dryrun
-                 add-only ) );
+                 dryrun ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
@@ -163,7 +162,6 @@ to a log.
                     Propagation fails if DN contains "fail".
     -dryrun         Don't actually do the database transaction.
                     No effect in this version.
-    -add-only       Only "add" requests are supported.
     -test-config    Ignored.
     -debugging      Enable debugging output.
 
