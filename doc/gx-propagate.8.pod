@@ -1,4 +1,4 @@
-# $Id: gx-propagate.8.pod,v 1.7 2006-04-19 18:38:28-07 kst Exp $
+# $Id: gx-propagate.8.pod,v 1.8 2006-05-19 22:43:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-propagate.8.pod,v $
 
 =for comment
@@ -145,6 +145,15 @@ B<-remove-user> request).
 
 Don't actually do the database transaction.  This is intended for
 developer testing only.
+
+=item B<-check-config>
+
+Check whether the F<tgcdb.db-config> file is ok.  If not, silently exit
+with an error indication.  This is used by B<gx-check-requests>.
+
+The F<tgcdb.db-config> is considered to be ok if all fields are filled
+in and the file's permissions are set to either 600 (rw-------) or 400
+(r--------).  The values of the fields are not checked.
 
 =item B<-debugging>
 
