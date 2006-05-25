@@ -1,0 +1,24 @@
+#!/usr/bin/perl -w
+
+# $Id: get-version,v 1.1 2006-05-24 18:32:13-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/get-version,v $
+
+use strict;
+
+my $version = undef;
+
+my $module = 'Gridmap_Utils.pm.in';
+open my $MODULE, '<', $module or die "${module}: $!\n";
+while (<$MODULE>) {
+    if (not defined $version and /\$VERSION = '(.*)'/) {
+        $version = $1;
+    }
+}
+close $MODULE;
+
+if (defined $version) {
+    print "$version\n";
+}
+else {
+    die "Unable to get version from $module\n";
+}
