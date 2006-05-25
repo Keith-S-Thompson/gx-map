@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.44 2006-05-23 18:26:32-07 kst Exp $
+# $Id: configure-gx-map,v 1.45 2006-05-24 18:12:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -147,7 +147,7 @@ close CONFIG;
 
 foreach my $name (@Var_Names) {
     if (not defined $Config{$name}) {
-        if ($Required_Var_name{$name}) {
+        if ($Required_Var_Name{$name}) {
             push @errors, "Missing definition for \"$name\" in $Config_File\n";
         }
         else {
