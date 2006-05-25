@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.21 2006-05-17 22:00:27-07 kst Exp $
+# $Id: make-release,v 1.22 2006-05-24 19:36:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -8,19 +8,29 @@ try() {
     eval "$@" || exit 1
 }
 
-if [ $# -ne 1 ] ; then
-    echo "Usage: $0 num" 1>&2
+if [ $# -eq 0 ] ; then
+    num=`./get-version`
+elif [ $# -eq 1 ] ; then
+    case "$1" in
+        [0-9]*)
+            num=$1
+            ;;
+        *)
+            echo "Usage: $0 [num]" 1>&2
+            exit 1
+            ;;
+    esac
+else
+    echo "Usage: $0 [num]" 1>&2
     exit 1
 fi
 
-case "$1" in
-    -*)
-        echo "Usage: $0 num" 1>&2
-        exit 1
-        ;;
-esac
+if [ "$num" = "" ] ; then
+    echo "Error getting version" 1>&2
+    echo "Usage: $0 [num]" 1>&2
+    exit 1
+fi
 
-num=$1
 in_files=`ls *.in | grep -v gx-map.conf.in`
 other_files="INSTALL LICENSE Makefile README README.TeraGrid \
              README.Upgrade Relnotes cleanup-gx-map configure-gx-map \
