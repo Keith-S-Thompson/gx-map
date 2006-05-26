@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.94 2006-05-17 20:16:54-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.95 2006-05-25 18:40:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -217,21 +217,21 @@ $ENV{PATH} = $Gridmap_Utils::Config{PATH};
 #
 my $propagate = "$Install_Dir/sbin/gx-propagate";
 
-#
-# First, check whether the tgcdb.db-config file is ok.
-#
-{
-    my $result = system $propagate, '-check-config';
-    if ($result != 0) {
+if (-x $propagate) {
+    #
+    # First, check whether the tgcdb.db-config file is ok.
+    #
+    if ($User_Opt->{propagate} and
+        system($propagate, '-check-config') != 0)
+    {
         #
         # "gx-propagate -check-config" died with an error message.
         #
         exit 1;
     }
-}
 
-my @propagation_failures = ();
-if (-x $propagate) {
+    my @propagation_failures = ();
+
     REQUEST:
     foreach my $request (@good_requests) {
         if (not $User_Opt->{propagate}) {
