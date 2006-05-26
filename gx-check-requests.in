@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-check-requests.in,v 1.95 2006-05-25 18:40:00-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.96 2006-05-25 19:17:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -298,36 +298,36 @@ if (-x $propagate) {
             push @propagation_failures, $request;
         }
     }
-}
-if (@propagation_failures) {
-    my $count = scalar @propagation_failures;
-    my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
-    my $subject = ($count == 1 ? "gx-propagate: 1 failure"
-                               : "gx-propagate: $count failures");
-    my $body = "$propagate\n" .
-               "failed on the following " .
-               ($count == 1 ? "request" : "requests") .
-               ".\n\n";
+    if (@propagation_failures) {
+        my $count = scalar @propagation_failures;
+        my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+        my $subject = ($count == 1 ? "gx-propagate: 1 failure"
+                                   : "gx-propagate: $count failures");
+        my $body = "$propagate\n" .
+                   "failed on the following " .
+                   ($count == 1 ? "request" : "requests") .
+                   ".\n\n";
 
-    $body .= "Please check the logs in the directory\n" .
-             "    $Install_Dir/gx-map-data\n";
-    $body .= "You may need to resubmit " .
-             ($count == 1 ? "this request" : "these requests") .
-             "\n\n";
+        $body .= "Please check the logs in the directory\n" .
+                 "    $Install_Dir/gx-map-data\n";
+        $body .= "You may need to resubmit " .
+                 ($count == 1 ? "this request" : "these requests") .
+                 "\n\n";
 
-    foreach my $request (@propagation_failures) {
-        foreach my $field (sort keys %$request) {
-            $body .= sprintf "    %-20s %s\n",
-                             $field,
-                             $request->{$field};
+        foreach my $request (@propagation_failures) {
+            foreach my $field (sort keys %$request) {
+                $body .= sprintf "    %-20s %s\n",
+                                 $field,
+                                 $request->{$field};
+            }
+            $body .= "\n";
         }
-        $body .= "\n";
+
+        $body .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) " .
+                 "on $Hostname\n";
+
+        Gridmap_Utils::Send_Email $Program_Name, $recipient, $subject, $body;
     }
-
-    $body
-        .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
-
-    Gridmap_Utils::Send_Email $Program_Name, $recipient, $subject, $body;
 }
 
 #
