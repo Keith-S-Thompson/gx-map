@@ -1,0 +1,31 @@
+# $Id: bug-0093,v 1.1 2006-05-26 18:35:42-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0093,v $
+
+gx-map bug 0093
+Date: Fri 2006-05-26
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: Possible performance improvements for gx-gen-mapfile
+
+Summary:
+Currently, gx-gen-mapfile re-scans the requests.log file every time it
+generates a new grid-mapfile.  This can get slow as the requests.log
+file grows.  Instead, consider generating a global grid-mapfile.all
+in gx-check-requests (probably by invoking "gx-gen-mapfile -all" from
+gx-check-requests).  gx-gen-mapfile without the "-all" option would
+then read from this file, doing the equivalent of "filter-grid-mapfile"
+i.e., filtering out all mappings for accounts that don't exist on
+the current machine).
+
+Also, gx-gen-mapfile (actually Gridmap_Utils::Gen_Mappings) invokes
+Gridmap_Utils::Get_PW for each user name, to determine whether the
+account exists.  Other uses of Get_PW are less significant: it's
+invoked when a request has a UID but no name, and it's invoked by
+gx-gen-mapfile itself to get the user's real name (but only with
+the "-real-name" option).  Instead, consider slurping the entire
+/etc/passwd file or equivalent into hashes, and index into that.
+Do this by adding a "-slurp" option to Gridmap_Utils::Get_PW; with this
+option, it initializes a cache if it hasn't already been initialized.
+Initialially make this optional, and compare the performance.
