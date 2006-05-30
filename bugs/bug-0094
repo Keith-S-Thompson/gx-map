@@ -1,4 +1,4 @@
-# $Id: bug-0094,v 1.1 2006-05-30 13:53:22-07 kst Exp $
+# $Id: bug-0094,v 1.2 2006-05-30 16:38:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0094,v $
 
 gx-map bug 0094
@@ -6,7 +6,7 @@ Date: Tue 2006-05-30
 Severity: med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.1.012
 Title: Race condition creating RCS directory
 
 Summary:
@@ -22,3 +22,7 @@ instance has already done so.  It the dies with an error message.
 Proposed solution: If the RCS directory doesn't exist, attempt to
 create it.  After the mkdir call, check whether it exists; report
 mkdir's error only if it doesn't.
+
+Fixed:
+gx-gen-mapfile.in 1.84
+gx-map release 0.5.1.012
