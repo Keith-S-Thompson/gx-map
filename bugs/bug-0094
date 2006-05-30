@@ -1,0 +1,24 @@
+# $Id: bug-0094,v 1.1 2006-05-30 13:53:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0094,v $
+
+gx-map bug 0094
+Date: Tue 2006-05-30
+Severity: med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1
+Status: Open
+Title: Race condition creating RCS directory
+
+Summary:
+gx-gen-mapfile, by default, creates an RCS directory in the target
+directory for the generated grid-mapfile, if the RCS directory doesn't
+already exist.
+
+If the RCS directory doesn't exist, and two instances of gx-gen-mapfile
+are run simultaneously, one of the instances can see that the RCS
+directory doesn't exist, then attempt to create it after the other
+instance has already done so.  It the dies with an error message.
+
+Proposed solution: If the RCS directory doesn't exist, attempt to
+create it.  After the mkdir call, check whether it exists; report
+mkdir's error only if it doesn't.
