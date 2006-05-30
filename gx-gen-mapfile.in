@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.83 2006-05-01 16:40:31-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.84 2006-05-30 16:37:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -355,9 +355,21 @@ foreach my $output_file (@Output_Files) {
         or die "$Program_Name: copy to $intermediate_file failed\n";
     if ($User_Opt->{rcs}) {
         my $dir = File::Basename::dirname $output_file;
-        if (not -d "$dir/RCS") {
-            mkdir "$dir/RCS", 0755 or die "mkdir $dir/RCS: $!\n";
-            chmod 0755, "$dir/RCS" or die "chmod 0755 $dir/RCS: $!\n";
+        my $RCS_dir = "$dir/RCS";
+        #
+        # There was a possible race condition here.  If the mkdir call
+        # fails, it could be because another gx-gen-mapfile process
+        # created it after the "-d" test.  If the mkdir fails, check
+        # whether the directory exists; if it does, ignore the error.
+        # bug-0094.
+        #
+        if (not -d $RCS_dir) {
+            if (not mkdir $RCS_dir, 0755) {
+                my $mkdir_error = $!;
+                if (not -d $RCS_dir) {
+                    die "$RCS_dir: $!\n";
+                }
+            }
         } 
         Gridmap_Utils::Use_Commands 'rcs', 'ci';
         system "rcs -l $intermediate_file >/dev/null 2>/dev/null";
