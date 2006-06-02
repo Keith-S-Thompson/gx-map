@@ -1,0 +1,126 @@
+# $Id: README-0.4.1e,v 1.1 2006-06-01 18:22:20-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/README-0.4.1e,v $
+
+This is an update for some cadesc files, to be applied to gx-map-0.4.1.
+This is gx-map-cadesc-update-0.4.1e.
+It includes everything from the previous updates, 0.4.1{a,b,c,d}.
+It can be applied whether the previous updates have been applied
+or not.  It can also be applied to releases 0.4.2 through 0.4.5
+(but not to release 0.5.1 or higher).
+
+The only change from 0.4.1d is the addition of two new files:
+
+    a317c467.aist.cadesc
+    b57985f0.usc-kerberos-v3.cadesc
+
+and an update to another file:
+
+    16da7552.nikhef.cadesc
+
+To apply this update to a gx-map-0.4.1 installation:
+
+    If you haven't installed gx-map 0.4.1:
+
+        Unpack gx-map-0.4.1.tar.gz.
+
+        Remove the following files from the ca subdirectory:
+            13eab55e-datagrid-es.cadesc
+            2c7969d0.usc-pki-lite.cadesc
+
+        Copy all the *.cadesc files in this update into the ca
+        subdirectory.
+
+        Install as specified in the INSTALL file.
+
+        Copy this file, "README-0.4.1e", into etc/ca-config under
+        the installation directory.
+
+    If you have installed gx-map 0.4.1 (whether or not you've applied
+    the 0.4.1a, 0.4.1b, 0.4.1c, and/or 0.4.1d updates):
+
+        Remove the following files from etc/ca-config under the
+        installation directory if they exist:
+            13eab55e-datagrid-es.cadesc
+            2c7969d0.usc-pki-lite.cadesc
+
+        Copy all these files, including this "README-0.4.1e", into
+        etc/ca-config under the installation directory
+
+Note that this does not update the gx-map version number (as
+reported by the "-version" command-line option).  You can tell
+whether this update has been applied by checking the CVS revision
+headers in the affected files (see below), or for checking for the
+etc/ca-config/README-0.4.1e file (if it was installed along with the
+*.cadesc files).
+
+These updated files are included in future releases of gx-map.  All
+files from the 0.4.1d update are included in releases 0.4.2 and later.
+The new files in 0.4.1e are included in releases 0.5.1 and later.
+
+Details:
+
+The deleted files are:
+
+    13eab55e-datagrid-es.cadesc
+        This was named incorrectly in the original release;
+        it's replaced with "13eab55e.datagrid-es.cadesc".
+
+    2c7969d0.usc-pki-lite.cadesc
+        Renamed to "2c7969d0.usc-pki-lite-old.cadesc" (see below).
+
+The updated files are:
+
+    01621954.uk-escience.cadesc
+        Updated to reflect the newly issued CA signing certificate
+        with a new MD5_FINGERPRINT.
+        This is newly updated in 0.4.1d.
+        revision 1.12 --> 1.13
+
+    13eab55e.datagrid-es.cadesc
+        This file was not included in gx-map-0.4.1 (because it was
+        named incorrectly).
+        It is included in updates 0.4.1{a,b,c,d}.
+        revision --> 1.2
+
+    16da7552.nikhef.cadesc
+        This file was included in gx-map-0.4.1.  An update is required
+        because a new certificate was issued.  The update is also
+        included in gx-map-0.4.2.
+        revision 1.6 --> 1.9
+
+    2c7969d0.usc-pki-lite-old.cadesc
+        An earlier version of this file was included in gx-map-0.4.1
+        as "2c7969d0.usc-pki-lite.cadesc".  It has been superseded by
+        "2ca73e82.usc-pki-lite-r1.cadesc", but this cadesc file should
+        still be included in the installation.
+        It is included in updates 0.4.1{c,d}.
+        revision --> 1.13
+
+    2ca73e82.usc-pki-lite-r1.cadesc
+        This file was not included in gx-map-0.4.1.
+        It is included in updates 0.4.1{b,c,d}.
+        revision -> 1.4
+
+    2fcac3ee.birn.cadesc
+        An earlier (and incorrect) version of this file was included
+        in gx-map-0.4.1.
+        This new version is included in updates 0.4.1{a,b,c,d}.
+        Corrected the SUBJECT variable.
+        revision 1.1 --> 1.2
+
+    34a5e0db.telescience.cadesc
+        An earlier version of this file (revision 1.2) was included
+        in gx-map-0.4.1.  It was updated in 0.4.1a (revision 1.4) and
+        again in 0.4.1b (revision 1.5).
+        This updated version is in updates 0.4.1{b,c,d}.
+        Added CRL_URL.
+        Documented source of MD5 fingerprint.
+        Donwload files via "http", not "https".
+        revision 1.2 --> 1.4 --> 1.5
+
+    fa9c3452.usc-kerberos-v2.cadesc
+        This file was not included in gx-map-0.4.1.
+        It is included in updates 0.4.1{c,d}.
+        revision --> 1.1
+
+                -- Keith Thompson <kst@sdsc.edu> Thu 2006-06-01
