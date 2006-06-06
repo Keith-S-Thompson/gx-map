@@ -1,4 +1,4 @@
-# $Id: README-0.4.1f,v 1.1 2006-06-05 16:16:11-07 kst Exp $
+# $Id: README-0.4.1f,v 1.2 2006-06-05 17:20:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README-0.4.1f,v $
 
 This is an update for some cadesc files, to be applied to gx-map-0.4.X.
@@ -8,11 +8,15 @@ It can be applied whether the previous updates have been applied
 or not.  It can also be applied to releases 0.4.2 through 0.4.5
 (but not to release 0.5.1 or higher).
 
-The only changes from 0.4.1e are an update to one file:
+For this update, I've copied the latest versions of all the *.cadesc
+files in previous updates, as well as the *.cadesc files for all
+CAs currently recognized by the TeraGrid, and commented out any
+fields that are not recognized by gx-map 0.4.X (CERTIFICATE_SHA1
+and ALLOW_MISSING_CRL).
 
-    a317c467.aist.cadesc
-
-and some corrections to this README file.
+Two files in release 0.4.1 were named incorrectly, and should be
+removed before applying this update.  Both files are replaced with
+corrected versions.
 
 To apply this update to a gx-map-0.4.X installation:
 
@@ -53,7 +57,14 @@ etc/ca-config/README-0.4.1f file (if it was installed along with the
 These updated files are included in later releases of gx-map.  All
 files from the 0.4.1d update are included in releases 0.4.2 and later.
 The new files in 0.4.1e are included in releases 0.5.1 and later.
-The new file in 0.4.1f is included in releases 0.5.2 and later.
+The new files in 0.4.1f is included in releases 0.5.2 and later.
+
+If you need updates for any other CAs, you should consider upgrading
+to the latest release of gx-map (0.5.1 or higher).  If that's not
+practical, you can download the latest release and extract whatever
+*.cadesc files you need, commenting out the CERTIFICATE_SHA1 line
+(and the ALLOW_MISSING_CRL line, if any).  If that doesn't solve your
+problem, please contact the author.
 
 Details:
 
@@ -66,71 +77,28 @@ The deleted files are:
     2c7969d0.usc-pki-lite.cadesc
         Renamed to "2c7969d0.usc-pki-lite-old.cadesc" (see below).
 
-The updated files are:
+The updated files are as follows:
 
-    01621954.uk-escience.cadesc
-        Updated to reflect the newly issued CA signing certificate
-        with a new MD5_FINGERPRINT.
-        This is newly updated in 0.4.1d.
-        revision 1.12 --> 1.13
-
-    13eab55e.datagrid-es.cadesc
-        This file was not included in gx-map-0.4.1 (because it was
-        named incorrectly).
-        It is included in updates 0.4.1{a,b,c,d}.
-        revision --> 1.2
-
-    16da7552.nikhef.cadesc
-        This file was included in gx-map-0.4.1.  An update is required
-        because a new certificate was issued.  The update is also
-        included in gx-map-0.4.2.
-        revision 1.6 --> 1.9
-
-    2c7969d0.usc-pki-lite-old.cadesc
-        An earlier version of this file was included in gx-map-0.4.1
-        as "2c7969d0.usc-pki-lite.cadesc".  It has been superseded by
-        "2ca73e82.usc-pki-lite-r1.cadesc", but this cadesc file should
-        still be included in the installation.
-        It is included in updates 0.4.1{c,d}.
-        revision --> 1.13
-
-    2ca73e82.usc-pki-lite-r1.cadesc
-        This file was not included in gx-map-0.4.1.
-        It is included in updates 0.4.1{b,c,d}.
-        revision --> 1.4
-
-    2fcac3ee.birn.cadesc
-        An earlier (and incorrect) version of this file was included
-        in gx-map-0.4.1.
-        This new version is included in updates 0.4.1{a,b,c,d}.
-        Corrected the SUBJECT variable.
-        revision 1.1 --> 1.2
-
-    34a5e0db.telescience.cadesc
-        An earlier version of this file (revision 1.2) was included
-        in gx-map-0.4.1.  It was updated in 0.4.1a (revision 1.4) and
-        again in 0.4.1b (revision 1.5).
-        This updated version is in updates 0.4.1{b,c,d}.
-        Added CRL_URL.
-        Documented source of MD5 fingerprint.
-        Donwload files via "http", not "https".
-        revision 1.2 --> 1.4 --> 1.5
-
-    a317c467.aist.cadesc
-	Updated to reflect checksums of new signing certificate.
-	An earlier version of this file was included in update 0.4.1e,
-	but was inadvertently not mentioned in README-0.4.1e.
-	revision --> 1.3
-
-    b57985f0.usc-kerberos-v3.cadesc
-	This file was not included in gx-map 0.4.1.
-	It is included in update 0.4.1e (but was inadvertently not
-	mentioned in README-0.4.1e).
-	revision --> 1.2
-
-    fa9c3452.usc-kerberos-v2.cadesc
-        This file was not included in gx-map-0.4.1.
-        It is included in updates 0.4.1{c,d}.
-        revision --> 1.1
+    01621954.uk-escience.cadesc      revision 1.19
+    13eab55e.datagrid-es.cadesc      revision 1.6
+    16da7552.nikhef.cadesc           revision 1.9
+    1c3f2ca8.doegrids.cadesc         revision 1.17
+    2c7969d0.usc-pki-lite-old.cadesc revision 1.19
+    2ca73e82.usc-pki-lite-r1.cadesc  revision 1.8
+    2fcac3ee.birn.cadesc             revision 1.5
+    34a5e0db.telescience.cadesc      revision 1.8
+    3deda549.sdsc.cadesc             revision 1.15
+    49f18420.infn.cadesc             revision 1.11
+    4a6cd8b1.ncsa.cadesc             revision 1.12
+    67e8acfa.purdue-tg-ra.cadesc     revision 1.10
+    85ca9edc.psc-kerberos.cadesc     revision 1.16
+    95009ddc.purdue.cadesc           revision 1.9
+    9a1da9f9.tacc.cadesc             revision 1.10
+    a317c467.aist.cadesc             revision 1.3
+    aa99c057.psc-root.cadesc         revision 1.12
+    b57985f0.usc-kerberos-v3.cadesc  revision 1.2
+    b89793e4.npaci.cadesc            revision 1.13
+    d1b603c3.esnet.cadesc            revision 1.14
+    fa9c3452.usc-kerberos-v2.cadesc  revision 1.6
 
                 -- Keith Thompson <kst@sdsc.edu> Mon 2006-06-05
