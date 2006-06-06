@@ -1,4 +1,4 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.12 2006-01-13 17:07:22-08 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.13 2006-06-06 00:55:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
 CA_NAME             EACL NorduGrid CA
@@ -7,11 +7,13 @@ CONTACT             ca@nbi.dk
 HASH                1f0e8352
 SUBJECT             /O=Grid/O=NorduGrid/CN=NorduGrid Certification Authority
 MAY_SIGN            /O=Grid/O=NorduGrid/*
-CERTIFICATE_MD5     D0:BB:8D:0A:48:28:BB:8E:92:0A:D9:6C:E2:54:E5:EB
-CERTIFICATE_SHA1    EE:49:34:9A:47:AC:0F:0D:AC:C9:31:3B:92:D0:83:A9:10:62:4C:CC
-CERTIFICATE_URL     http://www.nbi.dk/HEP/CA/1f0e8352.0
-SIGNING_POLICY_URL  http://www.nbi.dk/HEP/CA/1f0e8352.signing_policy
-CRL_URL             http://www.nbi.dk/HEP/CA/1f0e8352.r0
-CERT_EXPIRES        Mon 2006-05-22 11:18:48 UTC
+CERTIFICATE_MD5     D7:BC:25:FD:A5:C0:73:3B:53:DF:34:56:0C:E6:E3:D4
+CERTIFICATE_SHA1    A4:B2:8E:86:66:76:7C:D8:65:FC:79:9C:0F:BE:66:EC:58:31:4E:F1
+CERTIFICATE_URL     http://hep.nbi.dk/CA/1f0e8352.0
+SIGNING_POLICY_URL  http://hep.nbi.dk/CA/1f0e8352.signing_policy
+CRL_URL             http://hep.nbi.dk/CA/1f0e8352.r0
+CERT_EXPIRES        Sat 2007-05-12 02:30:36 UTC
 
-# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded 2005-11-22
+# The certificate files were updated 2006-05-12
+
+# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded Tue 2006-06-06
