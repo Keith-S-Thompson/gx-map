@@ -1,4 +1,4 @@
-# $Id: README-0.4.1g,v 1.1 2006-06-05 23:01:10-07 kst Exp $
+# $Id: README-0.4.1g,v 1.2 2006-06-06 00:57:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README-0.4.1g,v $
 
 This is an update for the cadesc files used by gx-ca-update, to be
@@ -89,7 +89,7 @@ The updated files are as follows:
     1aa81ac1.iisas.cadesc                   revision 1.5
     1c3f2ca8.doegrids.cadesc                revision 1.17
     1e43b9cc.grid-ireland.cadesc            revision 1.11
-    1f0e8352.nordugrid.cadesc               revision 1.12
+    1f0e8352.nordugrid.cadesc               revision 1.13
     21bf4d92.apac-grid.cadesc               revision 1.4
     225860ae.edg-worthless.cadesc           revision 1.5
     29021213.fermilab-top-level.cadesc      revision 1.11
@@ -149,7 +149,7 @@ The updated files are as follows:
     cb7b413d.ecmwf.cadesc                   revision 1.1
     cf4ba8c8.cnrs.cadesc                    revision 1.9
     d062fcc9.gtrc.cadesc                    revision 1.5
-    d0c2a341.armesfo.cadesc                 revision 1.10
+    d0c2a341.armesfo.cadesc                 revision 1.11
     d1b603c3.esnet.cadesc                   revision 1.14
     d2a353a5.pkgrid.cadesc                  revision 1.10
     d5036d74.bmg.cadesc                     revision 1.5
@@ -168,5 +168,7 @@ The updated files are as follows:
     fa3af1d7.cern.cadesc                    revision 1.9
     fa9c3452.usc-kerberos-v2.cadesc         revision 1.6
     fe3a68d6.unam.cadesc                    revision 1.7
+
+
 
                 -- Keith Thompson <kst@sdsc.edu> Mon 2006-06-05
