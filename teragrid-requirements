@@ -1,0 +1,21 @@
+# $Id: teragrid-requirements,v 1.1 2006-06-07 02:58:21-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
+
+Missing requirements for gx-map on TeraGrid systems
+===================================================
+
+rachel.psc.edu
+    no pg_hba.conf entry for host "128.182.99.90", ...
+
+tg-login1.ornl.teragrid.org
+    /usr/bin/crontab: Permission denied.
+
+lonestar.tacc.utexas.edu
+    Perl doesn't have Time::HiRes
+
+maverick.tacc.utexas.edu
+    Library problem with "curl" command
+    See TeraGrid Ticket # 123699
+
+tg-login1.uc.teragrid.org
+    Perl doesn't have DBD::Pg
