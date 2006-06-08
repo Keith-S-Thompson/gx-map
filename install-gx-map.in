@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.66 2006-06-07 19:48:07-07 kst Exp $
+# $Id: install-gx-map.in,v 1.67 2006-06-08 00:36:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -64,6 +64,13 @@ MAN_DIR=$INSTALL_DIR/man
 DATA_DIR=%DATA_DIR%
 GX_MAP_OWNER=%GX_MAP_OWNER%
 GX_PROPAGATE=%GX_PROPAGATE%
+EXTRAS=%EXTRAS%
+
+if [ "$EXTRAS" = "TGCDB" || "$EXTRAS" = "TGCDB_TEST" ] ; then
+    INSTALL_TGCDDB_FILEs=1
+else
+    INSTALL_TGCDDB_FILEs=0
+fi
 
 whoami="`whoami`"
 if [ "$whoami" = "" ] ; then
@@ -90,6 +97,11 @@ LIB_FILES="Gridmap_Utils.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes"
 # CA_FILES=ca/*.cadesc
 
+===
+$DATA_DIR/new-db-requests \
+$DATA_DIR/old-db-requests
+===
+
 for dir in $INSTALL_DIR \
            $BIN_DIR \
            $SBIN_DIR \
@@ -114,6 +126,17 @@ do
         verbosely chmod 755 $dir
     fi
 done
+
+if [ "$EXTRAS" = "TGCDB" || "$EXTRAS" = "TGCDB_TEST" ] ; then
+    for dir in $DATA_DIR/new-db-requests \
+               $DATA_DIR/old-db-requests
+    do
+        if [ ! -d $dir ] ; then
+            verbosely mkdir -p  $dir
+            verbosely chmod 755 $dir
+        fi
+    done
+fi
 
 # verbosely touch $DATA_DIR/requests.log
 if [ -f $DATA_DIR/requests.log ] ; then
