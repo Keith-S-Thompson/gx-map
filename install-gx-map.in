@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.68 2006-06-08 01:02:57-07 kst Exp $
+# $Id: install-gx-map.in,v 1.69 2006-06-08 01:31:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -96,11 +96,6 @@ RESTRICTED_SBIN_FILES="gx-ca-update gx-check-requests gx-remove-locks gx-propaga
 LIB_FILES="Gridmap_Utils.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes"
 # CA_FILES=ca/*.cadesc
-
-===
-$DATA_DIR/new-db-requests \
-$DATA_DIR/old-db-requests
-===
 
 for dir in $INSTALL_DIR \
            $BIN_DIR \
