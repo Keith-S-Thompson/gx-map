@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.45 2006-05-24 18:12:35-07 kst Exp $
+# $Id: configure-gx-map,v 1.46 2006-06-07 19:47:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -56,6 +56,7 @@ use strict;
 
 use File::Basename;
 
+sub Need_File($);
 sub Home_Dir($);
 sub Command_Exists($$);
 sub Get_Version();
@@ -73,7 +74,7 @@ my @Required_Var_Names
           INSTALL_DIR DATA_DIR
           REQUESTS_LOG_PERMISSIONS
           GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
-my @Optional_Var_Names = qw( GX_PROPAGATE );
+my @Optional_Var_Names = qw( GX_PROPAGATE EXTRAS );
 my @Var_Names = ( @Required_Var_Names, @Optional_Var_Names );
 my %Required_Var_Name = map { $_ => 1 } @Required_Var_Names;
 my %Valid_Var_Name    = map { $_ => 1 } @Var_Names;
@@ -84,6 +85,11 @@ if (scalar @ARGV == 1 and -e $ARGV[0]) {
 else {
     Usage;
 }
+
+my %Is_TGCDB_File     = ( 'gx-check-db-requests.in' => 1,
+                          'gx-db-request.in'        => 1 );
+my %Is_TGCDB_Test_File = ( %Is_TGCDB_File,
+                           'gx-dump-db.in'          => 1 );
 
 my $Prereq_Error = undef;
 my $Pod2Man_Error = undef;
@@ -152,8 +158,8 @@ foreach my $name (@Var_Names) {
         }
         else {
             #
-            # If GX_PROPAGATE isn't defined, it's more convenient to
-            # set it to the empty string.
+            # If GX_PROPAGATE or EXTRAS isn't defined, it's more
+            # convenient to set it to the empty string.
             #
             $Config{$name} = '';
         }
@@ -213,6 +219,13 @@ if (defined $Config{ADDITIONAL_ADMINS}) {
         Check_Admin $acct, 'ADDITIONAL_ADMINS';
     }
 }
+if ($Config{EXTRAS} ne '') {
+    if ($Config{EXTRAS} ne 'TGCDB' and
+        $Config{EXTRAS} ne 'TGCDB_TEST')
+    {
+        push @errors, "$Config_File: Bad value for EXTRAS\n";
+    }
+}
 
 die @errors if @errors;
 
@@ -242,8 +255,10 @@ my %out_file = ();
 
 opendir DIR, '.' or die ".: $!\n";
 foreach my $in_file (sort grep /\.in$/, readdir DIR) {
-    push @in_files, $in_file;
-    ($out_file{$in_file} = $in_file) =~ s/\.in$//;
+    if (Need_File $in_file) {
+        push @in_files, $in_file;
+        ($out_file{$in_file} = $in_file) =~ s/\.in$//;
+    }
 }
 closedir DIR;
 
@@ -291,6 +306,24 @@ if (defined $Pod2Man_Error) {
 }
 
 ########################################################################
+
+sub Need_File($) {
+    my($file) = @_;
+    #
+    # Order is significant.  TGCDB is a subset of TGCDB_TEST.
+    #
+    if ($Is_TGCDB_File{$file}) {
+        return (defined $Config{EXTRAS} and $Config{EXTRAS} eq 'TGCDB');
+    }
+    elsif ($Is_TGCDB_Test_File{$file}) {
+        return (defined $Config{EXTRAS} and $Config{EXTRAS} eq 'TGCDB_TEST');
+    }
+    else {
+        return 1;
+    }
+} # Need_File
+
+# ----------------------------------------------------------------------
 
 my %home_dir = ();
 
