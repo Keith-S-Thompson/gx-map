@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.69 2006-06-08 01:31:08-07 kst Exp $
+# $Id: install-gx-map.in,v 1.70 2006-06-08 01:35:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -66,12 +66,6 @@ GX_MAP_OWNER=%GX_MAP_OWNER%
 GX_PROPAGATE=%GX_PROPAGATE%
 EXTRAS=%EXTRAS%
 
-if [ "$EXTRAS" = "TGCDB" || "$EXTRAS" = "TGCDB_TEST" ] ; then
-    INSTALL_TGCDDB_FILEs=1
-else
-    INSTALL_TGCDDB_FILEs=0
-fi
-
 whoami="`whoami`"
 if [ "$whoami" = "" ] ; then
     whoami="$LOGNAME"
@@ -122,7 +116,7 @@ do
     fi
 done
 
-if [ "$EXTRAS" = "TGCDB" || "$EXTRAS" = "TGCDB_TEST" ] ; then
+if [ "$EXTRAS" = "TGCDB" -o "$EXTRAS" = "TGCDB_TEST" ] ; then
     for dir in $DATA_DIR/new-db-requests \
                $DATA_DIR/old-db-requests
     do
