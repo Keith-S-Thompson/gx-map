@@ -1,4 +1,4 @@
-# $Id: teragrid-requirements,v 1.1 2006-06-07 02:58:21-07 kst Exp $
+# $Id: teragrid-requirements,v 1.2 2006-06-07 17:36:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -19,3 +19,13 @@ maverick.tacc.utexas.edu
 
 tg-login1.uc.teragrid.org
     Perl doesn't have DBD::Pg
+
+tg-login1.iu.teragrid.org
+    ok
+
+tg-login1.ncsa.teragrid.org
+    Perl doesn't have DBI, DBD::Pg
+
+tg-login-linux.rcac.purdue.edu
+    Ran out of disk quota on home directory (shouldn't be a problem
+    for production use).
