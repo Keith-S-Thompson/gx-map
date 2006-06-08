@@ -1,0 +1,565 @@
+#!%PERL% -w
+
+# $Id: gx-check-db-requests.in,v 1.1 2006-06-07 18:15:35-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/gx-check-db-requests.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+# Database code contributed by Michael Shapiro <mshapiro@ncsa.uiuc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+use DBI;
+
+my $GX_Map_Dir;
+BEGIN {
+    $GX_Map_Dir = '%GX_MAP_INSTALL_DIR%';
+    push @INC, "$GX_Map_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+sub Debug(@);
+sub Debugf(@);
+
+sub Process_DB_Request($$);
+
+sub Get_Mappings_From_File($);
+sub Get_Mappings_From_DB($);
+sub Deep_Copy($);
+sub Flatten($);
+
+sub Request($$);        # add|remove, mapping
+
+sub Cleanup();
+
+my $Program_Name = File::Basename::basename $0;
+my $User_Opt = {};
+my @Opts = ( $User_Opt, qw( help!
+                            version!
+                            dryrun!
+                            debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-check-db-requests) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+my $DB_Config_File = "$GX_Map_Dir/etc/gx-map/tgcdb.db-config";
+
+my $Install_Dir      = '%INSTALL_DIR%';
+my $Data_Dir         = "$Install_Dir/gx-map-tgcdb-data";
+my $New_Requests_Dir = "$Data_Dir/new-db-requests";
+my $Old_Requests_Dir = "$Data_Dir/old-db-requests";
+my $Mappings_File    = "$Data_Dir/tgcdb-mappings";
+
+my $gx_request_command = "$GX_Map_Dir/bin/gx-request";
+
+Gridmap_Utils::Get_Lock $Data_Dir, $Program_Name;
+
+if (not -e $Mappings_File) {
+    #
+    # We don't have a saved copy of the TGCDB mappings
+    # Create it as an empty file and check it into RCS.
+    #
+    open my $FILE, '>', $Mappings_File or die "$Mappings_File: $!\n";
+    close $FILE;
+    Gridmap_Utils::Use_Commands 'ci';
+    system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
+}
+
+my $Old_Mappings = Get_Mappings_From_File $Mappings_File;
+my $New_Mappings = Deep_Copy $Old_Mappings;
+
+#
+# Cache the result of Get_Mappings_From_DB()
+# so we don't need to call it more than once.
+#
+my $Mappings_From_DB = undef;
+
+my @processed_files = ();
+
+#
+# Find any new db-request files.
+# Sorting puts them in chronological order.
+#
+opendir my $REQUESTS, $New_Requests_Dir or die "$New_Requests_Dir: $!\n";
+my @files = sort grep /\.db-request$/, readdir $REQUESTS;
+closedir $REQUESTS;
+if (not @files) {
+    Debug "Nothing to do\n";
+    Cleanup;
+    exit 0;
+}
+
+#
+# Process any db-request files, applying changes to $New_Mappings.
+#
+foreach my $file (@files) {
+    $New_Mappings = Process_DB_Request $New_Mappings, "$New_Requests_Dir/$file";
+    push @processed_files, $file;
+}
+
+my $Flat_Old_Mappings = Flatten $Old_Mappings;
+my $Flat_New_Mappings = Flatten $New_Mappings;
+
+my @removed_mappings = ();
+my @added_mappings = ();
+
+foreach my $mapping (keys %$Flat_Old_Mappings) {
+    if (not defined $Flat_New_Mappings->{$mapping}) {
+        push @removed_mappings, $mapping;
+    }
+}
+
+foreach my $mapping (keys %$Flat_New_Mappings) {
+    if (not defined $Flat_Old_Mappings->{$mapping}) {
+        push @added_mappings, $mapping;
+    }
+}
+
+@removed_mappings = sort @removed_mappings;
+@added_mappings   = sort @added_mappings;
+
+if (not @removed_mappings and not @added_mappings) {
+    Debug "No changes\n";
+    Cleanup;
+    exit 0;
+}
+
+#
+# First update the file with the new mappings, then submit the requests.
+# (If the file update fails, we don't want to submit the requests).
+#
+
+if (not $User_Opt->{dryrun}) {
+    my $Now = Gridmap_Utils::Time_Image time; 
+    my $Hostname = Gridmap_Utils::Get_Hostname;
+    #
+    # Split these string literals so CVS doesn't expand them.
+    #
+    my $Id_Keyword = '$Id' . ':$';
+    my $Source_Keyword = '$Source' . ':$';
+    my $version = $Gridmap_Utils::VERSION;
+
+    my $temp_file = "$Mappings_File.tmp";
+
+    open my $FILE, '>', $temp_file or die "$temp_file: $!\n";
+    print $FILE <<"EOF" or die "Printing to $temp_file: $!\n";
+# $Id_Keyword
+# $Source_Keyword
+
+# Automatically generated by gx-check-db-requests (gx-map-tgcdb $version)
+# at $Now on $Hostname.
+# This is not a grid-mapfile.
+# DO NOT EDIT THIS FILE.
+
+EOF
+
+    foreach my $mapping (sort keys %$Flat_New_Mappings) {
+        print $FILE "$mapping\n" or die "Printing to $temp_file: $!\n";
+    }
+    close $FILE or die "Closing ${temp_file}: $!\n";
+    rename $temp_file, $Mappings_File or die "renaming $temp_file: $!\n";
+    Gridmap_Utils::Use_Commands 'ci';
+    system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
+}
+
+foreach my $mapping (@removed_mappings) {
+    Request 'remove', $mapping;
+}
+foreach my $mapping (@added_mappings) {
+    Request 'add', $mapping;
+}
+
+Gridmap_Utils::Release_Lock $Data_Dir, $Program_Name;
+
+########################################################################
+
+#
+# Process a DB request, applying any changes to the specified mappings
+# structure.  Returns a (possibly modified) mappings structure.
+#
+# Arguments are:
+#     A reference to the mapping structure.
+#     The name of the db_request file.
+#
+sub Process_DB_Request($$) {
+    my($mappings, $db_request_file) = @_;
+    Debug "Process_DB_Request \"$db_request_file\"\n";
+    my $result = $mappings;
+    my $info = Gridmap_Utils::Read_Records '-single', $db_request_file;
+
+    my $request  = undef;
+    my $username = undef;
+    my @dn_list  = ();
+
+    my @errors = ();
+
+    foreach my $key (keys %$info) {
+        if ($key ne 'dn' and ref $info->{$key} eq 'ARRAY') {
+            push @errors, "Duplicate \"$key\" line\n";
+            $info->{$key} = 'BOGUS';
+        }
+        elsif ($key eq 'request') {
+            $request = $info->{$key};
+            if ($request ne 'full-query' and
+                $request ne 'add' and
+                $request ne 'remove')
+            {
+                push @errors, "Invalid \"$key\": $info->{$key}\n";
+            }
+        }
+        elsif ($key eq 'username') {
+            $username = $info->{$key};
+        }
+        elsif ($key eq 'dn') {
+            if (ref $info->{$key} eq 'ARRAY') {
+                @dn_list = @{$info->{$key}};
+            }
+            else {
+                @dn_list = ( $info->{$key} );
+            }
+            my %dn_seen = ();
+            foreach my $dn (@dn_list) {
+                $dn_seen{Gridmap_Utils::GT4_Subject $dn} = 1;
+            }
+            #
+            # No need to sort; order is irrelevant.
+            #
+            @dn_list = keys %dn_seen;
+        }
+        else {
+            push @errors, "Invalid key \"$key\"\n";
+        }
+    }
+
+    if (@errors) {
+        my $s = scalar @errors == 1 ? '' : 's';
+        unshift @errors, "Error$s in $db_request_file\n";
+        die @errors;
+    }
+
+    if ($request eq 'full-query') {
+        if (defined $username) {
+            push @errors, "\"username\" not allowed with full-query request\n";
+        }
+        if (@dn_list) {
+            push @errors, "\"dn\" not allowed with full-query request\n";
+        }
+    }
+    elsif ($request eq 'add') {
+        if (not defined $username) {
+            push @errors, "Missing username in add request\n";
+        }
+    }
+    elsif ($request eq 'remove') {
+        if (not defined $username) {
+            push @errors, "Missing username in remove request\n";
+        }
+        if (scalar @dn_list == 0) {
+            push @errors, "Missing dn in remove request\n";
+        }
+    }
+
+    if (@errors) {
+        my $s = scalar @errors == 1 ? '' : 's';
+        unshift @errors, "Error$s in $db_request_file\n";
+        die @errors;
+    }
+
+    Debug "    request  $request\n";
+    Debug "    username $username\n" if defined $username;
+    foreach my $dn (@dn_list) {
+        Debug "    dn       $dn\n";
+    }
+
+    if ($request eq 'full-query') {
+        if (not defined $Mappings_From_DB) {
+            $Mappings_From_DB = Get_Mappings_From_DB $DB_Config_File;
+        }
+        $result = $Mappings_From_DB;
+    }
+    elsif ($request eq 'add') {
+        #
+        # The DNs in an "add" request are added.
+        # No DNs are to be removed.
+        # (An "add" request results from an AMIE RUM(replace) packet.)
+        #
+        foreach my $dn (@dn_list) {
+            $result->{$username}->{$dn} = 1;
+        }
+    }
+    elsif ($request eq 'remove') {
+        #
+        # The DNs in a "remove" request are removed.
+        # (A "remove" request results from an AMIE RUM(delete) packet.)
+        #
+        foreach my $dn (@dn_list) {
+            if (defined $result->{$username} and
+                defined $result->{$username}->{$dn})
+            {
+                delete $result->{$username}->{$dn};
+            }
+        }
+        #
+        # If all the user's DNs have been removed, do some cleanup.
+        # (This probably isn't strictly necessary.)
+        #
+        if (scalar keys %{$result->{$username}} == 0) {
+            delete $result->{$username};
+        }
+    }
+    return $result;
+} # Process_DB_Request
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of an input file, returns a reference to a hash.
+# Each line of the file consists of a username, one or more spaces,
+# and a DN (no quotation marks are added).
+# 
+# In the result, keys are usernames, values are hash references, where:
+#     keys are DNs, values are 1
+# so the existence of a mapping of a DN to a username is indicated by
+#     $mapping->{$username}->{$dn} == 1
+#
+sub Get_Mappings_From_File($) {
+    my($filename) = @_;
+    Debug "Get_Mappings_From_File \"$filename\"\n";
+    my $result = {};
+    open my $FILE, '<', $filename or die "${filename}: $!\n";
+    while (<$FILE>) {
+        chomp;
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        my($user, $dn) = /^(\S+)\s+(.*)$/;
+        if (not defined $user or not defined $dn) {
+            die "Syntax error in $filename, line $.\n"
+        }
+        $dn = Gridmap_Utils::Normalize_DN $dn;
+        $result->{$user}->{$dn} = 1;
+    }
+    close $FILE;
+    Debug "Got mappings for ", scalar keys %$result, " user(s)\n";
+    return $result;
+} # Get_Mappings_From_File
+
+# ----------------------------------------------------------------------
+
+#
+# Query the TGCDB for and return a set of mappings.
+# The data structure is the same as for Get_Mappings_From_File().
+#
+sub Get_Mappings_From_DB($) {
+    my($db_config_file) = @_;
+    Debug "Get_Mappings_From_DB \"$db_config_file\"\n";
+    my $result = {};
+    my $DB_Config = Gridmap_Utils::Get_TGCDB_Config $db_config_file;
+    #
+    # See also acct.system_accounts.person_id
+    #
+    my $query = qq {
+        select dn, username
+        from   gxmap.dns, gxmap.users
+        where  users.resource_name = '$DB_Config->{resource_name}'
+        and    dns.person_id = users.person_id
+        and    dns.is_active
+    };
+    my $dbh = DBI->connect("DBI:Pg:dbname=$DB_Config->{dbname};" .
+                           "host=$DB_Config->{host};" .
+                           "port=$DB_Config->{port}",
+                           $DB_Config->{user},
+                           $DB_Config->{password});
+    die "Unable to connect to database\n" if not $dbh;
+
+    my @datarow;
+    my $sth = $dbh->prepare($query);
+
+    $sth->execute();
+
+    my $Mapping = {};
+
+    while (@datarow = $sth->fetchrow()) {
+        if ($datarow[1] ne '') {
+            my $dn = Gridmap_Utils::Normalize_DN $datarow[0];
+            my $user = $datarow[1];
+            $result->{$user}->{$dn} = 1;
+        }
+    }
+
+    $dbh->disconnect();
+    Debug "Got mappings for ", scalar keys %$result, " user(s)\n";
+    return $result;
+} # Get_Mappings_From_DB
+
+# ----------------------------------------------------------------------
+
+#
+# Returns a mappings structure equivalent to the one passed in,
+# containing no references to the original data.
+#
+sub Deep_Copy($) {
+    my($old_mappings) = @_;
+    my $result = {};
+    foreach my $user (keys %$old_mappings) {
+        my $ref = $old_mappings->{$user};
+        foreach my $dn (%$ref) {
+            $result->{$user}->{$dn} = 1;
+        }
+    }
+    return $result;
+} # Deep_Copy
+
+# ----------------------------------------------------------------------
+
+#
+# Given a mappings reference, with mappings indicated by
+#     $ref->{$user}->{$dn} == 1
+# flatten it to a reference with mappings indicated by
+#     $ref->{"$user $dn"} == 1
+#
+sub Flatten($) {
+    my($mappings) = @_;
+    my $result = {};
+    foreach my $user (keys %$mappings) {
+        my $ref = $mappings->{$user};
+        foreach my $dn (keys %$ref) {
+            $result->{"$user $dn"} = 1;
+        }
+    }
+    return $result;
+} # Flatten
+
+# ----------------------------------------------------------------------
+
+#
+# Submit a request.
+# Arguments:
+#    action:  "add" or "remove"
+#    mapping: A string of the form "username dn" (no quotes)
+#
+sub Request($$) {
+    my ($action, $mapping) = @_;
+
+    Debug "Request, action=$action, mapping=\"$mapping\"\n";
+    my @command = ($gx_request_command);
+
+    my($dn, $username);
+    if ($mapping =~ /^(\S+)\s+(.*)$/) {
+        ($username, $dn) = ($1, $2);
+        Debug "    username=$username dn=\"$dn\"\n"
+    }
+    else {
+        die "Invalid mapping: \"$mapping\"\n";
+    }
+
+    if    ($action eq 'add')    { push @command, '-add' }
+    elsif ($action eq 'remove') { push @command, '-remove' }
+    else                        { die "Internal error, action=$action\n" }
+    push @command, '-quiet';
+    push @command, '-force';
+    push @command, '-dn', $dn;
+    push @command, '-username', $username;
+    push @command, '-source', 'TGCDB';
+
+    my @printable_command = @command;
+    foreach (@printable_command) {
+        $_ = "\"$_\"" if $_ =~ / /;
+    }
+    if ($User_Opt->{dryrun}) {
+        my @printable_command = @command;
+        foreach (@printable_command) {
+            $_ = "\"$_\"" if $_ =~ / /;
+        }
+        print "% @printable_command\n";
+    }
+    else {
+        Debug "% @printable_command\n";
+        system @command;
+    }
+} # Request
+
+# ----------------------------------------------------------------------
+
+sub Cleanup() {
+    foreach my $file (@processed_files) {
+        rename "$New_Requests_Dir/$file", "$Old_Requests_Dir/$file";
+    }
+    Gridmap_Utils::Release_Lock $Data_Dir, $Program_Name;
+} # Cleanup
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+    -help         : Display this message and exit.
+    -version      : Display version number and exit.
+    -dryrun       : Don't perform updates.
+    -debugging    : Enable debugging output.
+EOF
+    exit 1;
+} # Usage
