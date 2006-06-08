@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.46 2006-06-07 19:47:46-07 kst Exp $
+# $Id: configure-gx-map,v 1.47 2006-06-07 20:48:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -310,13 +310,14 @@ if (defined $Pod2Man_Error) {
 sub Need_File($) {
     my($file) = @_;
     #
-    # Order is significant.  TGCDB is a subset of TGCDB_TEST.
+    # TGCDB is a subset of TGCDB_TEST.
     #
     if ($Is_TGCDB_File{$file}) {
-        return (defined $Config{EXTRAS} and $Config{EXTRAS} eq 'TGCDB');
+        return ( $Config{EXTRAS} eq 'TGCDB' or
+                 $Config{EXTRAS} eq 'TGCDB_TEST' );
     }
     elsif ($Is_TGCDB_Test_File{$file}) {
-        return (defined $Config{EXTRAS} and $Config{EXTRAS} eq 'TGCDB_TEST');
+        return $Config{EXTRAS} eq 'TGCDB_TEST';
     }
     else {
         return 1;
