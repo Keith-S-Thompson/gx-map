@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.67 2006-06-08 00:36:49-07 kst Exp $
+# $Id: install-gx-map.in,v 1.68 2006-06-08 01:02:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -226,7 +226,8 @@ if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
     cat <<EOF
 ########################################################################
 IMPORTANT:
-You must edit $ETC_DIR/tgcdb.db-config
+You must edit
+$ETC_DIR/tgcdb.db-config
 before enabling gx-map's interaction with the TeraGrid Central Database.
 ########################################################################
 EOF
