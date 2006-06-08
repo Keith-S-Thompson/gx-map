@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-db-request.in,v 1.1 2006-06-07 18:15:35-07 kst Exp $
+# $Id: gx-db-request.in,v 1.2 2006-06-07 19:46:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-request.in,v $
 
 ########################################################################
@@ -82,7 +82,7 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map-tgcdb) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
