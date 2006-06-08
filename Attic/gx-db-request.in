@@ -1,0 +1,211 @@
+#!%PERL% -w
+
+# $Id: gx-db-request.in,v 1.1 2006-06-07 18:15:35-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/gx-db-request.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use File::Copy ();
+use Getopt::Long ();
+
+my $GX_Map_Dir;
+BEGIN {
+    $GX_Map_Dir = '%GX_MAP_INSTALL_DIR%';
+    push @INC, "$GX_Map_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+sub Debug(@);
+sub Debugf(@);
+
+sub Request($@);
+
+my $Program_Name = File::Basename::basename $0;
+my $User_Opt = { dn => [] };
+my @Opts = ( $User_Opt, qw( help!
+                            version!
+                            add!
+                            remove!
+                            username=s
+                            dn=s@
+                            dn-list-file=s
+                            full-query!
+                            debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map-tgcdb) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+my $Operation = undef;
+
+{
+    my $count = 0;
+    foreach my $op (qw(add remove full-query)) {
+        if (defined $User_Opt->{$op}) {
+            $Operation = $op;
+            $count ++;
+        }
+    }
+    if ($count != 1) {
+        Usage "Specify exactly one of " .
+              "\"-add\", \"-remove\", \"-full-query\"\n";
+    }
+}
+
+if ($Operation eq 'full-query') {
+    if (defined $User_Opt->{username} or
+        scalar @{$User_Opt->{dn}} > 0 or
+        defined $User_Opt->{'dn-list-file'})
+    {
+        Usage "The \"-full-query\" option cannot be used with\n",
+              "\"-username\", \"-dn\", or \"-dn-list-file\"\n";
+    }
+}
+else {
+    if (not defined $User_Opt->{username}) {
+        Usage "Missing \"-username\" option\n";
+    }
+    my $dn_defined = scalar @{$User_Opt->{dn}} > 0;
+    my $dn_list_file_defined = defined $User_Opt->{'dn-list-file'};
+    if (not $dn_defined and not $dn_list_file_defined) {
+        Usage "Missing \"-dn\" or \"-dn-list-file\" option\n";
+    }
+    elsif ($dn_defined and $dn_list_file_defined) {
+        Usage "The \"-dn\" and \"-dn-list-file\" options " .
+              "cannot be used together\n";
+    }
+}
+
+my $Install_Dir  = '%INSTALL_DIR%';
+my $Data_Dir     = "$Install_Dir/gx-map-tgcdb-data";
+my $Requests_Dir = "$Data_Dir/new-db-requests";
+
+my @request_args = ();
+if ($Operation eq 'add' or $Operation eq 'remove') {
+    push @request_args, $User_Opt->{username};
+
+    my @dn_list;
+    if (scalar @{$User_Opt->{dn}} > 0) {
+        @dn_list = @{$User_Opt->{dn}};
+    }
+    else {
+        @dn_list = Gridmap_Utils::Get_DNs_From_List_File
+                       $User_Opt->{'dn-list-file'};
+    }
+    push @request_args, @dn_list;
+}
+Request $Operation, @request_args;
+
+########################################################################
+
+#
+# Handle a request.
+# Arguments are:
+#      The operation, one of 'full-query', 'add', or 'remove'.
+#      The username (present only if operation is 'add' or 'remove').
+#      Zero or more DNs.
+sub Request($@) {
+    my ($operation, @args) = @_;
+
+    my $request = {};
+
+    $request->{request} = $operation;
+
+    if ($operation ne 'full-query') {
+        my($username, @dn_list) = @args;
+        $request->{username} = $username;
+        $request->{dn} = \@dn_list;
+    }
+
+    my $timestamp = Gridmap_Utils::Get_Time_Of_Day;
+    my $filename =  "$Requests_Dir/$timestamp.db-request";
+    my $tmp_filename = "$filename.tmp";
+
+    Gridmap_Utils::Write_Records '-single', $tmp_filename, $request;
+    rename $tmp_filename, $filename or die "Renaming $tmp_filename: $!\n";
+} # Request
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+    -help              : Display this message and exit.
+    -version           : Display version number and exit.
+    -add               : Add specified DNs for specified user.
+    -remove            : Remove specified DNs for specified user.
+    -username USER     : User name (used with -add or -remove).
+    -dn DN             : DN (used with -add or -remove).
+                         May be specified multiple times.
+    -dn-list-file FILE : Read a list of DNs from a specified text file,
+                         one DN per line.  Use "-dn-list-file -" to read
+                         from stdin.
+    -full-query        : Perform a full query of the DN mappings in
+                         the TGCDB.
+    -debugging         : Enable debugging output.
+EOF
+    exit 1;
+} # Usage
