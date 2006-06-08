@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.70 2006-06-08 01:35:09-07 kst Exp $
+# $Id: install-gx-map.in,v 1.71 2006-06-08 15:58:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -160,7 +160,10 @@ done
 for file in $ETC_FILES ; do
     verbosely cp -f $file  $ETC_DIR/.
 done
-if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
+if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" -o  \
+     "$EXTRAS" = "TGCDB" -o \
+     "$EXTRAS" = "TGCDB_TEST" ]
+then
     verbosely cp -f tgcdb.db-config $ETC_DIR/.
     verbosely chmod 600 $ETC_DIR/tgcdb.db-config
 fi
