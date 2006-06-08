@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-db-requests.in,v 1.2 2006-06-07 19:46:51-07 kst Exp $
+# $Id: gx-check-db-requests.in,v 1.3 2006-06-07 20:49:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-check-db-requests.in,v $
 
 ########################################################################
@@ -55,10 +55,10 @@ use File::Basename ();
 use Getopt::Long ();
 use DBI;
 
-my $GX_Map_Dir;
+my $Install_Dir;
 BEGIN {
-    $GX_Map_Dir = '%GX_MAP_INSTALL_DIR%';
-    push @INC, "$GX_Map_Dir/lib";
+    $Install_Dir = '%INSTALL_DIR%';
+    push @INC, "$Install_Dir/lib";
 }
 use Gridmap_Utils ();
 
@@ -91,7 +91,7 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-my $DB_Config_File = "$GX_Map_Dir/etc/gx-map/tgcdb.db-config";
+my $DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
 my $Install_Dir      = '%INSTALL_DIR%';
 my $Data_Dir         = "$Install_Dir/gx-map-tgcdb-data";
@@ -99,7 +99,7 @@ my $New_Requests_Dir = "$Data_Dir/new-db-requests";
 my $Old_Requests_Dir = "$Data_Dir/old-db-requests";
 my $Mappings_File    = "$Data_Dir/tgcdb-mappings";
 
-my $gx_request_command = "$GX_Map_Dir/bin/gx-request";
+my $gx_request_command = "$Install_Dir/bin/gx-request";
 
 Gridmap_Utils::Get_Lock $Data_Dir, $Program_Name;
 
