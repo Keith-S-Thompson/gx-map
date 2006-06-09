@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-remove-locks.in,v 1.2 2006-04-06 23:49:28-07 kst Exp $
+# $Id: gx-remove-locks.in,v 1.3 2006-06-09 01:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-remove-locks.in,v $
 
 ########################################################################
@@ -84,7 +84,8 @@ Gridmap_Utils::Check_Data_Dir;
 Gridmap_Utils::Require_Owner $Program_Name;
 
 my @lock_files = qw( .gx-ca-update.lock
-                     .gx-check-requests.lock );
+                     .gx-check-requests.lock
+                     .gx-check-db-requests.lock );
 
 my $found_lock_file = 0;
 
