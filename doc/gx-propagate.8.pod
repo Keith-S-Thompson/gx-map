@@ -1,4 +1,4 @@
-# $Id: gx-propagate.8.pod,v 1.8 2006-05-19 22:43:59-07 kst Exp $
+# $Id: gx-propagate.8.pod,v 1.9 2006-06-09 21:45:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-propagate.8.pod,v $
 
 =for comment
@@ -191,7 +191,8 @@ is not recommended.
 =head1 SEE ALSO
 
 gx-map(7), gx-request(1), gx-check-requests(8), gx-propagate(8),
-gx-gen-mapfile(8), gx-map-security(7)
+gx-gen-mapfile(8), gx-map-security(7), gx-db-request(8),
+gx-check-db-requests(8)
 
 =head1 AUTHOR
 
