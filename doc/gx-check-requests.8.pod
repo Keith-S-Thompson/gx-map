@@ -1,4 +1,4 @@
-# $Id: gx-check-requests.8.pod,v 1.6 2006-04-12 23:34:12-07 kst Exp $
+# $Id: gx-check-requests.8.pod,v 1.7 2006-06-09 21:44:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-check-requests.8.pod,v $
 
 =for comment
@@ -55,7 +55,7 @@ gx-check-requests - Process requests for F<grid-mapfile> updates
 
 S<gx-check-requests -help>
 
-S<gx-request [options]>
+S<gx-check-requests [options]>
 
 =head1 DESCRIPTION
 
@@ -68,9 +68,9 @@ is checked for validity.  If the file is valid, it's appended, with
 annotations, to the requests.log file.
 
 The B<gx-check-requests> command must be executed by the account
-that owns the B<gx-map> installation; this is typically the "globus"
-account, but a different account can be configured when the B<gx-map>
-system is installed.
+that owns the B<gx-map> installation; this is typically the "gxmap"
+or "globus" account, but a different account can be configured when
+the B<gx-map> system is installed.
 
 =head1 OPTIONS
 
