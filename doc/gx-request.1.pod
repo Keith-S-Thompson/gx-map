@@ -1,4 +1,4 @@
-# $Id: gx-request.1.pod,v 1.9 2006-05-19 22:15:48-07 kst Exp $
+# $Id: gx-request.1.pod,v 1.10 2006-06-09 21:43:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-request.1.pod,v $
 
 =for comment
@@ -190,6 +190,9 @@ developer testing only.  This has no effect for a non-administrator.
 =item B<-dn> I<"string">
 
 Specify a distinguished name (also known as a subject name).
+The DN should be enclosed in double quotes, since it's likely to
+contain special characters (avoid single quotes since some people's
+names include apostrophes).
 
 =item B<-default-dn>
 
