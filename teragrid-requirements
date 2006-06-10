@@ -1,4 +1,4 @@
-# $Id: teragrid-requirements,v 1.4 2006-06-08 20:02:32-07 kst Exp $
+ $Id: teragrid-requirements,v 1.5 2006-06-09 18:16:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -28,15 +28,17 @@ tg-login1.ornl.teragrid.org
 lonestar.tacc.utexas.edu
     Perl doesn't have Time::HiRes
 maverick.tacc.utexas.edu
-    Library problem with "curl" command
-    See TeraGrid Ticket # 123699
-    Fixed.
+    Library problem with "curl" command (see TeraGrid Ticket # 123699), fixed.
+    no pg_hba.conf entry for host "129.114.50.3
+    Perl code using DBI needs /usr/local/lib in $LD_LIBRARY_PATH
 
 tg-login1.uc.teragrid.org
     Perl doesn't have DBD::Pg
 
 tg-login1.iu.teragrid.org
     ok
+tg-login-ia32.iu.teragrid.org
+    Perl doesn't have Time::HiRes
 
 tg-login1.ncsa.teragrid.org
     Perl doesn't have DBI, DBD::Pg
