@@ -1,4 +1,4 @@
-# $Id: gx-db-request.8.pod,v 1.1 2006-06-09 21:39:24-07 kst Exp $
+# $Id: gx-db-request.8.pod,v 1.2 2006-06-09 21:44:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-db-request.8.pod,v $
 
 =for comment
@@ -193,7 +193,7 @@ Enable debugging output.  This is intended for developer testing only.
 
 =head1 SEE ALSO
 
-gx-map(7), gx-db-request(8), gx-propagate(8)
+gx-map(7), gx-check-db-requests(8), gx-propagate(8)
 
 =head1 AUTHOR
 
