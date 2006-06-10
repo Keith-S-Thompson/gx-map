@@ -1,0 +1,205 @@
+# $Id: gx-db-request.8.pod,v 1.1 2006-06-09 21:39:24-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-db-request.8.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+gx-db-request - Submit a requests for a B<TGCDB> update
+
+=head1 SYNOPSIS
+
+S<gx-db-request -help>
+
+S<gx-db-request [options]>
+
+=head1 DESCRIPTION
+
+B<gx-db-request> is part of the B<gx-map> system and of the optional
+B<TGCDB> (TeraGrid Central Database) subsystem.  This subsystem
+specific to the TeraGrid; it may or may not be installed on your
+system.
+
+B<gx-db-request> is normally run either from a cron job or in response
+to an incoming B<AMIE> packet.  It creates a new F<db-request> file
+to be processed by B<gx-check-db-requests>.
+
+Unlike the B<gx-request> command, B<gx-db-request> is an administrative
+command, not intended to be used by end users.
+
+The B<gx-db-request> command must be executed by the account
+that owns the B<gx-map> installation; this is typically the "gxmap"
+or "globus" account, but a different account can be configured when
+the B<gx-map> system is installed.
+
+There are three kinds of B<db-request>s:
+
+=over
+
+=item B<full-query>
+
+This specifies a full query of the TGCDB for all user/DN mappings for
+a given resource name.  This allows the B<gx-map> B<TGCDB> subsystem
+to get a current and accurate view of the information in the database.
+
+=item B<add>
+
+This specifies that one or more mappings are to be added.  The request
+includes a single user name and one or more DNs.
+
+=item B<remove>
+
+This specifies that one or more mappings are to be removed.  The request
+includes a single user name and one or more DNs.
+
+=back
+
+The B<gx-db-request> command can be used in any of several ways:
+
+You can periodically invoke B<gx-db-request -full-query> from a cron
+job.  This is a good way to keep the mapping information synchronized,
+but it can place a burden on the database server if multiple sites
+are performing frequent queries.  If this option is chosen, TeraGrid
+sites should coordinate to choose a reasonable interval (one hour,
+perhaps?) and to stagger their requests to minimize the impact.
+
+You can invoke B<gx-db-request -add> in response to each incoming
+B<AMIE RUM(replace)> packet, and B<gx-db-request -remove> in response
+to each B<AMIE RUM(delete)> packet.  This will minimize the impact on
+the database server, and it I<should> theoretically keep everything
+synchronized.  Before doing this, you should run B<gx-db-request
+-full-query> to initialize the local copy of the TGCDB mapping
+information.
+
+Other combinations are possible.  For example, you can invoke
+B<gx-db-request -full-query> in response to each incoming B<AMIE RUM>
+packet, ignoring the content of the packet.  You can then control how
+often the actual queries are performed by controlling the frequency
+of the B<gx-db-check-requests> command.  (If B<gx-db-check-requests>
+sees multiple B<full-query> requests, it will only perform one full
+query.)  This has the advantage of using full queries to synchronize
+the mapping information more reliably, while avoiding submitting
+queries if no B<AMIE RUM> packets have been received recently.
+
+The best choice is going to depend on a number of factors: how big
+a burden is actually placed on the database, how many systems are
+running this software, how often B<AMIE RUM> packets are actually
+sent out, and so forth.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-add>
+
+Submit an B<add> request.  Requires exactly one B<-username> option
+and either a B<-dn-list-file> option or one or more B<-dn> options.
+
+=item B<-remove>
+
+Submit a B<remove> request.  Requires exactly one B<-username> option
+and either a B<-dn-list-file> option or one or more B<-dn> options.
+
+=item B<-username> I<USER>
+
+Unix user name to be used with B<-add> or B<-remove>.
+
+=item B<-dn> I<DN>
+
+A DN (Distinguished Name or Subject Name) associated with the specified
+user, to be added or removed.  This option may be given multiple times,
+but may not be used with the B<-dn-list-file> option.  The DN should
+be enclosed in double quotes, since it's likely to contain special
+characters (avoid single quotes since some people's names include
+apostrophes).
+
+=item B<-dn-list-file> I<FILE>
+
+Read a list of DNs from a specified text file.  Each line is treated
+as a complete DN; comments are not supported, and white space is not
+ignored.  Use B<-dn-list-file -> to read from stdin.  This option may
+not be used with the B<-dn> option.  It is intended to avoid problems
+with very long command lines when multiple DNs are needed.
+
+=item B<-full-query>
+
+Submit a B<full-query> request.  The B<-username>, B<-dn>, and
+B<-dn-list-file> options may not be used with this option.
+
+=item B<-debugging>
+
+Enable debugging output.  This is intended for developer testing only.
+
+=back
+
+=head1 SEE ALSO
+
+gx-map(7), gx-db-request(8), gx-propagate(8)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
