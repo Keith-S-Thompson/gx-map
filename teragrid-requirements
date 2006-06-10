@@ -1,50 +1,67 @@
- $Id: teragrid-requirements,v 1.5 2006-06-09 18:16:48-07 kst Exp $
+ $Id: teragrid-requirements,v 1.6 2006-06-09 21:43:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
 ===================================================
 
-tg-login.sdsc.teragrid.org
-    ok
-dslogin.sdsc.teragrid.org
-    ...
-bg-login.sdsc.teragrid.org
-    ...
+NCSA:
+    tg-login1.ncsa.teragrid.org (Mercury)
+	Perl doesn't have DBI, DBD::Pg
+    co-login1.ncsa.teragrid.org (Cobalt)
+	ok
+    login-w.ncsa.teragrid.org (Tungsten)
+	No access to system
+    login-cu.ncsa.teragrid.org (Copper)
+	No access to system
+    login-ra.ncsa.teragrid.org (Radium)
+	No access to system
 
-lemieux.psc.edu
-    no pg_hba.conf entry for host "128.182.99.155", ...
-    The curl command is not installed.  After building it, I had to
-    set $LD_LIBRARY_PATH to /usr/psc/gnu/lib in the cron job for curl
-    to work.
-rachel.psc.edu
-    no pg_hba.conf entry for host "128.182.99.90", ...
-    The curl command is not installed.  After building it, I had to
-    set $LD_LIBRARY_PATH to /usr/psc/gnu/lib in the cron job for curl
-    to work.
+SDSC:
+    tg-login.sdsc.teragrid.org
+	ok
+    dslogin.sdsc.teragrid.org
+	ok
+    bg-login.sdsc.teragrid.org
+	ok
 
-tg-login1.ornl.teragrid.org
-    /usr/bin/crontab: Permission denied.
+UC/ANL:
+    tg-login1.uc.teragrid.org
+	Perl doesn't have DBD::Pg
 
-lonestar.tacc.utexas.edu
-    Perl doesn't have Time::HiRes
-maverick.tacc.utexas.edu
-    Library problem with "curl" command (see TeraGrid Ticket # 123699), fixed.
-    no pg_hba.conf entry for host "129.114.50.3
-    Perl code using DBI needs /usr/local/lib in $LD_LIBRARY_PATH
+PSC:
+    lemieux.psc.edu
+	no pg_hba.conf entry for host "128.182.99.155", ...
+	The curl command is not installed.  After building it, I had to
+	set $LD_LIBRARY_PATH to /usr/psc/gnu/lib in the cron job for curl
+	to work.
+    rachel.psc.edu
+	no pg_hba.conf entry for host "128.182.99.90", ...
+	The curl command is not installed.  After building it, I had to
+	set $LD_LIBRARY_PATH to /usr/psc/gnu/lib in the cron job for curl
+	to work.
+    bigben.psc.edu
+	No access to system
 
-tg-login1.uc.teragrid.org
-    Perl doesn't have DBD::Pg
+IU:
+    tg-login1.iu.teragrid.org
+	ok
+    tg-login-ia32.iu.teragrid.org
+	Perl doesn't have Time::HiRes
+ORNL:
+    tg-login1.ornl.teragrid.org
+	/usr/bin/crontab: Permission denied.
+	Otherwise ok
 
-tg-login1.iu.teragrid.org
-    ok
-tg-login-ia32.iu.teragrid.org
-    Perl doesn't have Time::HiRes
+PURDUE:
+    tg-login-linux.rcac.purdue.edu
+	Ran out of disk quota on home directory (shouldn't be a problem
+	for production use).
 
-tg-login1.ncsa.teragrid.org
-    Perl doesn't have DBI, DBD::Pg
-cobalt.ncsa.teragrid.org
-    ok
-
-tg-login-linux.rcac.purdue.edu
-    Ran out of disk quota on home directory (shouldn't be a problem
-    for production use).
+TACC:
+    lonestar.tacc.utexas.edu
+	Perl doesn't have Time::HiRes
+    maverick.tacc.utexas.edu
+	Library problem with "curl" command (see TeraGrid Ticket #
+	123699), now fixed.
+	no pg_hba.conf entry for host "129.114.50.3
+	Perl code using DBI needs /usr/local/lib in $LD_LIBRARY_PATH
