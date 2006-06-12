@@ -1,114 +1,56 @@
-# $Id: README.TeraGrid,v 1.11 2006-05-24 18:15:14-07 kst Exp $
+# $Id: README.TeraGrid,v 1.12 2006-06-11 23:57:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
-Here is a set of cron jobs for SDSC's TeraGrid system,
-tg-login2.sdsc.teragrid.org, running under the "gxmap" account.
-Other TeraGrid sites should modify the paths and the namespace
-argument.  Non-TeraGrid sites will require customization as well,
-but can use this as a template.
+This is an overview of TeraGrid-specific information for the new
+release of gx-map.
 
-The lines are shown here with '\' continuation characters.  Crontab
-doesn't actualy allow this, so each command will need to be on a
-single line.
+If you have any questions, please feel free to contact me, Keith
+Thompson, <kst@sdsc.edu>.
 
-Not all versions of crontab accept the "*/5" syntax.
+Installation:
+=============
 
-# minute hour mday month wday command
-*/5 * * * *   /usr/local/apps/gx-map-0.5.1/sbin/gx-gen-mapfile \
-        /usr/local/apps/grid-security/grid-mapfile
-15,45 * * * * /usr/local/apps/gx-map-0.5.1/sbin/gx-ca-update \
-        -target-dir /usr/local/apps/grid-security/certificates \
-        -ca-list /usr/local/apps/grid-security/certificates/.list
+Instructions for installing the gx-map system are in the file INSTALL.
+You need to make and edit a copy of the file "sample.conf" to specify
+configuration parameters.  For TeraGrid sites, you should use
 
-The gx-check-requests command is run on an internal SDSC machine, so
-that command is not shown here; the data directory is shared between
-SDSC's internal and TeraGrid systems.
+    GX_PROPAGATE    gx-propagate.in.teragrid
+    EXTRAS          TGCDB
 
-The gx-gen-mapfile command generates (when necessary)
-a new grid-mapfile.  I assume here that it's written
-to the /usr/local/apps/grid-security directory; the file
-/etc/grid-security/grid-mapfile then needs to be a symlink to
-/usr/local/apps/grid-security/grid-mapfile.
+The GX_PROPAGATE variable specifies the version of the gx-propagate
+command that propagates information from gx-map to the TGCDB.
+The EXTRAS variable specifies the TGCDB subsystem, which receives
+information from the TGCDB and forwards it into gx-map.
 
-The gx-ca-update command runs every 30 minutes and checks for
-CRL (Certificate Revocation List) updates.  I recommend running
-gx-ca-update once manually, with the "-verbose" option, to populate
-the certificates directory and see what messages are produced, before
-enabling the cron job.  The ".list" file contains a list of the CA
-certificates to be installed; each CA is specified by its 8-digit hash.
-This allows the set of supported CAs to be updated without modifying
-the cron job.
+Make sure your system has all the prerequisite commands and modules
+needed for gx-map, including the TeraGrid-specific ones (see the
+INSTALL file for details), and that the system is able to talk to
+the TGCDB.  The configure-gx-map script will check the prerequisites
+and report any errors.
 
-For NCSA, the cron jobs might look like this:
+I recommend creating a special account "gxmap" to own and run the
+gx-map commands.  If you prefer you can use the "globus" account for
+this purpose.
 
-# minute hour mday month wday command
-*/5 * * * *   /usr/local/gx-map-0.5.1/sbin/gx-check-requests ; \
-        /usr/local/gx-map-0.5.1/sbin/gx-gen-mapfile \
-        /usr/local/grid-security/grid-mapfile
-15,45 * * * * /usr/local/gx-map-0.5.1/sbin/gx-ca-update \
-        -target-dir /usr/local/grid-security/certificates \
-        -ca-list /usr/local/grid-security/certificates/.list
+At SDSC, a shared NFS-mounted filesystem, /misc/gx-map, is used for
+data needed by the gx-map system.  This allows certain commands
+(gx-check-requests, gx-db-request, and gx-check-db-requests) to
+be run on a single system, with the information being used by all
+SDSC systems.  If there is no such shared filesystem, you'll need to
+run these commands separately on each system, with information being
+propagated through the TGCDB.
 
-Note the addition of the "gx-check-requests" command.  The "-namespace"
-option, required in gx-map release 0.4.X, no longer exists.
+It's most convenient if all systems at a site share the same namespace
+(see the NAMESPACE configuration variable in sample.conf).  A namespace
+corresponds to a common and consistent set of Unix usernames and
+numeric UIDs.  It should also correspond to a resource names in
+the TGCDB, but this isn't always the case; for example, there are
+currently four distinct TGCDB resource names for SDSC, but only a
+single namespace.
 
-By default, gx-ca-update will not install a certificate if there is
-no current corresponding CRL.  If a CRL expires and a new one is not
-available, the old one will be left in place, effectively disabling all
-certificates issued by the CA.  This behavior is designed to prevent
-a revoked user or host certificate from being recognized (which is
-the whole point of being able to revoke a certificate), but at the
-cost of being unable to use potentially valid certificates in some
-circumstances.
-
-There are several options available if you wish to sacrifice security
-for convenience.  See the gx-ca-update(8) man page for details.
-
-The gx-ca-update command writes log messages to the file
-gx-map-data/gx-ca-update.log under the gx-map installation directory.
-In a future release, it may optionally use the syslog facility as well.
-
-Cross-Site Propagation:
-=======================
-
-gx-map 0.5.2 includes support for cross-site propagation
-of grid-mapfile entries, via an optional plug-in program
-called "gx-propagate".  The TeraGrid-specific version is
-"gx-propagate.in.teragrid", which can be specified in the installation
-config file (see sample.conf).  By default, the gx-propagate command
-is invoked by gx-check-requests for each validated request; use
-"gx-check-requests -nopropagate" to disable this.  The gx-propagate
-command submits information to the TGCDB (TeraGrid Central Database).
-It requires a configuration file, "etc/gx-map/tgcdb.db-config" to
-be installed with permissions 400 or 600; this specifies information
-about the database, including the password.  A dummy version of this
-file is installed automatically.
-
-A sample tgcdb.conf file is:
-================================
-host           db-server.example.edu
-port           9999
-dbname         example-db-name
-resource_name  dtf.example.teragrid
-user           gxmap
-password       ********
-================================
+During installation, you will be instructed to edit the tgcdb.db-config
+file.  This file contains information that enables access to the TGCDB.
 Consult the TeraGrid accounting group for the specific values to use.
-
-gx-propagate propagates mappings from the local gx-map system into the
-TGCDB.  In response to these updates, the TGCDB generates AMIE packets.
-In particular, a RUM packet (Request User Modify) specifies a user's
-Unix account name and a list of zero or more DNs.  There are two
-forms of this packet: RUM(replace), which specifies a list of DNs to
-be added, and RUM(delete), which specifies a list of DNs to be removed.
-
-An auxiliary package, gx-map-tgcdb, is used to process information
-from the TGCDB.  It can either handle RUM packets as they come in,
-or periodically do a full query of the database, keeping track of
-changes and submitting requests to gx-map as needed.
-
-See the README file in the gx-map-tgcdb package itself for more
-information.
 
 Initial Deployment Plan:
 ========================
@@ -150,6 +92,113 @@ either can be deployed independently.  For example, if a site doesn't
 choose to use gx-map to maintain its grid-mapfiles, it can still use
 it to maintain its certificates directory, keeping CRLs up to date.
 
-If you have any questions, please feel free to contact me.
+Cross-Site Propagation:
+=======================
 
-                -- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
+gx-map 0.5.2 includes support for cross-site propagation
+of grid-mapfile entries, via an optional plug-in program
+called "gx-propagate".  The TeraGrid-specific version is
+"gx-propagate.in.teragrid", which can be specified in the installation
+config file (see sample.conf).  By default, the gx-propagate command
+is invoked by gx-check-requests for each validated request; use
+"gx-check-requests -nopropagate" to disable this.  The gx-propagate
+command submits information to the TGCDB (TeraGrid Central Database).
+
+Information from the TGCDB is propagated into the gx-map system at
+each site via gx-map's TGCDB subsystem.
+
+Cron Jobs:
+==========
+
+Here is a preliminary set of cron jobs for SDSC's IA-64 TeraGrid
+system, tg-login2.sdsc.teragrid.org, running under the "gxmap"
+account.  Other TeraGrid sites should modify the paths and the
+namespace argument.  Non-TeraGrid sites will require customization
+as well, but can use this as a template.
+
+The lines are shown here with '\' continuation characters.  Crontab
+doesn't actualy allow this, so each command will need to be on a
+single line.
+
+The "*/5" syntax is specific to the Linux version of crontab; it
+will have to be spelled out as 0,5,10,15,20,25,30,35,40,45,50,55 on,
+for example, Solaris and AIX systems.
+
+# minute hour mday month wday command
+*/5 * * * *  /usr/local/apps/gx-map-0.5.2/sbin/gx-gen-mapfile \
+	-gt2-compat /usr/local/apps/grid-security/grid-mapfile
+10,40 * * * * /usr/local/apps/gx-map-0.5.2/sbin/gx-ca-update \
+	-target-dir /usr/local/apps/grid-security/certificates \
+	-ca-list /usr/local/apps/grid-security/certificates/.list
+
+The gx-gen-mapfile command generates (when necessary)
+a new grid-mapfile.  I assume here that it's written
+to the /usr/local/apps/grid-security directory; the file
+/etc/grid-security/grid-mapfile then needs to be a symlink to
+/usr/local/apps/grid-security/grid-mapfile.
+
+Similar cron jobs will run on SDSC's BlueGene and DataStar systems.
+
+The gx-ca-update command runs every 30 minutes and checks for
+CRL (Certificate Revocation List) updates.  I recommend running
+gx-ca-update once manually, with the "-verbose" option, to populate
+the certificates directory and see what messages are produced,
+before enabling the cron job.  The ".list" file contains a list of
+the CA certificates to be installed.  Each CA is specified by its
+8-digit hash.  This allows the set of supported CAs to be updated
+without modifying the cron job.
+
+By default, gx-ca-update will not install a certificate if there is
+no current corresponding CRL.  If a CRL expires and a new one is not
+available, the old one will be left in place, effectively disabling all
+certificates issued by the CA.  This behavior is designed to prevent
+a revoked user or host certificate from being recognized (which is
+the whole point of being able to revoke a certificate), but at the
+cost of being unable to use potentially valid certificates in some
+circumstances.
+
+There are several options available if you wish to sacrifice security
+for convenience.  See the gx-ca-update(8) man page for details.
+
+The gx-ca-update command writes log messages to the file
+gx-map-data/gx-ca-update.log under the gx-map installation directory.
+In a future release, it may optionally use the syslog facility as well.
+
+The gx-check-requests command is run on chester.sdsc.edu, an internal
+SDSC machine; the data directory is shared between SDSC's internal
+and TeraGrid systems.  The crontab for chester.sdsc.edu will include
+something similar to this:
+
+# minute hour mday month wday command
+4,9,14,19,24,29,34,39,44,49,54,59 * * * * \
+    /usr/local/apps/gx-map-0.5.2/sbin/gx-check-requests
+
+To process information from the TGCDB (either by querying the database
+directly or by processing AMIE packets), chester.sdsc.edu will run
+cron jobs similar to the following:
+
+# minute hour mday month wday command
+0 * * * * /usr/local/apps/gx-map-0.5.1.015/sbin/gx-db-request -full-query ; \
+	  /usr/local/apps/gx-map-0.5.1.015/sbin/gx-check-db-requests
+
+This causes a full query of the TGCDB to be performed once an
+hour, invoking the gx-request command as needed for any changes.
+The interval on which this is done may have to be tuned to minimize
+the impact on the database server.  I suggest staggering the timing
+of these jobs across TeraGrid sites.
+
+Other approaches are possible.  See the gx-db-request(8) man page
+(also available on the gx-map web page) for more information.
+
+Other TeraGrid sites will need to run similar cron jobs.
+
+The gx-check-requests, gx-db-request and gx-check-db-requests commands
+need to be run on at least one system per site.  (They will result in
+calls to the gx-request command.)  If there is a shared filesystem,
+they only need to be run on one system; otherwise, they need to be
+run on each system that needs a grid-mapfile.
+
+The gx-gen-mapfile and gx-ca-update commands need to be run on each
+system that needs a grid-mapfile and a certificates directory.
+
+                -- Keith Thompson <kst@sdsc.edu> Sun 2006-06-11
