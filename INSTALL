@@ -1,7 +1,7 @@
-# $Id: INSTALL,v 1.6 2006-04-12 19:24:00-07 kst Exp $
+# $Id: INSTALL,v 1.7 2006-06-13 19:20:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
-Installation instructions for gx-map 0.5.1
+Installation instructions for gx-map 0.5.X
 ==========================================
 
 0.  Ensure all prerequisite software is available (see "Prerequisites",
@@ -31,10 +31,11 @@ Installation instructions for gx-map 0.5.1
     4b. Regenerate the grid-mapfile when necessary:
 	    DIR/sbin/gx-gen-mapfile MAPFILE
 
-    4c. The gx-gen-mapfile command checks for updates to the /etc/passwd
-	file.  On systems where new user accounts do not cause the
-	/etc/passwd file to be updated (e.g., systems using YP/NIS),
-	it may be necessary to run "gx-map -update" periodically.
+    4c. The gx-gen-mapfile command checks for updates to the
+	/etc/passwd file.  On systems where new user accounts
+	do not cause the /etc/passwd file to be updated (e.g.,
+	systems using YP/NIS or LDAP), it may be necessary to run
+	"gx-request -update" periodically.
 
 5.  If you want to use gx-ca-update to maintain CA certificates,
     CRLs, and signing_policy files, set up a cron job:
@@ -51,6 +52,9 @@ Installation instructions for gx-map 0.5.1
 
     Please read the gx-map-security(7) man page before using
     gx-ca-update.
+
+6.  For TeraGrid sites, see README.TeraGrid for details about
+    TeraGrid-specific TGCDB subsystem.
 
 The subsytem that maintains the grid-mapfile (gx-request,
 gx-check-requests, gx-gen-mapfile) is separate from the command that
@@ -76,7 +80,8 @@ The required Perl modules are:
 
     Time::HiRes     (standard in newer versions of Perl)
 
-    DBI             (needed by TeraGrid version of gx-propagate)
+    DBI             (needed by TeraGrid version of gx-propagate and
+                    the TGCDB subsystem)
     DBD::Pg         (needed by DBI)
 
 The following external commands are required:
@@ -132,8 +137,11 @@ These features were intended to allow information to be propagated
 across sites, but TeraGrid requirements led to a different mechanism
 being developed.
 
-The optional gx-propagate command is used to propagate mappings
-across sites, even when the sites don't share a common set of user
-account names.  This was developed for the TeraGrid, but is intended
-to be extensible to other systems.  See README.TeraGrid and the
-gx-propagate(8) man page for more information.
+The optional gx-propagate command is used to propagate mappings across
+sites, even when the sites don't share a common set of user account
+names.  This was developed for the TeraGrid, but is intended to be
+extensible to other systems.  In addition, the TeraGrid-specific
+TGCDB subsystem is used to extract information from the TeraGrid
+Central Database into the gx-map system.  See README.TeraGrid and
+the gx-propagate(8), gx-db-request(8), and gx-db-check-requests(8)
+man pages for more information.
