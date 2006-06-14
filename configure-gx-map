@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.48 2006-06-13 18:30:46-07 kst Exp $
+# $Id: configure-gx-map,v 1.49 2006-06-13 18:45:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -86,9 +86,9 @@ else {
     Usage;
 }
 
-my %Is_TGCDB_File = ( 'gx-check-db-requests.in' => 1,
+my %Is_TGCDB_File = ( 'gx-db-check-requests.in' => 1,
                       'gx-db-request.in'        => 1,
-                       'gx-dump-db.in'          => 1 );
+                      'gx-db-dump.in'           => 1 );
 
 my $Prereq_Error = undef;
 my $Pod2Man_Error = undef;
