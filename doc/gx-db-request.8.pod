@@ -1,4 +1,4 @@
-# $Id: gx-db-request.8.pod,v 1.2 2006-06-09 21:44:10-07 kst Exp $
+# $Id: gx-db-request.8.pod,v 1.3 2006-06-13 18:41:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-db-request.8.pod,v $
 
 =for comment
@@ -66,7 +66,7 @@ system.
 
 B<gx-db-request> is normally run either from a cron job or in response
 to an incoming B<AMIE> packet.  It creates a new F<db-request> file
-to be processed by B<gx-check-db-requests>.
+to be processed by B<gx-db-check-requests>.
 
 Unlike the B<gx-request> command, B<gx-db-request> is an administrative
 command, not intended to be used by end users.
@@ -193,7 +193,7 @@ Enable debugging output.  This is intended for developer testing only.
 
 =head1 SEE ALSO
 
-gx-map(7), gx-check-db-requests(8), gx-propagate(8)
+gx-map(7), gx-db-check-requests(8), gx-propagate(8)
 
 =head1 AUTHOR
 
