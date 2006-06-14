@@ -1,0 +1,268 @@
+#!%PERL% -w
+
+# $Id: gx-db-dump.in,v 1.1 2006-06-13 18:32:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-db-dump.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+# Database code contributed by Michael Shapiro <mshapiro@ncsa.uiuc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+use DBI;
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    push @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+sub Debug(@);
+sub Debugf(@);
+
+sub Get_Mappings_From_DB($);
+
+sub By_Domain;
+
+my $Default_DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
+
+my $Program_Name = File::Basename::basename $0;
+my $User_Opt = { 'db-config' => $Default_DB_Config_File };
+my @Opts = ( $User_Opt, qw( help!
+                            version!
+                            db-config=s
+                            raw!
+                            all!
+                            users!
+                            people!
+                            debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+my $Mappings = Get_Mappings_From_DB $User_Opt->{'db-config'};
+if ($User_Opt->{users}) {
+    foreach my $person_id (sort { $a <=> $b } keys %$Mappings) {
+        my $ref = $Mappings->{$person_id};
+        my $prefix = sprintf "%6d  ", $person_id;
+        foreach my $resource_name (sort By_Domain keys %$ref) {
+            printf "%6d  %-30s", $person_id, $resource_name;
+            my @users = sort keys %{$ref->{$resource_name}};
+            my $userlist = '';
+            foreach my $user (@users) {
+                $userlist .= sprintf "%-10s", $user;
+            }
+            $userlist =~ s/ *$//;
+            print "$userlist\n";
+        }
+    }
+}
+elsif ($User_Opt->{people}) {
+    foreach my $person_id (sort { $a <=> $b } keys %$Mappings) {
+        my $ref = $Mappings->{$person_id};
+        my @names = sort keys %$ref;
+        map { $_ = "\"$_\"" } @names;
+        printf "%6d  %s\n", $person_id, "@names";
+    }
+}
+else {
+    foreach my $user (sort keys %$Mappings) {
+        my $ref = $Mappings->{$user};
+        foreach my $dn (sort keys %$ref) {
+            if ($User_Opt->{all}) {
+                my ($username, $resource) = ($user =~ /^([^:]+):(.*)$/);
+                printf "%-10s %-32s %s\n", $username, $resource, $dn;
+            }
+            else {
+                printf "%-10s %s\n", $user, $dn;
+            }
+        }
+    }
+}
+
+########################################################################
+
+#
+# Query the TGCDB for and return a set of mappings.
+# The data structure is the same as for Get_Mappings_From_File().
+#
+sub Get_Mappings_From_DB($) {
+    my($db_config_file) = @_;
+    Debug "Get_Mappings_From_DB \"$db_config_file\"\n";
+    my $result = {};
+    my $DB_Config = Gridmap_Utils::Get_TGCDB_Config $db_config_file;
+    #
+    # See also acct.system_accounts.person_id
+    #
+    my $query;
+
+    if ($User_Opt->{users}) {
+        $query = qq {
+            select person_id, username, resource_name
+            from   gxmap.users
+        };
+    }
+    elsif ($User_Opt->{all}) {
+        $query = qq {
+            select dn, username, resource_name, is_active
+            from   gxmap.dns, gxmap.users
+            where  dns.person_id = users.person_id
+        };
+    }
+    elsif ($User_Opt->{people}) {
+        $query = qq {
+            select person_id, first_name, middle_name, last_name
+            from   acct.people
+        };
+    }
+    else {
+        $query = qq {
+            select dn, username
+            from   gxmap.dns, gxmap.users
+            where  users.resource_name = '$DB_Config->{resource_name}'
+            and    dns.person_id = users.person_id
+            and    dns.is_active
+        };
+    }
+    my $dbh = DBI->connect("DBI:Pg:dbname=$DB_Config->{dbname};" .
+                           "host=$DB_Config->{host};" .
+                           "port=$DB_Config->{port}",
+                           $DB_Config->{user},
+                           $DB_Config->{password});
+    die "Unable to connect to database\n" if not $dbh;
+
+    my @datarow;
+    my $sth = $dbh->prepare($query);
+
+    $sth->execute();
+
+    my $Mapping = {};
+
+    while (@datarow = $sth->fetchrow()) {
+        if (not $User_Opt->{users} and not $User_Opt->{all}) {
+            next if $datarow[0] eq '' or $datarow[1] eq '';
+        }
+        if ($User_Opt->{users}) {
+            my($person_id, $username, $resource_name) = @datarow;
+            $result->{$person_id}->{$resource_name}->{$username} = 1;
+        }
+        elsif ($User_Opt->{people}) {
+            my($person_id, $first_name, $middle_name, $last_name) = @datarow;
+            my @name = ();
+            foreach my $part ($first_name, $middle_name, $last_name) {
+                push @name, $part if defined $part and $part ne '';
+            }
+            $result->{$person_id}->{"@name"} = 1;
+        }
+        else {
+            my $dn = $datarow[0];
+            if (not $User_Opt->{raw}) {
+                $dn = Gridmap_Utils::Normalize_DN $dn;
+            }
+            my $user = $datarow[1];
+            if ($User_Opt->{all}) {
+                my $resource_name = $datarow[2];
+                my $is_active = $datarow[3];
+                $user .= ":$resource_name";
+                if (not $is_active) {
+                    $user .= ":inactive";
+                }
+            }
+            $result->{$user}->{$dn} = 1;
+        }
+    }
+
+    $dbh->disconnect();
+    Debug "Got mappings for ", scalar keys %$result, " user(s)\n";
+    return $result;
+} # Get_Mappings_From_DB
+
+# ----------------------------------------------------------------------
+
+sub By_Domain {
+    my $rev_a = join('.', reverse split /\./, $a);
+    my $rev_b = join('.', reverse split /\./, $b);
+    return $rev_a cmp $rev_b;
+} # By_Domain
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+This program is intended for testing purposes only.
+    -help           : Display this message and exit.
+    -version        : Display version number and exit.
+    -db-config FILE : DB config file (default is
+                      $Default_DB_Config_File)
+    -raw            : Get raw mappings; don't normalize DNs.
+    -all            : Get all info; don't filter by resource name.
+    -users          : Dump just the "users" view.
+    -people         : Dump information from the "people" table.
+    -debugging      : Enable debugging output.
+EOF
+    exit 1;
+} # Usage
