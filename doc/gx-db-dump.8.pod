@@ -1,4 +1,4 @@
-# $Id: gx-db-dump.8.pod,v 1.1 2006-06-13 18:36:19-07 kst Exp $
+# $Id: gx-db-dump.8.pod,v 1.2 2006-06-13 18:37:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-db-dump.8.pod,v $
 
 =for comment
@@ -49,28 +49,28 @@ Make sure the license text appears in the generated man pages.
 
 =head1 NAME
 
-gx-dump-db - Dump information from the TGCDB to stdout
+gx-db-dump - Dump information from the TGCDB to stdout
 
 =head1 SYNOPSIS
 
-S<gx-dump-db -help>
+S<gx-db-dump -help>
 
-S<gx-dump-db [options]>
+S<gx-db-dump [options]>
 
 =head1 DESCRIPTION
 
-B<gx-dump-db> is part of the B<gx-map> system and of the optional
+B<gx-db-dump> is part of the B<gx-map> system and of the optional
 B<TGCDB> (TeraGrid Central Database) subsystem.  This subsystem
 specific to the TeraGrid; it may or may not be installed on your
 system.
 
-B<gx-dump-db> is intended only for testing and debugging purposes.
+B<gx-db-dump> is intended only for testing and debugging purposes.
 It should not be run in normal production use.  Some invocations
 may place a significant burden on the database server.  I wrote this
 tool for my own testing as I was developing the B<TGCDB> subsystem;
 there's probably no need to use it at all.
 
-The B<gx-dump-db> command must be executed by the account that owns
+The B<gx-db-dump> command must be executed by the account that owns
 the B<gx-map> installation; this is typically the "gxmap" or "globus"
 account, but a different account can be configured when the B<gx-map>
 system is installed.
