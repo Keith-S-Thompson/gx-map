@@ -1,8 +1,8 @@
-# $Id: README,v 1.27 2006-05-19 23:07:20-07 kst Exp $
+# $Id: README,v 1.28 2006-06-13 19:20:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
-and CA files.  The current release is 0.5.1.  The primary documentation
+and CA files.  The current release is 0.5.2.  The primary documentation
 is in the man pages (new in release 0.5.1) and on the gx-map web site,
 <http://users.sdsc.edu/~kst/gx-map/>.
 
@@ -40,6 +40,10 @@ non-interactive use.
 The 0.5.1 release adds support for propagation of information across
 sites, using the optional gx-propagate command.
 
+The 0.5.2 release, in addition to the gx-propagate command, adds an
+optional TGCDB subsystem.  This is specifically intended for use with
+the TeraGrid Central Database.  See README.TeraGrid for details.
+
 The gx-ca-update command (new in release 0.4.0) handles automated
 installation and maintenance of certificate, signing_policy, and CRL
 files for CAs (Certificate Authorities).
@@ -52,4 +56,4 @@ files for CAs (Certificate Authorities).
 The README, README.*, and Relnotes files are installed in the
 etc/gx-map subdirectory when you install gx-map.
 
-                -- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
+                -- Keith Thompson <kst@sdsc.edu> Tue 2006-06-13
