@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.47 2006-06-07 20:48:16-07 kst Exp $
+# $Id: configure-gx-map,v 1.48 2006-06-13 18:30:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -86,10 +86,9 @@ else {
     Usage;
 }
 
-my %Is_TGCDB_File     = ( 'gx-check-db-requests.in' => 1,
-                          'gx-db-request.in'        => 1 );
-my %Is_TGCDB_Test_File = ( %Is_TGCDB_File,
-                           'gx-dump-db.in'          => 1 );
+my %Is_TGCDB_File = ( 'gx-check-db-requests.in' => 1,
+                      'gx-db-request.in'        => 1,
+                       'gx-dump-db.in'          => 1 );
 
 my $Prereq_Error = undef;
 my $Pod2Man_Error = undef;
@@ -219,12 +218,8 @@ if (defined $Config{ADDITIONAL_ADMINS}) {
         Check_Admin $acct, 'ADDITIONAL_ADMINS';
     }
 }
-if ($Config{EXTRAS} ne '') {
-    if ($Config{EXTRAS} ne 'TGCDB' and
-        $Config{EXTRAS} ne 'TGCDB_TEST')
-    {
-        push @errors, "$Config_File: Bad value for EXTRAS\n";
-    }
+if ($Config{EXTRAS} ne '' and $Config{EXTRAS} ne 'TGCDB') {
+    push @errors, "$Config_File: Bad value for EXTRAS\n";
 }
 
 die @errors if @errors;
@@ -309,15 +304,8 @@ if (defined $Pod2Man_Error) {
 
 sub Need_File($) {
     my($file) = @_;
-    #
-    # TGCDB is a subset of TGCDB_TEST.
-    #
     if ($Is_TGCDB_File{$file}) {
-        return ( $Config{EXTRAS} eq 'TGCDB' or
-                 $Config{EXTRAS} eq 'TGCDB_TEST' );
-    }
-    elsif ($Is_TGCDB_Test_File{$file}) {
-        return $Config{EXTRAS} eq 'TGCDB_TEST';
+        return $Config{EXTRAS} eq 'TGCDB';
     }
     else {
         return 1;
