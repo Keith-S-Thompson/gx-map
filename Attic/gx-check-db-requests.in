@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-db-requests.in,v 1.6 2006-06-08 01:25:26-07 kst Exp $
+# $Id: gx-check-db-requests.in,v 1.7 2006-06-13 18:39:55-07 kst dead $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-check-db-requests.in,v $
 
 ########################################################################
