@@ -1,17 +1,17 @@
-# $Id: README.Upgrade,v 1.7 2006-04-12 19:24:00-07 kst Exp $
+# $Id: README.Upgrade,v 1.8 2006-06-13 19:20:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.Upgrade,v $
 
 As of release 0.4.5, the client command for the gx-map system has been
 renamed from "gx-map" to "gx-request".  For backward compatibility, the
 "gx-map" command is still available as a symbolic link to "gx-request".
 
-Upgrading to 0.5.1.
+Upgrading to 0.5.X.
 ===================
 
 The data files (particularly the requests.log file) for gx-map 0.5.X
 are incompatible with the data files for gx-map 0.4.X.
 
-Install gx-map 0.5.1 as described in INSTALL.  This will create an
+Install gx-map 0.5.X as described in INSTALL.  This will create an
 initial empty requests.log file.
 
 You then need to feed your existing grid-mapfile entries into the
@@ -27,9 +27,10 @@ new gx-map installation.  There are two ways to do this.
    later), you can translate your existing requests.log file using
    the gx-convert-log command.  If you want to change the set of user
    accounts that have administrative privileges, use the "-old-admins"
-   and "-new-admin" options.  Optionally run gx-cleanup-logs to delete
-   or comment out redundant requests (such as an add request followed
-   by a corresponding remove request).
+   and "-new-admin" options.  Optionally run gx-cleanup-logs to
+   delete or comment out redundant requests (such as an add request
+   followed by a corresponding remove request).  If you have multiple
+   requests.log files, use "gx-cleanup-logs" to merge them.
 
    Install the generated requests.log file in the gx-map-data
    directory.
@@ -41,12 +42,12 @@ want to keep them; they'll appear if the accounts are created later,
 or if they exist on other systems within your site.  If you translate
 the requests.log file (option 2), these entries will be included
 automatically.  If you instead process your existing grid-mapfile,
-consider using your old installation's "gx-gen-mapfile -all" command
-to generate a grid-mapfile that contains all the entries.
+consider using your old gx-map installation's "gx-gen-mapfile -all"
+command to generate a grid-mapfile that contains all the entries.
 
 There are also some TeraGrid-specific considerations; see
 README.TeraGrid for details.
 
 If you have any questions, please feel free to contact me.
 
-                -- Keith Thompson <kst@sdsc.edu> Wed 2006-04-12
+                -- Keith Thompson <kst@sdsc.edu> Tue 2006-06-13
