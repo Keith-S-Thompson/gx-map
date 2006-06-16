@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.6 2006-06-09 21:43:06-07 kst Exp $
+ $Id: teragrid-requirements,v 1.7 2006-06-15 18:41:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -7,20 +7,25 @@ Missing requirements for gx-map on TeraGrid systems
 NCSA:
     tg-login1.ncsa.teragrid.org (Mercury)
 	Perl doesn't have DBI, DBD::Pg
+	(This may not be a problem if the DB interaction can be done on
+	another node with a shared filesystem.)
+	/usr/bin/crontab: permission denied
     co-login1.ncsa.teragrid.org (Cobalt)
 	ok
     login-w.ncsa.teragrid.org (Tungsten)
 	No access to system
     login-cu.ncsa.teragrid.org (Copper)
 	No access to system
-    login-ra.ncsa.teragrid.org (Radium)
-	No access to system
 
 SDSC:
     tg-login.sdsc.teragrid.org
 	ok
+	(No DBI module, but that's ok, since only chester needs to
+	connect to the TGCDB.)
     dslogin.sdsc.teragrid.org
 	ok
+	(No DBI module, but that's ok, since only chester needs to
+	connect to the TGCDB.)
     bg-login.sdsc.teragrid.org
 	ok
 
@@ -47,19 +52,23 @@ IU:
 	ok
     tg-login-ia32.iu.teragrid.org
 	Perl doesn't have Time::HiRes
+	Can't use crontab (will need to update /etc/cron.allow)
+
 ORNL:
     tg-login1.ornl.teragrid.org
-	/usr/bin/crontab: Permission denied.
+	/usr/bin/crontab: Permission denied (now ok).
 	Otherwise ok
 
 PURDUE:
     tg-login-linux.rcac.purdue.edu
 	Ran out of disk quota on home directory (shouldn't be a problem
 	for production use).
+	no pg_hba.conf entry for host "128.211.128.11", ...
 
 TACC:
     lonestar.tacc.utexas.edu
 	Perl doesn't have Time::HiRes
+	(DB connection ok)
     maverick.tacc.utexas.edu
 	Library problem with "curl" command (see TeraGrid Ticket #
 	123699), now fixed.
