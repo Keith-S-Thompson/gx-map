@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.47 2006-05-17 20:12:11-07 kst Exp $
+# $Id: gx-request.in,v 1.48 2006-06-16 15:26:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -941,6 +941,7 @@ EOF
                         #
                         print "$dn\n";
                         undef $dn;
+                        undef $cert_file;
                     }
                 }
             }
