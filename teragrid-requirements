@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.7 2006-06-15 18:41:46-07 kst Exp $
+ $Id: teragrid-requirements,v 1.8 2006-06-16 16:37:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -18,6 +18,8 @@ NCSA:
 	No access to system
 
 SDSC:
+    chester.sdsc.edu
+	ok
     tg-login.sdsc.teragrid.org
 	ok
 	(No DBI module, but that's ok, since only chester needs to
