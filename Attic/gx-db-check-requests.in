@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-db-check-requests.in,v 1.2 2006-06-13 18:45:49-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.3 2006-06-17 00:06:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -452,7 +452,7 @@ sub Deep_Copy($) {
     my $result = {};
     foreach my $user (keys %$old_mappings) {
         my $ref = $old_mappings->{$user};
-        foreach my $dn (%$ref) {
+        foreach my $dn (keys %$ref) {
             $result->{$user}->{$dn} = 1;
         }
     }
