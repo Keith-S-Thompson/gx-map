@@ -1,4 +1,4 @@
-# $Id: bug-0096,v 1.1 2006-06-16 20:38:39-07 kst Exp $
+# $Id: bug-0096,v 1.2 2006-06-17 00:07:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0096,v $
 
 gx-map bug 0096
@@ -6,7 +6,7 @@ Date: Fri 2006-06-16
 Severity: urgent
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1.017
-Status: Open
+Status: Fixed 0.5.1.018
 Title: gx-db-check-requests chokes on "remove" db-request
 
 Summary:
@@ -16,5 +16,6 @@ gx-request with a bad DN.  For example:
 /usr/local/apps/gx-map-0.5.1.017/bin/gx-request -add -quiet -force \
     -dn 1 -username kst -source TGCDB
 
-Question: Would this also happen on a full-query if a mapping happens
-to be removed?
+Fixed:
+gx-db-check-requests.in 1.3
+gx-map release 0.5.1.018
