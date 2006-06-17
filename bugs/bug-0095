@@ -1,4 +1,4 @@
-# $Id: bug-0095,v 1.1 2006-06-16 15:21:46-07 kst Exp $
+# $Id: bug-0095,v 1.2 2006-06-17 00:08:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0095,v $
 
 gx-map bug 0095
@@ -6,7 +6,7 @@ Date: Fri 2006-06-16
 Severity: med
 Reported by: Christopher Baumbauer <cab@sdsc.edu>
 Version: 0.5.1.017
-Status: Open
+Status: Fixed 0.5.1.018
 Title: Error detection bug in "gx-request -interactive"
 
 Summary:
@@ -14,3 +14,7 @@ Run "gx-request -interactive".  Add a grid-mapfile entry, getting
 the DN from a file. Specify an invalid file.  gx-request prompts
 for the DN input method; try again, entering the DN directly.
 gx-request complains again about the error reading the file.
+
+Fix:
+gx-request.in 1.48
+gx-map release 0.5.1.018
