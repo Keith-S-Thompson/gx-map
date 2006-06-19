@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-remove-locks.in,v 1.4 2006-06-13 18:45:50-07 kst Exp $
+# $Id: gx-remove-locks.in,v 1.5 2006-06-19 13:31:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-remove-locks.in,v $
 
 ########################################################################
@@ -113,7 +113,7 @@ foreach my $lock_file (@lock_files) {
 
     print "$lock_file_path:\n";
     if (defined $line) {
-        print "$line\n";
+        print "\"$line\"\n";
     }
     else {
         print "[Unable to determine contents of lock file]\n";
