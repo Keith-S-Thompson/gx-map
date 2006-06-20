@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-db-check-requests.in,v 1.4 2006-06-20 02:07:27-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.5 2006-06-20 02:26:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -436,7 +436,7 @@ sub Get_Mappings_From_DB($) {
     }
 
     $dbh->disconnect();
-    my $user_count = scalar keys scalar keys %$result;
+    my $user_count = scalar keys %$result;
     Debug "Got mappings for $user_count user(s)\n";
     if ($user_count == 0) {
         die "No mappings retrieved from database\n";
