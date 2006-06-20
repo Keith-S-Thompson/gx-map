@@ -1,0 +1,20 @@
+# $Id: bug-0098,v 1.1 2006-06-20 01:57:23-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0098,v $
+
+gx-map bug 0098
+Date: Tue 2006-06-20
+Severity: medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1.018
+Status: Open
+Title: Collect DB code into a separate module
+
+Summary:
+There are three commands in the gx-map system that interact with
+the TGCDB: gx-propagate.in.teragrid, gx-db-check-requests.in, and
+gx-db-dump.in.  There's a fair amount of duplicated code.  It should
+be collected into a single module.
+
+Consider making gx-propagate.in.teragrid part of the "EXTRAS TGCDB"
+subsystem (but we still want to be able to install a "gx-propagate"
+command that's not part of the TGCDB subsystem -- I think).
