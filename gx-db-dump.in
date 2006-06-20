@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-db-dump.in,v 1.1 2006-06-13 18:32:18-07 kst Exp $
+# $Id: gx-db-dump.in,v 1.2 2006-06-20 02:08:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-dump.in,v $
 
 ########################################################################
@@ -178,7 +178,8 @@ sub Get_Mappings_From_DB($) {
                            "host=$DB_Config->{host};" .
                            "port=$DB_Config->{port}",
                            $DB_Config->{user},
-                           $DB_Config->{password});
+                           $DB_Config->{password},
+			   { RaiseError => 1, PrintError => 1 });
     die "Unable to connect to database\n" if not $dbh;
 
     my @datarow;
