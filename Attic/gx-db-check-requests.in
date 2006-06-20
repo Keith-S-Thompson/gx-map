@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-db-check-requests.in,v 1.3 2006-06-17 00:06:09-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.4 2006-06-20 02:07:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -418,15 +418,14 @@ sub Get_Mappings_From_DB($) {
                            "host=$DB_Config->{host};" .
                            "port=$DB_Config->{port}",
                            $DB_Config->{user},
-                           $DB_Config->{password});
+                           $DB_Config->{password},
+                           { RaiseError => 1, PrintError => 1 });
     die "Unable to connect to database\n" if not $dbh;
 
     my @datarow;
     my $sth = $dbh->prepare($query);
 
     $sth->execute();
-
-    my $Mapping = {};
 
     while (@datarow = $sth->fetchrow()) {
         if ($datarow[1] ne '') {
@@ -437,7 +436,11 @@ sub Get_Mappings_From_DB($) {
     }
 
     $dbh->disconnect();
-    Debug "Got mappings for ", scalar keys %$result, " user(s)\n";
+    my $user_count = scalar keys scalar keys %$result;
+    Debug "Got mappings for $user_count user(s)\n";
+    if ($user_count == 0) {
+        die "No mappings retrieved from database\n";
+    }
     return $result;
 } # Get_Mappings_From_DB
 
