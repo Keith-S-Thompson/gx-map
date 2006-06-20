@@ -1,4 +1,4 @@
-# $Id: bug-0097,v 1.1 2006-06-20 01:57:23-07 kst Exp $
+# $Id: bug-0097,v 1.2 2006-06-20 09:14:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0097,v $
 
 gx-map bug 0097
@@ -6,7 +6,7 @@ Date: Tue 2006-06-20
 Severity: medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1.018
-Status: Open
+Status: Fixed 0.5.1.019
 Title: Catching DB errors in gx-db-check-requests, gx-db-dump
 
 Summary:
@@ -22,3 +22,8 @@ Also, gx-db-check-requests should die if the connection and query
 are successful, but no mappings are returned; this is more likely to
 be the result of an error (e.g., a misspelled resource name) than an
 actual empty mappings table.
+
+Fixed:
+gx-db-check-requests.in 1.4
+gx-db-dump.in 1.2
+gx-map release 0.5.1.019
