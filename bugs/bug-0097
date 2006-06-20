@@ -1,0 +1,24 @@
+# $Id: bug-0097,v 1.1 2006-06-20 01:57:23-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0097,v $
+
+gx-map bug 0097
+Date: Tue 2006-06-20
+Severity: medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1.018
+Status: Open
+Title: Catching DB errors in gx-db-check-requests, gx-db-dump
+
+Summary:
+In gx-db-check-requests and gx-db-dump, the result of DBI->connect()
+is checked (and the program die()s if it fails), but other calls
+(prepare(), execute(), disconnect()) are not checked.
+
+In gx-propagate.in.teragrid, connect is called with RaiseError => 1,
+which causes any error to trigger a die().  gx-db-check-requests and
+gx-db-dump should do the same thing.
+
+Also, gx-db-check-requests should die if the connection and query
+are successful, but no mappings are returned; this is more likely to
+be the result of an error (e.g., a misspelled resource name) than an
+actual empty mappings table.
