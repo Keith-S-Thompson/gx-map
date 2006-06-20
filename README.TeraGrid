@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.13 2006-06-13 18:45:49-07 kst Exp $
+# $Id: README.TeraGrid,v 1.14 2006-06-20 02:15:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
@@ -46,7 +46,8 @@ corresponds to a common and consistent set of Unix usernames and
 numeric UIDs.  It should also correspond to a resource names in
 the TGCDB, but this isn't always the case; for example, there are
 currently four distinct TGCDB resource names for SDSC, but only a
-single namespace.
+single namespace.  (See "TGCDB resource names vs. gx-map namespaces",
+below.)
 
 During installation, you will be instructed to edit the tgcdb.db-config
 file.  This file contains information that enables access to the TGCDB.
@@ -106,6 +107,28 @@ command submits information to the TGCDB (TeraGrid Central Database).
 
 Information from the TGCDB is propagated into the gx-map system at
 each site via gx-map's TGCDB subsystem.
+
+TGCDB resource names vs. gx-map namespaces
+==========================================
+A gx-map namespace is an identifier for a set of consistent usernames
+and numeric UIDs, typically for one or more systems at a single site.
+For example, SDSC is a single namespace; a user will have the same
+username and UID on all SDSC systems (but may or may not have an
+account on all systems).
+
+The TGCDB associates each user with a resource name.  For example,
+the following TGCDB resource names are associated with SDSC:
+
+    bluegene.sdsc.teragrid
+    datastar.sdsc.teragrid
+    datastar-p655.sdsc.teragrid
+    dtf.sdsc.teragrid
+
+For the interaction between gx-map and the TGCDB, I intend to use only
+the "dtf.sdsc.teragrid" resource name.  It's possible that this could
+cause some problems.  Other sites can either do something similar,
+or use a different resource name for each system (with a different
+gx-map installation for each one).
 
 Cron Jobs:
 ==========
