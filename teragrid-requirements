@@ -1,8 +1,11 @@
- $Id: teragrid-requirements,v 1.8 2006-06-16 16:37:09-07 kst Exp $
+ $Id: teragrid-requirements,v 1.9 2006-06-21 18:37:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
 ===================================================
+
+Reported via TeraGrid Ticket # 124267, 2006-06-17
+Split into one ticket for each site; see below.
 
 NCSA:
     tg-login1.ncsa.teragrid.org (Mercury)
@@ -16,6 +19,8 @@ NCSA:
 	No access to system
     login-cu.ncsa.teragrid.org (Copper)
 	No access to system
+
+    TG Ticket 124268
 
 SDSC:
     chester.sdsc.edu
@@ -31,9 +36,15 @@ SDSC:
     bg-login.sdsc.teragrid.org
 	ok
 
+    TG Ticket 124269 (should be closed)
+
 UC/ANL:
     tg-login1.uc.teragrid.org
 	Perl doesn't have DBD::Pg
+
+    TG Ticket 124270
+    JP requested a list of the prerequisites; I replied with an
+    excerpt from the INSTALL file.
 
 PSC:
     lemieux.psc.edu
@@ -49,6 +60,8 @@ PSC:
     bigben.psc.edu
 	No access to system
 
+    TG Ticket 124271
+
 IU:
     tg-login1.iu.teragrid.org
 	ok
@@ -56,16 +69,23 @@ IU:
 	Perl doesn't have Time::HiRes
 	Can't use crontab (will need to update /etc/cron.allow)
 
+    TG Ticket 124272
+
 ORNL:
     tg-login1.ornl.teragrid.org
 	/usr/bin/crontab: Permission denied (now ok).
 	Otherwise ok
+
+    TG Ticket 124273
 
 PURDUE:
     tg-login-linux.rcac.purdue.edu
 	Ran out of disk quota on home directory (shouldn't be a problem
 	for production use).
 	no pg_hba.conf entry for host "128.211.128.11", ...
+    
+    TG Ticket 124274
+    Disk quota increased to 1GB
 
 TACC:
     lonestar.tacc.utexas.edu
@@ -76,3 +96,7 @@ TACC:
 	123699), now fixed.
 	no pg_hba.conf entry for host "129.114.50.3
 	Perl code using DBI needs /usr/local/lib in $LD_LIBRARY_PATH
+
+    TG Ticket 124275
+    Time::HiRes installed on Lonestar and Lonestar2
+    (Lonestar2?)
