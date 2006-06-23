@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.6 2006-05-19 22:41:58-07 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.7 2006-06-22 19:28:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -110,7 +110,7 @@ By default, the generated grid-mapfile is *not* compatible with GT2
 for certain DNs.
 
 GT2 used an older version of OpenSSL, which used different text
-representations of certian fields in DNs.  The affected fields are:
+representations of certain fields in DNs.  The affected fields are:
 
     /USERID=... --> /UID=...
 
