@@ -1,4 +1,4 @@
-# $Id: gx-map-security.7.pod,v 1.7 2006-04-12 19:17:37-07 kst Exp $
+# $Id: gx-map-security.7.pod,v 1.8 2006-06-22 18:19:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-security.7.pod,v $
 
 =for comment
@@ -170,6 +170,14 @@ Some Unix systems do allow non-root chown, either by default or via
 a configuration option.  The B<gx-check-requests> command checks for
 this (by attempting to chown a temporary file) and refuses to run if
 non-root chown is allowed.
+
+The B<gx-map> system in general depends on Unix filesystem semantics,
+in particular that the content or ownership of a file can be affected
+only by the owner of the file.  For use across multiple systems
+within a site, it can be convenient to store B<gx-map>'s data files
+on a shared NFS-mounted filesystem.  There are legitimate concerns
+about the security of NFS in general.  Each site will have to make
+its own decision about any tradeoffs between security and convenience.
 
 =head2 B<gx-gen-mapfile>
 
