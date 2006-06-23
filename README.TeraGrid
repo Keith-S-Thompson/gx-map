@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.14 2006-06-20 02:15:27-07 kst Exp $
+# $Id: README.TeraGrid,v 1.15 2006-06-22 18:14:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
@@ -39,6 +39,10 @@ be run on a single system, with the information being used by all
 SDSC systems.  If there is no such shared filesystem, you'll need to
 run these commands separately on each system, with information being
 propagated through the TGCDB.
+
+There's some legitimate concern about the security of NFS in general.
+Naturally, each site will have to make its own decision about any
+tradeoffs between security and convenience.
 
 It's most convenient if all systems at a site share the same namespace
 (see the NAMESPACE configuration variable in sample.conf).  A namespace
