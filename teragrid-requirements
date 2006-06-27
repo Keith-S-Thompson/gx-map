@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.9 2006-06-21 18:37:27-07 kst Exp $
+ $Id: teragrid-requirements,v 1.10 2006-06-27 01:36:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -41,6 +41,7 @@ SDSC:
 UC/ANL:
     tg-login1.uc.teragrid.org
 	Perl doesn't have DBD::Pg
+	Fixed.
 
     TG Ticket 124270
     JP requested a list of the prerequisites; I replied with an
@@ -68,6 +69,8 @@ IU:
     tg-login-ia32.iu.teragrid.org
 	Perl doesn't have Time::HiRes
 	Can't use crontab (will need to update /etc/cron.allow)
+	According to Mike Lowe, this system is slated for retirement
+	in the near future.
 
     TG Ticket 124272
 
@@ -79,13 +82,8 @@ ORNL:
     TG Ticket 124273
 
 PURDUE:
-    tg-login-linux.rcac.purdue.edu
-	Ran out of disk quota on home directory (shouldn't be a problem
-	for production use).
-	no pg_hba.conf entry for host "128.211.128.11", ...
-    
     TG Ticket 124274
-    Disk quota increased to 1GB
+    ok
 
 TACC:
     lonestar.tacc.utexas.edu
