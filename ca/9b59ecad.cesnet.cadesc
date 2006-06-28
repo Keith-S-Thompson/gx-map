@@ -1,0 +1,20 @@
+# $Id: 9b59ecad.cesnet.cadesc,v 1.1 2006-06-27 21:39:33-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/9b59ecad.cesnet.cadesc,v $
+
+CA_NAME             CESNET CA
+HOMEPAGE            http://www.cesnet.cz/pki/
+CONTACT             ca@cesnet.cz
+HASH                9b59ecad
+SUBJECT             /DC=cz/DC=cesnet-ca/CN=CESNET CA
+MAY_SIGN            /DC=cz/DC=cesnet-ca/*
+CERTIFICATE_MD5     33:29:B7:54:19:BE:35:FF:4B:B1:B6:DF:11:3E:8A:DB
+CERTIFICATE_SHA1    B6:D8:8D:9D:CD:72:DF:1B:D6:CB:2E:EF:8E:64:2F:73:21:24:23:95
+CERTIFICATE_URL     http://www.cesnet.cz/pki/certs/cesnet-ca.cz.pem.crt
+SIGNING_POLICY_URL  http://www.lsc-group.phys.uwm.edu/daswg/projects/glue/epydoc/ldg-3.5/globus/share/certificates/9b59ecad.signing_policy
+CRL_URL             http://www.cesnet.cz/pki/crl/9b59ecad.r0
+CERT_EXPIRES        Tue 2025-06-17 15:20:17 UTC
+
+# I can't guarantee the authenticity of the signing_policy, since I
+# wasn't able to find it on the CA's own site, but it seems reasonable.
+
+# MD5 and SHA1 fingerprints from 9b59ecad.0 downloaded Tue 2006-06-27
