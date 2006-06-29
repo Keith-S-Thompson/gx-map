@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.10 2006-06-27 01:36:33-07 kst Exp $
+ $Id: teragrid-requirements,v 1.11 2006-06-28 19:36:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -36,7 +36,7 @@ SDSC:
     bg-login.sdsc.teragrid.org
 	ok
 
-    TG Ticket 124269 (should be closed)
+    TG Ticket 124269 (closed)
 
 UC/ANL:
     tg-login1.uc.teragrid.org
@@ -79,7 +79,7 @@ ORNL:
 	/usr/bin/crontab: Permission denied (now ok).
 	Otherwise ok
 
-    TG Ticket 124273
+    TG Ticket 124273 (closed)
 
 PURDUE:
     TG Ticket 124274
