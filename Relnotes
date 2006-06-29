@@ -1,4 +1,4 @@
-# $Id: Relnotes,v 1.19 2006-05-19 23:06:31-07 kst Exp $
+# $Id: Relnotes,v 1.20 2006-06-28 22:13:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -45,7 +45,7 @@ Release 0.5.2, 2006-05-??
 
     Miscellaneous minor bug fixes.
 
-    TeraGrid-specific changes:
+    TeraGrid-specific changes (see README.TeraGrid for details):
 
     The name of the database configuration file has been changed from
     "tgcdb.conf" to "tgcdb.db-config", and it is now installed in
@@ -58,6 +58,12 @@ Release 0.5.2, 2006-05-??
     created automatically.  You must manually edit this file before
     using gx-ca-update.  The permissions on the tgcdb.db-config file
     must be set to 400 (r--------) or 600 (rw-------).
+
+    In addition to the GX_PROPAGATE attribute, the installation
+    configuration file has a new optional attribute, EXTRAS.  The only
+    currently supported value for this is TGCDB, which causes the
+    TGCDB subsystem to be installed, consisting of the gx-db-request,
+    gx-db-gx-requests, and gx-db-dump commands.
 
     The gx-propagate command has a new option:
 	-check-config   Check whether the tgcdb.db-config file is ok.
