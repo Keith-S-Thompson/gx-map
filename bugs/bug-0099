@@ -1,0 +1,31 @@
+# $Id: bug-0099,v 1.1 2006-06-28 21:27:02-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0099,v $
+
+gx-map bug 0099
+Date: Wed 2006-06-28
+Severity: low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1.019
+Status: Open
+Title: Bad signing_policy files generated
+
+Summary:
+For certain CAs, gx-ca-update can generate an invalid signing_policy
+file.  This occurs only if the *.cadesc file has "MAY_SIGN ?".
+All such cadesc files have "DISABLE yes", so this can happen only
+with the use of the "-UNSAFE" and "-ignore-disable" options.
+
+The affected cadesc files (corresponding to CAs for which I've been
+unable to find a valid signing_policy) are:
+
+    12a1d8c2.grid-fr.cadesc
+    2fcac3ee.birn.cadesc
+    3a0abe12.malaysia.cadesc
+    473c3beb.nees.cadesc
+    6acd1142.ocikbserver1.cadesc
+    6b4ddd18.cnrs-datagrid.cadesc
+    cb7b413d.ecmwf.cadesc
+    d8501632.ocikbserver1.cadesc
+
+gx-ca-update should refuse to install any files when there's no valid
+MAY_SIGN attribute.
