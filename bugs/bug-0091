@@ -1,9 +1,9 @@
-# $Id: bug-0091,v 1.1 2006-05-19 18:39:38-07 kst Exp $
+# $Id: bug-0091,v 1.2 2006-06-30 16:51:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0091,v $
 
 gx-map bug 0091
 Date: Fri 2006-05-19
-Severity: med
+Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1.007
 Status: Open
