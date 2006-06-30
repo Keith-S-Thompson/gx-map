@@ -1,11 +1,11 @@
-# $Id: README.TeraGrid,v 1.16 2006-06-22 18:17:09-07 kst Exp $
+# $Id: README.TeraGrid,v 1.17 2006-06-30 16:55:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
-release of gx-map.
+0.5.2 release of gx-map.
 
-If you have any questions, please feel free to contact me, Keith
-Thompson, <kst@sdsc.edu>.
+If you have any questions, please feel free to contact me,
+Keith Thompson, <kst@sdsc.edu>.
 
 Installation:
 =============
@@ -228,4 +228,4 @@ run on each system that needs a grid-mapfile.
 The gx-gen-mapfile and gx-ca-update commands need to be run on each
 system that needs a grid-mapfile and a certificates directory.
 
-                -- Keith Thompson <kst@sdsc.edu> Tue 2006-06-13
+                -- Keith Thompson <kst@sdsc.edu> Fri 2006-06-30
