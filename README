@@ -1,4 +1,4 @@
-# $Id: README,v 1.28 2006-06-13 19:20:16-07 kst Exp $
+# $Id: README,v 1.29 2006-06-30 16:55:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
@@ -17,8 +17,8 @@ the instructions, or use other command-line options.  Run "gx-request
 -help" or see the gx-request(1) man page for details.
 
 (Prior to release 0.4.5, the "gx-request" command was called "gx-map";
-it can still be invoked by the old name, but it will be removed in
-a future release.)
+it can still be invoked by the old name, but the "gx-map" command
+will be removed in a future release.)
 
 A user may map an arbitrary DN (distinguished name) to his own
 Unix account.  An administrator (as specified in the config file)
@@ -26,11 +26,11 @@ may map any DN to any Unix account.
 
 Some DNs may be mapped automatically without user intervention; in
 particular, certificates issued by the NPACI and SDSC certificate
-authorities (cacl) are automatically mapped to the corresponding
-user account.  This is handled by a separate tool (not included here)
-that watches for updates in the cacl index file and invokes gx-request.
-This applies only to systems within the SDSC namespace.  Other sites
-may implement similar tools.
+authorities (cacl) are automatically mapped to the corresponding user
+account.  This is handled by a separate tool (not included here) that
+watches for updates in the cacl index files and invokes gx-request.
+This applies only to systems within SDSC.  Other sites may implement
+similar tools.
 
 All commands accept a "-help" option to print a brief usage message and
 a "-version" option to display the current version.  The gx-request
@@ -44,7 +44,7 @@ The 0.5.2 release, in addition to the gx-propagate command, adds an
 optional TGCDB subsystem.  This is specifically intended for use with
 the TeraGrid Central Database.  See README.TeraGrid for details.
 
-The gx-ca-update command (new in release 0.4.0) handles automated
+The gx-ca-update command (added in release 0.4.0) handles automated
 installation and maintenance of certificate, signing_policy, and CRL
 files for CAs (Certificate Authorities).
 
@@ -56,4 +56,4 @@ files for CAs (Certificate Authorities).
 The README, README.*, and Relnotes files are installed in the
 etc/gx-map subdirectory when you install gx-map.
 
-                -- Keith Thompson <kst@sdsc.edu> Tue 2006-06-13
+                -- Keith Thompson <kst@sdsc.edu> Fri 2006-06-30
