@@ -1,9 +1,9 @@
-# $Id: bug-0065,v 1.3 2006-04-06 23:50:00-07 kst Exp $
+# $Id: bug-0065,v 1.4 2006-06-30 16:51:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0065,v $
 
 gx-map bug 0065
 Date: Wed 2006-01-25
-Severity: Med
+Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
 Status: Fixed 0.5.0e8
