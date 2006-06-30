@@ -1,12 +1,13 @@
-# $Id: Relnotes,v 1.21 2006-06-28 22:19:10-07 kst Exp $
+# $Id: Relnotes,v 1.22 2006-06-30 16:55:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
 
-Release 0.5.2, 2006-06-??
+Release 0.5.2, Fri 2006-06-30
 
     This release is mostly intended to allow for some changes in the
-    TeraGrid Central Database (TGCDB).
+    TeraGrid Central Database (TGCDB).  It also makes some operations
+    more efficient.
 
     The gx-request commands "-set" and "-dn-list-file" options have
     been removed.
@@ -43,21 +44,22 @@ Release 0.5.2, 2006-06-??
     only by the owner of the gx-map installation.  These commands now
     have their permissions set to 744 (rwxr--r--) during installation.
 
-    Miscellaneous minor bug fixes.
+    Miscellaneous minor bug fixes and enhancements.
 
     TeraGrid-specific changes (see README.TeraGrid for details):
 
-    The name of the database configuration file has been changed from
-    "tgcdb.conf" to "tgcdb.db-config", and it is now installed in
-    the correct directory (etc/gx-map rather than etc).  The names
-    of some of the fields have been changed.
+    The name of the database configuration file (introduced in release
+    0.5.1) has been changed from "tgcdb.conf" to "tgcdb.db-config",
+    and it is now installed in the correct directory (etc/gx-map rather
+    than etc).  The names of some of the fields have been changed.
 
     On installation, if the GX_PROPAGATE attribute is set to
     "gx-propagate.in.teragrid" (i.e., if you're using the TeraGrid
-    specific database code), the etc/gx-map/tgcdb-db-config file is
-    created automatically.  You must manually edit this file before
-    using gx-ca-update.  The permissions on the tgcdb.db-config file
-    must be set to 400 (r--------) or 600 (rw-------).
+    specific database code), the etc/gx-map/tgcdb.db-config file
+    is created automatically.  You must manually edit this file
+    before using gx-ca-update (you will be reminded to do this during
+    installation).  The permissions on the tgcdb.db-config file must
+    be set to 400 (r--------) or 600 (rw-------).
 
     In addition to the GX_PROPAGATE attribute, the installation
     configuration file has a new optional attribute, EXTRAS.  The only
