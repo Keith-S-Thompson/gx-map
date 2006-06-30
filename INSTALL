@@ -1,4 +1,4 @@
-# $Id: INSTALL,v 1.7 2006-06-13 19:20:16-07 kst Exp $
+# $Id: INSTALL,v 1.8 2006-06-30 16:55:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
 Installation instructions for gx-map 0.5.X
@@ -18,7 +18,10 @@ Installation instructions for gx-map 0.5.X
     This must be done from the administrative account that will own
     the installed files (typically "gxmap" or "globus").
 
-3a. Optionally run
+3a. If you've installed the TGCDB subsystem, you'll be reminded to
+    edit the tgcdb.db-config file.
+
+3b. Optionally run
 	make clean
     to clean up temporary intallation files.
 
