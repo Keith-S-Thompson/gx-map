@@ -1,0 +1,27 @@
+# $Id: bug-0100,v 1.1 2006-07-01 11:31:00-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0100,v $
+
+gx-map bug 0100
+Date: Sat 2006-07-01
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.1.019
+Status: Open
+Title: Possible glitch in locking code
+
+My test installation of gx-map 0.5.1.019 on
+tg-login-linux.purdue.teragrid.org ran into a locking problem in
+gx-db-check-requests.  It could have been either a filesystem problem
+or a problem (race condition?) in the locking code.
+
+The error message (sent by e-mail) was:
+
+/home/clerk/u76/kst/linux-x86/apps/gx-map-0.5.1.019/gx-map-data/.gx-db-check-requests.lock: No such file or directory
+
+Attempts after that resulted in:
+
+Locked since Sat 2006-07-01 17:43:01 UTC (301 second(s))
+gx-db-check-requests (gx-map 0.5.1.019) PID=15729 on tg-login-linux.rcac.purdue.edu
+Consider running gx-remove-locks
+
+Correcting this is easy enough; just run gx-remove-locks.
