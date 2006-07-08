@@ -1,21 +1,27 @@
-# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.8 2006-03-03 01:54:30-08 kst Exp $
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.9 2006-07-07 17:37:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
-HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/
+HOMEPAGE            http://www.usc.edu/its/services/authx/CA/
 CONTACT             authx@usc.edu
 HASH                2ca73e82
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     32:2A:0F:13:54:D0:6E:4D:DC:8D:0A:CB:AD:7C:80:48
 CERTIFICATE_SHA1    9B:E3:5C:B9:DD:64:3A:54:F7:2C:97:C9:FB:0A:A8:9A:18:F4:4C:A5
-CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/USC-PKI-Lite-CA.crt
-SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/USC-PKI-Lite-CA.signing_policy
-CRL_URL             http://www.usc.edu/isd/services/authx/CA/USC-PKI-Lite-CA.crl
+CERTIFICATE_URL     http://www.usc.edu/its/services/authx/CA/USC-PKI-Lite-CA.crt
+SIGNING_POLICY_URL  http://www.usc.edu/its/services/authx/CA/USC-PKI-Lite-CA.signing_policy
+CRL_URL             http://www.usc.edu/its/services/authx/CA/USC-PKI-Lite-CA.crl
 CERT_EXPIRES        Sat 2011-01-01 22:06:57 UTC
 
 # MD5 and SHA1 fingerprints from certificate downloaded Fri 2006-03-03
+# Reverified Fri 2006-07-07, after URLs were updated.
 
 # The certificate replaces two older deprecated certificates, still
-# available at <http://www.usc.edu/isd/services/authx/CA/deprecated.html>.
+# available at <http://www.usc.edu/its/services/authx/CA/deprecated.html>.
 # See 2c7969d0.usc-pki-lite-old.cadesc
+
+# The URLs were updated Fri 2006-07-07, changing "/isd/" to "/its/"
+# due to an organizational name change.  It's not yet clear how long
+# the old URLs (which are included in the gx-map 0.5.2 release) will
+# continue to be valid.
