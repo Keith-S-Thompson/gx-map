@@ -1,4 +1,4 @@
-# $Id: ed99a497.cesnet-old.cadesc,v 1.1 2006-06-27 21:17:11-07 kst Exp $
+# $Id: ed99a497.cesnet-old.cadesc,v 1.2 2006-07-10 18:19:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ed99a497.cesnet-old.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -14,6 +14,7 @@ CERTIFICATE_URL     http://www.cesnet.cz/pki/certs/cca.pem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ed99a497.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Tue 2006-06-27 13:15:12 UTC
+DISABLE             yes
 
 # CRL is available in DER format at <http://www.cesnet.cz/pki/crl/cca.crl>.
 
