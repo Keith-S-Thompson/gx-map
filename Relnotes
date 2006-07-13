@@ -1,7 +1,38 @@
-# $Id: Relnotes,v 1.22 2006-06-30 16:55:11-07 kst Exp $
+# $Id: Relnotes,v 1.23 2006-07-13 16:07:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.5.2.1, Thu 2006-07-13
+
+    This is a minor maintenance update for gx-map 0.5.2.  It was
+    prompted by a change in the URLs for the USC Certificate
+    Authorities.  Two other cadesc files were also updated: some
+    information for the TACC CA was updated, and two old CAs whose
+    signing certificates have expired were marked as disabled.  Also,
+    a new bug report was added for a transient (and probably harmless)
+    locking failure.
+
+    The updated files are:
+
+	Gridmap_Utils.pm.in (updated VERSION only)
+	Relnotes
+	ca/2ca73e82.usc-pki-lite-r1.cadesc
+	ca/84c1f123.cygrid-old.cadesc
+	ca/9a1da9f9.tacc.cadesc
+	ca/b57985f0.usc-kerberos-v3.cadesc
+	ca/ed99a497.cesnet-old.cadesc
+	bugs/bug-0100
+
+    This is a recommended upgrade for TeraGrid sites, and for other
+    sites using the USC Certificate Authorities.  (The old USC URLs
+    still work, but it's not clear that they'll continue to work.)
+
+    If you're already using gx-map 0.5.2, you can also consider just
+    updating the necessary cadesc files:
+
+	ca/2ca73e82.usc-pki-lite-r1.cadesc
+	ca/b57985f0.usc-kerberos-v3.cadesc
 
 Release 0.5.2, Fri 2006-06-30
 
