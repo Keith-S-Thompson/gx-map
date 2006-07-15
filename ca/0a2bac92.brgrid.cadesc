@@ -1,0 +1,22 @@
+# $Id: 0a2bac92.brgrid.cadesc,v 1.1 2006-07-14 19:35:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/0a2bac92.brgrid.cadesc,v $
+
+CA_NAME             UFF Brazilian Grid Certification Authority
+HOMEPAGE            https://brgridca.ic.uff.br/
+CONTACT             brgridca@ic.uff.br
+HASH                0a2bac92
+SUBJECT             /C=BR/O=ICPEDU/O=UFF BrGrid CA/CN=UFF Brazilian Grid Certification Authority
+MAY_SIGN            ?
+CERTIFICATE_MD5     AC:27:1F:34:44:FF:D4:AB:1F:43:26:74:F5:0E:A9:45
+CERTIFICATE_SHA1    EB:E5:93:4D:04:8F:A0:72:A3:01:71:CB:43:57:E6:CD:FC:59:DF:BD
+CERTIFICATE_URL     https://brgridca.ic.uff.br/certs/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://brgridca.ic.uff.br/crl/cacrl.pem
+CERT_EXPIRES        Mon 2016-07-11 17:46:58 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from cacert.pem (0a2bac92.0)
+# downloaded Fri 2006-07-14
+
+# I was unable to find a signing_policy file.  This CA is marked as
+# disabled until a signing_policy can be found.
