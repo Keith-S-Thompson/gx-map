@@ -1,0 +1,39 @@
+# $Id: bug-0103,v 1.1 2006-07-17 18:31:40-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0103,v $
+
+gx-map bug 0103
+Date: Mon 2006-07-17
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: Fine-grained locking for gx-ca-update
+
+Currently, gx-ca-update obtains a global lock when it runs.
+
+A solution to bug-0101 will require implementing both read and
+write locks.
+
+gx-ca-update obtains a lock because it needs to update finds in the
+cache directory; multiple instances working on the same file could
+cause unpredictable problems.  Rather than obtaining a global lock,
+obtain individual locks on each cache file as it's being used.
+
+In addition to this, provide a mechanism so that a failure to obtain
+a lock is not immediately fatal; rather, the client can attempt some
+configurable number of retries.  (Be careful that it doesn't keep
+trying too long; otherwise successive cron jobs could cause processes
+to pile up.)
+
+Another possibility: 
+
+Create the cache files in a way that doesn't require locking: create
+a temporary file, then rename it to the target file.  Code that
+attempts to use an existing cache file will then have to be careful
+to avoid race conditions; rather than testing "-e $cached_file",
+it will need to attempt to open it.  Less ambitious: "gx-ca-update"
+without "-readonly" obtains a lock, but "gx-ca-update -readonly"
+doesn't need a lock at all.  Again, this will require some careful
+changes to the Cache_File function.
+
+See also bug-0101, bug-0102.
