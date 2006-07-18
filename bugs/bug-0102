@@ -1,0 +1,22 @@
+# $Id: bug-0102,v 1.1 2006-07-17 18:31:40-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0102,v $
+
+gx-map bug 0102
+Date: Mon 2006-07-17
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: gx-map -no-target-directory
+
+Consider adding a "-no-target-directory" to gx-ca-update.  With this
+option, it would download files as necessary and update the cache
+directory, but would not install anything.  For a site with multiple
+nodes running gx-ca-update with a shared data directory, a master
+node could run "gx-ca-update -no-target-directory", and the other
+nodes could run "gx-ca-update -readonly" (see bug-0101).
+
+This is likely to be more effort than it's worth; you'd probably want
+to update a certificates directory on the master node anyway.
+
+See also bug-0101, bug-0103.
