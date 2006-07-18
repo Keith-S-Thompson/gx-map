@@ -1,0 +1,40 @@
+# $Id: bug-0101,v 1.1 2006-07-17 18:31:39-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0101,v $
+
+gx-map bug 0101
+Date: Mon 2006-07-17
+Severity: Med
+Reported by: Ti Leggett <leggett@mcs.anl.gov>
+Version: 0.5.2.1
+Status: Open
+Title: gx-ca-update locking collisions
+
+Consider a site with multiple systems running gx-ca-update with a
+shared data directory.  If all the systems run gx-ca-update at the
+same time, it's likely that only one of them will obtain a lock.
+gx-ca-update creates a lock because it updates files in the cache
+directory; multiple processes simultaneously updating cache files
+could cause unpredictable problems.
+
+One solution is to stagger the invocations of gx-ca-update so they
+don't collide.  For a large number of systems, this means creating
+a separate crontab for each system, which doesn't scale well.
+
+Proposed solution: Add a new "-readonly" option to gx-ca-update.
+With this option, gx-ca-update would not attempt to download any
+files; it would use only cached copies.  (This would depend on another
+instance of gx-ca-update being run without the "-readonly" option.)
+
+This would require a new "-readonly" option to the
+Gridmap_Utils::Cache_File function, telling it not to download any
+files; it would fail if the cache file doesn't already exist.
+
+It would also require Gridmap_Utils::Get_Lock to distinguish between
+read locks and write locks.  "gx-ca-update" would normally obtain
+a write lock, preventing any other instance of "gx-ca-update"
+from running.  "gx-ca-update -readonly" would obtain a read lock;
+arbitrarily many read locks can exist simultaneously, but only one
+write lock.  For example, if "gx-ca-update -readonly" is running,
+"gx-ca-update" (without "-readonly") cannot run until it finishes.
+
+See also bug-0102, bug-0103.
