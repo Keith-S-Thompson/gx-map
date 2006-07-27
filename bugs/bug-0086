@@ -1,4 +1,4 @@
-# $Id: bug-0086,v 1.2 2006-06-30 16:51:23-07 kst Exp $
+# $Id: bug-0086,v 1.3 2006-07-27 16:46:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0086,v $
 
 gx-map bug 0086
@@ -6,7 +6,7 @@ Date: Wed 2006-04-19
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: More efficient handling of AMIE packets
 
 Summary:
@@ -35,3 +35,9 @@ bug-0087).
 
 Consider initializing the index file with information currently in
 the database (assuming they can get it cleaned up).
+
+Fixed:
+gx-map release 0.5.2
+
+This is addressed by the TGCDB subsystem introduced in gx-map release
+0.5.2.
