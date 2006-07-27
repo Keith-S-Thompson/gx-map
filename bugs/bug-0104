@@ -1,4 +1,4 @@
-# $Id: bug-0104,v 1.1 2006-07-26 21:42:27-07 kst Exp $
+# $Id: bug-0104,v 1.2 2006-07-27 16:51:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0104,v $
 
 gx-map bug 0104
@@ -17,8 +17,9 @@ Consider allowing gx-map to work without Time::HiRes, in one of
 two ways:
 
 1. If Time::HiRes is not available, just use time() and append
-   ".000000" to the result.  (This could cause ordering problems with
-   things like gx-ingest.)
+   ".000000" to the result.  This could cause ordering problems with
+   things like gx-ingest, but that could be addressed by a solution to
+   bug-0092.
 
 2. Install an external program that prints a high-resolution
    timestamp, and invoke it rather than computing it internally (see
