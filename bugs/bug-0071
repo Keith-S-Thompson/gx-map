@@ -1,4 +1,4 @@
-# $Id: bug-0071,v 1.5 2006-06-30 16:51:21-07 kst Exp $
+# $Id: bug-0071,v 1.6 2006-07-27 16:48:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0071,v $
 
 gx-map bug 0071
@@ -7,7 +7,7 @@ Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d1
 Status: Fixed 0.5.0d6
-Title: Spurious complaint about bad request.file
+Title: Spurious complaint about bad request file
 
 Summary:
 gx-request creates a temporary file with a name of the form
