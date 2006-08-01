@@ -1,0 +1,21 @@
+# $Id: bug-0105,v 1.1 2006-07-31 20:21:50-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0105,v $
+
+gx-map bug 0105
+Date: Mon 2006-07-31
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: gx-ca-update logging is not checked
+
+The Notify function in gx-ca-update appends a message to a log file
+using open, print, and close.  It doesn't check whether these
+succeeded.
+
+Similar code in gx-map 0.4.1 has produced the following error message:
+
+print() on closed filehandle LOG at /usr/local/apps/gx-map-0.4.1/sbin/gx-ca-update line 1161.
+
+This function should check the results of all three calls, and print
+a coherent message to stderr if any of them fails.
