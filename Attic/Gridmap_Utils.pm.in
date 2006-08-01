@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.208 2006-07-13 16:07:45-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.209 2006-07-31 21:37:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -70,8 +70,14 @@ package Gridmap_Utils;
 # to use it in the Get_Hostname function if it's available; otherwise
 # we'll fall back to the "hostname" command.
 #
+# Normally we use the Time::HiRes module to get timestamps with
+# microsecond resolution.  If this module is not available, we can fall
+# back to an external gettimeofday program, which must be installed
+# separately.
+#
 
 my $Have_Net_Domain_Module;
+my $Have_Time_HiRes_Module;
 
 BEGIN {
     require 5.006;
@@ -80,9 +86,9 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.2.1';
+    $VERSION = '0.5.2.1.001';
 
-    $Debugging = undef;
+    $Debugging = undef; 
     %Config = ( PERL                     => '%PERL%',
                 PATH                     => '%PATH%',
                 NAMESPACE                => '%NAMESPACE%',
@@ -93,13 +99,14 @@ BEGIN {
                 ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
-    use Cwd ();
+    use Cwd (); 
     use Time::Local ();
-    use Time::HiRes ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
+    eval { use Time::HiRes () };
+    $Have_Time_HiRes_Module = ( $@ eq '' );
     eval { require Net::Domain };
     $Have_Net_Domain_Module = ( $@ eq '' );
-}
+} 
 
 # ----------------------------------------------------------------------
 
@@ -537,10 +544,25 @@ sub Use_Commands(@) {
 
 #
 # Returns the current raw time with exactly 10 digits before the decimal
-# point and 6 digits after.
+# point and 6 digits after.  Uses Time::HiRes::gettimeofday if possible;
+# otherwise falls back to an external gettimeofday command.
 #
 sub Get_Time_Of_Day() {
-    my($sec, $usec) = Time::HiRes::gettimeofday;
+    my($sec, $usec);
+    if ($Have_Time_HiRes_Module) {
+        ($sec, $usec) = Time::HiRes::gettimeofday;
+    }
+    else {
+        Gridmap_Utils::Use_Commands 'gettimeofday';
+        my $output = `gettimeofday`;
+        if ($? != 0) {
+            die "Failed to execute gettimeofday command\n";
+        }
+        chomp $output;
+        if ($output =~ /^(\d+)\.(\d{6})$/) {
+            die "Unexpected output from gettimeofday command\n";
+        }
+    }
     return sprintf "%010d.%06d", $sec, $usec;
 } # Get_Time_Of_Day
 
