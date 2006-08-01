@@ -1,4 +1,4 @@
-# $Id: bug-0104,v 1.2 2006-07-27 16:51:11-07 kst Exp $
+# $Id: bug-0104,v 1.3 2006-07-31 21:46:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0104,v $
 
 gx-map bug 0104
@@ -6,7 +6,7 @@ Date: Wed 2006-07-26
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.1
-Status: Open
+Status: Fixed, 0.5.?
 Title: Work around missing Time::HiRes module
 
 The gx-map system currently depends on the Time::HiRes module.
@@ -26,3 +26,11 @@ two ways:
    my gettimeofday.c).  This is likely to slow things down a bit,
    so it's preferred to have Time::HiRes installed.  (I've tested
    this with gx-map 0.5.2.1 on NCSA's Tungsten system.)
+
+Fixed:
+Use Time:HiRes if available, otherwise fall back to external
+gettimeofday command (installed separately), otherwise fail.
+gx-check-prereqs 1.22
+Gridmap_Utils.pm.in 1.209
+sample.conf 1.28
+gx-map release 0.5.?
