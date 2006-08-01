@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.111 2006-05-01 17:51:28-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.112 2006-07-31 20:41:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1409,6 +1409,31 @@ sub Error($$$$;$) {
 
 # ----------------------------------------------------------------------
 
+sub Append_To_Log($$) {
+    my($log_file, $message) = @_;
+    Gridmap_Utils::Untaint $log_file;
+
+    my $Log;
+
+    if (not open $Log, '>>', $log_file) {
+        warn "Error appending to log $log_file: $!\n" .
+             "Message was:\n" .
+             $message;
+    }
+    elsif (not print $Log $message) {
+        warn "Error printing to log $log_file: $!\n" .
+             "Message was:\n" .
+             $message;
+    }
+    elsif (not close $Log) {
+        warn "Error closing log $log_file: $!\n" .
+             "Message was:\n" .
+             $message;
+    }
+} # Append_To_Log
+
+# ----------------------------------------------------------------------
+
 #
 # Send an error notification by e-mail.
 # Log messages to log file.
@@ -1487,10 +1512,7 @@ sub Notify() {
     $log_message_body .= "\n";
 
     my $log_file = "$Install_Dir/gx-map-data/$Program_Name.log";
-    Gridmap_Utils::Untaint $log_file;
-    open my $Log, '>>', $log_file;
-    print $Log $log_message_body;
-    close $Log;
+    Append_To_Log $log_file, $log_message_body;
 
     if ($User_Opt->{email} and $new_error_count > 0) {
         my $subject = "$Program_Name: $new_error_count error(s), " .
