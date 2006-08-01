@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.210 2006-07-31 21:46:18-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.211 2006-08-01 03:27:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -102,9 +102,9 @@ BEGIN {
     use Cwd (); 
     use Time::Local ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
-    eval { use Time::HiRes () };
+    eval 'use Time::HiRes ()';
     $Have_Time_HiRes_Module = ( $@ eq '' );
-    eval { require Net::Domain };
+    eval 'require Net::Domain';
     $Have_Net_Domain_Module = ( $@ eq '' );
 } 
 
