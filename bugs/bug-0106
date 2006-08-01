@@ -1,4 +1,4 @@
-# $Id: bug-0106,v 1.1 2006-08-01 03:26:02-07 kst Exp $
+# $Id: bug-0106,v 1.2 2006-08-01 03:27:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0106,v $
 
 gx-map bug 0106
@@ -23,3 +23,7 @@ It needs to eval a string rather than a block:
     eval '{ require Net::Domain }';
 
 (This also needs to be done for Time::HiRes.)
+
+Fixed:
+Gridmap_Utils.pm.in 1.211
+gx-map release 0.5.?
