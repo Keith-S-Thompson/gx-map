@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.21 2006-01-05 16:31:53-08 kst Exp $
+# $Id: gx-check-prereqs,v 1.22 2006-07-31 21:37:20-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -56,7 +56,7 @@ use File::Basename ();
 sub Usage(@);
 sub Check_Perl($);
 sub Check_Command($);
-sub Check_Module($;$);
+sub Check_Module(@);
 sub Vprint(@);
 sub Vprintf(@);
 
@@ -94,15 +94,13 @@ foreach my $dir (@path) {
 die @path_errors if @path_errors;
 
 my @Errors = ();
+my @Warnings = ();
 my $Perl_OK = 1;
-my %Command_Found = ();
 my $All_Commands_Found = 1;
-my %Module_Found = ();
 my $All_Modules_Found = 1;
 
 Check_Perl 5.006;
 
-Check_Command 'hostname';
 Check_Command 'co';
 Check_Command 'ci';
 Check_Command 'rcs';
@@ -114,8 +112,8 @@ Check_Module 'File::Copy';
 Check_Module 'Getopt::Long';
 Check_Module 'Time::Local';
 Check_Module 'Cwd';
-Check_Module 'Net::Domain';
-Check_Module 'Time::HiRes';
+Check_Module 'Net::Domain', 'hostname';
+Check_Module 'Time::HiRes', 'gettimeofday';
 if ($Opt{teragrid}) {
     Check_Module '-teragrid', 'DBI';
     Check_Module '-teragrid', 'DBD::Pg';
@@ -138,19 +136,6 @@ if (not $All_Commands_Found) {
 Note: Consider specifying a different value for \$PATH to find
       missing commands.  This should match the PATH option in
       your config file.
-
-EOF
-}
-
-if ($Module_Found{'Net::Domain'} and not $Command_Found{hostname}) {
-    push @Notes, <<"EOF";
-Note: Missing hostname command is ok, will use Net::Domain module
-
-EOF
-}
-elsif (not $Module_Found{'Net::Domain'} and $Command_Found{hostname}) {
-    push @Notes, <<"EOF";
-Note: Missing Net::Domain module is ok, will use hostname command
 
 EOF
 }
@@ -191,15 +176,16 @@ sub Check_Perl($) {
 
 sub Check_Command($) {
     my($command) = @_;    
+    my $command_found = 0;
     Vprintf "%-42s", "Checking for $command command: ";
     foreach my $dir (@path) {
         if (-x "$dir/$command") {
             Vprint "found $dir/$command\n";
-            $Command_Found{$command} = 1;
+            $command_found = 1;
             last;
         }
     }
-    if (not $Command_Found{$command}) {
+    if (not $command_found) {
         Vprint "not found in \$PATH=$ENV{PATH}\n";
         push @Errors, "Command $command not found\n";
         $All_Commands_Found = 0;
@@ -209,23 +195,63 @@ sub Check_Command($) {
 
 # ----------------------------------------------------------------------
 
-sub Check_Module($;$) {
+sub Check_Module(@) {
     my $teragrid = 0;
-    if (scalar @_ == 2 and $_[0] eq '-teragrid') {
+    my $module = undef;
+    my $fallback_command = undef;
+    my $fallback_command_found = 0;
+
+    if (@_ and $_[0] eq '-teragrid') {
         shift;
         $teragrid = 1;
     }
-    my($module) = @_;
-    Vprintf "%-42s", "Checking for Perl module $module: ";
+
+    my $tg_message = $teragrid ? ' (TeraGrid only)' : '';
+
+    if (@_) {
+        $module = shift;
+    }
+    else {
+        die "Internal error: Check_Module: No module specified\n";
+    }
+
+    if (@_) {
+        $fallback_command = shift;
+    }
+
+    if (@_) {
+        die "Internal error: Check_Modules: Too many arguments\n";
+    }
+
+    Vprintf "%-42s", "Checking for Perl module ${module}: ";
     eval "require $module";
     if ($@ eq '') {
         Vprint "found\n";
-        $Module_Found{$module} = 1;
+    }
+    elsif (defined $fallback_command) {
+        Vprint "Module not found, trying to fall back " .
+               "to $fallback_command command\n";
+        foreach my $dir (@path) {
+            if (-x "$dir/$fallback_command") {
+                Vprint "found $dir/$fallback_command\n";
+                $fallback_command_found = 1;
+                last;
+            }
+        }
+        if ($fallback_command_found) {
+            push @Warnings, "Module $module not found, falling back to " .
+                            "$fallback_command command$tg_message\n";
+        }
+        else {
+            Vprint "Failed to find command $fallback_command\n";
+            push @Errors, "Module $module and command " .
+                          "$fallback_command not found$tg_message\n";
+            $All_Modules_Found = 0;
+        }
     }
     else {
-        my $tg_string = $teragrid ? ' (TeraGrid only)' : '';
-        Vprint "not found$tg_string\n";
-        push @Errors, "Module $module not found$tg_string\n";
+        Vprint "not found$tg_message\n";
+        push @Errors, "Module $module not found$tg_message\n";
         $All_Modules_Found = 0;
     }
 } # Check_Module
