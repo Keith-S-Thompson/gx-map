@@ -1,0 +1,25 @@
+# $Id: bug-0106,v 1.1 2006-08-01 03:26:02-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0106,v $
+
+gx-map bug 0106
+Date: Tue 2006-08-01
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Fixed 0.5.?
+Title: Check for Net::Domain doesn't work
+
+Gridmap_Utils.pm tries to check whether the Net::Domain exists; if
+not, the Get_Hostname function falls back to the external "hostname"
+command.
+
+It does this by doing
+    eval { require Net::Domain };
+in the BEGIN block and checking the value of $@.  It turns out that
+if the module doesn't exist, this aborts compilation rather than
+setting $@.
+
+It needs to eval a string rather than a block:
+    eval '{ require Net::Domain }';
+
+(This also needs to be done for Time::HiRes.)
