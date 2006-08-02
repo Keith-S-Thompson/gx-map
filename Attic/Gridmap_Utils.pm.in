@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.212 2006-08-01 03:28:00-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.213 2006-08-01 18:38:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -428,7 +428,7 @@ sub Get_Hostname() {
         # Use_Commands sets $PATH.
         #
         Use_Commands();
-        return Net::Domain::hostfqdn();
+        return eval 'Net::Domain::hostfqdn()';
     }
     else {
         Use_Commands 'hostname';
@@ -550,7 +550,7 @@ sub Use_Commands(@) {
 sub Get_Time_Of_Day() {
     my($sec, $usec);
     if ($Have_Time_HiRes_Module) {
-        ($sec, $usec) = Time::HiRes::gettimeofday;
+        ($sec, $usec) = eval 'Time::HiRes::gettimeofday()';
     }
     else {
         Gridmap_Utils::Use_Commands 'gettimeofday';
@@ -560,6 +560,9 @@ sub Get_Time_Of_Day() {
         }
         chomp $output;
         if ($output =~ /^(\d+)\.(\d{6})$/) {
+            ($sec, $usec) = ($1, $2);
+        }
+        else {
             die "Unexpected output from gettimeofday command\n";
         }
     }
