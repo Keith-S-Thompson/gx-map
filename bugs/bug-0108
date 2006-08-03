@@ -1,0 +1,90 @@
+# $Id: bug-0108,v 1.1 2006-08-02 18:32:20-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0108,v $
+
+gx-map bug 0108
+Date: Wed 2006-08-02
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: Consider adding gx-cron command
+
+The cron jobs for the account that owns gx-map tend to be very complex.
+For example, on chester.sdsc.edu:
+========================================================================
+# minute hour mday month wday command
+#
+# gx-map-cacl 0.5.2.1
+#
+2,7,12,17,22,27,32,37,42,47,52,57 * * * *	/paci/sdsc/gxmap/linux-x86/apps/gx-map-cacl-0.5.2.1-npaci/sbin/gx-check-cacl-index
+3,8,13,18,23,28,33,38,43,48,53,58 * * * *	/paci/sdsc/gxmap/linux-x86/apps/gx-map-cacl-0.5.2.1-sdsc/sbin/gx-check-cacl-index
+#
+# gx-map 0.5.2.1 (DB)
+#
+0 * * * *					/usr/local/apps/gx-map-0.5.2.1/sbin/gx-db-request -full-query ; /usr/local/apps/gx-map-0.5.2.1/sbin/gx-db-check-requests
+#
+# gx-map 0.5.2.1
+#
+4,9,14,19,24,29,34,39,44,49,54,59 * * * *	/usr/local/apps/gx-map-0.5.2.1/sbin/gx-check-requests
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *	/usr/local/apps/gx-map-0.5.2.1/sbin/gx-gen-mapfile -gt2-compat /misc/gx-map/grid-mapfiles-0.5.2.1/chester.sdsc.edu.grid-mapfile
+0,5,10,15,20,25,30,35,40,45,50,55 * * * *	/usr/local/apps/gx-map-0.5.2.1/sbin/gx-gen-mapfile -all /misc/gx-map/grid-mapfiles-0.5.2.1/ALL.grid-mapfile
+5,35 * * * *					/usr/local/apps/gx-map-0.5.2.1/sbin/gx-ca-update -target-dir /misc/gx-map/certificates-0.5.2.1 -ca-list /misc/gx-map/certificates-0.5.2.1/.list
+========================================================================
+
+Consider adding a "gx-cron" command that would invoke any of:
+    gx-check-cacl-index
+    gx-db-request
+    gx-db-check-requests
+    gx-check-requests
+    gx-gen-mapfile
+    gx-ca-update
+based on a configuration file.  The configuration file could have
+a simpler syntax than a cron job, and could conditionally invoke
+commands depending on the current time and hostname.
+
+For example:
+{
+    interval 5+2
+    hostname chester.sdsc.edu
+    command  gx-check-cacl-index npaci sdsc
+}
+
+{
+    interval 60
+    hostname chester.sdsc.edu
+    command gx-db-request -full-query
+    command gx-db-check-requests
+}
+
+{
+    interval 5+4
+    hostname chester.sdsc.edu
+    command gx-check-requests
+}
+
+{
+    interval 5
+    command gx-gen-mapfile -gt2-compat \
+	/misc/gx-map/grid-mapfiles-%VERSION%/%HOSTNAME%.grid-mapfile
+}
+
+{
+    interval 5
+    hostname chester.sdsc.edu
+    command gx-gen-mapfile -all \
+	/misc/gx-map/grid-mapfiles-%VERSION%/ALL.grid-mapfile
+}
+
+{
+    interval 30+5
+    command gx-ca-update -target-dir /misc/gx-map/certificates-%VERSION% \
+	-ca-list /misc/gx-map/certificates-%VERSION%/.list
+}
+
+The hostname is determined by Gridmap_Utils::Get_Hostname.
+%HOSTNAME% and %VERSION% expand to the obvious.
+If no hostname is specified, run on all hosts.
+
+The cron job can then be:
+
+* * * * * .../gx-map-<version>/sbin/gx-cron
