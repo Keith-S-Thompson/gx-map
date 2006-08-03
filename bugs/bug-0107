@@ -1,0 +1,21 @@
+# $Id: bug-0107,v 1.1 2006-08-02 18:32:19-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0107,v $
+
+gx-map bug 0107
+Date: Wed 2006-08-02
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: Integrate gx-map-cacl into gx-map
+
+Consider integrating gx-map-cacl into the gx-map package, as an
+auxiliary EXTRAS component like TGCDB.
+
+Don't require multiple installations for multiple CAs; get attributes
+(primarily the location of the index file) from the *.cadesc file,
+and specify one or more CAs on the gx-check-cacl-index command line.
+
+Consider changing the command name to something more generic than
+gx-check-cacl-index, perhaps gx-check-ca-index.  Think (eventually)
+about handling other index file formats (if they exist).
