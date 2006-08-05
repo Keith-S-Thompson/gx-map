@@ -1,0 +1,26 @@
+# $Id: adcbc9ef.uk-escience.cadesc,v 1.1 2006-08-04 21:58:36-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/adcbc9ef.uk-escience.cadesc,v $
+
+CA_NAME             UK e-Science CA
+HOMEPAGE            http://www.grid-support.ac.uk/ca/
+CONTACT             support@grid-support.ac.uk
+HASH                adcbc9ef
+SIGNED_BY           /C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
+SUBJECT             /C=UK/O=eScienceCA/OU=Authority/CN=CA
+MAY_SIGN            ?
+CERTIFICATE_MD5     24:47:F1:F0:BD:1F:3E:E5:AE:4B:55:E9:E3:30:3A:0F
+CERTIFICATE_SHA1    0A:E0:5B:0C:64:99:18:2B:4F:FB:15:33:6F:77:33:F9:8E:F2:6D:C7
+CERTIFICATE_URL     http://ca.grid-support.ac.uk/pub/certs/adcbc9ef.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://ca.grid-support.ac.uk/pub/crl/escience-ca-crl.pem
+CERT_EXPIRES        Fri 2011-07-15 16:32:55 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from adcbc9ef.0, downloaded Fri 2006-08-04
+
+# This certificate, along with its signer (hash 8175c1cd) supersede the
+# old UK e-Science CA certificate (hash 01621954), which has not yet
+# expired but will not issue any new certificates.
+
+# I have not yet found a signing_policy for this certificate.  Until I
+# find one, I will leave it marked as DISABLED.
