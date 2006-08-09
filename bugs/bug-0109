@@ -1,0 +1,44 @@
+# $Id: bug-0109,v 1.1 2006-08-08 19:26:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0109,v $
+
+gx-map bug 0109
+Date: Tue 2006-08-08
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: Consider a client/server model
+
+Currently, gx-map manages its information via local files, particularly
+the requests.log file.  Files can be shared via an NFS-mounted
+filesystem, but that may introduce security problems and doesn't
+scale to multiple sites.
+
+Consider implementing a gx-map server to hold (an equivalent of) the
+requests.log file.  To a first approximation, it might look like this:
+
+gx-request works pretty much as it does now, and is unprivileged
+(I think).
+
+gx-check-requests, or an equivalent, submits validated requests
+to the server, using a simple protocol.  Each submitted request is
+cryptographically signed.  Question: How does gx-check-requests get
+access to the signing certificate?  If it runs from a cron job, the
+only real solution is to store it in the file system.  If it runs as
+a daemon, it might be possible to manually enter the passphrase and
+store it only in memory.
+
+Each local installation, I think, stores its own copy of the
+requests.log file, or perhaps of a subset (restricted to entries with
+the correct namespace, for example).  gx-gen-mapfile issues a request
+to the server for all entries after a specified timestamp.  Possibly
+the server goes back a few minutes (hours? a day? configurable?) before
+that to allow for propagation delays.  The client receives the new
+entries and merges them into its local requests.log file, ignoring
+any it already has.  Again, the information is signed.
+
+For TeraGrid, a single instance of some tool feeds information from
+the TGCDB into a TeraGrid-wide gx-map server; individual sites don't
+have to do TGCDB queries.
+
+This will be a lot of work, and it still requires a lot of thought.
