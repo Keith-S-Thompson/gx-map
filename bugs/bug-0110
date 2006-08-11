@@ -1,0 +1,23 @@
+# $Id: bug-0110,v 1.1 2006-08-10 17:59:36-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0110,v $
+
+gx-map bug 0110
+Date: Thu 2006-08-10
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: Feature: Filter DNs by signing_policy files
+
+Consider adding an option to gx-gen-mapfile:
+    -policy-directory <dir>
+The directory (typically /etc/grid-security/certificates) is searched
+for xxxxxxxx.signing_policy files.  Each matching file is searched
+for lines of the form
+    cond_subjects  globus  <pattern>
+DNs not matching any of the patterns are excluded from the generated
+grid-mapfile.
+
+By default, DNs are included regardless of any signing policies.
+
+(How much would this slow things down?)
