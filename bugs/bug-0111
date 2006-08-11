@@ -1,0 +1,15 @@
+# $Id: bug-0111,v 1.1 2006-08-11 13:23:53-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0111,v $
+
+gx-map bug 0111
+Date: Fri 2006-08-11
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: Use Carp module
+
+Replace handcrafted traceback code in Gridmap_Utils with the standard
+Carp module.  (First, figure out how Carp works; quick experiments seem
+to indicate that routines that *arent'* supposed to print tracebacks
+actually do so.)
