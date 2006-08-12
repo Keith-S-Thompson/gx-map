@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.12 2006-08-02 22:31:10-07 kst Exp $
+ $Id: teragrid-requirements,v 1.13 2006-08-11 18:10:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -7,23 +7,31 @@ Missing requirements for gx-map on TeraGrid systems
 Reported via TeraGrid Ticket # 124267, 2006-06-17
 Split into one ticket for each site; see below.
 
+Time for each system (e.g., ":55") indicates when it queries the TGCDB
+(e.g., 55 minutes after each hour).
+
 NCSA:
-    tg-login1.ncsa.teragrid.org (Mercury)
+    tg-login3.ncsa.teragrid.org (Mercury)
 	Perl doesn't have DBI, DBD::Pg
 	(This may not be a problem if the DB interaction can be done on
-	another node with a shared filesystem.)
-	/usr/bin/crontab: permission denied
+	another node with a shared filesystem -- but NCSA is not
+	inclined to do that).
+	Had "/usr/bin/crontab: permission denied", but that's fixed.
     co-login1.ncsa.teragrid.org (Cobalt)
+	:55
 	ok
     login-w.ncsa.teragrid.org (Tungsten)
+	:20
 	ok
     login-cu.ncsa.teragrid.org (Copper)
-	No access to system
+	:5
+	No curl command (I installed it separately).
 
     TG Ticket 124268
 
 SDSC:
     chester.sdsc.edu
+	:0
 	ok
     tg-login.sdsc.teragrid.org
 	ok
@@ -39,9 +47,9 @@ SDSC:
     TG Ticket 124269 (closed)
 
 UC/ANL:
+    :15
     tg-login1.uc.teragrid.org
-	Perl doesn't have DBD::Pg
-	Fixed.
+	Perl didn't have DBD::Pg; fixed.
 
     TG Ticket 124270
     JP requested a list of the prerequisites; I replied with an
@@ -69,11 +77,11 @@ PSC:
 
 IU:
     tg-login1.iu.teragrid.org
+	:50
 	ok
     tg-login-ia32.iu.teragrid.org
 	Perl doesn't have Time::HiRes
-	Can't use crontab (will need to update /etc/cron.allow)
-	ok as of Wed 2006-08-02
+	Had a problem with crontab (cron.allow), ok as of Wed 2006-08-02
 	According to Mike Lowe, this system is slated for retirement
 	in the near future.
 
@@ -81,17 +89,19 @@ IU:
 
 ORNL:
     tg-login1.ornl.teragrid.org
+	:40
 	/usr/bin/crontab: Permission denied (now ok).
-	Otherwise ok
+	ok
 
     TG Ticket 124273 (closed)
 
 PURDUE:
+    :10
     TG Ticket 124274
     ok
 
 TACC:
-    lonestar.tacc.utexas.edu
+    lonestar2.tacc.utexas.edu
 	Perl doesn't have Time::HiRes
 	(DB connection ok)
     maverick.tacc.utexas.edu
