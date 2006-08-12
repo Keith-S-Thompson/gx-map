@@ -1,0 +1,20 @@
+# $Id: bug-0112,v 1.1 2006-08-11 18:28:47-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0112,v $
+
+gx-map bug 0112
+Date: Fri 2006-08-11
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.1
+Status: Open
+Title: gx-ca-update: use ".ca-list" file implicitly
+
+Currently, gx-ca-update is typically used as:
+    .../sbin/gx-ca-update -target-dir FOO -ca-list FOO/.ca-list
+where "FOO" can be a long path.
+
+If no CAs are specified (via the "-ca" or "-ca-list" option), *and*
+if the specified target directory contains a ".ca-list" file, use
+that as the list of CAs.
+
+(I've been calling the list file ".list", but ".ca-list" is better.)
