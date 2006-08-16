@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.3 2006-08-15 21:48:21-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.4 2006-08-15 21:58:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -92,11 +92,9 @@ if ($User_Opt->{version}) {
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
 
-my $now = time;
-my $minutes = int($now / 60);
 my $Hostname = Gridmap_Utils::Get_Hostname();
 
-Debug "\$now = $now, \$minutes = $minutes, \$hostname = $Hostname\n";
+Debug "\$hostname = $Hostname\n";
 
 my @Jobs = Gridmap_Utils::Read_Records $User_Opt->{'config-file'};
 Debug "Got ", scalar @Jobs, " jobs\n";
@@ -111,7 +109,9 @@ if ($User_Opt->{daemon}) {
         if ($sleep_time == 0) {
             $sleep_time = 60;
         }
+        Debug "sleep $sleep_time\n";
         sleep $sleep_time;
+        Debug scalar gmtime time, " UTC\n";
         Run_Jobs @Jobs;
     }
 }
@@ -124,6 +124,9 @@ else {
 
 sub Run_Jobs(@) {
     my(@Jobs) = @_;
+
+    my $now = time;
+    my $minutes = int($now / 60);
 
     JOB:
     foreach my $job (@Jobs) {
@@ -160,13 +163,15 @@ sub Run_Jobs(@) {
             @commands = ( $job->{command} );
         }
 
-        if ($minutes % $interval == $offset) {
+        my $actual_offset = $minutes % $interval;
+        if ($actual_offset == $offset) {
             foreach my $command (@commands) {
                 print "... Execute $command\n";
             }
         }
         else {
-            Debug "Skipping, interval doesn't match\n";
+            Debug "Skipping, needed $offset mod $interval, " .
+                  "got $actual_offset mod $interval\n";
         }
     }
 } # Run_Jobs
