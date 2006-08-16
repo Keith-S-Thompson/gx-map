@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.73 2006-06-13 18:45:50-07 kst Exp $
+# $Id: install-gx-map.in,v 1.74 2006-08-15 21:27:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -84,7 +84,7 @@ if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
 fi
 
 BIN_FILES="gx-request"
-SBIN_FILES="gx-check-requests gx-cleanup-logs gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins gx-remove-locks"
+SBIN_FILES="gx-check-requests gx-cleanup-logs gx-cron-job gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins gx-remove-locks"
 OPTIONAL_SBIN_FILES="gx-propagate gx-db-request gx-db-check-requests gx-db-dump"
 RESTRICTED_SBIN_FILES="gx-ca-update gx-check-requests gx-remove-locks gx-propagate gx-db-request gx-db-check-requests gx-db-dump"
 LIB_FILES="Gridmap_Utils.pm"
