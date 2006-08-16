@@ -1,0 +1,164 @@
+#!%PERL% -wT
+
+# $Id: gx-cron-job.in,v 1.1 2006-08-15 21:14:47-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+
+sub Usage(@);
+sub Debug(@);
+sub Debugf(@);
+
+# 
+# Make warnings fatal.
+# 
+$SIG{__WARN__} = sub { die @_ };
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+my $Default_Config_File = "$Install_Dir/etc/gx-map/gx-cron-job.conf";
+
+my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = { 'config-file' => $Default_Config_File };
+my @Opts = ( $User_Opt,
+             qw( help
+                 version
+                 debugging!
+                 config-file=s ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
+
+my $now = time;
+my $minutes = int($now / 60);
+my $Hostname = Gridmap_Utils::Get_Hostname();
+
+my @Jobs = Gridmap_Utils::Read_Records $User_Opt->{'config-file'};
+
+JOB:
+foreach my $job (@Jobs) {
+    die "No interval specified\n" if not defined $job->{interval};
+    die "No command specified\n"  if not defined $job->{command};
+
+    my $interval = $job->{interval};
+    my $offset;
+    if ($interval =~ /^\d+$/) {
+        $offset = 0;
+    }
+    elsif ($interval =~ /^(\d+)\+(\d+)$/) {
+        ($interval, $offset) = ($1, $2);
+    }
+    else {
+        die "Unrecognized interval: $interval\n";
+    }
+
+    if (defined $job->{hostname}) {
+        #
+        # Allow multiple hostnames?
+        #
+        if ($Hostname ne $job->{hostname}) {
+            Debug "Skipping, hostname doesn't match\n";
+        }
+        next JOB;
+    }
+
+    my @commands;
+    if (ref $job->{command} eq 'ARRAY') {
+        @commands = @{$job->{command}};
+    }
+    else {
+        @commands = ( $job->{command} );
+    }
+
+    foreach my $command (@commands) {
+        print "... Execute $command\n";
+    }
+}
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+Option names may be abbreviated.
+    -help              : Display this message and exit.
+    -version           : Display version information and exit.
+    -config-file file  : Use the specified configuration file; default is
+                         $Default_Config_File
+EOF
+    exit 1;
+} # Usage
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
