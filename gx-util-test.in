@@ -1,0 +1,378 @@
+#!%PERL% -wT
+
+# $Id: gx-util-test.in,v 1.1 2006-08-16 00:52:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+
+sub Usage(@);
+sub Debug(@);
+sub Debugf(@);
+
+# 
+# Make warnings fatal.
+# 
+$SIG{__WARN__} = sub { die @_ };
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = { };
+my @Opts = ( $User_Opt,
+             qw( help
+                 version
+                 debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
+
+Usage if not @ARGV;
+
+if ($ARGV[0] eq 'Check_Data_Dir') {
+    Usage if scalar @ARGV != 1;
+    Gridmap_Utils::Check_Data_Dir();
+    print "ok\n";
+}
+
+elsif ($ARGV[0] eq 'Get_mtime') {
+    Usage if scalar @ARGV != 2;
+    my $mtime = Gridmap_Utils::Get_mtime $ARGV[1];
+    if (defined $mtime) {
+        print "mtime = $mtime\n";
+    }
+    else {
+        print "mtime = undef\n";
+    }
+}
+
+elsif ($ARGV[0] eq 'Get_PW') {
+    Usage if scalar @ARGV != 2;
+    my $pw = Gridmap_Utils::Get_PW $ARGV[1];
+    if (defined $pw) {
+        foreach my $key (sort keys %$pw) {
+            printf "%-7s %s\n", $key, $pw->{$key};
+        }
+    }
+    else {
+        print "Get_PW --> undef\n";
+    }
+}
+
+elsif ($ARGV[0] eq 'Get_GR') {
+    Usage if scalar @ARGV != 2;
+    my $gr = Gridmap_Utils::Get_GR $ARGV[1];
+    if (defined $gr) {
+        foreach my $key (sort keys %$gr) {
+            printf "%-7s %s\n", $key, $gr->{$key};
+        }
+    }
+    else {
+        print "Get_GR --> undef\n";
+    }
+}
+
+elsif ($ARGV[0] eq 'Get_Groups') {
+    Usage if scalar @ARGV != 2;
+    my @groups = Gridmap_Utils::Get_Groups $ARGV[1];
+    print join(' ', '(', @groups, ')'), "\n";
+}
+
+elsif ($ARGV[0] eq 'Get_Hostname') {
+    Usage if scalar @ARGV != 1;
+    my $hostname = Gridmap_Utils::Get_Hostname();
+    print "$hostname\n";
+}
+
+elsif ($ARGV[0] eq 'Dir_Error') {
+    Usage if scalar @ARGV != 2;
+    my $error = Gridmap_Utils::Dir_Error $ARGV[1];
+    if (defined $error) {
+        print "$error\n";
+    }
+    else {
+        print "undef\n";
+    }
+}
+
+elsif ($ARGV[0] eq 'Require_Owner') {
+    Usage if scalar @ARGV != 1;
+    Gridmap_Utils::Require_Owner $Program_Name;
+    print "ok\n";
+}
+
+
+elsif ($ARGV[0] eq 'Is_Admin_Account') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Is_Admin_Account $ARGV[1];
+    if ($result) {
+        print "yes\n";
+    }
+    else {
+        print "no\n";
+    }
+}
+
+elsif ($ARGV[0] eq 'Use_Commands') {
+    Usage if scalar @ARGV < 2;
+    shift;
+    Gridmap_Utils::Use_Commands @ARGV;
+    print "ok\n";
+}
+
+elsif ($ARGV[0] eq 'Increment_Timestamp') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Increment_Timestamp @ARGV;
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Get_Time_Of_Day') {
+    Usage if scalar @ARGV != 1;
+    my $result = Gridmap_Utils::Get_Time_Of_Day;
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Timestamp_Of') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Timestamp_Of $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Time_Image') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Time_Image $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Long_Time_Image') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Long_Time_Image $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Time_Value') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Time_Value $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Get_DNs_From_List_File') {
+    Usage if scalar @ARGV != 2;
+    my @DNs = Gridmap_Utils::Get_DNs_From_List_File $ARGV[1];
+    print scalar @DNs, " DNs:\n";
+    print join("\n", @DNs), "\n";
+}
+
+elsif ($ARGV[0] eq 'Write_Records') {
+    die "Write_Records test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Read_Records') {
+    die "Read_Records test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Sort_By_Timestamp') {
+    die "Sort_By_Timestamp test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Gen_Mappings') {
+    die "Gen_Mappings test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Cache_File') {
+    die "Cache_File test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'DN_Error') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::DN_Error $ARGV[1];
+    if (defined $result) {
+        print "$result\n";
+    }
+    else {
+        print "undef\n";
+    }
+}
+
+elsif ($ARGV[0] eq 'GT2_Subject') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::GT2_Subject $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'GT3_Subject') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::GT3_Subject $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'GT4_Subject') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::GT4_Subject $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'DN_List') {
+    Usage if scalar @ARGV != 2;
+    my @result = Gridmap_Utils::DN_List $ARGV[1], 'GT2', 'GT3', 'GT4';
+    print join("\n", @result), "\n";
+}
+
+elsif ($ARGV[0] eq 'Normalize_DN') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Normalize_DN $ARGV[1];
+    print "$result\n";
+}
+
+elsif ($ARGV[0] eq 'Send_Email') {
+    die "Send_Email test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Get_Lock') {
+    die "Get_Lock test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Release_Lock') {
+    die "Release_Lock test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Install_Die_Handler') {
+    Gridmap_Utils::Install_Die_Handler;
+    print "ok\n";
+}
+
+elsif ($ARGV[0] eq 'Install_Warn_Handler') {
+    Gridmap_Utils::Install_Warn_Handler;
+    print "ok\n";
+}
+
+elsif ($ARGV[0] eq 'Register_Handler_Function') {
+    die "Register_Handler_Function test not implemented\n";
+}
+
+elsif ($ARGV[0] eq 'Get_TGCDB_Config') {
+    die "Get_TGCDB_Config test not implemented\n";
+}
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+Usage: $Program_Name command [argument ...]
+Test functions in Gridmap_Utils package.
+Option names may be abbreviated.
+    -help                     Display this message and exit.
+    -version                  Display version information and exit.
+    Check_Data_Dir            directory
+    Get_mtime                 filename
+    Get_PW                    user|UID
+    Get_GR                    group|GID
+    Get_Groups                user|UID
+    Get_Hostname
+    Dir_Error                 directory
+    Require_Owner
+    Is_Admin_Account          user
+    Use_Commands              command...
+    Increment_Timestamp       timestamp
+    Get_Time_Of_Day
+    Timestamp_Of              raw-time
+    Time_Image                raw-time
+    Long_Time_Image           raw-time
+    Time_Value                timestamp
+    Get_DNs_From_List_File    filename
+    Write_Records             (not supported)
+    Read_Records              (not supported)
+    Sort_By_Timestamp         (not supported)
+    Gen_Mappings              (not supported)
+    Cache_File                (not supported)
+    DN_Error                  DN
+    GT2_Subject               DN
+    GT3_Subject               DN
+    GT4_Subject               DN
+    DN_List                   DN
+    Normalize_DN              DN
+    Send_Email                (not supported)
+    Get_Lock                  (not supported)
+    Release_Lock              (not supported)
+    Install_Die_Handler
+    Install_Warn_Handler
+    Register_Handler_Function
+    Get_TGCDB_Config          (not supported)
+EOF
+    exit 1;
+} # Usage
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
+
