@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.22 2006-07-31 21:37:20-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.23 2006-08-15 21:15:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -229,11 +229,11 @@ sub Check_Module(@) {
         Vprint "found\n";
     }
     elsif (defined $fallback_command) {
-        Vprint "Module not found, trying to fall back " .
+        Vprint "\n    Module not found, trying to fall back " .
                "to $fallback_command command\n";
         foreach my $dir (@path) {
             if (-x "$dir/$fallback_command") {
-                Vprint "found $dir/$fallback_command\n";
+                Vprint "    found $dir/$fallback_command\n";
                 $fallback_command_found = 1;
                 last;
             }
@@ -243,7 +243,7 @@ sub Check_Module(@) {
                             "$fallback_command command$tg_message\n";
         }
         else {
-            Vprint "Failed to find command $fallback_command\n";
+            Vprint "    Failed to find command $fallback_command\n";
             push @Errors, "Module $module and command " .
                           "$fallback_command not found$tg_message\n";
             $All_Modules_Found = 0;
