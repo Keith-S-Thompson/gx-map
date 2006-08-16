@@ -1,6 +1,6 @@
-!%PERL% -wT
+#!%PERL% -wT
 
-# $Id: gx-util-test.in,v 1.2 2006-08-16 01:18:10-07 kst Exp $
+# $Id: gx-util-test.in,v 1.3 2006-08-16 01:21:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
