@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.13 2006-08-11 18:10:30-07 kst Exp $
+ $Id: teragrid-requirements,v 1.14 2006-08-15 21:15:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -47,9 +47,9 @@ SDSC:
     TG Ticket 124269 (closed)
 
 UC/ANL:
-    :15
     tg-login1.uc.teragrid.org
-	Perl didn't have DBD::Pg; fixed.
+	:15
+	(Perl didn't have DBD::Pg; fixed)
 
     TG Ticket 124270
     JP requested a list of the prerequisites; I replied with an
@@ -102,7 +102,8 @@ PURDUE:
 
 TACC:
     lonestar2.tacc.utexas.edu
-	Perl doesn't have Time::HiRes
+	:25
+	Perl doesn't have Time::HiRes (lonestar only; lonestar2 is ok)
 	(DB connection ok)
     maverick.tacc.utexas.edu
 	Library problem with "curl" command (see TeraGrid Ticket #
