@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-util-test.in,v 1.3 2006-08-16 01:21:47-07 kst Exp $
+# $Id: gx-util-test.in,v 1.4 2006-08-16 01:23:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -304,6 +304,7 @@ elsif (Match $ARGV[0], 'Get_TGCDB_Config') {
 else {
     die "Unrecognized command\n";
 }
+
 ########################################################################
 
 sub Match($$) {
@@ -312,6 +313,7 @@ sub Match($$) {
     $s1 = lc $s1;
     $s2 =~ s/[_-]//g;
     $s2 = lc $s2;
+    return $s1 eq $s2;
 } # Match
 
 # ----------------------------------------------------------------------
