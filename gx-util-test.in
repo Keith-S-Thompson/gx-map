@@ -1,6 +1,6 @@
-#!%PERL% -wT
+!%PERL% -wT
 
-# $Id: gx-util-test.in,v 1.1 2006-08-16 00:52:18-07 kst Exp $
+# $Id: gx-util-test.in,v 1.2 2006-08-16 01:18:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -56,6 +56,8 @@ use Getopt::Long ();
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
+sub Match($$);
+sub Image($);
 
 # 
 # Make warnings fatal.
@@ -89,24 +91,19 @@ Gridmap_Utils::Install_Warn_Handler;
 
 Usage if not @ARGV;
 
-if ($ARGV[0] eq 'Check_Data_Dir') {
+if (Match $ARGV[0], 'Check_Data_Dir') {
     Usage if scalar @ARGV != 1;
     Gridmap_Utils::Check_Data_Dir();
     print "ok\n";
 }
 
-elsif ($ARGV[0] eq 'Get_mtime') {
+elsif (Match $ARGV[0], 'Get_mtime') {
     Usage if scalar @ARGV != 2;
     my $mtime = Gridmap_Utils::Get_mtime $ARGV[1];
-    if (defined $mtime) {
-        print "mtime = $mtime\n";
-    }
-    else {
-        print "mtime = undef\n";
-    }
+    print Image $mtime, "\n";
 }
 
-elsif ($ARGV[0] eq 'Get_PW') {
+elsif (Match $ARGV[0], 'Get_PW') {
     Usage if scalar @ARGV != 2;
     my $pw = Gridmap_Utils::Get_PW $ARGV[1];
     if (defined $pw) {
@@ -119,7 +116,7 @@ elsif ($ARGV[0] eq 'Get_PW') {
     }
 }
 
-elsif ($ARGV[0] eq 'Get_GR') {
+elsif (Match $ARGV[0], 'Get_GR') {
     Usage if scalar @ARGV != 2;
     my $gr = Gridmap_Utils::Get_GR $ARGV[1];
     if (defined $gr) {
@@ -132,37 +129,32 @@ elsif ($ARGV[0] eq 'Get_GR') {
     }
 }
 
-elsif ($ARGV[0] eq 'Get_Groups') {
+elsif (Match $ARGV[0], 'Get_Groups') {
     Usage if scalar @ARGV != 2;
     my @groups = Gridmap_Utils::Get_Groups $ARGV[1];
     print join(' ', '(', @groups, ')'), "\n";
 }
 
-elsif ($ARGV[0] eq 'Get_Hostname') {
+elsif (Match $ARGV[0], 'Get_Hostname') {
     Usage if scalar @ARGV != 1;
     my $hostname = Gridmap_Utils::Get_Hostname();
-    print "$hostname\n";
+    print Image $hostname, "\n";
 }
 
-elsif ($ARGV[0] eq 'Dir_Error') {
+elsif (Match $ARGV[0], 'Dir_Error') {
     Usage if scalar @ARGV != 2;
     my $error = Gridmap_Utils::Dir_Error $ARGV[1];
-    if (defined $error) {
-        print "$error\n";
-    }
-    else {
-        print "undef\n";
-    }
+    print Image $error, "\n";
 }
 
-elsif ($ARGV[0] eq 'Require_Owner') {
+elsif (Match $ARGV[0], 'Require_Owner') {
     Usage if scalar @ARGV != 1;
     Gridmap_Utils::Require_Owner $Program_Name;
     print "ok\n";
 }
 
 
-elsif ($ARGV[0] eq 'Is_Admin_Account') {
+elsif (Match $ARGV[0], 'Is_Admin_Account') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Is_Admin_Account $ARGV[1];
     if ($result) {
@@ -173,148 +165,167 @@ elsif ($ARGV[0] eq 'Is_Admin_Account') {
     }
 }
 
-elsif ($ARGV[0] eq 'Use_Commands') {
+elsif (Match $ARGV[0], 'Use_Commands') {
     Usage if scalar @ARGV < 2;
     shift;
     Gridmap_Utils::Use_Commands @ARGV;
     print "ok\n";
 }
 
-elsif ($ARGV[0] eq 'Increment_Timestamp') {
+elsif (Match $ARGV[0], 'Increment_Timestamp') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Increment_Timestamp @ARGV;
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Get_Time_Of_Day') {
+elsif (Match $ARGV[0], 'Get_Time_Of_Day') {
     Usage if scalar @ARGV != 1;
     my $result = Gridmap_Utils::Get_Time_Of_Day;
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Timestamp_Of') {
+elsif (Match $ARGV[0], 'Timestamp_Of') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Timestamp_Of $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Time_Image') {
+elsif (Match $ARGV[0], 'Time_Image') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Time_Image $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Long_Time_Image') {
+elsif (Match $ARGV[0], 'Long_Time_Image') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Long_Time_Image $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Time_Value') {
+elsif (Match $ARGV[0], 'Time_Value') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Time_Value $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Get_DNs_From_List_File') {
+elsif (Match $ARGV[0], 'Get_DNs_From_List_File') {
     Usage if scalar @ARGV != 2;
     my @DNs = Gridmap_Utils::Get_DNs_From_List_File $ARGV[1];
     print scalar @DNs, " DNs:\n";
     print join("\n", @DNs), "\n";
 }
 
-elsif ($ARGV[0] eq 'Write_Records') {
+elsif (Match $ARGV[0], 'Write_Records') {
     die "Write_Records test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Read_Records') {
+elsif (Match $ARGV[0], 'Read_Records') {
     die "Read_Records test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Sort_By_Timestamp') {
+elsif (Match $ARGV[0], 'Sort_By_Timestamp') {
     die "Sort_By_Timestamp test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Gen_Mappings') {
+elsif (Match $ARGV[0], 'Gen_Mappings') {
     die "Gen_Mappings test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Cache_File') {
+elsif (Match $ARGV[0], 'Cache_File') {
     die "Cache_File test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'DN_Error') {
+elsif (Match $ARGV[0], 'DN_Error') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::DN_Error $ARGV[1];
-    if (defined $result) {
-        print "$result\n";
-    }
-    else {
-        print "undef\n";
-    }
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'GT2_Subject') {
+elsif (Match $ARGV[0], 'GT2_Subject') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::GT2_Subject $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'GT3_Subject') {
+elsif (Match $ARGV[0], 'GT3_Subject') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::GT3_Subject $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'GT4_Subject') {
+elsif (Match $ARGV[0], 'GT4_Subject') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::GT4_Subject $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'DN_List') {
+elsif (Match $ARGV[0], 'DN_List') {
     Usage if scalar @ARGV != 2;
     my @result = Gridmap_Utils::DN_List $ARGV[1], 'GT2', 'GT3', 'GT4';
     print join("\n", @result), "\n";
 }
 
-elsif ($ARGV[0] eq 'Normalize_DN') {
+elsif (Match $ARGV[0], 'Normalize_DN') {
     Usage if scalar @ARGV != 2;
     my $result = Gridmap_Utils::Normalize_DN $ARGV[1];
-    print "$result\n";
+    print Image $result, "\n";
 }
 
-elsif ($ARGV[0] eq 'Send_Email') {
+elsif (Match $ARGV[0], 'Send_Email') {
     die "Send_Email test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Get_Lock') {
+elsif (Match $ARGV[0], 'Get_Lock') {
     die "Get_Lock test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Release_Lock') {
+elsif (Match $ARGV[0], 'Release_Lock') {
     die "Release_Lock test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Install_Die_Handler') {
+elsif (Match $ARGV[0], 'Install_Die_Handler') {
     Gridmap_Utils::Install_Die_Handler;
     print "ok\n";
 }
 
-elsif ($ARGV[0] eq 'Install_Warn_Handler') {
+elsif (Match $ARGV[0], 'Install_Warn_Handler') {
     Gridmap_Utils::Install_Warn_Handler;
     print "ok\n";
 }
 
-elsif ($ARGV[0] eq 'Register_Handler_Function') {
+elsif (Match $ARGV[0], 'Register_Handler_Function') {
     die "Register_Handler_Function test not implemented\n";
 }
 
-elsif ($ARGV[0] eq 'Get_TGCDB_Config') {
+elsif (Match $ARGV[0], 'Get_TGCDB_Config') {
     die "Get_TGCDB_Config test not implemented\n";
 }
 
+else {
+    die "Unrecognized command\n";
+}
 ########################################################################
+
+sub Match($$) {
+    my($s1, $s2) = @_;
+    $s1 =~ s/[_-]//g;
+    $s1 = lc $s1;
+    $s2 =~ s/[_-]//g;
+    $s2 = lc $s2;
+} # Match
+
+# ----------------------------------------------------------------------
+
+sub Image($) {
+    if (defined $_[0]) {
+        return $_[0];
+    }
+    else {
+        return 'undef';
+    }
+} # Image
+
+# ----------------------------------------------------------------------
 
 sub Usage(@) {
     print @_ if @_;
