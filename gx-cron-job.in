@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.4 2006-08-15 21:58:57-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.5 2006-08-15 22:05:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -133,6 +133,14 @@ sub Run_Jobs(@) {
         die "No interval specified\n" if not defined $job->{interval};
         die "No command specified\n"  if not defined $job->{command};
 
+        my $name;
+        if (defined $job->{name}) { 
+            $name = $job->{name};
+        }
+        else {
+            $name = 'job';
+        }
+
         my $interval = $job->{interval};
         my $offset;
         if ($interval =~ /^\d+$/) {
@@ -146,13 +154,17 @@ sub Run_Jobs(@) {
         }
 
         if (defined $job->{hostname}) {
-            #
-            # Allow multiple hostnames?
-            #
-            if ($Hostname ne $job->{hostname}) {
-                Debug "Skipping, hostname doesn't match\n";
+            my @hostnames = ();
+            if (ref $job->{hostname} eq 'ARRAY') {
+                @hostnames = @{$job->{hostname}};
             }
-            next JOB;
+            else {
+                @hostnames = ( $job->{hostname} );
+            }
+            if (not grep { $_ eq $Hostname } @hostnames) {
+                Debug "Skipping $name, hostname doesn't match\n";
+                next JOB;
+            }
         }
 
         my @commands;
@@ -170,7 +182,7 @@ sub Run_Jobs(@) {
             }
         }
         else {
-            Debug "Skipping, needed $offset mod $interval, " .
+            Debug "Skipping $name, needed $offset mod $interval, " .
                   "got $actual_offset mod $interval\n";
         }
     }
