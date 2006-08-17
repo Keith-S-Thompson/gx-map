@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-util-test.in,v 1.4 2006-08-16 01:23:47-07 kst Exp $
+# $Id: gx-util-test.in,v 1.5 2006-08-16 20:18:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -174,7 +174,7 @@ elsif (Match $ARGV[0], 'Use_Commands') {
 
 elsif (Match $ARGV[0], 'Increment_Timestamp') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Increment_Timestamp @ARGV;
+    my $result = Gridmap_Utils::Increment_Timestamp $ARGV[1];
     print Image $result, "\n";
 }
 
@@ -334,10 +334,13 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Program_Name [options]
 Usage: $Program_Name command [argument ...]
-Test functions in Gridmap_Utils package.
+Exercise functions in the Gridmap_Utils package.
 Option names may be abbreviated.
     -help                     Display this message and exit.
     -version                  Display version information and exit.
+    -debugging                Enable debugging messages.
+
+Command names are case-insensitive; underscores and hyphens are ignored.
     Check_Data_Dir            directory
     Get_mtime                 filename
     Get_PW                    user|UID
