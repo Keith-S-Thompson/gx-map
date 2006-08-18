@@ -1,19 +1,18 @@
-# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.1 2006-08-04 21:58:35-07 kst Exp $
+# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.2 2006-08-18 03:35:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8175c1cd.uk-escience-root.cadesc,v $
 
 CA_NAME             UK e-Science Root CA
 HOMEPAGE            http://www.grid-support.ac.uk/ca/
 CONTACT             support@grid-support.ac.uk
 HASH                8175c1cd
-SUBJECT             C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
-MAY_SIGN            ?
+SUBJECT             /C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
+MAY_SIGN            /C=UK/O=eScienceCA/OU=Authority/CN=CA
 CERTIFICATE_MD5     A7:AD:F4:F9:37:43:8D:88:B0:EA:50:F9:3F:1E:B0:91
 CERTIFICATE_SHA1    88:BF:90:CB:03:C6:10:14:FA:BB:0D:0A:3C:76:DA:D6:6E:21:54:95
 CERTIFICATE_URL     http://ca.grid-support.ac.uk/pub/certs/8175c1cd.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://ca.grid-support.ac.uk/pub/crl/escience-root-crl.pem
 CERT_EXPIRES        Tue 2026-07-14 16:30:27 UTC
-DISABLE             yes
 
 # MD5 and SHA1 fingerprints from 8175c1cd.0, downloaded Fri 2006-08-04
 
@@ -21,5 +20,5 @@ DISABLE             yes
 # supersede the old UK e-Science CA certificate (hash 01621954), which
 # has not yet expired but will not issue any new certificates.
 
-# I have not yet found a signing_policy for this certificate.  Until I
-# find one, I will leave it marked as DISABLED.
+# I have not yet found an official signing_policy for this certificate,
+# but one is included in the new teragrid-cert.tar.gz file.
