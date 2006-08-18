@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience-old.cadesc,v 1.1 2006-08-04 21:57:02-07 kst Exp $
+# $Id: 01621954.uk-escience-old.cadesc,v 1.2 2006-08-18 16:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/01621954.uk-escience-old.cadesc,v $
 
 CA_NAME             UK e-Science CA (old)
@@ -10,11 +10,12 @@ MAY_SIGN            /C=UK/O=eScience/*
 CERTIFICATE_MD5     F7:65:A8:5E:67:2B:7C:F4:90:20:38:14:BC:05:04:F6
 CERTIFICATE_SHA1    0C:B4:61:99:63:6C:A3:CB:E1:58:CE:F3:66:D2:C4:D3:34:BF:A7:40
 CERTIFICATE_URL     http://ca.grid-support.ac.uk/pub/cacert/cacert.pem
-SIGNING_POLICY_URL  http://ca.grid-support.ac.uk/pub/01621954.signing_policy
+SIGNING_POLICY_URL  http://www.grid-support.ac.uk/files/01621954.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/pub/crl/cacrl.pem
 CERT_EXPIRES        Sat 2007-08-04 10:36:41 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (01621954.0) downloaded 2005-07-05
+# Re-verified Fri 2006-08-18
 
 # An older version of this certificate has an MD5 fingerprint of
 # 32:2C:26:C7:54:47:94:51:68:4A:92:C9:0F:9F:95:E6
@@ -22,7 +23,7 @@ CERT_EXPIRES        Sat 2007-08-04 10:36:41 UTC
 # more secure because it uses an SHA1-with-RSA signature algorithm
 # rather than an MD5-with-RSA signature algorithm.
 
-# The web site was recently reorganized (before July 2005).  The URLs for
+# The web site was reorganized some time before July 2005.  The URLs for
 # the certificate and CRL were changed, but they're still available at
 # the old CRLs (though the old certificate URL was invalid for a while).
 
@@ -30,3 +31,12 @@ CERT_EXPIRES        Sat 2007-08-04 10:36:41 UTC
 # ones, a root CA with hash 8175c1cd and a new UK e-Science CA with
 # hash adcbc9ef.  The old CA has not yet expired, but it will not issue
 # any new certificates.
+
+# As of Fri 2006-08-18, the 01621954.signing_policy at the specified URL
+# is incorrect.  It specifies a subject name of
+#     /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca@grid-support.ac.uk 
+# rather than the actual subject name of the certificate:
+#     /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
+# The SUBJECT and MAY_SIGN attributes in this file show the correct
+# subject names.
+# I have reported this problem to support@grid-support.ac.uk.
