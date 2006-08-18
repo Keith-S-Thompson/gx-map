@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.5 2006-08-15 22:05:56-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.6 2006-08-18 03:09:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -57,6 +57,7 @@ sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
 sub Run_Jobs(@);
+sub Status_Image($);
 
 # 
 # Make warnings fatal.
@@ -79,6 +80,7 @@ my @Opts = ( $User_Opt,
              qw( help
                  version
                  daemon!
+                 dryrun!
                  debugging!
                  config-file=s ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -96,14 +98,11 @@ my $Hostname = Gridmap_Utils::Get_Hostname();
 
 Debug "\$hostname = $Hostname\n";
 
-my @Jobs = Gridmap_Utils::Read_Records $User_Opt->{'config-file'};
-Debug "Got ", scalar @Jobs, " jobs\n";
+my $config_file_timestamp = 0;
+my @Jobs;
 
 if ($User_Opt->{daemon}) {
     Debug "Running in daemon mode\n";
-    #
-    # TODO: Re-read config file on SIGHUP
-    #
     while (1) {
         my $sleep_time = 60 - time % 60;
         if ($sleep_time == 0) {
@@ -112,24 +111,34 @@ if ($User_Opt->{daemon}) {
         Debug "sleep $sleep_time\n";
         sleep $sleep_time;
         Debug scalar gmtime time, " UTC\n";
-        Run_Jobs @Jobs;
+        Run_Jobs;
     }
 }
 else {
     Debug "Single run\n";
-    Run_Jobs @Jobs;
+    Run_Jobs;
 }
 
 ########################################################################
 
-sub Run_Jobs(@) {
-    my(@Jobs) = @_;
-
+sub Run_Jobs() {
     my $now = time;
     my $minutes = int($now / 60);
 
+    my $mtime = Gridmap_Utils::Get_mtime $User_Opt->{'config-file'};
+    die "$User_Opt->{'config-file'}: $!\n" if not defined $mtime;
+
+    if ($mtime > $config_file_timestamp) {
+        Debug "Reading config file $User_Opt->{'config-file'}\n";
+        @Jobs = Gridmap_Utils::Read_Records $User_Opt->{'config-file'};
+        Debug "Got ", scalar @Jobs, " job(s)\n";
+    }
+
+    my %is_valid_field = map { %_ => 1 } qw(name interval hostname command);
+
     JOB:
-    foreach my $job (@Jobs) {
+    for (my $i = 0; $i <= $#Jobs; $i ++) {
+        my $job = $Jobs[$i];
         die "No interval specified\n" if not defined $job->{interval};
         die "No command specified\n"  if not defined $job->{command};
 
@@ -138,7 +147,13 @@ sub Run_Jobs(@) {
             $name = $job->{name};
         }
         else {
-            $name = 'job';
+            $name = "# " . ($i+1);
+        }
+
+        foreach my $key (sort keys $#job) {
+            if (not $is_valid_field{$key}) {
+                die "Invalid key \"$key\" in job $name\n";
+            }
         }
 
         my $interval = $job->{interval};
@@ -178,15 +193,40 @@ sub Run_Jobs(@) {
         my $actual_offset = $minutes % $interval;
         if ($actual_offset == $offset) {
             foreach my $command (@commands) {
-                print "... Execute $command\n";
+                if ($User_Opt->{dryrun}) {
+                    print "... Execute $command\n";
+                }
+                else {
+                    my $status = system "$Install_Dir/sbin/$command";
+                    if ($status != 0) {
+                        my $message = Status_Image $status;
+                        warn "$Program_Name: job $name failed: $message\n";
+                    }
+                }
             }
         }
         else {
-            Debug "Skipping $name, needed $offset mod $interval, " .
+            Debug "Skipping job $name, needed $offset mod $interval, " .
                   "got $actual_offset mod $interval\n";
         }
     }
 } # Run_Jobs
+
+# ----------------------------------------------------------------------
+
+sub Status_Image($) {
+    my($status) = @_;
+    my $exit_value  = $status >> 8;
+    my $signal_num  = $status & 0x7f;
+    my $dumped_core = $status & 0x80;
+    if ($signal_num == 0) {
+        return "exit $exit_value";
+    }
+    else {
+        return "killed by signal $signal_num" .
+               ($dumped_core ? ", core dumped" : "");
+    }
+} # Status_Image
 
 # ----------------------------------------------------------------------
 
@@ -201,6 +241,8 @@ Option names may be abbreviated.
                          (default is single execution, as from a cron job)
     -config-file file  : Use the specified configuration file; default is
                          $Default_Config_File
+    -dryrun            : Display commands but don't run them.
+    -debugging         : Display debugging messages
 EOF
     exit 1;
 } # Usage
