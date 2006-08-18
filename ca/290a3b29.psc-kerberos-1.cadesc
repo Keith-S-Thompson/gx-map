@@ -1,0 +1,18 @@
+# $Id: 290a3b29.psc-kerberos-1.cadesc,v 1.1 2006-08-18 03:08:49-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/290a3b29.psc-kerberos-1.cadesc,v $
+
+CA_NAME             PSC Hosts Certificate Authority
+HOMEPAGE            http://ocsp.psc.edu:8000/ca/
+CONTACT             ?
+HASH                290a3b29
+SIGNED_BY           /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Root CA
+SUBJECT             /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Kerberos CA 1
+MAY_SIGN            /C=US/O=Pittsburgh Supercomputing Center/OU=PSC Kerberos Certification Authority/*
+CERTIFICATE_MD5     F6:4C:A9:65:AB:02:52:89:A5:99:5F:9A:97:BE:F0:9E
+CERTIFICATE_SHA1    D6:78:9C:21:32:1C:2D:7A:B5:E8:F0:8D:6E:2A:CA:C9:13:B2:0F:48
+CERTIFICATE_URL     http://www.psc.edu/ca/cert/290a3b29.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.psc.edu/ca/crl/acc06fda.r0
+CERT_EXPIRES        Thu 2016-03-17 05:00:00 UTC
+
+# MD5 and SHA1 fingerprints from 290a3b29.0 downloaded Fri 2006-08-18
