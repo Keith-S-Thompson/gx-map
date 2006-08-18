@@ -1,4 +1,4 @@
-# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.2 2006-08-18 03:35:25-07 kst Exp $
+# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.3 2006-08-18 16:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8175c1cd.uk-escience-root.cadesc,v $
 
 CA_NAME             UK e-Science Root CA
@@ -10,7 +10,7 @@ MAY_SIGN            /C=UK/O=eScienceCA/OU=Authority/CN=CA
 CERTIFICATE_MD5     A7:AD:F4:F9:37:43:8D:88:B0:EA:50:F9:3F:1E:B0:91
 CERTIFICATE_SHA1    88:BF:90:CB:03:C6:10:14:FA:BB:0D:0A:3C:76:DA:D6:6E:21:54:95
 CERTIFICATE_URL     http://ca.grid-support.ac.uk/pub/certs/8175c1cd.0
-SIGNING_POLICY_URL  ?
+SIGNING_POLICY_URL  http://www.grid-support.ac.uk/files/8175c1cd.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/pub/crl/escience-root-crl.pem
 CERT_EXPIRES        Tue 2026-07-14 16:30:27 UTC
 
@@ -20,5 +20,24 @@ CERT_EXPIRES        Tue 2026-07-14 16:30:27 UTC
 # supersede the old UK e-Science CA certificate (hash 01621954), which
 # has not yet expired but will not issue any new certificates.
 
-# I have not yet found an official signing_policy for this certificate,
-# but one is included in the new teragrid-cert.tar.gz file.
+
+File name        http://ca.grid-support.ac.uk/pub/certs/8175c1cd.0
+File type        Certificate, PEM format
+hash             8175c1cd
+md5 fingerprint  A7:AD:F4:F9:37:43:8D:88:B0:EA:50:F9:3F:1E:B0:91
+sha1 fingerprint 88:BF:90:CB:03:C6:10:14:FA:BB:0D:0A:3C:76:DA:D6:6E:21:54:95
+issuer           /C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
+subject          /C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
+not before       Fri 2006-07-14 16:30:27 UTC
+not after        Tue 2026-07-14 16:30:27 UTC
+lifetime         7305d 00h 00m 00s, 0.48% used
+
+File name        http://ca.grid-support.ac.uk/pub/crl/escience-root-crl.pem
+File type        CRL, PEM format
+hash             8175c1cd
+issuer           /C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
+last update      Tue 2006-07-25 11:53:35 UTC
+next update      Fri 2008-07-25 11:53:35 UTC
+lifetime         731d 00h 00m 00s, 3.35% used
+revocations      None
+verification     Signed by http://ca.grid-support.ac.uk/pub/certs/8175c1cd.0
