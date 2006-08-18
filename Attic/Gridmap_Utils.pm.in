@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.216 2006-08-16 00:54:11-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.217 2006-08-18 01:55:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1423,6 +1423,7 @@ sub Error_Timestamp($$) {
 
 #
 # Messages for curl exit codes (from the man page).
+# Current as of curl release 7.15.5.
 #
 my %Curl_Error
     = (  1 => "Unsupported protocol",
@@ -1448,7 +1449,7 @@ my %Curl_Error
         21 => "FTP quote error",
         22 => "HTTP page not retrieved",
         23 => "Write error",
-        24 => "Malformat user",
+        24 => "Malformed user",
         25 => "FTP couldn't STOR file",
         26 => "Read error",
         27 => "Out of memory",
@@ -1486,7 +1487,20 @@ my %Curl_Error
         60 => "Problem with the CA cert",
         61 => "Unrecognized transfer encoding",
         62 => "Invalid LDAP URL",
-        63 => "Maximum file size exceeded" );
+        63 => "Maximum file size exceeded",
+        64 => "Requested FTP SSL level failed",
+        65 => "Sending the data requires a rewind that failed",
+        66 => "Failed to initialise SSL Engine",
+        67 => "User, password or similar was not accepted",
+        68 => "File not found on TFTP server",
+        69 => "Permission problem on TFTP server",
+        70 => "Out of disk space on TFTP server",
+        71 => "Illegal TFTP operation",
+        72 => "Unknown TFTP transfer ID",
+        73 => "File already exists (TFTP)",
+        74 => "No such user (TFTP)",
+        75 => "Character conversion failed",
+        76 => "Character conversion functions required" );
 
 my $Curl_Supports_Insecure_Option = undef;
 
