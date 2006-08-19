@@ -1,10 +1,12 @@
-# $Id: README-0.4.1h,v 1.2 2006-08-18 21:04:16-07 kst Exp $
+# $Id: README-0.4.1h,v 1.3 2006-08-18 21:20:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README-0.4.1h,v $
 
 This is an update for the cadesc files used by gx-ca-update, to be
 applied to gx-map-0.4.X.
 
 This is gx-map-cadesc-update-0.4.1h.
+
+(See below for TeraGrid-specific instructions.)
 
 It includes everything from the previous updates, 0.4.1[a-g].  It can
 be applied whether the previous updates have been applied or not.
@@ -178,5 +180,80 @@ The updated files are as follows:
     fa3af1d7.cern.cadesc                    revision 1.9
     fa9c3452.usc-kerberos-v2.cadesc         revision 1.6
     fe3a68d6.unam.cadesc                    revision 1.7
+
+TeraGrid-specific instructions:
+
+The current set of CAs accepted by TeraGrid sites can be found in the
+teragrid-certs-tar.gz file, CVS revision 1.5, found in the "security"
+directory in repo.
+
+The list is:
+
+    01621954 # UK e-Science CA (old)
+    16da7552 # DutchGrid Medium-Security Certification Authority
+    1c3f2ca8 # DOEGrids CA
+    290a3b29 # PSC Kerberos Certificate Authority
+    2ca73e82 # USC PKI Lite CA
+    3deda549 # SDSC CA
+    49f18420 # INFN Certification Authority
+    4a6cd8b1 # NCSA CA
+    67e8acfa # Purdue TeraGrid Registration Authority
+    8175c1cd # UK e-Science Root CA
+    85ca9edc # PSC Kerberos Certification Authority (old)
+    95009ddc # Purdue CA
+    9a1da9f9 # TACC Certification Authority
+    9b88e95b # PSC Root Certificate Authority
+    a317c467 # AIST GRID CA
+    aa99c057 # PSC Root Certificate Authority (old)
+    acc06fda # PSC Hosts Certificate Authority
+    adcbc9ef # UK e-Science CA
+    b57985f0 # USC Kerberos Certification Authority v3
+    b89793e4 # NPACI CA
+    d1b603c3 # ESnet Root CA
+
+To manage these certificates with gx-map 0.4.X, you'll need a cron
+job something like the following (change all occurrences of FOO to
+something sensible):
+
+FOO,FOO * * * *  /FOO/gx-map-0.4.FOO/sbin/gx-ca-update \
+	-target-dir FOO \
+	-ca 01621954 \
+	-ca 16da7552 \
+	-ca 1c3f2ca8 \
+	-ca 2ca73e82 \
+	-ca 3deda549 \
+	-ca 49f18420 \
+	-ca 4a6cd8b1 \
+	-ca 67e8acfa \
+	-ca 8175c1cd \
+	-ca 95009ddc \
+	-ca 9a1da9f9 \
+	-ca 9b88e95b \
+	-ca a317c467 \
+	-ca aa99c057 \
+	-ca acc06fda \
+	-ca adcbc9ef \
+	-ca b89793e4 \
+	-ca d1b603c3
+# Skip 290a3b29 (PSC Kerberos CA has no CRL)
+# Skip 85ca9edc (Old PSC Kerberos CA has no CRL)
+# Skip b57985f0 (USC Kerberos CA has no CRL)
+
+The '\' line continuations are included here for clarity.  They're not
+allowed in an actual crontab entry; the whole thing has to be on
+one line.  Comments, introduced by '#', are allowed.
+
+Three of the CAs have no CRLs, something that gx-map 0.4.X doesn't
+deal with very well.  To install the files for these files, you can
+run the following command just once (not in a cron job):
+
+    /FOO/gx-map-0.4.FOO/sbin/gx-ca-update \
+	-target-dir FOO \
+	-UNSAFE -ignore-missing-crl \
+	-ca 290a3b29 -ca 85ca9edc -ca b57985f0
+
+(In gx-map 0.5.X, this extra step is not necessary, and the entire
+list of CAs can be specified in a list file rather than directly on
+the command line.)
 
                 -- Keith Thompson <kst@sdsc.edu> Fri 2006-08-18
