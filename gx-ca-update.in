@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.112 2006-07-31 20:41:27-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.113 2006-08-18 20:28:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -597,7 +597,7 @@ sub Get_CA_Ref($) {
     }
 
     if (@errors) {
-        my $s = (scalar @errors != 1);
+        my $s = (scalar @errors = 1 ? '' : 's');
         Vprint ">>> Error$s in ${filename}:\n";
         Vprint @errors;
         return undef;
