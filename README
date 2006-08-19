@@ -1,8 +1,8 @@
-# $Id: README,v 1.29 2006-06-30 16:55:11-07 kst Exp $
+# $Id: README,v 1.30 2006-08-19 16:43:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README,v $
 
 This is gx-map, a system for automated updates of Globus grid-mapfiles
-and CA files.  The current release is 0.5.2.  The primary documentation
+and CA files.  The current release is 0.5.2.2.  The primary documentation
 is in the man pages (new in release 0.5.1) and on the gx-map web site,
 <http://users.sdsc.edu/~kst/gx-map/>.
 
@@ -56,4 +56,4 @@ files for CAs (Certificate Authorities).
 The README, README.*, and Relnotes files are installed in the
 etc/gx-map subdirectory when you install gx-map.
 
-                -- Keith Thompson <kst@sdsc.edu> Fri 2006-06-30
+                -- Keith Thompson <kst@sdsc.edu> Sat 2006-08-19
