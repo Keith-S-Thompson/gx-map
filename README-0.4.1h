@@ -1,19 +1,20 @@
-# $Id: README-0.4.1h,v 1.1 2006-08-18 04:02:07-07 kst Exp $
+# $Id: README-0.4.1h,v 1.2 2006-08-18 21:04:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README-0.4.1h,v $
 
 This is an update for the cadesc files used by gx-ca-update, to be
 applied to gx-map-0.4.X.
 
-This is gx-map-cadesc-update-0.4.1g.
+This is gx-map-cadesc-update-0.4.1h.
 
-It includes everything from the previous updates, 0.4.1{a,b,c,d,e,f}.
-It can be applied whether the previous updates have been applied
-or not.  It can also be applied to releases 0.4.2 through 0.4.5
-(but not to release 0.5.1 or higher).
+It includes everything from the previous updates, 0.4.1[a-g].  It can
+be applied whether the previous updates have been applied or not.
+It can be applied to any release from 0.4.1 through 0.4.5 (but not
+to release 0.5.1 or higher).
 
 For this update, I've copied the latest versions of all the *.cadesc
-files as of release 0.5.2 and commented out any fields that are not
-recognized by gx-map 0.4.X (CERTIFICATE_SHA1 and ALLOW_MISSING_CRL).
+files as of Fri 2006-08-18 (release 0.5.2.2) and commented out any
+fields that are not recognized by gx-map 0.4.X (CERTIFICATE_SHA1
+and ALLOW_MISSING_CRL).
 
 Three files in release 0.4.1 either were named incorrectly or are
 obsolete, and should be removed when applying this update.
@@ -34,7 +35,7 @@ To apply this update to a gx-map-0.4.X installation:
 
         Install as specified in the INSTALL file.
 
-        Copy this file, "README-0.4.1g", into etc/ca-config under
+        Copy this file, "README-0.4.1h", into etc/ca-config under
         the installation directory.
 
     If you have installed gx-map 0.4.X (whether or not you've applied
@@ -46,20 +47,21 @@ To apply this update to a gx-map-0.4.X installation:
             2c7969d0.usc-pki-lite.cadesc
 	    84c1f123.cygrid.cadesc
 
-        Copy all these files, including this "README-0.4.1g", into
+        Copy all these files, including this "README-0.4.1h", into
         etc/ca-config under the installation directory
 
 Note that this does not update the gx-map version number (as
 reported by the "-version" command-line option).  You can tell
 whether this update has been applied by checking the CVS revision
 headers in the affected files (see below), or for checking for the
-etc/ca-config/README-0.4.1g file (if it was installed along with the
+etc/ca-config/README-0.4.1h file (if it was installed along with the
 *.cadesc files).
 
 These updated files are included in later releases of gx-map.  All
 files from the 0.4.1d update are included in releases 0.4.2 and later.
 The new files in 0.4.1e are included in releases 0.5.1 and later.
 The new files in 0.4.1f and 0.4.1g are included in releases 0.5.2 and later.
+The new files in 0.4.1h will be included in release 0.5.2.2 and later.
 
 Details:
 
@@ -77,8 +79,10 @@ The deleted files are:
 
 The updated files are as follows:
 
-    01621954.uk-escience.cadesc             revision 1.19
+    00000000.example.cadesc                 revision 1.11
+    01621954.uk-escience-old.cadesc         revision 1.2
     03aa0ecb.begrid.cadesc                  revision 1.11
+    0a2bac92.brgrid.cadesc                  revision 1.1
     0db2f004.nanyang.cadesc                 revision 1.3
     0ed6468a.uk-hep-testbed.cadesc          revision 1.9
     12a1d8c2.grid-fr.cadesc                 revision 1.1
@@ -93,8 +97,9 @@ The updated files are as follows:
     21bf4d92.apac-grid.cadesc               revision 1.4
     225860ae.edg-worthless.cadesc           revision 1.5
     29021213.fermilab-top-level.cadesc      revision 1.11
+    290a3b29.psc-kerberos-1.cadesc          revision 1.2
     2c7969d0.usc-pki-lite-old.cadesc        revision 1.19
-    2ca73e82.usc-pki-lite-r1.cadesc         revision 1.8
+    2ca73e82.usc-pki-lite-r1.cadesc         revision 1.9
     2dc3958a.rocks11.cadesc                 revision 1.6
     2fcac3ee.birn.cadesc                    revision 1.5
     34a509c3.cnrs-projets.cadesc            revision 1.11
@@ -121,24 +126,29 @@ The updated files are as follows:
     6fee79b0.iucc.cadesc                    revision 1.9
     795d3882.sdg-testbed-old.cadesc         revision 1.5
     7a15b590.fermilab-old.cadesc            revision 1.5
+    8175c1cd.uk-escience-root.cadesc        revision 1.4
     82da68f0.kisti.cadesc                   revision 1.5
     83dacf34.kek-simpleca.cadesc            revision 1.6
-    84c1f123.cygrid-old.cadesc              revision 1.5
+    84c1f123.cygrid-old.cadesc              revision 1.6
     85ca9edc.psc-kerberos.cadesc            revision 1.16
     8a661490.polishgrid.cadesc              revision 1.9
     90e2484f.datagrid-es-old.cadesc         revision 1.13
     95009ddc.purdue.cadesc                  revision 1.9
-    9a1da9f9.tacc.cadesc                    revision 1.10
+    9a1da9f9.tacc.cadesc                    revision 1.11
+    9b59ecad.cesnet.cadesc                  revision 1.1
+    9b88e95b.psc-root.cadesc                revision 1.1
     9d8753eb.doe-sg-old.cadesc              revision 1.18
     a308c0c0.rocks-38.cadesc                revision 1.6
     a317c467.aist.cadesc                    revision 1.3
     a692434d.taiwan-ascg.cadesc             revision 1.9
     a7792cdb.npaci-old.cadesc               revision 1.17
     aa99c057.psc-root.cadesc                revision 1.12
+    acc06fda.psc-hosts.cadesc               revision 1.1
+    adcbc9ef.uk-escience.cadesc             revision 1.3
     afe55e66.cygrid.cadesc                  revision 1.3
     b2cb8d2c.nasa-old.cadesc                revision 1.6
     b38b4d8c.globus-gcs.cadesc              revision 1.11
-    b57985f0.usc-kerberos-v3.cadesc         revision 1.2
+    b57985f0.usc-kerberos-v3.cadesc         revision 1.3
     b89793e4.npaci.cadesc                   revision 1.13
     bc82f877.nasa.cadesc                    revision 1.16
     bc870044.cern-old.cadesc                revision 1.5
@@ -148,7 +158,7 @@ The updated files are as follows:
     c4c1901a.shard02.cadesc                 revision 1.6
     cb7b413d.ecmwf.cadesc                   revision 1.1
     cf4ba8c8.cnrs.cadesc                    revision 1.9
-    d062fcc9.gtrc.cadesc                    revision 1.5
+    d062fcc9.gtrc.cadesc                    revision 1.6
     d0c2a341.armesfo.cadesc                 revision 1.11
     d1b603c3.esnet.cadesc                   revision 1.14
     d2a353a5.pkgrid.cadesc                  revision 1.10
@@ -161,7 +171,7 @@ The updated files are as follows:
     e13e0fcf.slovakgrid.cadesc              revision 1.9
     e1fce4e9.fermilab-kerberos.cadesc       revision 1.13
     e7ad98af.baldridge.cadesc               revision 1.6
-    ed99a497.cesnet.cadesc                  revision 1.9
+    ed99a497.cesnet-old.cadesc              revision 1.2
     ede78092.hellasgrid.cadesc              revision 1.9
     f4cacd1f.anu.cadesc                     revision 1.7
     f93666d2.kisti-ca2.cadesc               revision 1.5
@@ -169,6 +179,4 @@ The updated files are as follows:
     fa9c3452.usc-kerberos-v2.cadesc         revision 1.6
     fe3a68d6.unam.cadesc                    revision 1.7
 
-
-
-                -- Keith Thompson <kst@sdsc.edu> Mon 2006-06-05
+                -- Keith Thompson <kst@sdsc.edu> Fri 2006-08-18
