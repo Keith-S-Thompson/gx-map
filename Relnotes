@@ -1,7 +1,51 @@
-# $Id: Relnotes,v 1.23 2006-07-13 16:07:46-07 kst Exp $
+e $Id: Relnotes,v 1.24 2006-08-19 16:43:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.5.2.2, Sat 2006-08-19
+
+    This is another minor maintenance update for gx-map 0.5.2.
+    It was prompted by the impending expiration of the PSC (Pittsburgh
+    Supercomputing Center) CA signing certificates and the issuance
+    of new certificates replacing them.  It also includes new and
+    updated *.cadesc files for some other CAs, particularly for the
+    new UK e-Science CA.
+
+    This is a recommended upgrade for TeraGrid sites, and for other
+    sites using the PSC Certificate Authorities.
+
+    The updated files are:
+
+        Gridmap_Utils.pm.in (updated VERSION only)
+        README (updated version information only)
+        Relnotes
+
+        ca/01621954.uk-escience-old.cadesc
+            (replaces ca/01621954.uk-escience.cadesc)
+        ca/0a2bac92.brgrid.cadesc
+        ca/290a3b29.psc-kerberos-1.cadesc  
+        ca/8175c1cd.uk-escience-root.cadesc
+        ca/85ca9edc.psc-kerberos-old.cadesc
+            (replaces ca/85ca9edc.psc-kerberos.cadesc)
+        ca/9b88e95b.psc-root.cadesc
+        ca/aa99c057.psc-root-old.cadesc
+            (replaces ca/aa99c057.psc-root.cadesc)
+        ca/acc06fda.psc-hosts.cadesc
+        ca/adcbc9ef.uk-escience.cadesc
+
+    If you're already using gx-map 0.5.2 or 0.5.2.1, you can also
+    consider just updating the necessary cadesc files.  Be sure to
+    remove any obsolete cadesc files with the same hash value (the
+    string of 8 hexadecimal digits at the beginning of the file name).
+
+    Maintenance note: Unlike most previous releases, this is not a full
+    snapshot.  There is some work in progress that is not yet ready for
+    prime time, and is therefore not included in this point release.
+
+    (In a future release, I plan to implement a more convenient method
+    of updating cadesc files without upgrading to a new version of
+    the gx-map package.)
 
 Release 0.5.2.1, Thu 2006-07-13
 
@@ -15,14 +59,14 @@ Release 0.5.2.1, Thu 2006-07-13
 
     The updated files are:
 
-	Gridmap_Utils.pm.in (updated VERSION only)
-	Relnotes
-	ca/2ca73e82.usc-pki-lite-r1.cadesc
-	ca/84c1f123.cygrid-old.cadesc
-	ca/9a1da9f9.tacc.cadesc
-	ca/b57985f0.usc-kerberos-v3.cadesc
-	ca/ed99a497.cesnet-old.cadesc
-	bugs/bug-0100
+        Gridmap_Utils.pm.in (updated VERSION only)
+        Relnotes
+        ca/2ca73e82.usc-pki-lite-r1.cadesc
+        ca/84c1f123.cygrid-old.cadesc
+        ca/9a1da9f9.tacc.cadesc
+        ca/b57985f0.usc-kerberos-v3.cadesc
+        ca/ed99a497.cesnet-old.cadesc
+        bugs/bug-0100
 
     This is a recommended upgrade for TeraGrid sites, and for other
     sites using the USC Certificate Authorities.  (The old USC URLs
@@ -31,8 +75,8 @@ Release 0.5.2.1, Thu 2006-07-13
     If you're already using gx-map 0.5.2, you can also consider just
     updating the necessary cadesc files:
 
-	ca/2ca73e82.usc-pki-lite-r1.cadesc
-	ca/b57985f0.usc-kerberos-v3.cadesc
+        ca/2ca73e82.usc-pki-lite-r1.cadesc
+        ca/b57985f0.usc-kerberos-v3.cadesc
 
 Release 0.5.2, Fri 2006-06-30
 
@@ -50,23 +94,23 @@ Release 0.5.2, Fri 2006-06-30
 
     The "-compatible" option of the gx-gen-mapfile command has been
     removed, and is replaced by two new options:
-	-gt2-compatible    : Generate a grid-mapfile compatible with both
-			     GT2 and GT3/GT4.  By default, the generated
-			     grid-mapfile is *not* compatible with GT2
-			     for certain DNs.
-	-gt3-compatible    : Generate a grid-mapfile compatible
-			     both with GT3 WS (Web Services) and
-			     with GT4.	This is rarely necessary.
-			     This option can be used together with the
-			     "-compatible" option.
+        -gt2-compatible    : Generate a grid-mapfile compatible with both
+                             GT2 and GT3/GT4.  By default, the generated
+                             grid-mapfile is *not* compatible with GT2
+                             for certain DNs.
+        -gt3-compatible    : Generate a grid-mapfile compatible
+                             both with GT3 WS (Web Services) and
+                             with GT4.  This is rarely necessary.
+                             This option can be used together with the
+                             "-compatible" option.
 
     The gx-ca-update command has a new option:
-	-gt3-compatible    Generate *.signing_policy files compatible
-			   with GT3 web services tools.  This should
-			   rarely be necessary or useful.  By default,
-			   generated *.signing_policy files are
-			   compatible with both GT2 and GT4, and with
-			   GT3 pre-WS.
+        -gt3-compatible    Generate *.signing_policy files compatible
+                           with GT3 web services tools.  This should
+                           rarely be necessary or useful.  By default,
+                           generated *.signing_policy files are
+                           compatible with both GT2 and GT4, and with
+                           GT3 pre-WS.
 
     gx-ca-update's "-force" option now applies to CRLs as well as to
     certificates and signing_policy files.
@@ -99,8 +143,8 @@ Release 0.5.2, Fri 2006-06-30
     gx-db-gx-requests, and gx-db-dump commands.
 
     The gx-propagate command has a new option:
-	-check-config   Check whether the tgcdb.db-config file is ok.
-			If not, silently exit with an error indication.
+        -check-config   Check whether the tgcdb.db-config file is ok.
+                        If not, silently exit with an error indication.
     This is used by gx-check-requests to determine whether the
     tgcdb.db-config file has been updated.  If not, it refuses to run
     (unless you use "gx-check-requests -nopropagate").
