@@ -1,8 +1,8 @@
-# $Id: README-0.4.1h,v 1.3 2006-08-18 21:20:23-07 kst Exp $
+# $Id: README-0.4.1h,v 1.4 2006-08-18 22:01:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README-0.4.1h,v $
 
 This is an update for the cadesc files used by gx-ca-update, to be
-applied to gx-map-0.4.X.
+applied to gx-map-0.4.1.
 
 This is gx-map-cadesc-update-0.4.1h.
 
@@ -10,27 +10,24 @@ This is gx-map-cadesc-update-0.4.1h.
 
 It includes everything from the previous updates, 0.4.1[a-g].  It can
 be applied whether the previous updates have been applied or not.
-It can be applied to any release from 0.4.1 through 0.4.5 (but not
-to release 0.5.1 or higher).
+It can be applied *only* to release 0.4.1.  To update releases 0.4.2
+through 0.4.5, use gx-map-cadesc-update-0.4.2h.  For release 0.5.X,
+upgrade to release 0.5.2.2 or higher (coming soon).
 
 For this update, I've copied the latest versions of all the *.cadesc
-files as of Fri 2006-08-18 (release 0.5.2.2) and commented out any
-fields that are not recognized by gx-map 0.4.X (CERTIFICATE_SHA1
-and ALLOW_MISSING_CRL).
+files as of Fri 2006-08-18 and commented out any fields that are not
+recognized by gx-map 0.4.1 (CERTIFICATE_SHA1 and ALLOW_MISSING_CRL).
 
-Three files in release 0.4.1 either were named incorrectly or are
-obsolete, and should be removed when applying this update.
+Several files in release 0.4.1 either were named incorrectly or are
+obsolete, and must be removed when applying this update.
 
-To apply this update to a gx-map-0.4.X installation:
+To apply this update to a gx-map-0.4.1 installation:
 
-    If you haven't yet installed gx-map 0.4.X:
+    If you haven't yet installed gx-map 0.4.1:
 
-        Unpack gx-map-0.4.X.tar.gz (X in 1 .. 5)
+        Unpack gx-map-0.4.1.tar.gz
 
-        Remove the following files from the ca subdirectory:
-	    13eab55e-datagrid-es.cadesc
-	    2c7969d0.usc-pki-lite.cadesc
-	    84c1f123.cygrid.cadesc
+	Remove *all* files in the "ca" directory.
 
         Copy all the *.cadesc files in this update into the ca
         subdirectory.
@@ -40,14 +37,19 @@ To apply this update to a gx-map-0.4.X installation:
         Copy this file, "README-0.4.1h", into etc/ca-config under
         the installation directory.
 
-    If you have installed gx-map 0.4.X (whether or not you've applied
-    any of the 0.4.1{a,b,c,d,e,f} updates):
+    If you have installed gx-map 0.4.1 (whether or not you've applied
+    any of the 0.4.1[a-g] updates):
 
         Remove the following files from etc/ca-config under the
-        installation directory if they exist:
-            13eab55e-datagrid-es.cadesc
-            2c7969d0.usc-pki-lite.cadesc
+        installation directory (they may not all exist):
+
+	    01621954.uk-escience.cadesc
+	    13eab55e-datagrid-es.cadesc
+	    2c7969d0.usc-pki-lite.cadesc
 	    84c1f123.cygrid.cadesc
+	    85ca9edc.psc-kerberos.cadesc
+	    aa99c057.psc-root.cadesc
+	    ed99a497.cesnet.cadesc
 
         Copy all these files, including this "README-0.4.1h", into
         etc/ca-config under the installation directory
@@ -69,15 +71,28 @@ Details:
 
 The deleted files are:
 
+    01621954.uk-escience.cadesc
+	Replaced by 01621954.uk-escience-old.cadesc
+
     13eab55e-datagrid-es.cadesc
-        This was named incorrectly in the 0.4.1 release;
-        it's replaced with "13eab55e.datagrid-es.cadesc".
+	This was named incorrectly in the 0.4.1 release
+	(the first hyphen should be a period).
+        Replaced by 13eab55e.datagrid-es.cadesc
 
     2c7969d0.usc-pki-lite.cadesc
-        Renamed to "2c7969d0.usc-pki-lite-old.cadesc" (see below).
+        Replaced by 2c7969d0.usc-pki-lite-old.cadesc
 
     84c1f123.cygrid.cadesc
-        Renamed to "84c1f123.cygrid-old.cadesc" (see below).
+        Replaced by 84c1f123.cygrid-old.cadesc
+
+    85ca9edc.psc-kerberos.cadesc
+	Replaced by 85ca9edc.psc-kerberos-old.cadesc
+
+    aa99c057.psc-root.cadesc
+	Replaced by aa99c057.psc-root-old.cadesc
+
+    ed99a497.cesnet.cadesc
+	Replaced by ed99a497.cesnet-old.cadesc
 
 The updated files are as follows:
 
@@ -132,7 +147,7 @@ The updated files are as follows:
     82da68f0.kisti.cadesc                   revision 1.5
     83dacf34.kek-simpleca.cadesc            revision 1.6
     84c1f123.cygrid-old.cadesc              revision 1.6
-    85ca9edc.psc-kerberos.cadesc            revision 1.16
+    85ca9edc.psc-kerberos-old.cadesc        revision 1.16
     8a661490.polishgrid.cadesc              revision 1.9
     90e2484f.datagrid-es-old.cadesc         revision 1.13
     95009ddc.purdue.cadesc                  revision 1.9
@@ -144,7 +159,7 @@ The updated files are as follows:
     a317c467.aist.cadesc                    revision 1.3
     a692434d.taiwan-ascg.cadesc             revision 1.9
     a7792cdb.npaci-old.cadesc               revision 1.17
-    aa99c057.psc-root.cadesc                revision 1.12
+    aa99c057.psc-root-old.cadesc            revision 1.12
     acc06fda.psc-hosts.cadesc               revision 1.1
     adcbc9ef.uk-escience.cadesc             revision 1.3
     afe55e66.cygrid.cadesc                  revision 1.3
@@ -211,11 +226,11 @@ The list is:
     b89793e4 # NPACI CA
     d1b603c3 # ESnet Root CA
 
-To manage these certificates with gx-map 0.4.X, you'll need a cron
+To manage these certificates with gx-map 0.4.1, you'll need a cron
 job something like the following (change all occurrences of FOO to
 something sensible):
 
-FOO,FOO * * * *  /FOO/gx-map-0.4.FOO/sbin/gx-ca-update \
+FOO,FOO * * * *  /FOO/gx-map-0.4.1/sbin/gx-ca-update \
 	-target-dir FOO \
 	-ca 01621954 \
 	-ca 16da7552 \
@@ -243,13 +258,13 @@ The '\' line continuations are included here for clarity.  They're not
 allowed in an actual crontab entry; the whole thing has to be on
 one line.  Comments, introduced by '#', are allowed.
 
-Three of the CAs have no CRLs, something that gx-map 0.4.X doesn't
+Three of the CAs have no CRLs, something that gx-map 0.4.1 doesn't
 deal with very well.  To install the files for these files, you can
 run the following command just once (not in a cron job):
 
     /FOO/gx-map-0.4.FOO/sbin/gx-ca-update \
 	-target-dir FOO \
-	-UNSAFE -ignore-missing-crl \
+	-UNSAFE -allow-missing-crl \
 	-ca 290a3b29 -ca 85ca9edc -ca b57985f0
 
 (In gx-map 0.5.X, this extra step is not necessary, and the entire
