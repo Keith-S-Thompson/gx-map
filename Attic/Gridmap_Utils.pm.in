@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.219 2006-08-19 16:25:59-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.220 2006-08-21 18:04:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -70,8 +70,14 @@ package Gridmap_Utils;
 # to use it in the Get_Hostname function if it's available; otherwise
 # we'll fall back to the "hostname" command.
 #
+# Normally we use the Time::HiRes module to get timestamps with
+# microsecond resolution.  If this module is not available, we can fall
+# back to an external gettimeofday program, which must be installed
+# separately.
+#
 
 my $Have_Net_Domain_Module;
+my $Have_Time_HiRes_Module;
 
 BEGIN {
     require 5.006;
@@ -80,9 +86,9 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.2.2';
+    $VERSION = '0.5.2.2.001';
 
-    $Debugging = undef;
+    $Debugging = undef; 
     %Config = ( PERL                     => '%PERL%',
                 PATH                     => '%PATH%',
                 NAMESPACE                => '%NAMESPACE%',
@@ -93,13 +99,14 @@ BEGIN {
                 ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
-    use Cwd ();
+    use Cwd (); 
     use Time::Local ();
-    use Time::HiRes ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
-    eval { require Net::Domain };
+    eval 'use Time::HiRes ()';
+    $Have_Time_HiRes_Module = ( $@ eq '' );
+    eval 'require Net::Domain';
     $Have_Net_Domain_Module = ( $@ eq '' );
-}
+} 
 
 # ----------------------------------------------------------------------
 
@@ -421,7 +428,7 @@ sub Get_Hostname() {
         # Use_Commands sets $PATH.
         #
         Use_Commands();
-        return Net::Domain::hostfqdn();
+        return eval 'Net::Domain::hostfqdn()';
     }
     else {
         Use_Commands 'hostname';
@@ -537,10 +544,28 @@ sub Use_Commands(@) {
 
 #
 # Returns the current raw time with exactly 10 digits before the decimal
-# point and 6 digits after.
+# point and 6 digits after.  Uses Time::HiRes::gettimeofday if possible;
+# otherwise falls back to an external gettimeofday command.
 #
 sub Get_Time_Of_Day() {
-    my($sec, $usec) = Time::HiRes::gettimeofday;
+    my($sec, $usec);
+    if ($Have_Time_HiRes_Module) {
+        ($sec, $usec) = eval 'Time::HiRes::gettimeofday()';
+    }
+    else {
+        Gridmap_Utils::Use_Commands 'gettimeofday';
+        my $output = `gettimeofday`;
+        if ($? != 0) {
+            die "Failed to execute gettimeofday command\n";
+        }
+        chomp $output;
+        if ($output =~ /^(\d+)\.(\d{6})$/) {
+            ($sec, $usec) = ($1, $2);
+        }
+        else {
+            die "Unexpected output from gettimeofday command\n";
+        }
+    }
     return sprintf "%010d.%06d", $sec, $usec;
 } # Get_Time_Of_Day
 
@@ -1398,6 +1423,7 @@ sub Error_Timestamp($$) {
 
 #
 # Messages for curl exit codes (from the man page).
+# Current as of curl release 7.15.5.
 #
 my %Curl_Error
     = (  1 => "Unsupported protocol",
@@ -1423,7 +1449,7 @@ my %Curl_Error
         21 => "FTP quote error",
         22 => "HTTP page not retrieved",
         23 => "Write error",
-        24 => "Malformat user",
+        24 => "Malformed user",
         25 => "FTP couldn't STOR file",
         26 => "Read error",
         27 => "Out of memory",
@@ -1461,7 +1487,20 @@ my %Curl_Error
         60 => "Problem with the CA cert",
         61 => "Unrecognized transfer encoding",
         62 => "Invalid LDAP URL",
-        63 => "Maximum file size exceeded" );
+        63 => "Maximum file size exceeded",
+        64 => "Requested FTP SSL level failed",
+        65 => "Sending the data requires a rewind that failed",
+        66 => "Failed to initialise SSL Engine",
+        67 => "User, password or similar was not accepted",
+        68 => "File not found on TFTP server",
+        69 => "Permission problem on TFTP server",
+        70 => "Out of disk space on TFTP server",
+        71 => "Illegal TFTP operation",
+        72 => "Unknown TFTP transfer ID",
+        73 => "File already exists (TFTP)",
+        74 => "No such user (TFTP)",
+        75 => "Character conversion failed",
+        76 => "Character conversion functions required" );
 
 my $Curl_Supports_Insecure_Option = undef;
 
