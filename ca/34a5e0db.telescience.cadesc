@@ -1,8 +1,8 @@
-# $Id: 34a5e0db.telescience.cadesc,v 1.8 2006-01-13 17:07:23-08 kst Exp $
+# $Id: 34a5e0db.telescience.cadesc,v 1.9 2006-08-30 01:21:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a5e0db.telescience.cadesc,v $
 
 CA_NAME             UCSD Telescience CA
-HOMEPAGE            https://telescience.ucsd.edu/CA/
+HOMEPAGE            http://telescience.ucsd.edu/CA/
 CONTACT             Tomas Molina <tmolina@ncmir.ucsd.edu>
 HASH                34a5e0db
 SUBJECT             /C=US/O=NCMIR/OU=Telescience/CN=certman
@@ -14,4 +14,7 @@ SIGNING_POLICY_URL  http://telescience.ucsd.edu/CA/34a5e0db.signing_policy
 CRL_URL             http://telescience.ucsd.edu/CA/34a5e0db.r0
 CERT_EXPIRES        Sun 2014-01-26 17:23:17 UTC
 
-# MD5 and SHA1 fingerprints from 34a5e0db.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from 34a5e0db.0 downloaded Tue 2005-03-29,
+# re-verified Wed 2006-08-30
+
+# Another contact: Abel W. Lin <awlin@ncmir.ucsd.edu>
