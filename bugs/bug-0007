@@ -1,4 +1,4 @@
-# $Id: bug-0007,v 1.4 2005-06-23 12:03:24-07 kst Exp $
+# $Id: bug-0007,v 1.5 2006-09-02 13:13:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0007,v $
 
 gx-map bug 0007
@@ -41,3 +41,7 @@ Motivation: Simplify installation and make it work better with a
 future NMI release.
 
 See also "new-config" in the gx-map CVS directory.
+
+Proposed first step: Leave the configuration and installation method
+as it is, but read the configuration from the config file at run time,
+allowing changes in *some* options to be made by editing the file.
