@@ -1,0 +1,19 @@
+# $Id: bug-0115,v 1.1 2006-09-02 13:13:11-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0115,v $
+
+gx-map bug 0115
+Date: Sat 2006-09-02
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.2
+Status: Open
+Title: Warn about CNs that are handled automatically
+
+At SDSC, cron jobs automatically invoke gx-request for new, expired,
+and revoked user certificates issued by the NPACI and SDSC CAs.
+Users are not always aware of this, and they often invoke gx-map or
+gx-request manually.
+
+Add a configuration option of some sort to specify which DNs are
+handled automatically.  If a user tries to invoke gx-request with a
+matching DN, issue a warning.
