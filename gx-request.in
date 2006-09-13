@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.48 2006-06-16 15:26:53-07 kst Exp $
+# $Id: gx-request.in,v 1.49 2006-09-12 18:11:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -341,7 +341,6 @@ if ($Options->{operation} ne 'remove-dn') {
 # Strip trailing components from a proxy DN.
 # Translate to the newer GT3/GT4 form.
 #
-my @new_dns = ();
 foreach my $dn (@{$Options->{dn}}) {
     $dn = Gridmap_Utils::Normalize_DN $dn;
 }
