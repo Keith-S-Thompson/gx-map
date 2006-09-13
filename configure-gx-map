@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.49 2006-06-13 18:45:49-07 kst Exp $
+# $Id: configure-gx-map,v 1.50 2006-09-12 18:42:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -392,7 +392,11 @@ sub Pod2Man_Command() {
 
     my $perl_command = $Config{PERL};
     while (defined $perl_command and -l $perl_command) {
+        my $dir = File::Basename::dirname $perl_command;
         $perl_command = readlink $perl_command;
+        if ($perl_command !~ /^\//) {
+            $perl_command = "$dir/$perl_command";
+        }
     }
 
     my @dirs = ();
