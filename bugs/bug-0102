@@ -1,4 +1,4 @@
-# $Id: bug-0102,v 1.1 2006-07-17 18:31:40-07 kst Exp $
+# $Id: bug-0102,v 1.2 2006-09-12 20:14:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0102,v $
 
 gx-map bug 0102
@@ -7,7 +7,7 @@ Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.1
 Status: Open
-Title: gx-map -no-target-directory
+Title: gx-ca-update -no-target-directory
 
 Consider adding a "-no-target-directory" to gx-ca-update.  With this
 option, it would download files as necessary and update the cache
