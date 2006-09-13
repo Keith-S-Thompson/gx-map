@@ -1,4 +1,4 @@
-# $Id: bug-0116,v 1.1 2006-09-12 17:48:55-07 kst Exp $
+# $Id: bug-0116,v 1.2 2006-09-12 21:31:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0116,v $
 
 gx-map bug 0116
@@ -6,9 +6,13 @@ Date: Tue 2006-09-12
 Severity: Med
 Reported by: Krishna Muriki <kmuriki@sdsc.edu>
 Version: 0.5.2.2
-Status: Open
+Status: Fixed 0.5.2.2.003
 Title: gx-convert-log should strip proxy info
 
 Currently, gx-convert-log filters all DNs using the GT4_Subject
 function.  It should use Normalize_DN instead.  (The difference is
 that Normalize_DN also strips proxy information.)
+
+Fixed:
+gx-convert-log.in 1.29
+gx-map release 0.5.2.2.003
