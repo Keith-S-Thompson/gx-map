@@ -1,4 +1,4 @@
-# $Id: bug-0087,v 1.2 2006-06-30 16:51:23-07 kst Exp $
+# $Id: bug-0087,v 1.3 2006-09-12 20:16:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0087,v $
 
 gx-map bug 0087
@@ -6,7 +6,7 @@ Date: Wed 2006-04-19
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.2
 Title: AMIE doesn't handle removals?
 
 Summary:
@@ -23,3 +23,8 @@ Supposedly AMIE packets should be handled by adding all the specified
 DNs without removing any.  The new AMIE handling mechanism suggested
 in bug-0086 should handle this; it just means that nothing will be
 removed from the index file.
+
+Fixed:
+gx-map release 0.5.2
+
+The TGCDB now handles removals.
