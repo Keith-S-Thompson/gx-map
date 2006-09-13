@@ -1,4 +1,4 @@
-# $Id: bug-0117,v 1.1 2006-09-12 17:48:55-07 kst Exp $
+# $Id: bug-0117,v 1.2 2006-09-13 01:44:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0117,v $
 
 gx-map bug 0117
@@ -6,7 +6,7 @@ Date: Tue 2006-09-12
 Severity: Med
 Reported by: Krishna Muriki <kmuriki@sdsc.edu>
 Version: 0.5.2.2
-Status: Open
+Status: Fixed 0.5.2.2.004
 Title: gx-request: add "-literal-dn" option
 
 Add a "-literal-dn" option to gx-request.  This will prevent the
@@ -16,3 +16,7 @@ Currently, if a proxy DN is in the requests.log file (see bug-0016),
 there's no good way to remove it; the "gx-request -remove" command
 will strip the trailing "/CN=proxy" or "/CN=<number>" from the DN
 before removing it.
+
+Fixed:
+gx-request.in 1.50
+gx-map release 0.5.2.2.004
