@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.49 2006-09-12 18:11:04-07 kst Exp $
+# $Id: gx-request.in,v 1.50 2006-09-13 01:42:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -142,7 +142,7 @@ my @Opts = ( $User_Opt,
                  username=s
                  directory=s
                  email=s
-                 force-dn no-email comment=s
+                 force-dn literal-dn no-email comment=s
                  source=s
                  debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -341,8 +341,10 @@ if ($Options->{operation} ne 'remove-dn') {
 # Strip trailing components from a proxy DN.
 # Translate to the newer GT3/GT4 form.
 #
-foreach my $dn (@{$Options->{dn}}) {
-    $dn = Gridmap_Utils::Normalize_DN $dn;
+if (not $Options->{'literal-dn'}) {
+    foreach my $dn (@{$Options->{dn}}) {
+        $dn = Gridmap_Utils::Normalize_DN $dn;
+    }
 }
 
 my @dn_list = Unique @{$Options->{dn}};
@@ -1056,9 +1058,10 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
-    $Options->{'force-dn'} = 1 if $User_Opt->{'force-dn'};
-    $Options->{quiet}      = 1 if $User_Opt->{quiet};
-    $Options->{force}      = 1 if $User_Opt->{quiet} or $User_Opt->{force};
+    $Options->{'force-dn'}   = 1 if $User_Opt->{'force-dn'};
+    $Options->{'literal-dn'} = 1 if $User_Opt->{'literal-dn'};
+    $Options->{quiet}        = 1 if $User_Opt->{quiet};
+    $Options->{force}        = 1 if $User_Opt->{quiet} or $User_Opt->{force};
 
     if (defined $User_Opt->{directory}) {
         if ($Is_Admin) {
@@ -1272,6 +1275,11 @@ Note: Exactly one of -interactive, -quick-add, -quick-remove,
     -force-dn               : Normally, gx-request (minimally) checks
                               the DN for proper syntax; this option
                               overrides that check.
+    -literal-dn             : Normally, gx-request normalizes the DN,
+                              converting it to GT4 format and stripping
+                              any proxy information.  This option disables
+                              the conversion.  Not recommended for general
+                              use.  Not available in interactive mode.
     -username name          : Unix user name to map.
                               This option is for use by gx-map
                               administrators only.
