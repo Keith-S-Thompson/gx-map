@@ -1,4 +1,4 @@
-# $Id: bug-0099,v 1.3 2006-09-12 20:28:05-07 kst Exp $
+# $Id: bug-0099,v 1.4 2006-09-12 21:31:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0099,v $
 
 gx-map bug 0099
@@ -6,7 +6,7 @@ Date: Wed 2006-06-28
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1.019
-Status: Fixed 0.5.2.2.002
+Status: Fixed 0.5.2.2.003
 Title: Bad signing_policy files generated
 
 Summary:
@@ -30,6 +30,11 @@ unable to find a valid signing_policy) are:
 gx-ca-update should refuse to install any files when there's no valid
 MAY_SIGN attribute.
 
+On further thought, generating a bad signing_policy file is ok.
+It will make the CA certificate unusable, which is just what we want.
+Add a warning comment to the signing_policy file, and generate an
+error message.
+
 Fixed:
-gx-ca-update.in 1.116
-gx-map release 0.5.2.2.002
+gx-ca-update.in 1.119
+gx-map release 0.5.2.2.003
