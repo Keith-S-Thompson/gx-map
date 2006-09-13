@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.114 2006-08-18 20:31:11-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.115 2006-09-12 20:12:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -67,10 +67,10 @@ BEGIN {
 use Gridmap_Utils ();
 
 sub Read_CA_List_File($);
-sub Match_CA_Name($$);
 sub String_To_Seconds($);
 sub Seconds_To_String($);
 sub Signing_Policy($);
+sub Get_CA_Info($);
 sub Get_CA_Ref($);
 sub Disabled($);
 sub Allow_Missing_CRL($);
@@ -167,38 +167,38 @@ if (not $User_Opt->{UNSAFE}) {
 my $Data_Dir = "$Install_Dir/gx-map-data";
 
 my $ca_conf_dir = "$Install_Dir/etc/gx-map/ca-config";
-my @ca_list_all;
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
 
-opendir my $Conf_Dir, $ca_conf_dir or die "$ca_conf_dir: $!\n";
-@ca_list_all = sort
-                   grep { /\.cadesc$/ and not /^00000000\./ }
-                       readdir $Conf_Dir;
-closedir $Conf_Dir;
+my $CA_Info = Get_CA_Info $ca_conf_dir;
+if (not defined $CA_Info) {
+    die "Error reading CA information from $ca_conf_dir\n"
+}
 
 if ($User_Opt->{'list-cas'}) {
-    foreach my $ca (@ca_list_all) {
-        #
-        # This clobbers the contents of @ca_list_all, but that's ok
-        # since we're going to exit.
-        #
-        $ca =~ s/\.cadesc$//;
-        $ca =~ s/\./ /g;
-        print "$ca\n";
+    foreach my $hash (sort keys %$CA_Info) {
+        my $short_ca_name = $CA_Info->{$hash}->{_SHORT_CA_NAME};
+        my $ca_name = $CA_Info->{$hash}->{CA_NAME};
+        print "$hash # $ca_name ($short_ca_name)\n";
     }
     exit 0;
+}
+
+my $CA_Info_By_Name = {};
+foreach my $hash (sort keys %$CA_Info) {
+    my $name = $CA_Info->{$hash}->{_SHORT_CA_NAME};
+    $CA_Info_By_Name->{$name} = $CA_Info->{$hash};
 }
 
 if (not defined $User_Opt->{ca} and
     not defined $User_Opt->{'ca-list'})
 {
-    Usage "No CA specified\n"
+    Usage "No CA specified\n";
 }
 
 if (not defined $User_Opt->{'target-dir'}) {
-    Usage "No target directory specified\n"
+    Usage "No target directory specified\n";
 }
 elsif (not -e $User_Opt->{'target-dir'}) {
     Usage "Target directory $User_Opt->{'target-dir'} does not exist\n";
@@ -260,10 +260,6 @@ if ($User_Opt->{debugging}) {
     }
 }
 
-if (scalar @ca_list_all == 0) {
-    die "No *.cadesc files in $ca_conf_dir\n";
-}
-
 my %selected = ();
 
 my @requested_ca_list = ();
@@ -278,26 +274,35 @@ if (defined $User_Opt->{'ca-list'}) {
     }
 }
 
-Debug "\@ca_list_all = ( @ca_list_all )\n";
-Debug "\@requested_ca_list = ( @requested_ca_list )\n";
-
+my @ca_list = ();
 my @mismatches = ();
+
+#
+# Elements of @requested_ca_list may be either hash values
+# or short CA names.  Elements of @ca_list will be CA references.
+#
+
+Debug "\@requested_ca_list = ( @requested_ca_list )\n";
 
 foreach my $requested_ca (@requested_ca_list) {
     my $match = 0;
-    foreach my $ca (@ca_list_all) {
-        if (Match_CA_Name $requested_ca, $ca) {
-            $selected{$ca} = 1;
-            $match = 1;
-            last;
+    if ($requested_ca =~ /^[0-9a-f]{8}$/) {
+        if (defined $CA_Info->{$requested_ca}) {
+            push @ca_list, $CA_Info->{$requested_ca};
+        }
+        else {
+            push @mismatches, $requested_ca;
         }
     }
-    if (not $match) {
-        push @mismatches, $requested_ca;
+    else {
+        if (defined $CA_Info_By_Name->{$requested_ca}) {
+            push @ca_list, $CA_Info_By_Name->{$requested_ca};
+        }
+        else {
+            push @mismatches, $requested_ca;
+        }
     }
 }
-
-my @ca_list = grep $selected{$_}, @ca_list_all;
 
 if (scalar @ca_list == 0 or scalar @mismatches > 0) {
     my @message = ();
@@ -313,16 +318,9 @@ if (scalar @ca_list == 0 or scalar @mismatches > 0) {
     die join(', ', @message), "\n";
 }
 
-my @ca_info = ();
-
-foreach my $ca_desc_file (@ca_list) {
-    my $ref = Get_CA_Ref "$ca_conf_dir/$ca_desc_file";
-    push @ca_info, $ref if defined $ref;
-}
-
-Debug "Got ", scalar @ca_info, " ca record(s):\n";
+Debug "Got ", scalar @ca_list, " ca record(s):\n";
 if ($User_Opt->{debugging}) {
-    Gridmap_Utils::Write_Records '-multiple', '-', @ca_info;
+    Gridmap_Utils::Write_Records '-multiple', '-', @ca_list;
 }
 
 Gridmap_Utils::Use_Commands 'openssl';
@@ -330,7 +328,7 @@ Gridmap_Utils::Use_Commands 'openssl';
 Gridmap_Utils::Get_Lock undef, $Program_Name;
 
 CA:
-foreach my $ref (@ca_info) {
+foreach my $ref (@ca_list) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     if (Disabled $ref) {
         if ($User_Opt->{'ignore-disable'}) {
@@ -397,28 +395,6 @@ sub Read_CA_List_File($) {
     close $List;
     return @ca_list;
 } # Read_CA_List_File
-
-# ----------------------------------------------------------------------
-
-#
-# Given an argument to the "-ca" option and the name of a *.cadesc
-# file, return true iff the requested CA name matches a subfield of the
-# file name.
-#
-sub Match_CA_Name($$) {
-    my($requested_ca, $cadesc_filename) = @_;
-    # Debug "Match_CA_Name \"$requested_ca\", \"$cadesc_filename\"";
-    my @fields = split /\./, $cadesc_filename;
-    pop @fields; # drop ".cadesc" suffix
-    foreach my $field (@fields) {
-        if (lc $requested_ca eq lc $field) {
-            # Debug " => 1\n";
-            return 1;
-        }
-    }
-    # Debug " => 0\n";
-    return 0;
-} # Match_CA_Name
 
 # ----------------------------------------------------------------------
 
@@ -535,6 +511,65 @@ sub Signing_Policy($) {
 # ----------------------------------------------------------------------
 
 #
+# Given a directory name, reads all *.cadesc files in that directory
+# (excluding any whose names begin with "00000000.").  If there are any
+# errors, prints a message (using Vprint) and returns undef.  Otherwise,
+# returns a reference to a hash: keys are hashes (8 hex digits), values
+# are CA references as returned by Get_CA_Ref().
+#
+sub Get_CA_Info($) {
+    my($dir) = @_;
+    opendir my $DIR, $dir or die "${dir}: $!\n";
+    my @cadesc_files = sort
+                           grep { /\.cadesc$/ and not /^00000000\./ }
+                               readdir $DIR;
+    closedir $DIR;
+
+    my $result = ();
+    my @errors = ();
+
+    if (scalar @cadesc_files == 0) {
+        push @errors, "No *.cadesc files in $dir\n";
+    }
+
+    FILE:
+    foreach my $file (@cadesc_files) {
+        my($hash, $short_name);
+        if ($file =~ /^([0-9a-f]{8})\.(.*)\.cadesc$/) {
+            ($hash, $short_name) = ($1, $2);
+        }
+        else {
+            push @errors, "Bad file name: $file\n";
+            next FILE;
+        }
+        my $ref = Get_CA_Ref "$dir/$file";
+        if (not defined $ref) {
+            push @errors, "Error reading $dir/$file\n";
+        }
+        if ($ref->{HASH} ne $hash) {
+            push @errors,
+                 "Inconsistent hash value $ref->{HASH} for file $file\n";
+            next FILE;
+        }
+        if (defined $result->{$hash}) {
+            my $orig_name = $result->{$hash}->{_FILE_BASENAME};
+            push @errors, "Conflicting file names: $orig_name vs. $file\n";
+            next FILE;
+        }
+        $result->{$hash} = $ref;
+    }
+    if (@errors) {
+        Vprint @errors;
+        return undef;
+    }
+    else {
+        return $result;
+    }
+} # Get_CA_Info
+
+# ----------------------------------------------------------------------
+
+#
 # Given the name of a cadesc file, returns a reference to a hash containing
 # information about the CA.
 #
@@ -544,6 +579,11 @@ sub Get_CA_Ref($) {
     my @errors = ();
 
     $ref->{_FILENAME} = $filename;
+    $ref->{_FILE_BASENAME} = File::Basename::basename $filename;
+    my $short_name = $ref->{_FILE_BASENAME};
+    $short_name =~ s/\.cadesc$//;
+    $short_name =~ s/^[^.]*\.//;
+    $ref->{_SHORT_CA_NAME} = $short_name;
 
     if (Disabled $ref) {
         return $ref;
@@ -555,7 +595,7 @@ sub Get_CA_Ref($) {
                                     CERTIFICATE_URL SIGNING_POLICY_URL
                                     CRL_URL ALLOW_MISSING_CRL
                                     CERT_EXPIRES DISABLE
-                                    _FILENAME );
+                                    _FILENAME _FILE_BASENAME _SHORT_CA_NAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
     my %remap = ( SIGNED_BY => 1,
@@ -877,6 +917,7 @@ sub Update_Certificate($) {
                                 "Certificate is not self-signed, " .
                                 "but no SIGNED_BY attribute was " .
                                 "specified in $ref->{_FILENAME}";
+
                 }
             }
             if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
@@ -1279,7 +1320,7 @@ sub Update_And_Install_Signing_Policy($) {
 sub Check_Dependencies() {
     my @errors = ();
     REF:
-    foreach my $ref (@ca_info) {
+    foreach my $ref (@ca_list) {
         #
         # We could specifically check each non-self-signed CA certificate
         # against its signer, but it's easier to check against the
@@ -1444,7 +1485,7 @@ sub Append_To_Log($$) {
 # be reported by e-mail repeatedly.
 #
 sub Notify() {
-    my $total_ca_count = scalar @ca_info;
+    my $total_ca_count = scalar @ca_list;
     my $error_ca_count = 0;       # CAs with errors
     my $new_error_ca_count = 0;   # CAs with new errors
     my $error_count = 0;          # Number of errors
@@ -1460,7 +1501,7 @@ sub Notify() {
     # _NEW_ERRORS is a subset of _ERRORS, specifically the errors
     # that need to be reported by e-mail.
     #
-    foreach my $ref (@ca_info) {
+    foreach my $ref (@ca_list) {
         if (defined $ref->{_ERRORS}) {
             $error_ca_count ++;
             $error_count += scalar @{$ref->{_ERRORS}};
@@ -1481,7 +1522,7 @@ sub Notify() {
         }
     }
 
-    foreach my $ref (@ca_info) {
+    foreach my $ref (@ca_list) {
         if (defined $ref->{_MESSAGES} or defined $ref->{_ERRORS}) {
             $log_message_body .= "$ref->{HASH} $ref->{CA_NAME}:\n";
 
