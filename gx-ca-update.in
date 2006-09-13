@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.117 2006-09-12 20:51:44-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.118 2006-09-12 21:29:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -466,22 +466,25 @@ sub Seconds_To_String($) {
 # was specified, the generated signing_policy will also be compatible
 # with GT3 WS.
 #
-# On error (i.e., MAY_SIGN is '?'), returns undef.
+# On error (i.e., MAY_SIGN is '?'), a warning message is included as
+# a comment.
 #
 sub Signing_Policy($) {
     my($ref) = @_;
+
+    my $unknown_policy = 0;
 
     my $cond_subjects;
     if (ref $ref->{MAY_SIGN} eq 'ARRAY') {
         my @list = ();
         foreach my $may_sign (@{$ref->{MAY_SIGN}}) {
-            return undef if $may_sign eq '?';
+            $unknown_policy = 1 if $may_sign eq '?';
             push @list, qq("$may_sign");
         }
         $cond_subjects = "'@list'";
     }
     else {
-        return undef if $ref->{MAY_SIGN} eq '?';
+        $unknown_policy = 1 if $ref->{MAY_SIGN} eq '?';
         $cond_subjects = qq('$ref->{MAY_SIGN}');
     }
 
@@ -510,6 +513,14 @@ sub Signing_Policy($) {
             $result .= $body;
             $seen{$body} = 1;
         }
+    }
+
+    if ($unknown_policy) {
+        $result .= "\n" .
+                   "# WARNING: There is not enough information to generate " .
+                   "a valid signing_policy.\n" .
+                   "# See $ref->{_FILENAME}\n";
+        Error $ref, undef, undef, "No valid signing_policy";
     }
 
     return $result;
