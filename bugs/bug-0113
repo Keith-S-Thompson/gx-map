@@ -1,4 +1,4 @@
-# $Id: bug-0113,v 1.1 2006-08-20 00:54:32-07 kst Exp $
+# $Id: bug-0113,v 1.2 2006-09-13 01:05:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0113,v $
 
 gx-map bug 0113
@@ -6,7 +6,7 @@ Date: Sat 2006-08-19
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2
-Status: Open
+Status: Fixed 0.5.2.2.003
 Title: gx-ca-update: Complain about duplicate cadesc files
 
 With updates of the *.cadesc files, particularly renaming files from
@@ -15,3 +15,7 @@ ca-config directory could contain two or more files with the same hash.
 I'm not sure what gx-ca-update will do if this is the case.  Find out
 how it behaves now, and update it to detect and complain about this
 if it happens.
+
+Fixed:
+gx-ca-update.in 1.115
+gx-map release 0.5.2.2.003
