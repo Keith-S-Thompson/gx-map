@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.222 2006-09-12 21:31:30-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.223 2006-09-13 01:43:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -86,7 +86,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.2.2.003';
+    $VERSION = '0.5.2.2.004';
 
     $Debugging = undef; 
     %Config = ( PERL                     => '%PERL%',
