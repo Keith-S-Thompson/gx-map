@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.50 2006-09-13 01:42:42-07 kst Exp $
+# $Id: gx-request.in,v 1.51 2006-09-13 19:38:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -682,8 +682,8 @@ EOF
         > (r) Remove a grid-mapfile entry
         > (u) Request an update of the grid-mapfiles
         > (x) Exit
-        > (The "set" operation is not currently available in interactive mode.)
 EOF
+#       > (The "set" operation is not currently available in interactive mode.)
         print "What do you want to do? [arux] ";
         chomp($response = lc scalar <STDIN>);
         if ($response =~ /^a/) {
