@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.6 2006-08-18 03:09:35-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.7 2006-09-14 18:37:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -56,7 +56,7 @@ use Getopt::Long ();
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
-sub Run_Jobs(@);
+sub Run_Jobs();
 sub Status_Image($);
 
 # 
@@ -150,7 +150,7 @@ sub Run_Jobs() {
             $name = "# " . ($i+1);
         }
 
-        foreach my $key (sort keys $#job) {
+        foreach my $key (sort keys %$job) {
             if (not $is_valid_field{$key}) {
                 die "Invalid key \"$key\" in job $name\n";
             }
