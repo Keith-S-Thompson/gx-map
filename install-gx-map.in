@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.78 2006-09-14 22:22:46-07 kst Exp $
+# $Id: install-gx-map.in,v 1.79 2006-09-15 00:50:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -84,12 +84,11 @@ if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
 fi
 
 BIN_FILES="gx-request"
-SBIN_FILES="gx-check-requests gx-cleanup-logs gx-cron-job gx-gen-mapfile gx-ingest gx-ca-update gx-convert-log gx-admins gx-remove-locks gx-util-test"
-OPTIONAL_SBIN_FILES="gx-propagate gx-db-request gx-db-check-requests gx-db-dump"
-RESTRICTED_SBIN_FILES="gx-ca-update gx-check-requests gx-cron-job gx-remove-locks gx-propagate gx-db-request gx-db-check-requests gx-db-dump"
+SBIN_FILES="gx-admins gx-ca-update gx-check-requests gx-cleanup-logs gx-convert-log gx-cron-job gx-gen-mapfile gx-ingest gx-install-cadesc gx-remove-locks gx-util-test"
+OPTIONAL_SBIN_FILES="gx-db-check-requests gx-db-dump gx-db-request gx-propagate"
+RESTRICTED_SBIN_FILES="gx-ca-update gx-check-requests gx-cron-job gx-db-check-requests gx-db-dump gx-db-request gx-propagate gx-remove-locks"
 LIB_FILES="Gridmap_Utils.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes"
-# CA_FILES=ca/*.cadesc
 
 for dir in $INSTALL_DIR \
            $BIN_DIR \
@@ -211,9 +210,9 @@ if [ ! -h $INSTALL_DIR/gx-map-data ] ; then
     verbosely ln -s -f $DATA_DIR $INSTALL_DIR/gx-map-data
 fi
 
-cadesc_tarball=gx-map-cadesc-????-??-??.tar.gz
+cadesc_tarball=`echo gx-map-cadesc-????-??-??.tar.gz`
 if [ ! -e "$cadesc_tarball" ] ; then
-    echo "Can't find cadesc tarball" 1>*2
+    echo "Can't find cadesc tarball" 1>&2
     exit 1
 fi
 verbosely $SBIN_DIR/gx-install-cadesc $cadesc_tarball
