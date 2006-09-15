@@ -1,0 +1,43 @@
+#!/bin/sh
+
+# $Id: make-cadesc-release,v 1.1 2006-09-14 18:58:34-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/make-cadesc-release,v $
+
+try() {
+    echo "% $@"
+    eval "$@" || exit 1
+}
+
+today=`date +%Y-%m-%d`
+
+dir=gx-map-cadesc-$today
+tarball=gx-map-cadesc-$today.tar.gz
+
+if [ -f release/$tarball ] ; then
+    echo "release/$tarball already exists" 1>&2
+    exit 1
+fi
+
+try mkdir release/$dir
+try cd release/$dir
+ls ../../ca | grep '\.cadesc$' | \
+    while read file ; do
+        try cp -p ../../ca/$file .
+    done
+
+cat >README <<EOF
+This directory contains a number of *.cadesc files, used by the
+gx-ca-update command, part of the gx-map package.  Each file contains
+information about a certificate authority.  See the gx-map-cadesc(5)
+man page.
+
+These files are installed automatically as part of gx-map.  You can
+use the gx-install-cadesc command to install an updated set of *.cadesc
+files; see the gx-install-cadesc(8) man page for more information.
+
+This release of the *.cadesc files was built $today.
+EOF
+
+try cd ..
+try tar zcf $tarball $dir
+try rm -rf $dir
