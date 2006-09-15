@@ -1,12 +1,14 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.22 2006-05-24 19:36:55-07 kst Exp $
+# $Id: make-release,v 1.23 2006-09-14 22:22:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
     echo "% $@"
     eval "$@" || exit 1
 }
+
+today=`date +%Y-%m-%d`
 
 if [ $# -eq 0 ] ; then
     num=`./get-version`
@@ -30,6 +32,9 @@ if [ "$num" = "" ] ; then
     echo "Usage: $0 [num]" 1>&2
     exit 1
 fi
+
+try ./make-cadesc-release
+cadesc_tarball=gx-map-cadesc-$today.tar.gz
 
 in_files=`ls *.in | grep -v gx-map.conf.in`
 other_files="INSTALL LICENSE Makefile README README.TeraGrid \
@@ -55,13 +60,7 @@ for file in $other_files ; do
     try cp -p ../../$file .
 done
 
-try mkdir ca
-try cd ca
-ls ../../../ca | grep '\.cadesc$' | \
-    while read file ; do
-        try cp -p ../../../ca/$file .
-    done
-try cd ..
+try cp -p ../$cadesc_tarball .
 
 try mkdir bugs
 try cd bugs
