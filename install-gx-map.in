@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.77 2006-08-22 19:19:20-07 kst Exp $
+# $Id: install-gx-map.in,v 1.78 2006-09-14 22:22:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -96,7 +96,6 @@ for dir in $INSTALL_DIR \
            $SBIN_DIR \
            $LIB_DIR \
            $ETC_DIR \
-           $ETC_DIR/ca-config \
            $DOC_DIR \
            $MAN_DIR \
            $MAN_DIR/man1 \
@@ -176,14 +175,14 @@ for section in 1 3 5 7 8 ; do
         fi
     done
 done
-#
-# There are a *lot* of *.cadesc files.  To avoid possible problems with
-# overly long command lines, don't store all the names in a variable.
-#
-ls ca | grep '\.cadesc$' | \
-    while read file ; do
-        verbosely cp -f ca/$file $ETC_DIR/ca-config/.
-    done
+# #
+# # There are a *lot* of *.cadesc files.  To avoid possible problems with
+# # overly long command lines, don't store all the names in a variable.
+# #
+# ls ca | grep '\.cadesc$' | \
+#     while read file ; do
+#         verbosely cp -f ca/$file $ETC_DIR/ca-config/.
+#     done
 if [ -r .config-file ] ; then
     config_file=`cat .config-file`
     config_file_basename=`basename $config_file`
@@ -212,8 +211,17 @@ if [ ! -h $INSTALL_DIR/gx-map-data ] ; then
     verbosely ln -s -f $DATA_DIR $INSTALL_DIR/gx-map-data
 fi
 
+cadesc_tarball=gx-map-cadesc-????-??-??.tar.gz
+if [ ! -e "$cadesc_tarball" ] ; then
+    echo "Can't find cadesc tarball" 1>*2
+    exit 1
+fi
+verbosely $SBIN_DIR/gx-install-cadesc $cadesc_tarball
+
 verbosely cd $BIN_DIR
 verbosely ln -s -f gx-request gx-map
+
+verbosely cd $ETC_DIR
 
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
     cat <<EOF
