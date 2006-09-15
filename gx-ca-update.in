@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.118 2006-09-12 21:29:59-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.119 2006-09-14 17:37:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -531,9 +531,9 @@ sub Signing_Policy($) {
 #
 # Given a directory name, reads all *.cadesc files in that directory
 # (excluding any whose names begin with "00000000.").  If there are any
-# errors, prints a message (using Vprint) and returns undef.  Otherwise,
-# returns a reference to a hash: keys are hashes (8 hex digits), values
-# are CA references as returned by Get_CA_Ref().
+# errors, prints a message and dies.  Otherwise, returns a reference to
+# a hash: keys are hashes (8 hex digits), values are CA references as
+# returned by Get_CA_Ref().
 #
 sub Get_CA_Info($) {
     my($dir) = @_;
@@ -547,7 +547,7 @@ sub Get_CA_Info($) {
     my @errors = ();
 
     if (scalar @cadesc_files == 0) {
-        push @errors, "No *.cadesc files in $dir\n";
+        die "No *.cadesc files in $dir\n";
     }
 
     FILE:
@@ -561,24 +561,36 @@ sub Get_CA_Info($) {
             next FILE;
         }
         my $ref = Get_CA_Ref "$dir/$file";
-        if (not defined $ref) {
-            push @errors, "Error reading $dir/$file\n";
+        if (ref $ref eq 'ARRAY') {
+            #
+            # The returned value is an error message, not a hash reference.
+            #
+            my $s = (scalar @$ref == 1 ? '' : 's');
+            push @errors, "Error$s in $dir/${file}:\n";
+            foreach my $error (@$ref) {
+                push @errors, "    $error\n";
+            }
         }
-        if ($ref->{HASH} ne $hash) {
-            push @errors,
-                 "Inconsistent hash value $ref->{HASH} for file $file\n";
-            next FILE;
+        elsif (ref $ref eq 'HASH') {
+            if ($ref->{HASH} ne $hash) {
+                push @errors,
+                     "Inconsistent hash value $ref->{HASH} for file $file\n";
+                next FILE;
+            }
+            if (defined $result->{$hash}) {
+                my $orig_name = $result->{$hash}->{_FILE_BASENAME};
+                push @errors, "Conflicting file names in ${dir}:\n",
+                              "$orig_name vs. $file\n";
+                next FILE;
+            }
+            $result->{$hash} = $ref;
         }
-        if (defined $result->{$hash}) {
-            my $orig_name = $result->{$hash}->{_FILE_BASENAME};
-            push @errors, "Conflicting file names: $orig_name vs. $file\n";
-            next FILE;
+        else {
+            die "Internal error, bad result from Get_CA_Ref: $ref\n";
         }
-        $result->{$hash} = $ref;
     }
     if (@errors) {
-        Vprint @errors;
-        return undef;
+        die @errors;
     }
     else {
         return $result;
@@ -590,6 +602,9 @@ sub Get_CA_Info($) {
 #
 # Given the name of a cadesc file, returns a reference to a hash containing
 # information about the CA.
+#
+# If there's an error, return an error message as reference to an array
+# of strings.
 #
 sub Get_CA_Ref($) {
     my($filename) = @_;
@@ -622,17 +637,17 @@ sub Get_CA_Ref($) {
                        
     foreach my $key (@required) {
         if (not defined $ref->{$key}) {
-            push @errors, "Missing key $key\n";
+            push @errors, "Missing key $key";
         }
     }
 
     foreach my $key (sort keys %$ref) {
         if (not $valid{$key}) {
-            push @errors, "Unrecognized key $key\n";
+            push @errors, "Unrecognized key $key";
         }
         if ($key =~ /_URL$/) {
             if ($ref->{$key} ne '?' and $ref->{$key} !~ m<^(https?|ftp):>) {
-                push @errors, "Bad value for $key\n";
+                push @errors, "Bad value for $key (must be a URL)";
             }
         }
         #
@@ -648,17 +663,14 @@ sub Get_CA_Ref($) {
         }
     }
     if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
-        push @errors, "Invalid HASH\n";
+        push @errors, "Invalid HASH";
     }
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
-        push @errors, "Value for DISABLE must be \"yes\" or \"no\"\n";
+        push @errors, "Value for DISABLE must be \"yes\" or \"no\"";
     }
 
     if (@errors) {
-        my $s = (scalar @errors == 1 ? '' : 's');
-        Vprint ">>> Error$s in ${filename}:\n";
-        Vprint @errors;
-        return undef;
+        return \@errors;
     }
     else {
         return $ref;
