@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.79 2006-09-15 00:50:38-07 kst Exp $
+# $Id: install-gx-map.in,v 1.80 2006-09-15 01:02:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -83,7 +83,7 @@ if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
     exit 1
 fi
 
-BIN_FILES="gx-request"
+BIN_FILES="gx-map gx-request"
 SBIN_FILES="gx-admins gx-ca-update gx-check-requests gx-cleanup-logs gx-convert-log gx-cron-job gx-gen-mapfile gx-ingest gx-install-cadesc gx-remove-locks gx-util-test"
 OPTIONAL_SBIN_FILES="gx-db-check-requests gx-db-dump gx-db-request gx-propagate"
 RESTRICTED_SBIN_FILES="gx-ca-update gx-check-requests gx-cron-job gx-db-check-requests gx-db-dump gx-db-request gx-propagate gx-remove-locks"
@@ -216,11 +216,6 @@ if [ ! -e "$cadesc_tarball" ] ; then
     exit 1
 fi
 verbosely $SBIN_DIR/gx-install-cadesc $cadesc_tarball
-
-verbosely cd $BIN_DIR
-verbosely ln -s -f gx-request gx-map
-
-verbosely cd $ETC_DIR
 
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
     cat <<EOF
