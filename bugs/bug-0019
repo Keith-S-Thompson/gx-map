@@ -1,4 +1,4 @@
-# $Id: bug-0019,v 1.6 2006-06-30 16:51:17-07 kst Exp $
+# $Id: bug-0019,v 1.7 2006-09-15 01:03:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0019,v $
 
 gx-map bug 0019
@@ -34,3 +34,8 @@ Further suggested fix:
 In a future release, delete the "gx-map" command altogether (or
 make it a separate command that just prints an error message).
 Before doing this, confirm that nobody still depends on the old name.
+
+Done:
+gx-map.in 1.43
+install-gx-map.in 1.80
+gx-map release 0.5.2.2.005
