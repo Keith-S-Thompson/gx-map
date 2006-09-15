@@ -1,4 +1,4 @@
-# $Id: cb7b413d.ecmwf.cadesc,v 1.1 2006-02-24 11:51:28-08 kst Exp $
+# $Id: cb7b413d.ecmwf.cadesc,v 1.2 2006-09-14 17:36:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/cb7b413d.ecmwf.cadesc,v $
 
 CA_NAME             European Centre for Medium-Range Weather Forecasts CA
@@ -19,4 +19,4 @@ DISABLE             yes
 # MD5 and SHA1 fingerprints from cb7b413d.0 downloaded 2006-02-23
 
 # I have so far been unable to find a CRL or signing_policy for this CA.
-# I've marked the CA as DISABLED until that's resolved.
+# I've marked the CA as DISABLEd until that's resolved.
