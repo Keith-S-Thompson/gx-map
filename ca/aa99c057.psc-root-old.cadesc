@@ -1,4 +1,4 @@
-# $Id: aa99c057.psc-root-old.cadesc,v 1.1 2006-08-19 21:13:45-07 kst Exp $
+# $Id: aa99c057.psc-root-old.cadesc,v 1.2 2006-09-15 00:49:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/aa99c057.psc-root-old.cadesc,v $
 
 CA_NAME             PSC Root Certificate Authority (old)
@@ -13,5 +13,6 @@ CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/aa99c057.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/aa99c057.signing_policy
 CERT_EXPIRES        Sun 2006-08-20 04:00:00 UTC
 CRL_URL             http://ocsp.psc.edu:8000/ca/aa99c057.r0
+DISABLE             yes
 
 # MD5 and SHA1 fingerprints from aa99c057.0 downloaded 2005-03-29
