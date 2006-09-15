@@ -1,4 +1,4 @@
-# $Id: 12a1d8c2.grid-fr.cadesc,v 1.1 2006-02-24 11:51:28-08 kst Exp $
+# $Id: 12a1d8c2.grid-fr.cadesc,v 1.2 2006-09-14 17:36:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/12a1d8c2.grid-fr.cadesc,v $
 
 CA_NAME             GRID-FR CA
@@ -19,4 +19,4 @@ DISABLE             yes
 # MD5 and SHA1 fingerprints from 12a1d8c2.0, downloaded 2006-02-23
 
 # I have so far been unable to find a definitive signing_policy for this CA.
-# I've marked the CA as DISABLED until that's resolved.
+# I've marked the CA as DISABLEd until that's resolved.
