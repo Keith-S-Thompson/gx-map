@@ -1,4 +1,4 @@
-# $Id: 85ca9edc.psc-kerberos-old.cadesc,v 1.1 2006-08-19 21:14:12-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos-old.cadesc,v 1.2 2006-09-15 00:49:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/85ca9edc.psc-kerberos-old.cadesc,v $
 
 CA_NAME             PSC Kerberos Certification Authority (old)
@@ -15,6 +15,7 @@ SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/85ca9edc.signing_policy
 CERT_EXPIRES        Sun 2006-08-20 04:00:00 UTC
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
+DISABLE             yes
 
 #
 # There is no CRL for this CA.  Since it only issues short-term
