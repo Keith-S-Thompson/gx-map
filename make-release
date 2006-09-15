@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.23 2006-09-14 22:22:10-07 kst Exp $
+# $Id: make-release,v 1.24 2006-09-15 00:51:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -33,6 +33,11 @@ if [ "$num" = "" ] ; then
     exit 1
 fi
 
+if [ -f release/gx-map-$num.tar.gz ] ; then
+    echo "release/gx-map-$num.tar.gz already exists" 1>&2
+    exit 1
+fi
+
 try ./make-cadesc-release
 cadesc_tarball=gx-map-cadesc-$today.tar.gz
 
@@ -44,11 +49,6 @@ other_files="INSTALL LICENSE Makefile README README.TeraGrid \
 
 # cadesc_files=`cd ca ; echo *.cadesc`
 # bug_files=`cd bugs ; echo bug-*`
-
-if [ -f release/gx-map-$num.tar.gz ] ; then
-    echo "release/gx-map-$num.tar.gz already exists" 1>&2
-    exit 1
-fi
 
 try mkdir release/gx-map-$num
 try cd release/gx-map-$num
