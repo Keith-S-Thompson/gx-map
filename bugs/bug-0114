@@ -1,4 +1,4 @@
-# $Id: bug-0114,v 1.1 2006-08-20 00:54:32-07 kst Exp $
+# $Id: bug-0114,v 1.2 2006-09-15 15:22:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0114,v $
 
 gx-map bug 0114
@@ -6,7 +6,7 @@ Date: Sat 2006-08-19
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2
-Status: Open
+Status: Fixed 0.5.2.2.005
 Title: Create a better mechanism for cadesc updates
 
 Certificate authorities tend to be updated more often than gx-map
@@ -23,3 +23,11 @@ etc/gx-map/ca-config directory; allow for user-modified files.
 (I had some vague thoughts about downloading updates automatically,
 but I think I'd rather just let people grab the tarball; if it can
 be installed with a single command, that's good enough.)
+
+Fixed:
+Created a new gx-install-cadesc command.
+Each release includes a newly generated gx-map-cadesc-YYYY-MM-DD.tar.gz
+file, which is automatically installed by gx-install-cadesc during
+installation.  New gx-map-cadesc tarballs can be installed into an
+existing gx-map installation by the gx-map owner.
+gx-map release 0.5.2.2.005
