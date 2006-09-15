@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: gx-check-prereqs,v 1.23 2006-08-15 21:15:59-07 kst Exp $
+# $Id: gx-check-prereqs,v 1.24 2006-09-14 22:21:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-prereqs,v $
 
 ########################################################################
@@ -101,11 +101,12 @@ my $All_Modules_Found = 1;
 
 Check_Perl 5.006;
 
-Check_Command 'co';
-Check_Command 'ci';
-Check_Command 'rcs';
 Check_Command 'curl';
+Check_Command 'rcs';
+Check_Command 'ci';
 Check_Command 'openssl';
+Check_Command 'gzip';
+Check_Command 'tar';
 
 Check_Module 'File::Basename';
 Check_Module 'File::Copy';
