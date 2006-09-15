@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.224 2006-09-14 19:01:26-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.225 2006-09-14 22:20:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -99,7 +99,6 @@ BEGIN {
                 ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
-    use Cwd (); 
     use Time::Local ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
     eval 'use Time::HiRes ()';
