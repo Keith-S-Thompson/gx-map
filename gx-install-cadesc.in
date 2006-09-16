@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-install-cadesc.in,v 1.1 2006-09-15 00:48:41-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.2 2006-09-15 19:58:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -73,10 +73,11 @@ use Cwd ();
 
 my $Program_Name = File::Basename::basename $0;
 
-my $User_Opt = {};
+my $User_Opt = { 'install-dir' => $Install_Dir };
 my @Opts = ( $User_Opt,
              qw( help
                  version
+                 install-dir=s
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -103,7 +104,8 @@ $dir =~ s/\.tar\.gz$//;
 
 $| = 1;
 
-chdir "$Install_Dir/etc/gx-map" or die "$Install_Dir: $!\n";
+chdir "$User_Opt->{'install-dir'}/etc/gx-map"
+    or die "$User_Opt->{'install-dir'}: $!\n";
 
 my $backup_ca_config_dir = undef;
 if (-d 'ca-config') {
@@ -120,9 +122,9 @@ rename $dir, 'ca-config' or die "Renaming $dir to ca-config: $!\n";
 if (defined $backup_ca_config_dir) {
     print <<"EOF";
 Your existing directory
-    $Install_Dir/etc/gx-map/ca-config
+    $User_Opt->{'install-dir'}/etc/gx-map/ca-config
 has been renamed to
-    $Install_Dir/etc/gx-map/$backup_ca_config_dir
+    $User_Opt->{'install-dir'}/etc/gx-map/$backup_ca_config_dir
 and a new directory has been created and populated in its place.
 
 If you've created or customized any *.cadesc files, you can copy them
@@ -171,9 +173,11 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Program_Name [options]
 Option names may be abbreviated.
-    -help       : Display this message and exit.
-    -version    : Display version information and exit.
-    -debugging  : Display debugging messages
+    -help            : Display this message and exit.
+    -version         : Display version information and exit.
+    -install-dir dir : gx-map installation directory
+                       Default is $Install_Dir
+    -debugging       : Display debugging messages
 EOF
     exit 1;
 } # Usage
