@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.227 2006-09-18 17:28:40-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.228 2006-09-19 03:32:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1413,7 +1413,7 @@ sub QP_Encode($) {
 sub Make_Hard_Link($) {
     my($filename) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname();
-    my $link_name = "$filename-hostname-$$";
+    my $link_name = "$filename-$hostname-$$";
     link $filename, $link_name or die "$link_name: $!\n";
     return $link_name;
 } # Make_Hard_Link
