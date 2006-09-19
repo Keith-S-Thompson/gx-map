@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.85 2006-08-22 18:49:43-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.86 2006-09-18 17:28:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -110,6 +110,8 @@ Gridmap_Utils::Check_Data_Dir;
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
 
+my @cache_files = ();
+
 #
 # If the requests-log array is empty (i.e., the user didn't give the
 # '-requests-log' option), set it to a single element consisting of the
@@ -144,6 +146,7 @@ if (@{$User_Opt->{'requests-log'}}) {
             # we're using a previously cached copy.
             #
             $log = $cache_result->{filename};
+	    push @cache_files, $log;
         }
     }
 }
@@ -215,6 +218,10 @@ if (@{$User_Opt->{'merge-file'}}) {
 }
 
 my $Mappings = Gridmap_Utils::Gen_Mappings @args;
+
+foreach my $cache_file (@cache_files) {
+    Gridmap_Utils::Release_Cache_File $cache_file;
+}
 
 my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
 Gridmap_Utils::Register_Handler_Function sub { unlink $tmp_file };
