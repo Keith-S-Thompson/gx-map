@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.120 2006-09-18 17:28:11-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.121 2006-09-19 03:33:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1198,11 +1198,6 @@ sub Update_And_Install_CRL($) {
                      "chmod $Octal_Permissions, $temp_file: $!";
         rename $temp_file, $ref->{_CRL_FILE}
             or Error $ref, undef, undef, "Failed to rename CRL: $!";
-        if (defined $ref->{_CACHED_CERT_FILE} and
-            -e $ref->{_CACHED_CERT_FILE})
-        {
-            Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
-        }
     }
 
     if (defined $ref->{_CRL_FILE}) {
@@ -1294,6 +1289,9 @@ sub Update_And_Install_CRL($) {
     }
     else {
         Vprint"No CRL\n";
+    }
+    if (defined $cache_result->{filename}) {
+        Gridmap_Utils::Release_Cache_File $cache_result->{filename};
     }
 } # Update_And_Install_CRL
 
