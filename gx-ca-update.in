@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.119 2006-09-14 17:37:18-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.120 2006-09-18 17:28:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -99,6 +99,7 @@ my $Hostname = Gridmap_Utils::Get_Hostname();
 my $Certificate_Installed = 0;
 
 my $User_Opt = { permissions => '444',
+                 download => 1,
                  email => 1 };
 my @Opts = ( $User_Opt,
              qw( help!
@@ -110,6 +111,7 @@ my @Opts = ( $User_Opt,
                  ca-list=s@
                  list-cas!
                  target-dir=s
+                 download!
                  permissions=s
                  gt3-compatible!
                  allow-missing-crl!
@@ -325,7 +327,9 @@ if ($User_Opt->{debugging}) {
 
 Gridmap_Utils::Use_Commands 'openssl';
 
-Gridmap_Utils::Get_Lock undef, $Program_Name;
+if ($User_Opt->{download}) {
+    Gridmap_Utils::Get_Lock undef, $Program_Name;
+}
 
 CA:
 foreach my $ref (@ca_list) {
@@ -376,7 +380,9 @@ Check_Dependencies if $Certificate_Installed;
 
 Notify;
 
-Gridmap_Utils::Release_Lock undef, $Program_Name;
+if ($User_Opt->{download}) {
+    Gridmap_Utils::Release_Lock undef, $Program_Name;
+}
 
 ########################################################################
 
@@ -880,7 +886,11 @@ sub Update_Certificate($) {
         Vprint "Skipping existing $ref->{_CERT_FILE}\n";
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(https?|ftp)://>) {
-        my $cache_result = Gridmap_Utils::Cache_File $ref->{CERTIFICATE_URL};
+        my $download_arg = $User_Opt->{download}
+                               ? '-download'
+                               : '-nodownload';
+        my $cache_result = Gridmap_Utils::Cache_File
+                               $download_arg, $ref->{CERTIFICATE_URL};
         if ($cache_result->{status} eq 'failed') {
             Error $ref,
                   'cert_download_failed',
@@ -904,6 +914,7 @@ sub Update_Certificate($) {
                 Error $ref, 'no_cert_info',
                             Gridmap_Utils::Get_mtime $cache_result->{filename},
                             "Can't get certificate information";
+                Gridmap_Utils::Release_Cache_File $cache_result->{filename};
                 return;
             }
             if (defined $cert_info->{enddate}) {
@@ -1044,7 +1055,11 @@ sub Update_And_Install_CRL($) {
     # Attempt to download a new CRL (or use a cached copy)
     #
     my $error;
-    my $cache_result = Gridmap_Utils::Cache_File $ref->{CRL_URL};
+    my $download_arg = $User_Opt->{download}
+                           ? '-download'
+                           : '-nodownload';
+    my $cache_result = Gridmap_Utils::Cache_File
+                           $download_arg, $ref->{CRL_URL};
     if ($User_Opt->{debugging}) {
         foreach my $key (sort keys %$cache_result) {
             if (defined $cache_result->{$key}) {
@@ -1183,6 +1198,11 @@ sub Update_And_Install_CRL($) {
                      "chmod $Octal_Permissions, $temp_file: $!";
         rename $temp_file, $ref->{_CRL_FILE}
             or Error $ref, undef, undef, "Failed to rename CRL: $!";
+        if (defined $ref->{_CACHED_CERT_FILE} and
+            -e $ref->{_CACHED_CERT_FILE})
+        {
+            Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
+        }
     }
 
     if (defined $ref->{_CRL_FILE}) {
@@ -1304,6 +1324,7 @@ sub Install_Certificate($) {
     rename $temp_file, $ref->{_CERT_FILE}
         or Error $ref, undef, undef, "Failed to rename certificate: $!";
     $Certificate_Installed = 1;
+    Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
 } # Install_Certificate
 
 # ----------------------------------------------------------------------
@@ -1657,6 +1678,9 @@ Usage: $Program_Name [options]
                        The "-ca" and "-ca-list" options may be combined.
     -list-cas          List available CAs and exit.
     -target-dir dir    Target directory.
+    -[no]download      By default, gx-ca-update attempts to download
+                       files as needed.  With "-nodownload", use only
+                       existing files in the cache directory.
     -permissions perm  Specify permissions for installed files (in octal);
                        default is 444
     -gt3-compatible    Generate *.signing_policy files compatible with
