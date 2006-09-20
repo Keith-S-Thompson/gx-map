@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.8 2006-09-15 18:44:42-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.9 2006-09-19 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -188,6 +188,11 @@ sub Run_Jobs() {
         }
         else {
             @commands = ( $job->{command} );
+        }
+
+        foreach my $command (@commands) [
+            $command =~ s/%HOSTNAME%/$Hostname/g;
+            $command =~ s/%VERSION%/$Gridmap_Utils::VERSION/g;
         }
 
         my $actual_offset = $minutes % $interval;
