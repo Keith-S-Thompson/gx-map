@@ -1,4 +1,4 @@
-# $Id: bug-0112,v 1.1 2006-08-11 18:28:47-07 kst Exp $
+# $Id: bug-0112,v 1.2 2006-09-19 20:22:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0112,v $
 
 gx-map bug 0112
@@ -6,7 +6,7 @@ Date: Fri 2006-08-11
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.1
-Status: Open
+Status: Fixed 0.5.2.2.006
 Title: gx-ca-update: use ".ca-list" file implicitly
 
 Currently, gx-ca-update is typically used as:
@@ -18,3 +18,7 @@ if the specified target directory contains a ".ca-list" file, use
 that as the list of CAs.
 
 (I've been calling the list file ".list", but ".ca-list" is better.)
+
+Fixed:
+gx-ca-update.in 1.122
+gx-map release 0.5.2.2.006
