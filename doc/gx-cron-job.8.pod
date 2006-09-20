@@ -1,0 +1,181 @@
+# $Id: gx-cron-job.8.pod,v 1.1 2006-09-19 21:59:01-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-cron-job.8.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+gx-cron-job - Execute gx-map commands (for use in a cron job)
+
+=head1 SYNOPSIS
+
+S<gx-cron-job -help>
+
+S<gx-cron-job -version>
+
+S<gx-cron-job [options] [files]>
+
+=head1 DESCRIPTION
+
+B<gx-cron-job>, part of the B<gx-map> system, is an administrative
+command.  It is intended to simplify the job of setting up cron jobs
+for B<gx-map>.  Rather than setting up multiple cron jobs for various
+commands, you can run a single instance of B<gx-cron-job> once per
+minute; it will execute other commands based on the F<gx-cron-job.conf>
+file.  Or you can run it in daemon mode and bypass B<cron> altogether.
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-daemon>
+
+Run in a continuous loop, checking for jobs once per minute.
+The default is a single execution, suitable for running in a cron job.
+
+=item B<-config-file> I<file>
+
+Use the specified configuration file.  The default is
+F<etc/gx-map/gx-cron-job> in the B<gx-map> installation directory.
+
+=item B<-dryrun>
+
+Display commands but don't execut them.
+
+=item B<-debugging>
+
+Enable debugging output.
+
+=back
+
+=head1 USAGE
+
+The B<gx-map> system depends on certain administrative commands to
+be executed repeatedly, usually from a cron job.  It's possible to
+execute the necessary commands directly from your crontab, but the
+B<gx-cron-job> command is intended to simplify this.
+
+The behavior of the B<gx-cron-job> command is controlled by a
+configuration file; see below.
+
+
+=head1 CONFIGURATION FILE
+
+The default B<gx-cron-job> configuration file is
+F<etc/gx-map/gx-cron-job> in the B<gx-map> installation directory.
+This file is not installed by default, but a sample configuration
+file is provided in the release as F<sample-gx-cron-job.conf>.
+
+The configuration file consists of a sequence of records.  Each record
+consists of a line containing only an opening brace '{', a sequence of
+lines each containing an attribute name followed by the corresponding
+attribute value, and a line consisting only of a closing brace '}'.
+(The similarity to the format of the F<requests.log> file is not a
+coincidence; the same code is used to parse both.)
+
+The permitted attributes are:
+
+=over
+
+=item B<name> I<string>
+
+An arbitrary name for this record, used in error messages.
+
+=item B<interval> I<minutes>
+
+=item B<interval> I<minutes+minutes>
+
+How often the command is executed.  The value may be either a decimal
+integer X, indicating that the command is executed every X minutes,
+or a pair of the form X+Y, which causes the command to be executed
+every X minutes with an Y-minute offset.
+
+For example, "interval 15" causes the command to be executed at 0,
+15, 30, and 45 minutes after each hour; "interval 15+5" causes it to
+be executed at 5, 20, 35, and 50 minutes after each hour.
+
+Intervals are based on raw Unix time (elapsed time since
+S<1970-01-01 00:00:00 GMT>).  For example, a command with an interval
+1440 minutes (24 hours) will execute at midnight UTC, not midnight
+local time.  For an interval that is a factor of one hour, this
+shouldn't be relevant.
+
+=item B<command>
+
+There can be one or more commands in each record.  The specified
+command must be in the F<sbin> directory of the B<gx-map> installation
+directory.  The commands are executed in the order specified.
+
+=back
+
+=head1 SEE ALSO
+
+gx-map(7)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
