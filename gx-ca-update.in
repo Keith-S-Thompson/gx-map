@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.121 2006-09-19 03:33:13-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.122 2006-09-19 19:52:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -193,11 +193,11 @@ foreach my $hash (sort keys %$CA_Info) {
     $CA_Info_By_Name->{$name} = $CA_Info->{$hash};
 }
 
-if (not defined $User_Opt->{ca} and
-    not defined $User_Opt->{'ca-list'})
-{
-    Usage "No CA specified\n";
-}
+# if (not defined $User_Opt->{ca} and
+#     not defined $User_Opt->{'ca-list'})
+# {
+#     Usage "No CA specified\n";
+# }
 
 if (not defined $User_Opt->{'target-dir'}) {
     Usage "No target directory specified\n";
@@ -273,6 +273,19 @@ if (defined $User_Opt->{ca}) {
 if (defined $User_Opt->{'ca-list'}) {
     foreach my $arg (@{$User_Opt->{'ca-list'}}) {
         push @requested_ca_list, Read_CA_List_File $arg;
+    }
+}
+if (not defined $User_Opt->{ca} and
+    not defined $User_Opt->{'ca-list'})
+{
+    my $list_file = "$User_Opt->{'target-dir'}/.ca-list";
+    if (-e $list_file) {
+        push @requested_ca_list, Read_CA_List_File $list_file;
+    }
+    else {
+        Usage "No CA specified\n" .
+              qq(Use "-ca" or "-ca-list", or create a ".ca-list" file in\n) .
+              " the target directory\n";
     }
 }
 
@@ -1674,6 +1687,8 @@ Usage: $Program_Name [options]
                        "-ca" option.
                        Multiple "-ca-list" options may be given.
                        The "-ca" and "-ca-list" options may be combined.
+                       If no "-ca" or "-ca-list" option is specified, try
+                       to use a ".ca-list" file in the target directory.
     -list-cas          List available CAs and exit.
     -target-dir dir    Target directory.
     -[no]download      By default, gx-ca-update attempts to download
