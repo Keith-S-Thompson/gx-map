@@ -1,4 +1,4 @@
-# $Id: bug-0108,v 1.1 2006-08-02 18:32:20-07 kst Exp $
+# $Id: bug-0108,v 1.2 2006-09-21 19:38:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0108,v $
 
 gx-map bug 0108
@@ -6,8 +6,8 @@ Date: Wed 2006-08-02
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.1
-Status: Open
-Title: Consider adding gx-cron command
+Status: Fixed 0.5.2.2.006
+Title: Add gx-cron-job command
 
 The cron jobs for the account that owns gx-map tend to be very complex.
 For example, on chester.sdsc.edu:
@@ -31,7 +31,7 @@ For example, on chester.sdsc.edu:
 5,35 * * * *					/usr/local/apps/gx-map-0.5.2.1/sbin/gx-ca-update -target-dir /misc/gx-map/certificates-0.5.2.1 -ca-list /misc/gx-map/certificates-0.5.2.1/.list
 ========================================================================
 
-Consider adding a "gx-cron" command that would invoke any of:
+Ad a "gx-cron-job" command that would invoke any of:
     gx-check-cacl-index
     gx-db-request
     gx-db-check-requests
@@ -87,4 +87,9 @@ If no hostname is specified, run on all hosts.
 
 The cron job can then be:
 
-* * * * * .../gx-map-<version>/sbin/gx-cron
+* * * * * .../gx-map-<version>/sbin/gx-cron-job
+
+Fixed:
+gx-cron-job.in 1.10
+doc/gx-cron-job.8.pod 1.1
+gx-map release 0.5.2.2.006
