@@ -1,4 +1,4 @@
-# $Id: bug-0110,v 1.1 2006-08-10 17:59:36-07 kst Exp $
+# $Id: bug-0110,v 1.2 2006-09-22 16:28:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0110,v $
 
 gx-map bug 0110
@@ -21,3 +21,7 @@ grid-mapfile.
 By default, DNs are included regardless of any signing policies.
 
 (How much would this slow things down?)
+
+Note that the *.signing_policy files would have to be treated as inputs
+for the grid-mapfile -- i.e., we need to re-generate the grid-mapfile
+if any signing_policy file is newer than the grid-mapfile.
