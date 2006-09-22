@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.80 2006-09-15 01:02:12-07 kst Exp $
+# $Id: install-gx-map.in,v 1.81 2006-09-21 18:54:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -75,7 +75,7 @@ if [ "$whoami" = "" ] ; then
 fi
 if [ "$whoami" = "" ] ; then
     echo ">>> Can't determine user name" 1>&2
-    echo '    (tried whoami, who am i, $USER, $LOGNAME)' 1>&2
+    echo '    (tried whoami, $LOGNAME, $USER)' 1>&2
     exit 1
 fi
 if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
