@@ -1,0 +1,392 @@
+#!%PERL% -w
+
+# $Id: gx-cacl-check-index.in,v 1.1 2006-09-22 19:19:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/gx-cacl-check-index.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+
+my $GX_Map_Dir;
+BEGIN {
+    $GX_Map_Dir = '%GX_MAP_INSTALL_DIR%';
+    push @INC, "$GX_Map_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+sub Debug(@);
+sub Debugf(@);
+sub Get_Index_Info($);  # filename -> hash ref
+sub Request($$$);       # add|remove, ref, comment; called by Gen_Request
+sub Gen_Request($$);    # old_ref new_ref
+
+my $Install_Dir = '%INSTALL_DIR%';
+my $Index_File  = '%INDEX_FILE%';
+my $CA_Name     = '%CA_NAME%';
+my $Target_Dir  = "$Install_Dir/var";
+my $Filename    = File::Basename::basename $Index_File;
+my $Saved_File  = "$Target_Dir/$Filename";
+my $New_File    = "$Saved_File.new";
+
+#
+# $Error_File is created if there's a serious problem; it can be removed
+# manually after the problem is corrected.
+#
+# $Lock_File is created and removes every time this command runs; it
+# prevents running more than once in parallel.
+#
+my $Error_File  = "$Target_Dir/.cacl_error";
+my $Lock_File   = "$Target_Dir/.lock";
+
+my $gx_request_command = "$GX_Map_Dir/bin/gx-request";
+
+my $Program_Name = File::Basename::basename $0;
+my $User_Opt = {};
+my @Opts = ( $User_Opt, qw( help! dryrun! debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+
+if (-e $Error_File) {
+    #
+    # Something went wrong; don't process cacl updates until I fix it
+    # and manually remove the lock file.
+    #
+    exit 0;
+}
+elsif (-e $Lock_File) {
+    #
+    # Another gx-check-cacl-index process is still running; let it finish.
+    # (This should happen only rarely.)
+    #
+    my $lock_time = Gridmap_Utils::Get_mtime $Lock_File;
+    my $now = time;
+    die "Locked for ", $now - $lock_time, " seconds\n";
+}
+open LOCK, ">$Lock_File";
+close LOCK;
+
+if (not -e $Saved_File) {
+    #
+    # We don't have a saved copy of ca.db.index.
+    # Create it as an empty file and check it into RCS.
+    #
+    open FILE, ">$Saved_File" or die "$Saved_File: $!\n";
+    close FILE;
+    system "ci -l $Saved_File </dev/null >/dev/null 2>/dev/null";
+}
+
+#
+# $Index_File is the system ca.db.index file.
+#
+# $Saved_File is a saved copy of the index file, presumably created by
+# an earlier execution of this program.
+#
+# $New_File is a temporary copy of $Index_File, to be compared to
+# $Saved_File.
+#
+
+my @index_stat = stat $Index_File;
+my @saved_stat = stat $Saved_File;
+my $Index_File_Size  = $index_stat[7];
+my $Index_File_Mtime = $index_stat[9];
+my $Saved_File_Size  = $saved_stat[7];
+my $Saved_File_Mtime = $saved_stat[9];
+
+if ($Saved_File_Size == $Index_File_Size and
+    $Saved_File_Mtime == $Index_File_Mtime)
+{
+    Debug "Index file has not been not updated, bailing out\n";
+    unlink $Lock_File;
+    exit 0;
+}
+
+my $result = system 'cp', '-pf', $Index_File, $New_File;
+die "cp failed\n" if $result != 0;
+
+my $old_info = Get_Index_Info $Saved_File;
+my $new_info = Get_Index_Info $New_File;
+
+my @old_serials = sort { hex $a <=> hex $b } keys %$old_info;
+my @new_serials = sort { hex $a <=> hex $b } keys %$new_info;
+
+#
+# Confirm that all the serial numbers in the old index file are still
+# in the new index file.
+# Confirm that all DNs in the old index file are unchanged in the
+# new index file.
+#
+Debug "Checking for errors\n";
+my @missing_serials = ();
+my @changed_DNs = ();
+foreach my $serial (@old_serials) {
+    if (not defined $new_info->{$serial}) {
+        push @missing_serials, $serial;
+    }
+    elsif ($new_info->{$serial}->{dn} ne $old_info->{$serial}->{dn}) {
+        push @changed_DNs, $serial;
+    }
+}
+if (@missing_serials or @changed_DNs) {
+    my $mail_program = undef;
+    foreach my $cmd ('/bin/mailx', '/bin/mail') {
+        if (-x $cmd) {
+            $mail_program = $cmd;
+            last;
+        }
+    }
+
+    open ERROR, ">$Error_File";
+    if (@missing_serials) {
+        print ERROR "Missing serial numbers: @missing_serials\n";
+    }
+    if (@changed_DNs) {
+        print ERROR "Changed DNs: @changed_DNs\n";
+    }
+    if (not defined $mail_program) {
+        print ERROR "Unable to send e-mail notification " .
+                    "(no /bin/mail or /bin/mailx)\n";
+    }
+    close ERROR;
+
+    if (defined $mail_program) {
+        my $admin_email = '%ADMIN_EMAIL%';
+        system "$mail_program -s '$Program_Name $CA_Name problem' " .
+               "$admin_email < $Error_File";
+    }
+    system 'cp', $Saved_File, "$New_File.bad";
+    unlink $Lock_File;
+    exit 1;
+}
+
+foreach my $serial (@new_serials) {
+    Debug "Checking cert $serial";
+    my $old_ref = $old_info->{$serial}; # possibly undef
+    my $new_ref = $new_info->{$serial};
+
+    if (not defined $new_ref->{uid}) {
+        Debug ", not a user certificate\n";
+        next;
+    }
+    elsif (not defined $new_ref->{ou}) {
+        Debug ", undefined ou\n";
+        next;
+    }
+    elsif ($new_ref->{ou} ne 'SDSC') {
+        Debug ", ou is not \"SDSC\"\n";
+        next;
+    }
+    if (not defined $old_ref) {
+        #
+        # New entry
+        #
+        Debug ", new entry, $new_ref->{status}\n";
+        Gen_Request undef, $new_ref;
+    }
+    elsif ($old_ref->{line} ne $new_ref->{line}) {
+        #
+        # Modified entry
+        #
+        Debug ", modified entry, $old_ref->{status}", '->',
+                                 "$new_ref->{status}\n";
+        Gen_Request $old_ref, $new_ref;
+    }
+    else {
+        Debug ", unchanged\n";
+    }
+}
+
+if ($User_Opt->{dryrun}) {
+    print "% rename $New_File $Saved_File\n";
+    print "% chdir $Target_Dir\n";
+    print "% ci -l $Saved_File\n";
+    unlink $New_File;
+}
+else {
+    rename $New_File, $Saved_File;
+    chdir $Target_Dir;
+    Gridmap_Utils::Use_Commands 'ci';
+    system "ci -l $Saved_File </dev/null >/dev/null 2>/dev/null";
+}
+
+unlink $Lock_File;
+
+########################################################################
+
+#
+# Returns a reference to a hash, keyed by serial number, of
+# entry references.
+# Each entry reference is a reference to a hash of the information
+# extracted from the entry.
+#
+sub Get_Index_Info($) {
+    my($filename) = @_;
+    my $info = {};
+
+    open FILE, $filename or die "${filename}: $!\n";
+    while (<FILE>) {
+        chomp;
+        next LINE if /^$/;
+        my $ref = {};
+        my @fields = split /\t/, $_;
+        if (scalar @fields != 6) {
+            die "$filename, ", scalar @fields, " fields on line $.\n"
+        }
+        $ref->{line} = $_;
+        $ref->{status}   = $fields[0];
+        $ref->{expires}  = $fields[1];
+        $ref->{revoked}  = $fields[2];
+        $ref->{serial}   = $fields[3];
+        $ref->{unknown}  = $fields[4];
+        $ref->{dn}       = $fields[5];
+        $ref->{is_valid} = $ref->{status} eq 'V';
+
+        if ($ref->{dn} =~ m[/(USERID|UID)=([^/]+)]) {
+            $ref->{uid} = $2;
+            $ref->{email} = "$ref->{uid}\@sdsc.edu";
+            if ($ref->{dn} =~ m[/O=(NPACI|SDSC)/OU=(\w+)]) {
+                $ref->{ou} = $2;
+            }
+        }
+        $info->{$ref->{serial}} = $ref;
+    }
+    return $info;
+} # Get_Index_Info
+
+# ----------------------------------------------------------------------
+
+sub Request($$$) {
+    my ($action, $ref, $comment) = @_;
+    my @command = ($gx_request_command);
+
+    if    ($action eq 'add')    { push @command, '-add' }
+    elsif ($action eq 'remove') { push @command, '-remove' }
+    else                        { die "Internal error, action=$action\n" }
+    push @command, '-quiet';
+    push @command, '-force';
+    push @command, '-dn', $ref->{dn};
+    push @command, '-username', $ref->{uid};
+    push @command, '-email', $ref->{email};
+
+    my $source = $CA_Name;
+    $source =~ s/ /-/g;
+    push @command, '-source', $source;
+
+    push @command, '-comment',
+                   "$CA_Name certificate # $ref->{serial} ($comment)";
+
+    if ($User_Opt->{dryrun}) {
+        my @printable_command = @command;
+        foreach (@printable_command) {
+            $_ = "\"$_\"" if $_ =~ / /;
+        }
+        print "% @printable_command\n";
+    }
+    else {
+        system @command;
+    }
+} # Request
+
+# ----------------------------------------------------------------------
+
+sub Gen_Request($$) {
+    my($old_ref, $new_ref) = @_;
+
+    if (defined $old_ref) {
+        #
+        # If the old and new refs are both valid or both invalid,
+        # we don't need to request and update, since the DN and username
+        # are guaranteed to be unchanged (we already checked that)
+        #
+        my $status_change
+            = "$old_ref->{status}" . '->' . "$new_ref->{status}";
+
+        if ($old_ref->{is_valid} and not $new_ref->{is_valid}) {
+            Request 'remove', $new_ref, $status_change;
+        }
+        elsif (not $old_ref->{is_valid} and $new_ref->{is_valid}) {
+            Request 'add', $new_ref, $status_change;
+        }
+    }
+    else {
+        #
+        # If the new ref is invalid, don't do anything (perhaps
+        # a cert was issued and revoked between checks).
+        #
+        if ($new_ref->{is_valid}) {
+            Request 'add', $new_ref, $new_ref->{status};
+        }
+    }
+} # Gen_Request
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+    -help         : Display this message and exit
+    -dryrun       : Don't perform updates
+    -debugging    : Enable debugging output
+EOF
+    exit 1;
+} # Usage
