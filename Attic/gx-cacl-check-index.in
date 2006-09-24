@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-cacl-check-index.in,v 1.2 2006-09-23 20:27:03-07 kst Exp $
+# $Id: gx-cacl-check-index.in,v 1.3 2006-09-24 00:38:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-cacl-check-index.in,v $
 
 ########################################################################
@@ -51,6 +51,7 @@
 use strict;
 
 use File::Basename ();
+use File::Copy ();
 use Getopt::Long ();
 
 my $Install_Dir;
@@ -66,25 +67,6 @@ sub Debugf(@);
 sub Get_Index_Info($);  # filename -> hash ref
 sub Request($$$);       # add|remove, ref, comment; called by Gen_Request
 sub Gen_Request($$);    # old_ref new_ref
-
-my $Install_Dir = '%INSTALL_DIR%';
-my $Index_File  = '%INDEX_FILE%';
-my $CA_Name     = '%CA_NAME%';
-my $Data_Dir    = "$Install_Dir/gx-map-data";
-my $Target_Dir  = "... determine this after getting the CA name ...";
-my $Filename    = File::Basename::basename $Index_File;
-my $Saved_File  = "$Target_Dir/$Filename";
-my $New_File    = "$Saved_File.new";
-
-#
-# $Error_File is created if there's a serious problem; it can be removed
-# manually after the problem is corrected.
-#
-# $Lock_File is created and removes every time this command runs; it
-# prevents running more than once in parallel.
-#
-my $Error_File  = "$Target_Dir/.cacl_error";
-my $Lock_File   = "$Target_Dir/.lock";
 
 my $gx_request_command = "$Install_Dir/bin/gx-request";
 
@@ -118,11 +100,11 @@ my $Index_Is_Cached = 0;
 if (Gridmap_Utils::Is_URL $CA->{INDEX}) {
     my $result = Gridmap_Utils::Cache_File $CA->{INDEX};
     if (defined $result->{filename}) {
-	$Index_File = $result->{filename};
-	$Index_Is_Cached = 1;
+        $Index_File = $result->{filename};
+        $Index_Is_Cached = 1;
     }
     else {
-	die "$CA->{INDEX}: $result->{error}\n";
+        die "$CA->{INDEX}: $result->{error}\n";
     }
 }
 else {
@@ -130,31 +112,16 @@ else {
 }
 
 my $Data_Dir = "$Install_Dir/gx-map-data/cacl";
+
+Gridmap_Utils::Get_Lock $Program_Name;
+
 if (! -d $Data_Dir) {
     mkdir $Data_Dir, 0755 or die "$Data_Dir: $!\n";
 }
 my $Target_Dir = "$Data_Dir/$CA->{hash}";
 my $Saved_File = "$Target_Dir/$CA->{hash}.index";
+my $Error_File = "$Target_Dir/$CA->{hash}.error";
 my $New_File   = "$Saved_File.new";
-
-if (-e $Error_File) {
-    #
-    # Something went wrong; don't process cacl updates until I fix it
-    # and manually remove the lock file.
-    #
-    exit 0;
-}
-elsif (-e $Lock_File) {
-    #
-    # Another gx-check-cacl-index process is still running; let it finish.
-    # (This should happen only rarely.)
-    #
-    my $lock_time = Gridmap_Utils::Get_mtime $Lock_File;
-    my $now = time;
-    die "Locked for ", $now - $lock_time, " seconds\n";
-}
-open LOCK, ">$Lock_File";
-close LOCK;
 
 if (not -e $Saved_File) {
     #
@@ -187,7 +154,7 @@ if ($Saved_File_Size == $Index_File_Size and
     $Saved_File_Mtime == $Index_File_Mtime)
 {
     Debug "Index file has not been not updated, bailing out\n";
-    unlink $Lock_File;
+    Gridmap_Utils::Release_Lock $Program_Name;
     exit 0;
 }
 
@@ -226,26 +193,25 @@ if (@missing_serials or @changed_DNs) {
         }
     }
 
-    open ERROR, ">$Error_File";
+    my $message = '';
     if (@missing_serials) {
-        print ERROR "Missing serial numbers: @missing_serials\n";
+        $message .= "Missing serial numbers: @missing_serials\n";
     }
     if (@changed_DNs) {
-        print ERROR "Changed DNs: @changed_DNs\n";
+        $message .= "Changed DNs: @changed_DNs\n";
     }
-    if (not defined $mail_program) {
-        print ERROR "Unable to send e-mail notification " .
-                    "(no /bin/mail or /bin/mailx)\n";
-    }
-    close ERROR;
 
-    if (defined $mail_program) {
-        my $admin_email = '%ADMIN_EMAIL%';
-        system "$mail_program -s '$Program_Name $CA_Name problem' " .
-               "$admin_email < $Error_File";
-    }
-    system 'cp', $Saved_File, "$New_File.bad";
-    unlink $Lock_File;
+    open my $ERROR, '>', $Error_File;
+    print $ERROR $message;
+    close $ERROR;
+
+    Gridmap_Utils::Send_Email $Program_Name,
+                              $Gridmap_Utils::Config{ADMIN_EMAIL},
+                              "$CA_Name problem",
+                              $message;
+
+    File::Copy::copy $Saved_File, "$New_File.bad";
+    # Gridmap_Utils::Release_Lock $Program_Name;
     exit 1;
 }
 
@@ -299,7 +265,7 @@ else {
     system "ci -l $Saved_File </dev/null >/dev/null 2>/dev/null";
 }
 
-unlink $Lock_File;
+Gridmap_Utils::Release_Lock $Program_Name;
 
 ########################################################################
 
@@ -318,26 +284,29 @@ sub Get_CA_Info($) {
     closedir $DIR;
 
     my @matches = ();
+    my $matching_filename;
     foreach my $file (@files) {
-	my($hash, $short_name, $suffix) = split /\./, $file;
-	next if not defined $suffix or $suffix ne 'cadesc';
-	next if $hash eq '00000000';
-	if ($is_hash and $hash eq $name) {
-	    push @matches, $name;
-	}
-	elsif (not $is_hash and lc $short_name eq $name) {
-	    push @matches $name;
-	}
+        my($hash, $short_name, $suffix) = split /\./, $file;
+        next if not defined $suffix or $suffix ne 'cadesc';
+        next if $hash eq '00000000';
+        if ($is_hash and $hash eq $name) {
+            push @matches, $name;
+            $matching_filename = $file;
+        }
+        elsif (not $is_hash and lc $short_name eq $name) {
+            push @matches, $name;
+            $matching_filename = $file;
+        }
     }
     if (scalar @matches == 0) {
-	die "No matches for CA name $name\n";
+        die "No matches for CA name $name\n";
     }
     elsif (scalar @matches > 1) {
-	die "Multiple matches for CA name ${name}: @matches\n";
+        die "Multiple matches for CA name ${name}: @matches\n";
     }
 
-    return Gridmap_Utils::Get_CA_Ref "$ca_dir/$file";
-} Get_CA_Info
+    return Gridmap_Utils::Get_CA_Ref "$ca_dir/$matching_filename";
+} # Get_CA_Info
 
 # ----------------------------------------------------------------------
 
