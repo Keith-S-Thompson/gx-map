@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.122 2006-09-19 19:52:29-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.123 2006-09-23 23:44:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -71,7 +71,6 @@ sub String_To_Seconds($);
 sub Seconds_To_String($);
 sub Signing_Policy($);
 sub Get_CA_Info($);
-sub Get_CA_Ref($);
 sub Disabled($);
 sub Allow_Missing_CRL($);
 sub CRL_Info($$);
@@ -341,7 +340,7 @@ if ($User_Opt->{debugging}) {
 Gridmap_Utils::Use_Commands 'openssl';
 
 if ($User_Opt->{download}) {
-    Gridmap_Utils::Get_Lock undef, $Program_Name;
+    Gridmap_Utils::Get_Lock $Program_Name;
 }
 
 CA:
@@ -394,7 +393,7 @@ Check_Dependencies if $Certificate_Installed;
 Notify;
 
 if ($User_Opt->{download}) {
-    Gridmap_Utils::Release_Lock undef, $Program_Name;
+    Gridmap_Utils::Release_Lock $Program_Name;
 }
 
 ########################################################################
@@ -552,7 +551,7 @@ sub Signing_Policy($) {
 # (excluding any whose names begin with "00000000.").  If there are any
 # errors, prints a message and dies.  Otherwise, returns a reference to
 # a hash: keys are hashes (8 hex digits), values are CA references as
-# returned by Get_CA_Ref().
+# returned by Gridmap_Utils::Get_CA_Ref().
 #
 sub Get_CA_Info($) {
     my($dir) = @_;
@@ -579,7 +578,7 @@ sub Get_CA_Info($) {
             push @errors, "Bad file name: $file\n";
             next FILE;
         }
-        my $ref = Get_CA_Ref "$dir/$file";
+        my $ref = Gridmap_Utils::Get_CA_Ref "$dir/$file";
         if (ref $ref eq 'ARRAY') {
             #
             # The returned value is an error message, not a hash reference.
@@ -605,7 +604,8 @@ sub Get_CA_Info($) {
             $result->{$hash} = $ref;
         }
         else {
-            die "Internal error, bad result from Get_CA_Ref: $ref\n";
+            die "Internal error, bad result from " .
+		"Gridmap_Utils::Get_CA_Ref: $ref\n";
         }
     }
     if (@errors) {
@@ -615,86 +615,6 @@ sub Get_CA_Info($) {
         return $result;
     }
 } # Get_CA_Info
-
-# ----------------------------------------------------------------------
-
-#
-# Given the name of a cadesc file, returns a reference to a hash containing
-# information about the CA.
-#
-# If there's an error, return an error message as reference to an array
-# of strings.
-#
-sub Get_CA_Ref($) {
-    my($filename) = @_;
-    my $ref = Gridmap_Utils::Read_Records '-single', $filename;
-    my @errors = ();
-
-    $ref->{_FILENAME} = $filename;
-    $ref->{_FILE_BASENAME} = File::Basename::basename $filename;
-    my $short_name = $ref->{_FILE_BASENAME};
-    $short_name =~ s/\.cadesc$//;
-    $short_name =~ s/^[^.]*\.//;
-    $ref->{_SHORT_CA_NAME} = $short_name;
-
-    if (Disabled $ref) {
-        return $ref;
-    }
-
-    my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
-                                    SIGNED_BY SUBJECT MAY_SIGN
-                                    CERTIFICATE_MD5 CERTIFICATE_SHA1
-                                    CERTIFICATE_URL SIGNING_POLICY_URL
-                                    CRL_URL ALLOW_MISSING_CRL
-                                    CERT_EXPIRES DISABLE
-                                    _FILENAME _FILE_BASENAME _SHORT_CA_NAME );
-    my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
-                       CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
-    my %remap = ( SIGNED_BY => 1,
-                  SUBJECT   => 1,
-                  MAY_SIGN  => 1 );
-                       
-    foreach my $key (@required) {
-        if (not defined $ref->{$key}) {
-            push @errors, "Missing key $key";
-        }
-    }
-
-    foreach my $key (sort keys %$ref) {
-        if (not $valid{$key}) {
-            push @errors, "Unrecognized key $key";
-        }
-        if ($key =~ /_URL$/) {
-            if ($ref->{$key} ne '?' and $ref->{$key} !~ m<^(https?|ftp):>) {
-                push @errors, "Bad value for $key (must be a URL)";
-            }
-        }
-        #
-        # Map subject names to GT4-compatible (and GT3-compatible) forms.
-        #
-        if ($remap{$key}) {
-            if (ref $ref->{$key} eq 'ARRAY') {
-                map { $_ = Gridmap_Utils::GT4_Subject $_ } @{$ref->{$key}};
-            }
-            else {
-                $ref->{$key} = Gridmap_Utils::GT4_Subject $ref->{$key};
-            }
-        }
-    }
-    if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
-        push @errors, "Invalid HASH";
-    }
-    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
-        push @errors, "Value for DISABLE must be \"yes\" or \"no\"";
-    }
-
-    if (@errors) {
-        return \@errors;
-    }
-    else {
-        return $ref;
-    }
-} # Get_CA_Ref
 
 # ----------------------------------------------------------------------
 
