@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.4 2006-09-24 01:28:43-07 kst Exp $
+# $Id: gx-check-index.in,v 1.5 2006-09-24 01:36:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -119,9 +119,8 @@ my $Data_Dir = "$Install_Dir/gx-map-data/ca-index";
 
 Gridmap_Utils::Get_Lock $Program_Name;
 
-my $Target_Dir = "$Data_Dir/$CA->{HASH}";
-my $Saved_File = "$Target_Dir/$CA->{HASH}.index";
-my $Error_File = "$Target_Dir/$CA->{HASH}.error";
+my $Saved_File = "$Data_Dir/$CA->{HASH}.index";
+my $Error_File = "$Data_Dir/$CA->{HASH}.error";
 my $New_File   = "$Saved_File.new";
 
 if (not -e $Saved_File) {
@@ -255,13 +254,13 @@ foreach my $serial (@new_serials) {
 
 if ($User_Opt->{dryrun}) {
     print "% rename $New_File $Saved_File\n";
-    print "% chdir $Target_Dir\n";
+    print "% chdir $Data_Dir\n";
     print "% ci -l $Saved_File\n";
     unlink $New_File;
 }
 else {
     rename $New_File, $Saved_File;
-    chdir $Target_Dir;
+    chdir $Data_Dir;
     Gridmap_Utils::Use_Commands 'ci';
     system "ci -l $Saved_File </dev/null >/dev/null 2>/dev/null";
 }
