@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.2 2006-09-24 00:57:31-07 kst Exp $
+# $Id: gx-check-index.in,v 1.3 2006-09-24 01:22:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -112,13 +112,10 @@ else {
     $Index_File = $CA->{INDEX};
 }
 
-my $Data_Dir = "$Install_Dir/gx-map-data/cacl";
+my $Data_Dir = "$Install_Dir/gx-map-data/ca-index";
 
 Gridmap_Utils::Get_Lock $Program_Name;
 
-if (! -d $Data_Dir) {
-    mkdir $Data_Dir, 0755 or die "$Data_Dir: $!\n";
-}
 my $Target_Dir = "$Data_Dir/$CA->{hash}";
 my $Saved_File = "$Target_Dir/$CA->{hash}.index";
 my $Error_File = "$Target_Dir/$CA->{hash}.error";
