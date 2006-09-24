@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-cacl-check-index.in,v 1.1 2006-09-22 19:19:18-07 kst Exp $
+# $Id: gx-cacl-check-index.in,v 1.2 2006-09-23 20:27:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-cacl-check-index.in,v $
 
 ########################################################################
@@ -53,10 +53,10 @@ use strict;
 use File::Basename ();
 use Getopt::Long ();
 
-my $GX_Map_Dir;
+my $Install_Dir;
 BEGIN {
-    $GX_Map_Dir = '%GX_MAP_INSTALL_DIR%';
-    push @INC, "$GX_Map_Dir/lib";
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
 }
 use Gridmap_Utils ();
 
@@ -70,7 +70,8 @@ sub Gen_Request($$);    # old_ref new_ref
 my $Install_Dir = '%INSTALL_DIR%';
 my $Index_File  = '%INDEX_FILE%';
 my $CA_Name     = '%CA_NAME%';
-my $Target_Dir  = "$Install_Dir/var";
+my $Data_Dir    = "$Install_Dir/gx-map-data";
+my $Target_Dir  = "... determine this after getting the CA name ...";
 my $Filename    = File::Basename::basename $Index_File;
 my $Saved_File  = "$Target_Dir/$Filename";
 my $New_File    = "$Saved_File.new";
@@ -85,14 +86,56 @@ my $New_File    = "$Saved_File.new";
 my $Error_File  = "$Target_Dir/.cacl_error";
 my $Lock_File   = "$Target_Dir/.lock";
 
-my $gx_request_command = "$GX_Map_Dir/bin/gx-request";
+my $gx_request_command = "$Install_Dir/bin/gx-request";
 
 my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
-my @Opts = ( $User_Opt, qw( help! dryrun! debugging! ) );
+my @Opts = ( $User_Opt, qw( help! version! dryrun! debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
-Usage if @ARGV;
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+Usage if scalar @ARGV != 1;
+my $CA_Name = $ARGV[0];
+
+my $CA = Get_CA_Info $CA_Name;
+if (ref $CA eq 'ARRAY') {
+    #
+    # The returned value is an error message, not a hash reference
+    #
+    my @errors = map "$_\n", @$CA;
+    die @errors;
+}
+
+if (not defined $CA->{INDEX}) {
+    die "No INDEX specified in $CA->{_FILENAME}\n";
+}
+
+my $Index_File;
+my $Index_Is_Cached = 0;
+if (Gridmap_Utils::Is_URL $CA->{INDEX}) {
+    my $result = Gridmap_Utils::Cache_File $CA->{INDEX};
+    if (defined $result->{filename}) {
+	$Index_File = $result->{filename};
+	$Index_Is_Cached = 1;
+    }
+    else {
+	die "$CA->{INDEX}: $result->{error}\n";
+    }
+}
+else {
+    $Index_File = $CA->{INDEX};
+}
+
+my $Data_Dir = "$Install_Dir/gx-map-data/cacl";
+if (! -d $Data_Dir) {
+    mkdir $Data_Dir, 0755 or die "$Data_Dir: $!\n";
+}
+my $Target_Dir = "$Data_Dir/$CA->{hash}";
+my $Saved_File = "$Target_Dir/$CA->{hash}.index";
+my $New_File   = "$Saved_File.new";
 
 if (-e $Error_File) {
     #
@@ -261,6 +304,44 @@ unlink $Lock_File;
 ########################################################################
 
 #
+# Given either a hexadecimal hash or a short name, search for
+# a matching *.cadesc file and return information about the CA
+# using Gridmap_Utils::Get_CA_Ref.
+#
+sub Get_CA_Info($) {
+    my($name) = @_;
+    my $is_hash = $name =~ /^[\da-f]{8}$/;
+    my $ca_dir = "$Install_Dir/etc/gx-map/ca-config";
+
+    opendir my $DIR, $ca_dir or die "$ca_dir: $!\n";
+    my @files = grep /\.cadesc$/, readdir $DIR;
+    closedir $DIR;
+
+    my @matches = ();
+    foreach my $file (@files) {
+	my($hash, $short_name, $suffix) = split /\./, $file;
+	next if not defined $suffix or $suffix ne 'cadesc';
+	next if $hash eq '00000000';
+	if ($is_hash and $hash eq $name) {
+	    push @matches, $name;
+	}
+	elsif (not $is_hash and lc $short_name eq $name) {
+	    push @matches $name;
+	}
+    }
+    if (scalar @matches == 0) {
+	die "No matches for CA name $name\n";
+    }
+    elsif (scalar @matches > 1) {
+	die "Multiple matches for CA name ${name}: @matches\n";
+    }
+
+    return Gridmap_Utils::Get_CA_Ref "$ca_dir/$file";
+} Get_CA_Info
+
+# ----------------------------------------------------------------------
+
+#
 # Returns a reference to a hash, keyed by serial number, of
 # entry references.
 # Each entry reference is a reference to a hash of the information
@@ -383,10 +464,13 @@ sub Debugf(@) {
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Program_Name [options]
+Usage: $Program_Name [options] CA_name
     -help         : Display this message and exit
+    -version      : Display version number and exit
     -dryrun       : Don't perform updates
     -debugging    : Enable debugging output
+The CA name can be given either as a hexadecimal hash value (such as
+"3deda549" or "b89793e4") or as a short name (such as "sdsc" or "npaci")
 EOF
     exit 1;
 } # Usage
