@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.228 2006-09-19 03:32:46-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.229 2006-09-23 23:20:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -149,6 +149,8 @@ sub Sort_By_Timestamp(@);
 
 sub Gen_Mappings(@);
 
+sub Is_URL($);
+
 sub Cache_File(@);
 sub Release_Cache_File($);
 
@@ -169,8 +171,10 @@ sub Normalize_DN($);
 
 sub Send_Email($$$$);
 
-sub Get_Lock($$);
-sub Release_Lock($$);
+sub Get_CA_Ref($);
+
+sub Get_Lock($);
+sub Release_Lock($);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
@@ -1409,7 +1413,7 @@ sub QP_Encode($) {
 # The argument is the name of a cache file.  The function creates a
 # uniquely named hard link to the cache file, and returns the name of
 # the hard link.
-# 
+#
 sub Make_Hard_Link($) {
     my($filename) = @_;
     my $hostname = Gridmap_Utils::Get_Hostname();
@@ -1520,6 +1524,20 @@ my %Curl_Error
         76 => "Character conversion functions required" );
 
 my $Curl_Supports_Insecure_Option = undef;
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the argument is a URL (either ftp, http, or https),
+# false otherwise.
+#
+sub Is_URL($) {
+    my($arg) = @_;
+    return 1 if $arg =~ m<^ftp://>;
+    return 1 if $arg =~ m<^http://>;
+    return 1 if $arg =~ m<^https://>;
+    return 0;
+} # Is_URL
 
 # ----------------------------------------------------------------------
 
@@ -1799,13 +1817,6 @@ sub Cache_File(@) {
              filename  => Make_Hard_Link $cached_file,
              timestamp => $cached_mtime };
 } # Cache_File
-
-# ----------------------------------------------------------------------
-
-sub Release_Cache_File($) {
-    my($filename) = @_;
-    unlink $filename;
-} # Release_Cache_File
 
 # ----------------------------------------------------------------------
 
@@ -2341,26 +2352,103 @@ EOF
 # ----------------------------------------------------------------------
 
 #
+# Given the name of a cadesc file, returns a reference to a hash containing
+# information about the CA.
+#
+# If there's an error, return an error message as reference to an array
+# of strings.
+#
+sub Get_CA_Ref($) {
+    my($filename) = @_;
+    my $ref = Gridmap_Utils::Read_Records '-single', $filename;
+    my @errors = ();
+
+    $ref->{_FILENAME} = $filename;
+    $ref->{_FILE_BASENAME} = File::Basename::basename $filename;
+    my $short_name = $ref->{_FILE_BASENAME};
+    $short_name =~ s/\.cadesc$//;
+    $short_name =~ s/^[^.]*\.//;
+    $ref->{_SHORT_CA_NAME} = $short_name;
+
+    if (Disabled $ref) {
+        return $ref;
+    }
+
+    my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
+                                    SIGNED_BY SUBJECT MAY_SIGN
+                                    CERTIFICATE_MD5 CERTIFICATE_SHA1
+                                    CERTIFICATE_URL SIGNING_POLICY_URL
+                                    CRL_URL ALLOW_MISSING_CRL
+                                    CERT_EXPIRES DISABLE
+                                    _FILENAME _FILE_BASENAME _SHORT_CA_NAME );
+    my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
+                       CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
+    my %remap = ( SIGNED_BY => 1,
+                  SUBJECT   => 1,
+                  MAY_SIGN  => 1 );
+                       
+    foreach my $key (@required) {
+        if (not defined $ref->{$key}) {
+            push @errors, "Missing key $key";
+        }
+    }
+
+    foreach my $key (sort keys %$ref) {
+        if (not $valid{$key}) {
+            push @errors, "Unrecognized key $key";
+        }
+        if ($key =~ /_URL$/) {
+            if ($ref->{$key} ne '?' and Gridmap_Utils::Is_URL $ref->{$key}) {
+                push @errors, "Bad value for $key (must be a URL)";
+            }
+        }
+        #
+        # Map subject names to GT4-compatible (and GT3-compatible) forms.
+        #
+        if ($remap{$key}) {
+            if (ref $ref->{$key} eq 'ARRAY') {
+                map { $_ = Gridmap_Utils::GT4_Subject $_ } @{$ref->{$key}};
+            }
+            else {
+                $ref->{$key} = Gridmap_Utils::GT4_Subject $ref->{$key};
+            }
+        }
+    }
+    if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
+        push @errors, "Invalid HASH";
+    }
+    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
+        push @errors, "Value for DISABLE must be \"yes\" or \"no\"";
+    }
+
+    if (@errors) {
+        return \@errors;
+    }
+    else {
+        return $ref;
+    }
+} # Get_CA_Ref
+
+# ----------------------------------------------------------------------
+
+#
 # Get a lock.
-# Arguments:
-#     Data directory.
-#     Program name.
+# The argument is a program name (or possibly the name of some resource
+# to be locked).
+#
 # Create a uniquely named lock file, then attempt to create
 # the actual lock file as a hard link to it.  If this succeeds,
 # we have the lock; otherwise check the link count.
 #
-# If the data directory is undef, use INSTALL_DIR/gx-map-data
-# (this is used to determine whether to advise running gx-remove-locks).
+# The lock is created in INSTALL_DIR/gx-map-data.
 #
-# See bugs/bug-0081 for details.
+# See bugs/bug-0081 for details about the locking mechanism.
 #
-sub Get_Lock($$) {
-    my($dir, $name) = @_;
-    my $actual_dir = ( defined $dir
-                       ? $dir
-                       : "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data" );
+sub Get_Lock($) {
+    my($name) = @_;
+    my $dir = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data";
     my $hostname = Gridmap_Utils::Get_Hostname;
-    my $lock_file = "$actual_dir/.$name.lock";
+    my $lock_file = "$dir/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
     Gridmap_Utils::Untaint $lock_file;
     Gridmap_Utils::Untaint $unique_lock_file;
@@ -2409,9 +2497,7 @@ sub Get_Lock($$) {
                     }
                     close $old_lock;
                 }
-                if (not defined $dir) {
-                    $message .= "Consider running gx-remove-locks\n";
-                }
+		$message .= "Consider running gx-remove-locks\n";
             }
             else {
                 $message = "Failed to get lock: $link_error\n";
@@ -2427,11 +2513,9 @@ sub Get_Lock($$) {
 #
 # Delete the lock file created by Get_Lock().
 #
-sub Release_Lock($$) {
-    my($dir, $name) = @_;
-    if (not defined $dir) {
-        $dir = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data";
-    }
+sub Release_Lock($) {
+    my($name) = @_;
+    my $dir = "$Gridmap_Utils::Config{INSTALL_DIR}/gx-map-data";
     my $lock_file = "$dir/.$name.lock";
     Untaint $lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
