@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.1 2006-09-24 00:54:10-07 kst Exp $
+# $Id: gx-check-index.in,v 1.2 2006-09-24 00:57:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -64,6 +64,7 @@ use Gridmap_Utils ();
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
+sub Get_CA_Info($);
 sub Get_Index_Info($);  # filename -> hash ref
 sub Request($$$);       # add|remove, ref, comment; called by Gen_Request
 sub Gen_Request($$);    # old_ref new_ref
