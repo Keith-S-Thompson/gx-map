@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.3 2006-09-24 01:22:30-07 kst Exp $
+# $Id: gx-check-index.in,v 1.4 2006-09-24 01:28:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -83,6 +83,9 @@ if ($User_Opt->{version}) {
 Usage if scalar @ARGV != 1;
 my $CA_Name = $ARGV[0];
 
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
+
 my $CA = Get_CA_Info $CA_Name;
 if (ref $CA eq 'ARRAY') {
     #
@@ -116,9 +119,9 @@ my $Data_Dir = "$Install_Dir/gx-map-data/ca-index";
 
 Gridmap_Utils::Get_Lock $Program_Name;
 
-my $Target_Dir = "$Data_Dir/$CA->{hash}";
-my $Saved_File = "$Target_Dir/$CA->{hash}.index";
-my $Error_File = "$Target_Dir/$CA->{hash}.error";
+my $Target_Dir = "$Data_Dir/$CA->{HASH}";
+my $Saved_File = "$Target_Dir/$CA->{HASH}.index";
+my $Error_File = "$Target_Dir/$CA->{HASH}.error";
 my $New_File   = "$Saved_File.new";
 
 if (not -e $Saved_File) {
