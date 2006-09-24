@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.231 2006-09-24 01:01:33-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.232 2006-09-24 01:04:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2398,7 +2398,9 @@ sub Get_CA_Ref($) {
             push @errors, "Unrecognized key $key";
         }
         if ($key =~ /_URL$/) {
-            if ($ref->{$key} ne '?' and Gridmap_Utils::Is_URL $ref->{$key}) {
+            if ($ref->{$key} ne '?' and
+                not Gridmap_Utils::Is_URL $ref->{$key})
+            {
                 push @errors, "Bad value for $key (must be a URL)";
             }
         }
@@ -2497,7 +2499,7 @@ sub Get_Lock($) {
                     }
                     close $old_lock;
                 }
-		$message .= "Consider running gx-remove-locks\n";
+                $message .= "Consider running gx-remove-locks\n";
             }
             else {
                 $message = "Failed to get lock: $link_error\n";
