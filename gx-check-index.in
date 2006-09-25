@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.7 2006-09-25 01:23:11-07 kst Exp $
+# $Id: gx-check-index.in,v 1.8 2006-09-25 13:32:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -73,7 +73,7 @@ my $gx_request_command = "$Install_Dir/bin/gx-request";
 
 my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
-my @Opts = ( $User_Opt, qw( help! version! dryrun! debugging! ) );
+my @Opts = ( $User_Opt, qw( help! version! ca=s dryrun! debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 if ($User_Opt->{version}) {
@@ -81,12 +81,12 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 Usage if scalar @ARGV != 1;
-my $CA_Name = $ARGV[0];
+my $Index = $ARGV[0];
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
 
-my $CA = Get_CA_Info $CA_Name;
+my $CA = Get_CA_Info $User_Opt->{ca};
 if (ref $CA eq 'ARRAY') {
     #
     # The returned value is an error message, not a hash reference
@@ -95,24 +95,24 @@ if (ref $CA eq 'ARRAY') {
     die @errors;
 }
 
-if (not defined $CA->{INDEX}) {
-    die "No INDEX specified in $CA->{_FILENAME}\n";
-}
-
+#
+# $Index may be either a file name or a URL.
+# $Index_File is a file name (possibly a cache file).
+#
 my $Index_File;
 my $Index_Is_Cached = 0;
-if (Gridmap_Utils::Is_URL $CA->{INDEX}) {
-    my $result = Gridmap_Utils::Cache_File $CA->{INDEX};
+if (Gridmap_Utils::Is_URL $Index) {
+    my $result = Gridmap_Utils::Cache_File $Index;
     if (defined $result->{filename}) {
         $Index_File = $result->{filename};
         $Index_Is_Cached = 1;
     }
     else {
-        die "$CA->{INDEX}: $result->{error}\n";
+        die "${Index}: $result->{error}\n";
     }
 }
 else {
-    $Index_File = $CA->{INDEX};
+    $Index_File = $Index;
 }
 
 my $Data_Dir = "$Install_Dir/gx-map-data/ca-index";
@@ -207,7 +207,7 @@ if (@missing_serials or @changed_DNs) {
 
     Gridmap_Utils::Send_Email $Program_Name,
                               $Gridmap_Utils::Config{ADMIN_EMAIL},
-                              "$CA_Name problem",
+                              "$User_Opt->{ca} problem",
                               $message;
 
     File::Copy::copy $Saved_File, "$New_File.bad";
@@ -419,13 +419,16 @@ sub Debugf(@) {
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Program_Name [options] CA_name
+Usage: $Program_Name [options] index-file
+The index-file argument can be either a local file name or a URL.
     -help         : Display this message and exit
     -version      : Display version number and exit
+    -ca name      : The CA being handled.  Mandatory.
+                    The CA name can be given either as a hexadecimal
+                    hash value (such as "3deda549" or "b89793e4") or as
+                    a short name (such as "sdsc" or "npaci")
     -dryrun       : Don't perform updates
     -debugging    : Enable debugging output
-The CA name can be given either as a hexadecimal hash value (such as
-"3deda549" or "b89793e4") or as a short name (such as "sdsc" or "npaci")
 EOF
     exit 1;
 } # Usage
