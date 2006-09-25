@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.9 2006-09-25 13:37:56-07 kst Exp $
+# $Id: gx-check-index.in,v 1.10 2006-09-25 13:53:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -115,7 +115,7 @@ if (Gridmap_Utils::Is_URL $User_Opt->{index}) {
         $Index_Is_Cached = 1;
     }
     else {
-        die "${Index}: $result->{error}\n";
+        die "$User_Opt->{index}: $result->{error}\n";
     }
 }
 else {
@@ -334,11 +334,14 @@ sub Get_Index_Info($) {
         $ref->{revoked}  = $fields[2];
         $ref->{serial}   = $fields[3];
         $ref->{unknown}  = $fields[4];
-        $ref->{dn}       = $fields[5];
+        $ref->{dn}       = Gridmap_Utils::Normalize_DN $fields[5];
         $ref->{is_valid} = $ref->{status} eq 'V';
 
-        if ($ref->{dn} =~ m[/(USERID|UID)=([^/]+)]) {
-            $ref->{uid} = $2;
+        if ($ref->{dn} =~ m[/UID=([^/]+)]) {
+            $ref->{uid} = $1;
+        }
+        if ($ref->{dn} =~ m[/emailAddress=([^/]+)]) {
+            $ref->{email} = $1;
         }
         $info->{$ref->{serial}} = $ref;
     }
@@ -358,9 +361,11 @@ sub Request($$$) {
     push @command, '-force';
     push @command, '-dn', $ref->{dn};
     push @command, '-username', $ref->{uid};
+    if (defined $ref->{email}) {
+        push @command, '-email', $ref->{email};
+    }
 
-    my $source = "CA-$CA->{HASH}";
-    push @command, '-source', $source;
+    push @command, '-source', "CA_$CA->{HASH}";
 
     push @command, '-comment',
                    "$CA->{HASH} $CA->{CA_NAME} # $ref->{serial} ($comment)";
