@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.6 2006-09-25 01:10:04-07 kst Exp $
+# $Id: gx-check-index.in,v 1.7 2006-09-25 01:23:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -351,13 +351,12 @@ sub Request($$$) {
     push @command, '-force';
     push @command, '-dn', $ref->{dn};
     push @command, '-username', $ref->{uid};
-    push @command, '-email', $ref->{email};
 
     my $source = "CA-$CA->{HASH}";
-    push @command, '-source', $source
+    push @command, '-source', $source;
 
     push @command, '-comment',
-                   "$CA->{HASH} $CA->{NAME} # $ref->{serial} ($comment)";
+                   "$CA->{HASH} $CA->{CA_NAME} # $ref->{serial} ($comment)";
 
     if ($User_Opt->{dryrun}) {
         my @printable_command = @command;
