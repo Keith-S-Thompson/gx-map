@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.5 2006-09-24 01:36:02-07 kst Exp $
+# $Id: gx-check-index.in,v 1.6 2006-09-25 01:10:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -224,14 +224,6 @@ foreach my $serial (@new_serials) {
         Debug ", not a user certificate\n";
         next;
     }
-    elsif (not defined $new_ref->{ou}) {
-        Debug ", undefined ou\n";
-        next;
-    }
-    elsif ($new_ref->{ou} ne 'SDSC') {
-        Debug ", ou is not \"SDSC\"\n";
-        next;
-    }
     if (not defined $old_ref) {
         #
         # New entry
@@ -340,10 +332,6 @@ sub Get_Index_Info($) {
 
         if ($ref->{dn} =~ m[/(USERID|UID)=([^/]+)]) {
             $ref->{uid} = $2;
-            $ref->{email} = "$ref->{uid}\@sdsc.edu";
-            if ($ref->{dn} =~ m[/O=(NPACI|SDSC)/OU=(\w+)]) {
-                $ref->{ou} = $2;
-            }
         }
         $info->{$ref->{serial}} = $ref;
     }
@@ -365,12 +353,11 @@ sub Request($$$) {
     push @command, '-username', $ref->{uid};
     push @command, '-email', $ref->{email};
 
-    my $source = $CA_Name;
-    $source =~ s/ /-/g;
-    push @command, '-source', $source;
+    my $source = "CA-$CA->{HASH}";
+    push @command, '-source', $source
 
     push @command, '-comment',
-                   "$CA_Name certificate # $ref->{serial} ($comment)";
+                   "$CA->{HASH} $CA->{NAME} # $ref->{serial} ($comment)";
 
     if ($User_Opt->{dryrun}) {
         my @printable_command = @command;
