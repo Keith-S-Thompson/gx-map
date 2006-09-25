@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.8 2006-09-25 13:32:11-07 kst Exp $
+# $Id: gx-check-index.in,v 1.9 2006-09-25 13:37:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -73,15 +73,22 @@ my $gx_request_command = "$Install_Dir/bin/gx-request";
 
 my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
-my @Opts = ( $User_Opt, qw( help! version! ca=s dryrun! debugging! ) );
+my @Opts = ( $User_Opt, qw( help!
+                            version!
+                            ca=s
+                            index=s
+                            dryrun!
+                            debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
-Usage if scalar @ARGV != 1;
-my $Index = $ARGV[0];
+Usage if @ARGV;
+if (not defined $User_Opt->{ca} or not defined $User_Opt->{index}) {
+    Usage "Both \"-ca\" and \"-index\" must be specified\n";
+}
 
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
@@ -96,13 +103,13 @@ if (ref $CA eq 'ARRAY') {
 }
 
 #
-# $Index may be either a file name or a URL.
+# $User_Opt->{index} may be either a file name or a URL.
 # $Index_File is a file name (possibly a cache file).
 #
 my $Index_File;
 my $Index_Is_Cached = 0;
-if (Gridmap_Utils::Is_URL $Index) {
-    my $result = Gridmap_Utils::Cache_File $Index;
+if (Gridmap_Utils::Is_URL $User_Opt->{index}) {
+    my $result = Gridmap_Utils::Cache_File $User_Opt->{index};
     if (defined $result->{filename}) {
         $Index_File = $result->{filename};
         $Index_Is_Cached = 1;
@@ -112,7 +119,7 @@ if (Gridmap_Utils::Is_URL $Index) {
     }
 }
 else {
-    $Index_File = $Index;
+    $Index_File = $User_Opt->{index};
 }
 
 my $Data_Dir = "$Install_Dir/gx-map-data/ca-index";
@@ -427,6 +434,8 @@ The index-file argument can be either a local file name or a URL.
                     The CA name can be given either as a hexadecimal
                     hash value (such as "3deda549" or "b89793e4") or as
                     a short name (such as "sdsc" or "npaci")
+    -index index  : Index file.  Mandatory.
+                    This can be either a local file name or a URL.
     -dryrun       : Don't perform updates
     -debugging    : Enable debugging output
 EOF
