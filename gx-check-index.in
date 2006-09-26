@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-check-index.in,v 1.10 2006-09-25 13:53:29-07 kst Exp $
+# $Id: gx-check-index.in,v 1.11 2006-09-25 17:28:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -431,7 +431,7 @@ sub Debugf(@) {
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Program_Name [options] index-file
+Usage: $Program_Name [options]
 The index-file argument can be either a local file name or a URL.
     -help         : Display this message and exit
     -version      : Display version number and exit
