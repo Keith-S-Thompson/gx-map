@@ -1,4 +1,4 @@
-# $Id: bug-0118,v 1.1 2006-09-26 18:21:38-07 kst Exp $
+# $Id: bug-0118,v 1.2 2006-09-26 18:24:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0118,v $
 
 gx-map bug 0118
@@ -7,7 +7,7 @@ Severity: Med
 Reported by: JP Navarro <navarro@mcs.anl.gov>
 Version: 0.4.5
 Status: Open
-Title: Add configurations for the the IGTF CAs
+Title: Add configurations for the IGTF CAs
 
 E-mail from JP Navarro, Tue 2006-09-12:
 
