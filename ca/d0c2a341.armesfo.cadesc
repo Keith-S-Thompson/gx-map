@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.11 2006-06-06 00:55:20-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.12 2006-09-26 22:03:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -19,3 +19,5 @@ CERT_EXPIRES        Mon 2008-12-01 23:29:21 UTC
 # The certificate appears to have been updated again 2006-04-20.
 
 # MD5 and SHA1 fingerprints from d0c2a341.0 downloaded Tue 2006-06-06
+# Re-verified Tue 2006-09-26
+# Checked against https://www.tacar.org/md5.html Tue 2006-09-26
