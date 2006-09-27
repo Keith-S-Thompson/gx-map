@@ -1,4 +1,4 @@
-# $Id: bug-0115,v 1.2 2006-09-14 22:20:06-07 kst Exp $
+# $Id: bug-0115,v 1.3 2006-09-26 19:41:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0115,v $
 
 gx-map bug 0115
@@ -6,7 +6,7 @@ Date: Sat 2006-09-02
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2
-Status: Open
+Status: Fixed 0.5.2.2.008
 Title: Warn about DNs that are handled automatically
 
 At SDSC, cron jobs automatically invoke gx-request for new, expired,
@@ -17,3 +17,15 @@ gx-request manually.
 Add a configuration option of some sort to specify which DNs are
 handled automatically.  If a user tries to invoke gx-request with a
 matching DN, issue a warning.
+
+Fix:
+Add a list of patterns (similar to those in a signing_policy file) in
+etc/gx-map/auto.txt.  If a DN matches one of the specified patterns,
+gx-request prints a warning before submitting the request (unless
+"-force" or "-quiet" is specified).
+
+Fixed:
+auto.txt 1.1
+install-gx-map.in 1.85
+gx-request.in 1.52
+gx-map release 0.5.2.2.008
