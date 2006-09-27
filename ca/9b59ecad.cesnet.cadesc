@@ -1,4 +1,4 @@
-# $Id: 9b59ecad.cesnet.cadesc,v 1.1 2006-06-27 21:39:33-07 kst Exp $
+# $Id: 9b59ecad.cesnet.cadesc,v 1.2 2006-09-26 22:03:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b59ecad.cesnet.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -18,3 +18,5 @@ CERT_EXPIRES        Tue 2025-06-17 15:20:17 UTC
 # wasn't able to find it on the CA's own site, but it seems reasonable.
 
 # MD5 and SHA1 fingerprints from 9b59ecad.0 downloaded Tue 2006-06-27
+# Re-verified Tue 2006-09-26
+# Checked against <https://www.tacar.org/md5.html> Tue 2006-09-26
