@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.51 2006-09-13 19:38:01-07 kst Exp $
+# $Id: gx-request.in,v 1.52 2006-09-26 19:41:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -72,6 +72,7 @@ sub Get_DN_From_Certificate($);
 sub Proxy_File_Name();
 sub User_Cert_File_Name();
 sub Gen_Request_File_Name($);
+sub DN_Is_Handled_Automatically($);
 sub Clone($);
 sub Unique(@);
 sub Die_Quietly(@);
@@ -388,6 +389,20 @@ if (not $Options->{quiet}) {
     }
 }
 if (not $Options->{force}) {
+    #
+    # Warn if the DN is one that's handled automatically (i.e., matches
+    # a pattern in the etc/gx-map/auto.txt file).  We assume here that
+    # there's at most 1 DN, since the "set" option is no longer supported.
+    # (If there's more than one, we'll just check the first.)
+    #
+
+    if (scalar @dn_list >= 1 and DN_Is_Handled_Automatically $dn_list[0]) {
+        print "NOTE: The distinguished name\n",
+              "    \"\$dn_list[0]\"\n",
+              "should be handled automatically; this request\n",
+              "is probably unnecessary\n";
+    }
+
     PROMPT:
     while (1) {
         print "Proceed? [yn] ";
@@ -1162,6 +1177,35 @@ sub Get_Options_From_Command_Line() {
     
     return $Options;
 } # Get_Options_From_Command_Line
+
+# ----------------------------------------------------------------------
+
+#
+# Returns 1 if the given DN matches one of the patterns in
+# etc/gx-map/auto.txt.  Returns 0 if it doesn't, or if the
+# auto.txt file can't be read.
+#
+sub DN_Is_Handled_Automatically($) {
+    my($dn) = @_;
+    my $auto_file = "$Install_Dir/etc/gx-map/auto.txt";
+    open my $AUTO, '<', $auto_file or return 0;
+    while (<$AUTO>) {
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        my $regexp = $_;
+        $regexp =~ s/\*/__ASTERISK__/g;
+        $regexp = quotemeta $regexp;
+        $regexp =~ s/__ASTERISK__/.*/g;
+        $regexp = qr/$regexp/;
+        if ($dn =~ /$regexp/) {
+            close $AUTO;
+            return 1;
+        }
+    }
+    close $AUTO;
+    return 0;
+} # DN_Is_Handled_Automatically
 
 # ----------------------------------------------------------------------
 
