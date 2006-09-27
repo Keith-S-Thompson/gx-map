@@ -1,4 +1,4 @@
-# $Id: fa3af1d7.cern.cadesc,v 1.9 2006-01-13 17:07:29-08 kst Exp $
+# $Id: fa3af1d7.cern.cadesc,v 1.10 2006-09-26 21:48:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa3af1d7.cern.cadesc,v $
 
 CA_NAME             CERN CA
@@ -20,4 +20,6 @@ CERT_EXPIRES        Tue 2008-08-19 09:50:00 UTC
 #     fa3af1d7.crl_url (points to a CRL in DER format)
 #     fa3af1d7.0
 
-# MD5 and SHA1 fingerprints from fa3af1d7.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from fa3af1d7.0 downloaded Tue 2005-03-29
+# Re-verified Tue 2006-09-26
+# Verified against https://www.tacar.org/md5.html Tue 2006-09-26
