@@ -1,4 +1,4 @@
-# $Id: gx-map-cadesc.5.pod,v 1.4 2006-04-12 19:17:37-07 kst Exp $
+# $Id: gx-map-cadesc.5.pod,v 1.5 2006-09-26 18:12:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-cadesc.5.pod,v $
 
 =for comment
@@ -153,23 +153,30 @@ level of security than checking just one.  If future releases of
 OpenSSL provide more secure hash functions, future releases of
 B<gx-map> will use them.
 
+=item CERTIFICATE_URL (required)
+
+A URL from which the signing certificate, in PEM format, can be
+downloaded.  This must be a URL; it cannot be the name of a local file.
+
 =item SIGNING_POLICY_URL (doc)
 
-A URL from which a signing_policy file can be downloaded.  This is
-included for reference; gx-ca-update doesn't use it.  Instead, the
-signing_policy file is constructed from the SUBJECT and MAY_SIGN
-attributes.  This allows a site to impose a stricter policy than the
-one suggested by the CA's owner (or a looser policy, but that's seldom
-a good idea).  It also ensures that the signing_policy reflects both
-GT2-compatible and GT4-compatible forms (e.g., both "/USERID=" and
-"/UID="); see below.
+A URL from which a signing_policy file can be downloaded.  This must
+be a URL; it cannot be the name of a local file.  This is included for
+reference; gx-ca-update doesn't use it.  Instead, the signing_policy
+file is constructed from the SUBJECT and MAY_SIGN attributes.
+This allows a site to impose a stricter policy than the one suggested
+by the CA's owner (or a looser policy, but that's seldom a good idea).
+It also ensures that the signing_policy reflects both GT2-compatible
+and GT4-compatible forms (e.g., both "/USERID=" and "/UID=");
+see below.
 
 =item CRL_URL
 
 A URL from which the certificate revocation list, in PEM format,
-can be downloaded.  A missing CRL_URL is normally treated as an
-error; see the B<-allow-missing-crl> command-line option and the
-B<ALLOW_MISSING_CRL> attributes for ways to override this.
+can be downloaded.  This must be a URL; it cannot be the name of a
+local file.  A missing CRL_URL is normally treated as an error; see the
+B<-allow-missing-crl> command-line option and the B<ALLOW_MISSING_CRL>
+attributes for ways to override this.
 
 =item ALLOW_MISSING_CRL
 
@@ -189,10 +196,10 @@ This is the expiration date for the certificate.
 It can be determined by 
     S<C<openssl x509 -in B<FILENAME> -noout -enddate>>
 
-=item DISABLED
+=item DISABLE
 
 If set to "yes", this indicates that the CA files are not to be
-installed.  Note that setting DISABLED to "no", or omitting it,
+installed.  Note that setting DISABLE to "no", or omitting it,
 doesn't mean that the CA files will be installed.  The set of CAs
 to be recognized is specified by the B<-ca> or B<-ca-list> option to
 the B<gx-ca-update> program.
