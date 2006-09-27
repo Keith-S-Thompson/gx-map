@@ -1,0 +1,16 @@
+# $Id: auto.txt,v 1.1 2006-09-26 19:41:44-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/auto.txt,v $
+
+# This file contains a list of patterns, similar to those in a
+# signing_policy file, for DNs that are processed automatically.
+# For example, at SDSC certificates from the SDSC and NPACI CAs are
+# processed automatically by the gx-check-index command, so it's not
+# necessary to handle them manually.
+#
+# For DNs matching any of these patterns, the gx-request command will
+# print a warning before submitting the request.
+#
+# Comments are ignored.  Uncomment the following lines for SDSC.
+
+# /C=US/O=SDSC/*
+# /C=US/O=NPACI/*
