@@ -1,4 +1,4 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.14 2006-01-13 17:07:28-08 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.15 2006-09-26 22:04:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
@@ -16,3 +16,5 @@ CRL_URL             http://www.es.net/CA/d1b603c3/d1b603c3.r0
 CERT_EXPIRES        Mon 2012-10-08 07:00:00 UTC
 
 # MD5 and SHA1 fingerprints from d1b603c3.0 downloaded 2005-03-29
+# Re-verified Tue 2006-09-26
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
