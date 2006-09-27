@@ -1,0 +1,23 @@
+# $Id: a78484ef.europki.cadesc,v 1.1 2006-09-26 22:51:53-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/a78484ef.europki.cadesc,v $
+
+CA_NAME             EuroPKI
+HOMEPAGE            http://www.europki.org/ca/root/
+CONTACT             ca@europki.org
+HASH                a78484ef
+SUBJECT             /O=EuroPKI/CN=EuroPKI Root Certification Authority
+MAY_SIGN            ?
+CERTIFICATE_MD5     87:9E:BF:00:BE:E0:8C:51:E2:3F:41:92:63:E6:AA:C1
+CERTIFICATE_SHA1    FB:BC:4C:69:E4:3D:E4:23:58:F6:FB:92:AA:15:E7:5B:8B:FB:33:08
+CERTIFICATE_URL     http://www.europki.org/ca/root/ca_cert/ca_cert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.europki.org/ca/root/crl/crl.pem
+# ALLOW_MISSING_CRL   yes
+CERT_EXPIRES        Fri 2010-12-31 12:00:00 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from ca_cert.pem (a78484ef.0), downloaded Tue 2006-09-26
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
+
+# I was unable to find a signing_policy file.  This CA is marked as
+# disabled until a signing_policy can be found.
