@@ -1,0 +1,18 @@
+# $Id: 6e3b436b.austriangrid.cadesc,v 1.1 2006-09-26 21:36:37-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/6e3b436b.austriangrid.cadesc,v $
+
+CA_NAME             AustrianGrid Certification Authority
+HOMEPAGE            http://ca.austriangridca.at/
+CONTACT             ca@austriangrid.at
+HASH                6e3b436b
+SUBJECT             /C=AT/O=AustrianGrid/OU=Certification Authority/CN=Certificate Issuer
+MAY_SIGN            /C=AT/O=AustrianGrid/*
+CERTIFICATE_MD5     D7:09:9D:28:58:C8:58:8A:01:A4:0E:E4:14:78:DE:60
+CERTIFICATE_SHA1    A5:3C:9B:3E:CE:2E:B8:B1:33:C7:9F:3A:5C:86:53:12:77:28:42:FE
+CERTIFICATE_URL     https://ca.austriangridca.at/certs/6e3b436b.0
+SIGNING_POLICY_URL  https://ca.austriangridca.at/signing_policies/6e3b436b.signing_policy
+CRL_URL             http://ca.austriangridca.at/crl/6e3b436b.r0
+CERT_EXPIRES        Wed 2010-03-10 19:42:35 UTC
+
+# MD5 and SHA1 fingerprints from 6e3b436b.0 downloaded Tue 2006-09-26
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
