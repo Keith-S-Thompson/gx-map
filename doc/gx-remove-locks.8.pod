@@ -1,4 +1,4 @@
-# $Id: gx-remove-locks.8.pod,v 1.2 2006-04-12 19:17:37-07 kst Exp $
+# $Id: gx-remove-locks.8.pod,v 1.3 2006-09-26 19:48:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-remove-locks.8.pod,v $
 
 =for comment
@@ -72,8 +72,8 @@ that created it crashed before it was able to remove the lock).
 Even then it's strongly recommended to determine why the command
 crashed before removing the lock.
 
-Lock files are created by the B<gx-ca-update> and B<gx-check-requests>
-commands.
+Lock files are created by the B<gx-ca-update>, B<gx-check-requests>,
+B<gx-check-index>, and B<gx-db-check-requests> commands.
 
 =head1 OPTIONS
 
@@ -98,7 +98,7 @@ Display the software version number and exit.
 
 =head1 SEE ALSO
 
-gx-map(7), gx-check-requests(8), gx-ca-update(8)
+gx-map(7), gx-ca-update(8), gx-check-requests(8), gx-check-index(8), gx-db-check-requests(8)
 
 =head1 AUTHOR
 
