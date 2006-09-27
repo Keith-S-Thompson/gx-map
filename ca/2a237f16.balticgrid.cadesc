@@ -1,0 +1,18 @@
+# $Id: 2a237f16.balticgrid.cadesc,v 1.1 2006-09-26 21:45:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/2a237f16.balticgrid.cadesc,v $
+
+CA_NAME             Baltic Grid Certification Authority
+HOMEPAGE            http://ca.balticgrid.org/
+CONTACT             ca@ca.balticgrid.org
+HASH                2a237f16
+SUBJECT             /DC=org/DC=balticgrid/CN=Baltic Grid Certification Authority
+MAY_SIGN            /DC=org/DC=balticgrid/*
+CERTIFICATE_MD5     EB:31:19:3E:67:44:C4:5A:93:2C:C4:65:F2:8D:A2:80
+CERTIFICATE_SHA1    B2:34:AA:9C:B6:45:1D:59:B9:18:15:94:20:29:10:CC:D5:D1:FD:A5
+CERTIFICATE_URL     http://ca.balticgrid.org/2a237f16.0
+SIGNING_POLICY_URL  http://ca.balticgrid.org/2a237f16.signing_policy
+CRL_URL             http://ca.balticgrid.org/2a237f16.r0
+CERT_EXPIRES        Mon 2015-09-21 10:19:33 UTC
+
+# MD5 and SHA1 fingerprints from 2a237f16.0 downloaded Tue 2006-09-26
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
