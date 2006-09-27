@@ -1,4 +1,4 @@
-# $Id: gx-cron-job.8.pod,v 1.1 2006-09-19 21:59:01-07 kst Exp $
+# $Id: gx-cron-job.8.pod,v 1.2 2006-09-26 18:12:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-cron-job.8.pod,v $
 
 =for comment
@@ -99,7 +99,7 @@ F<etc/gx-map/gx-cron-job> in the B<gx-map> installation directory.
 
 =item B<-dryrun>
 
-Display commands but don't execut them.
+Display commands but don't execute them.
 
 =item B<-debugging>
 
@@ -159,17 +159,29 @@ S<1970-01-01 00:00:00 GMT>).  For example, a command with an interval
 local time.  For an interval that is a factor of one hour, this
 shouldn't be relevant.
 
+The B<interval> attribute is mandatory.
+
+=item B<hostname> I<name>
+
+Execute the command only if running on the specified
+host.  The hostname is checked against the result of the
+B<Gridmap_Utils::Get_Hostname> function, which may not be the same as
+the result of the system F<hostname> command.
+(Use S<C<gx-util-test get_hostname>> to check this.)
+
 =item B<command>
 
 There can be one or more commands in each record.  The specified
 command must be in the F<sbin> directory of the B<gx-map> installation
 directory.  The commands are executed in the order specified.
 
+At least one B<command> must be specified.
+
 =back
 
 =head1 SEE ALSO
 
-gx-map(7)
+gx-map(7), gx-util-test(8)
 
 =head1 AUTHOR
 
