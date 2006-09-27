@@ -1,4 +1,4 @@
-# $Id: 16da7552.nikhef.cadesc,v 1.9 2006-01-13 17:07:21-08 kst Exp $
+# $Id: 16da7552.nikhef.cadesc,v 1.10 2006-09-26 22:51:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/16da7552.nikhef.cadesc,v $
 
 CA_NAME             DutchGrid Medium-Security Certification Authority
@@ -17,6 +17,8 @@ CRL_URL             http://certificate.nikhef.nl/medium/cacrl.pem
 CERT_EXPIRES        Tue 2021-02-09 00:00:00 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (16da7552.0) downloaded 2005-03-29
+# Re-verified Tue 2006-09-26
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
 
 # An older version of this certificate, downloaded 2004-10-10, had
 # an expiration date of Feb  9 09:36:14 2006 GMT and
