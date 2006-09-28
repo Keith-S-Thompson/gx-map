@@ -1,0 +1,35 @@
+# $Id: bug-0119,v 1.1 2006-09-27 20:56:34-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0119,v $
+
+gx-map bug 0119
+Date: Wed 2006-09-27
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.2.008
+Status: Open
+Title: Add a command to watch for locks
+
+See also bug-0065.
+
+It's much too easy to miss a lock file that's been there for a
+long time.  For example, I just removed a .gx-ca-update.lock that
+had been there for nearly 5 days, causing several CRLs to expire on
+production systems.
+
+Some method of automatically removing stale locks would be great,
+but it's hard to see how to do that safely.  Probably a lock should
+be removed if predates the last boot time of the machine on which it
+was created, but that's tricky, and it only solves part of the problem.
+
+A command that fails due to an existing lock normally sends e-mail,
+but that's easy to miss.
+
+Create a new command, gx-watch-locks, that periodically checks for
+lock files.  (This is reminiscent of the "globus-status" command from
+the old globus-extras package.)  By default, it displays a list of
+existing locks and their ages.  With a command-line option, it checks
+periodically; on each iteration, it clears the screen and shows current
+locks.  Locks newer than, say, 1 minute are (optioally?) ignored;
+locks older than, say, 1 hour are highlighted.  Highlighting is
+probably a ">>> " prefix on the line, though I suppose I could use
+"tput" if I wanted to be fancy.
