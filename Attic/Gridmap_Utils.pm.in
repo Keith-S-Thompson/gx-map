@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.235 2006-09-26 00:08:50-07 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.236 2006-09-27 19:54:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2455,9 +2455,10 @@ sub Get_Lock($) {
     Gridmap_Utils::Untaint $lock_file;
     Gridmap_Utils::Untaint $unique_lock_file;
 
+    my $timestamp = Gridmap_Utils::Time_Image time;
     open my $lock, '>', $unique_lock_file or die "$unique_lock_file: $!\n";
     print $lock "$name (gx-map $Gridmap_Utils::VERSION) ",
-                "PID=$$ on $hostname\n";
+                "PID=$$ on $hostname at $timestamp\n";
     close $lock;
     if (link $unique_lock_file, $lock_file) {
         #
