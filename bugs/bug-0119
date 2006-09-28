@@ -1,4 +1,4 @@
-# $Id: bug-0119,v 1.1 2006-09-27 20:56:34-07 kst Exp $
+# $Id: bug-0119,v 1.2 2006-09-27 20:57:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0119,v $
 
 gx-map bug 0119
@@ -7,7 +7,7 @@ Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2.008
 Status: Open
-Title: Add a command to watch for locks
+Title: Add a gx-watch-locks command
 
 See also bug-0065.
 
