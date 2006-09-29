@@ -1,0 +1,204 @@
+#!%PERL% -w
+
+# $Id: gx-watch-locks.in,v 1.1 2006-09-28 17:37:04-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2006 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+use File::Basename ();
+use Getopt::Long ();
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+sub Seconds_To_String($);
+sub Lock_File_Info($$$);
+sub List_Lock_Files();
+
+my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = { interval => 300 };
+my @Opts = ( $User_Opt,
+             qw( help
+                 version
+                 loop!
+                 interval=i
+                 all! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if @ARGV;
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+my $Data_Dir = "$Install_Dir/gx-map-data";
+
+$| = 1;
+
+Gridmap_Utils::Check_Data_Dir;
+
+if ($User_Opt->{loop}) {
+    while (1) {
+        system 'clear';
+        List_Lock_Files;
+        sleep $User_Opt->{interval} - time % $User_Opt->{interval};
+    }
+}
+else {
+    List_Lock_Files;
+}
+
+########################################################################
+
+#
+# Given a non-negative number of seconds, returns a string such as
+# "1m12s" or "32d 12h00m00s" for display.
+#           
+sub Seconds_To_String($) {
+    use integer;
+    my($total) = @_;
+    die "Internal error: Seconds_To_String($total)" if $total < 0;
+    my $seconds = $total % 60;
+    $total = $total / 60;
+    my $minutes = $total % 60;
+    $total = $total / 60;
+    my $hours = $total % 24;
+    my $days = $total / 24;                 
+            
+    if ($days > 0) {
+        return sprintf "%dd %02dh %02dm %02ds",
+                       $days, $hours, $minutes, $seconds;
+    }
+    elsif ($hours > 0) {    
+        return sprintf "%dh %02dm %02ds",
+                       $hours, $minutes, $seconds;
+    }   
+    else {
+        return sprintf "%dm %02ds",
+                       $minutes, $seconds;
+    }       
+} # Seconds_To_String
+
+# ----------------------------------------------------------------------
+
+sub Lock_File_Info($$$) {
+    my($now, $dir, $filename) = @_;
+    my $result = {};
+
+    $result->{name} = $filename;
+    $result->{mtime} = Gridmap_Utils::Get_mtime "$dir/$filename";
+    return undef if not defined $result->{mtime};
+    $result->{age} = $now - $result->{mtime};
+
+    open my $FILE, '<', "$dir/$filename" or return undef;
+    chomp($result->{content} = scalar <$FILE>);
+    close $FILE;
+
+    return $result;
+} # Lock_File_Info
+
+# ----------------------------------------------------------------------
+
+sub List_Lock_Files() {
+    my $now = time;
+    print Gridmap_Utils::Time_Image $now, "\n";
+    print "Checking for locks in $Data_Dir\n";
+
+    opendir my $DIR, $Data_Dir or die "$Data_Dir: $!\n";
+    my @lock_files = sort grep /^\..*\.lock$/, readdir $DIR;
+    closedir $DIR;
+
+    my @lock_file_info = ();
+
+    foreach my $lock_file (@lock_files) {
+        my $ref = Lock_File_Info $now, $Data_Dir, $lock_file;
+        next if not defined $ref;
+        next if not $User_Opt->{all} and $ref->{age} <= 300;
+        push @lock_file_info, $ref;
+    }
+
+    if (not @lock_file_info) {
+        print "No lock files found\n";
+        return;
+    }
+
+    foreach my $ref (@lock_file_info) {
+        my $s = $ref->{age} == 1 ? '' : 's';
+        print "Lock file $ref->{name}, age = $ref->{age} second$s\n";
+        print "$ref->{content}\n";
+        print "\n";
+    }
+} # List_Lock_Files
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<EOF;
+Usage: $Program_Name [options]
+Generate a listing of gx-map lock files.  Each listed file is marked
+depending on its age (older lock files could indicate a serious
+problem).  Use gx-remove-locks to remove stale lock files.
+    -help              : Display this message and exit.
+    -version           : Display version information and exit.
+    -loop              : Repeatedly check every 5 minutes.
+                         (The default is to check once and exit.)
+    -interval seconds  : Check every interval seconds
+                         Default is 300 (5 minutes).
+    -all               : Show all lock files.  By default, lock files
+                         younger than 5 minutes are ignored.
+EOF
+    exit 1;
+}
