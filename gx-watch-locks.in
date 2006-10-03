@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-watch-locks.in,v 1.2 2006-10-02 17:46:18-07 kst Exp $
+# $Id: gx-watch-locks.in,v 1.3 2006-10-02 17:50:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
 
 ########################################################################
@@ -75,6 +75,7 @@ my @Opts = ( $User_Opt,
                  loop!
                  interval=i
                  beep!
+                 directory=s
                  all! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -85,11 +86,21 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-my $Data_Dir = "$Install_Dir/gx-map-data";
+my $Data_Dir;
+
+if (defined $User_Opt->{directory}) {
+    $Data_Dir = $User_Opt->{directory};
+    die "\$Data_Dir: No such directory\n" if not -d $Data_Dir;
+    if (-d "$Data_Dir/gx-map-data") {
+        $Data_Dir = "$Data_Dir/gx-map-data";
+    }
+}
+else {
+    Gridmap_Utils::Check_Data_Dir;
+    $Data_Dir = "$Install_Dir/gx-map-data";
+}
 
 $| = 1;
-
-Gridmap_Utils::Check_Data_Dir;
 
 if ($User_Opt->{loop}) {
     while (1) {
@@ -228,6 +239,8 @@ problem).  Use gx-remove-locks to remove stale lock files.
     -interval seconds  : Check every interval seconds
                          Default is 300 (5 minutes).
     -beep              : Beep if any lock is older than 5 minutes.
+    -directory dir     : Specify a gx-map installation *or* data directory.
+                         Default is $Install_Dir
     -all               : Show all lock files.  By default, lock files
                          younger than 5 minutes are ignored.
 EOF
