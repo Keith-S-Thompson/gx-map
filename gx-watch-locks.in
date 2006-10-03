@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-watch-locks.in,v 1.1 2006-09-28 17:37:04-07 kst Exp $
+# $Id: gx-watch-locks.in,v 1.2 2006-10-02 17:46:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
 
 ########################################################################
@@ -61,6 +61,7 @@ BEGIN {
 use Gridmap_Utils ();
 
 sub Usage(@);
+sub Beep();
 sub Seconds_To_String($);
 sub Lock_File_Info($$$);
 sub List_Lock_Files();
@@ -73,6 +74,7 @@ my @Opts = ( $User_Opt,
                  version
                  loop!
                  interval=i
+                 beep!
                  all! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -101,6 +103,19 @@ else {
 }
 
 ########################################################################
+
+#
+# Beep three times at 0.5-second intervals.
+#
+sub Beep() {
+    print "\a";
+    select undef, undef, undef, 0.5;
+    print "\a";
+    select undef, undef, undef, 0.5;
+    print "\a";
+} # Beep
+
+# ----------------------------------------------------------------------
 
 #
 # Given a non-negative number of seconds, returns a string such as
@@ -155,6 +170,7 @@ sub List_Lock_Files() {
     my $now = time;
     print Gridmap_Utils::Time_Image $now, "\n";
     print "Checking for locks in $Data_Dir\n";
+    print "\n";
 
     opendir my $DIR, $Data_Dir or die "$Data_Dir: $!\n";
     my @lock_files = sort grep /^\..*\.lock$/, readdir $DIR;
@@ -174,12 +190,26 @@ sub List_Lock_Files() {
         return;
     }
 
-    foreach my $ref (@lock_file_info) {
-        my $s = $ref->{age} == 1 ? '' : 's';
-        print "Lock file $ref->{name}, age = $ref->{age} second$s\n";
-        print "$ref->{content}\n";
+    my $need_beep = 0;
+    my $border = '#' x 72;
+    #
+    # Show oldest locks first.
+    #
+    foreach my $ref (sort { $b->{age} <=> $a->{age} } @lock_file_info) {
+        if ($ref->{age} > 300) {
+            print "$border\n";
+            $need_beep = 1;
+        }
+        print "Lock file $ref->{name}, age = ",
+              Seconds_To_String $ref->{age},
+              "\n";
+        print "$ref->{content}\n" if defined $ref->{content};;
+        if ($ref->{age} > 300) {
+            print "$border\n";
+        }
         print "\n";
     }
+    Beep if $need_beep and $User_Opt->{beep};
 } # List_Lock_Files
 
 # ----------------------------------------------------------------------
@@ -197,6 +227,7 @@ problem).  Use gx-remove-locks to remove stale lock files.
                          (The default is to check once and exit.)
     -interval seconds  : Check every interval seconds
                          Default is 300 (5 minutes).
+    -beep              : Beep if any lock is older than 5 minutes.
     -all               : Show all lock files.  By default, lock files
                          younger than 5 minutes are ignored.
 EOF
