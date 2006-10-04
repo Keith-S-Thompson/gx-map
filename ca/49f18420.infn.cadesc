@@ -1,4 +1,4 @@
-# $Id: 49f18420.infn.cadesc,v 1.11 2006-02-24 11:51:19-08 kst Exp $
+# $Id: 49f18420.infn.cadesc,v 1.12 2006-10-03 21:32:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
 
 CA_NAME             INFN Certification Authority
@@ -10,18 +10,16 @@ MAY_SIGN            /C=it/O=INFN/*
 MAY_SIGN            /C=IT/O=INFN/*
 CERTIFICATE_MD5     9C:3E:F4:3B:18:44:12:55:10:F3:89:C0:D5:D8:49:16
 CERTIFICATE_SHA1    AB:6D:CE:77:D3:5D:F0:A2:02:C8:87:4D:AE:AF:60:A8:D4:99:5C:D5
-CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.0
+CERTIFICATE_URL     https://security.fi.infn.it/CA/mgt/CAcert.pem
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.signing_policy
 CRL_URL             http://security.fi.infn.it/CA/crl.pem
 CERT_EXPIRES        Tue 2007-09-18 16:06:29 UTC
 
-#
-# The home page provides links to download the certificate and URL files,
+# English web page at <http://security.fi.infn.it/CA/en/>.
+
+# The home page provides links to download the certificate and CRL files,
 # but the interface doesn't allow the use of wget; the URLs given here
 # are from the DataGrid Certificate Authorities page.
 # The CRL referenced from the DataGrid Certificate Authorities page,
 # <http://security.fi.infn.it/CA/crl.crl>, is in DER format, but
 # I've since found a PEM-format CRL (see above).
-#
-
-# MD5 and SHA1 fingerprints from 49f18420.0 downloaded 2005-03-29
