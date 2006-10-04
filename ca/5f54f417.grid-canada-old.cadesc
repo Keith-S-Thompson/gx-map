@@ -1,0 +1,23 @@
+# $Id: 5f54f417.grid-canada-old.cadesc,v 1.1 2006-10-03 21:48:07-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/5f54f417.grid-canada-old.cadesc,v $
+
+CA_NAME             Grid Canada CA (old)
+HOMEPAGE            http://www.gridcanada.ca/ca/
+CONTACT             ca@gridcanada.ca
+HASH                5f54f417
+SUBJECT             /C=CA/O=Grid/CN=Grid Canada CA
+MAY_SIGN            /C=CA/O=Grid/*
+CERTIFICATE_MD5     3C:8F:D4:4D:BA:E2:8E:28:24:38:0F:2D:71:4C:9C:84
+CERTIFICATE_SHA1    5B:A5:92:81:D1:0B:D5:75:4F:F8:D1:95:6E:B2:0E:69:32:50:C6:3B
+CERTIFICATE_URL     http://www.gridcanada.ca/ca/5f54f417.0
+SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/5f54f417.signing_policy
+CRL_URL             http://www.gridcanada.ca/ca/5f54f417.r0
+CERT_EXPIRES        Tue 2007-04-10 03:59:29 UTC
+
+# MD5 and SHA1 fingerprints from 5f54f417.0 downloaded Tue 2005-03-29
+# Re-verified Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+
+# This CA has been superseded by a new CA; see bffbd7d0.grid-canada.cadesc
+# Certificates issued by this CA will remain valid until 2007-04-10, but
+# no new certificates will be issued.
