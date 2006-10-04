@@ -1,4 +1,4 @@
-# $Id: dd4b34ea.germangrid.cadesc,v 1.9 2006-01-13 17:07:28-08 kst Exp $
+# $Id: dd4b34ea.germangrid.cadesc,v 1.10 2006-10-03 21:32:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/dd4b34ea.germangrid.cadesc,v $
 
 CA_NAME             GermanGrid GridKa CA
@@ -6,14 +6,24 @@ HOMEPAGE            http://grid.fzk.de/cgi-bin/welcome_ca.pl
 CONTACT             gridka-ca@hik.fzk.de
 HASH                dd4b34ea
 SUBJECT             /C=DE/O=GermanGrid/CN=GridKa-CA
-MAY_SIGN            /C=DE/O=FZK-Grid/*
 MAY_SIGN            /C=DE/O=GermanGrid/*
 MAY_SIGN            /O=GermanGrid/OU=*
-CERTIFICATE_MD5     D2:FB:CC:88:63:E1:FA:83:15:64:96:96:83:22:F2:C9
-CERTIFICATE_SHA1    1F:E4:41:02:EC:A7:57:D8:4A:7E:A6:EE:CC:5B:A4:19:10:57:CA:17
+CERTIFICATE_MD5     74:7A:9E:7B:6B:03:5A:FA:FC:BF:70:FB:DD:E9:95:0B
+CERTIFICATE_SHA1    AF:A0:D1:16:FB:E6:E9:44:9B:22:01:8A:6E:0D:AC:23:A7:DC:CD:A7
 CERTIFICATE_URL     http://grid.fzk.de/ca/dd4b34ea.0
 SIGNING_POLICY_URL  http://grid.fzk.de/ca/dd4b34ea.signing_policy
 CRL_URL             http://grid.fzk.de/ca/gridka-crl.pem
-CERT_EXPIRES        Sun 2007-06-10 13:45:54 UTC
+CERT_EXPIRES        Tue 2014-06-10 13:45:54 UTC
 
-# MD5 and SHA1 fingerprints from dd4b34ea.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from dd4b34ea.0 downloaded Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+
+# This certificate supersedes an older certificate with the same subject
+# and hash, but different checksums.  The old certificate is available
+# at <http://grid.fzk.de/ca/dd4b34ea.0.old> and has the following
+# characteristics:
+#     CERTIFICATE_URL     http://grid.fzk.de/ca/dd4b34ea.0
+#     SIGNING_POLICY_URL  http://grid.fzk.de/ca/dd4b34ea.signing_policy
+#     CERT_EXPIRES        Sun 2007-06-10 13:45:54 UTC
+# The signing_policy file was changed at some point; it no longer
+# indicates that certificates matching "/C=DE/O=FZK-Grid/*" may be signed.
