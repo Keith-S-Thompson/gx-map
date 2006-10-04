@@ -1,4 +1,4 @@
-# $Id: ede78092.hellasgrid.cadesc,v 1.9 2006-01-13 17:07:29-08 kst Exp $
+# $Id: ede78092.hellasgrid.cadesc,v 1.10 2006-10-03 21:32:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ede78092.hellasgrid.cadesc,v $
 
 CA_NAME             HellasGrid CA
@@ -11,7 +11,16 @@ CERTIFICATE_MD5     67:B9:5A:B5:B2:50:01:20:2C:F5:AD:D1:57:88:0D:3B
 CERTIFICATE_SHA1    36:12:69:64:31:35:FD:E1:FA:9B:6B:9C:4F:31:32:B5:B3:20:13:B5
 CERTIFICATE_URL     http://pki.physics.auth.gr/hellasgrid-ca/CA/ede78092.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ede78092.signing_policy
-CRL_URL             http://pki.physics.auth.gr/hellasgrid-ca/CRL/ede78092.r0
+CRL_URL             http://pki.physics.auth.gr/hellasgrid-ca/CRL/hellasgrid-crl-v2.pem
 CERT_EXPIRES        Wed 2007-08-15 14:29:13 UTC
 
 # MD5 and SHA1 fingerprints from ede78092.0 downloaded 2005-03-29
+# Re-verified Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+
+# Note that the signing_policy file was obtained from a different site.
+
+# The CRL_URL has been updated as of Tue 2006-10-03.  There are actually
+# two CRLs on the web site:
+#     http://pki.physics.auth.gr/hellasgrid-ca/CRL/hellasgrid-crl-v1.pem
+#     http://pki.physics.auth.gr/hellasgrid-ca/CRL/hellasgrid-crl-v2.pem
