@@ -1,0 +1,23 @@
+# $Id: 9dd23746.irisgrid.cadesc,v 1.1 2006-10-04 16:48:51-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/9dd23746.irisgrid.cadesc,v $
+
+CA_NAME             pkIRISGrid CA
+HOMEPAGE            http://www.irisgrid.es/pki/
+CONTACT             http://www.rediris.es/cgi-bin/sugerencias.en.pl?contact=irisgrid
+HASH                9dd23746
+SUBJECT             /DC=es/DC=irisgrid/CN=IRISGridCA
+MAY_SIGN            /DC=es/DC=irisgrid/*
+CERTIFICATE_MD5     04:52:A7:CF:5C:1F:8A:79:87:31:43:D7:9C:7B:64:96
+CERTIFICATE_SHA1    6F:62:7B:52:E1:F6:4F:3F:1D:56:78:7F:1A:02:5E:E8:D2:A2:29:AD
+CERTIFICATE_URL     http://www.irisgrid.es/pki/cacert/9dd23746.0
+SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/9dd23746.signing_policy
+CRL_URL             http://www.irisgrid.es/pki/crl/cacrl.pem
+CERT_EXPIRES        Fri 2015-06-26 05:02:28 UTC
+
+# English home page at <http://www.irisgrid.es/pki/index.en.html>.
+# The CONTACT link is a web form, not an e-mail address.
+
+# Note that the SIGNING_POLICY_URL is from a different site.
+
+# MD5 and SHA1 fingerprints from 9dd23746.0 downloaded Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
