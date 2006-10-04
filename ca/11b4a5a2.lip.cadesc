@@ -1,0 +1,21 @@
+# $Id: 11b4a5a2.lip.cadesc,v 1.1 2006-10-03 21:32:51-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/11b4a5a2.lip.cadesc,v $
+
+CA_NAME             LIP Autoridade de Certificacao
+HOMEPAGE            http://ca.lip.pt/
+CONTACT             ?
+HASH                11b4a5a2
+SUBJECT             /C=PT/O=LIPCA/CN=LIP Certification Authority
+MAY_SIGN            /C=PT/O=LIPCA/*
+CERTIFICATE_MD5     AA:61:52:96:09:3E:38:67:02:93:18:06:F9:A2:16:AF
+CERTIFICATE_SHA1    C7:D5:DE:7B:F1:51:F9:DA:B7:43:C2:83:1A:C7:92:0F:5C:23:33:11
+CERTIFICATE_URL     https://ca.lip.pt/lip-lisboa/pub/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             https://ca.lip.pt/lip-lisboa/pub/crl/cacrl.pem
+CERT_EXPIRES        Tue 2009-06-02 16:42:59 UTC
+
+# MD5 and SHA1 fingerprints from cacert.pem (11b4a5a2.0) downloaded Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+
+# There doesn't appear to be a signing_policy file on the web page, but
+# the information is available at <http://ca.lip.pt/en/index.php?link=globus>
