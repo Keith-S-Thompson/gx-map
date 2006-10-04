@@ -1,0 +1,19 @@
+# $Id: ff94d436.srce.cadesc,v 1.1 2006-10-03 21:32:52-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/ff94d436.srce.cadesc,v $
+
+CA_NAME             SRCE CA
+HOMEPAGE            http://ra.srce.hr/
+CONTACT             srce-ca@srce.hr
+HASH                ff94d436
+SUBJECT             /C=HR/O=edu/OU=srce/CN=SRCE CA
+MAY_SIGN            /C=HR/O=edu/OU=srce/CN=SRCE CA
+MAY_SIGN            /C=HR/O=edu/*
+CERTIFICATE_MD5     7C:99:2C:12:D1:76:F2:7E:CA:11:FA:85:7E:5D:B8:7B
+CERTIFICATE_SHA1    A0:39:C3:FD:D6:A3:5F:C5:94:5C:5B:87:89:0D:4C:32:8F:11:C7:E0
+CERTIFICATE_URL     http://ra.srce.hr/globus/ff94d436.0
+SIGNING_POLICY_URL  http://ra.srce.hr/globus/ff94d436.signing_policy
+CRL_URL             http://ra.srce.hr/cacrl.pem
+CERT_EXPIRES        Wed 2011-06-15 17:39:20 UTC
+
+# MD5 and SHA1 fingerprints from ff94d436.0 downloaded Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
