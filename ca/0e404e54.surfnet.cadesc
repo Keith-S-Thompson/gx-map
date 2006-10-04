@@ -1,0 +1,22 @@
+# $Id: 0e404e54.surfnet.cadesc,v 1.1 2006-10-03 21:32:20-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/0e404e54.surfnet.cadesc,v $
+
+CA_NAME             
+HOMEPAGE            http://pki.surfnet.nl/
+CONTACT             admin@surfnet.nl
+HASH                0e404e54
+SUBJECT             /C=NL/O=SURFnet/OU=Policy Certification Authority/emailAddress=SURFnet-PCA@surfnet.nl/CN=SURFnet-PCA-Root-CA
+MAY_SIGN            ?
+CERTIFICATE_MD5     CA:8D:97:FC:7E:DA:12:81:24:6B:F6:0D:73:4A:D1:93
+CERTIFICATE_SHA1    3C:DA:BA:08:11:3D:93:42:07:B9:1D:1C:52:56:83:CC:09:BB:C8:29
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
+CERT_EXPIRES        Mon 2017-04-24 19:20:02 UTC
+DISABLE             yes
+
+# The information here is mostly from <https://www.tacar.org/certs.html>.
+# I've been unable to get much information from pki.surfnet.nl itself,
+# since the site is in Dutch.  I've found a copy of the CA certificate
+# in DER format, but not in PEM format, and I haven't found a CRL or
+# signing_policy file.
