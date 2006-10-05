@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.125 2006-10-05 02:43:11-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.126 2006-10-05 02:50:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -185,7 +185,7 @@ if (not defined $CA_Info) {
 
 if ($User_Opt->{'list-cas'} or $User_Opt->{'list-all-cas'}) {
     foreach my $hash (sort keys %$CA_Info) {
-        next if $User_Opt->{'list-cas'} and Disabled $CA_Info;
+        next if $User_Opt->{'list-cas'} and Disabled $CA_Info->{$hash};
         my $short_ca_name = $CA_Info->{$hash}->{_SHORT_CA_NAME};
         my $ca_name = $CA_Info->{$hash}->{CA_NAME};
         print "$hash # $ca_name ($short_ca_name)\n";
