@@ -1,7 +1,7 @@
-# $Id: 0e404e54.surfnet.cadesc,v 1.1 2006-10-03 21:32:20-07 kst Exp $
+# $Id: 0e404e54.surfnet.cadesc,v 1.2 2006-10-05 01:22:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0e404e54.surfnet.cadesc,v $
 
-CA_NAME             
+CA_NAME             SURFnet
 HOMEPAGE            http://pki.surfnet.nl/
 CONTACT             admin@surfnet.nl
 HASH                0e404e54
