@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.123 2006-09-23 23:44:56-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.124 2006-10-05 01:29:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -109,6 +109,7 @@ my @Opts = ( $User_Opt,
                  ca=s@
                  ca-list=s@
                  list-cas!
+                 list-all-cas!
                  target-dir=s
                  download!
                  permissions=s
@@ -605,7 +606,7 @@ sub Get_CA_Info($) {
         }
         else {
             die "Internal error, bad result from " .
-		"Gridmap_Utils::Get_CA_Ref: $ref\n";
+                "Gridmap_Utils::Get_CA_Ref: $ref\n";
         }
     }
     if (@errors) {
@@ -1610,6 +1611,7 @@ Usage: $Program_Name [options]
                        If no "-ca" or "-ca-list" option is specified, try
                        to use a ".ca-list" file in the target directory.
     -list-cas          List available CAs and exit.
+    -list-all-cas      Like "-list-cas", but include disabled CAs.
     -target-dir dir    Target directory.
     -[no]download      By default, gx-ca-update attempts to download
                        files as needed.  With "-nodownload", use only
