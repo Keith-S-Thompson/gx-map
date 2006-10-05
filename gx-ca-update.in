@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-ca-update.in,v 1.124 2006-10-05 01:29:16-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.125 2006-10-05 02:43:11-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -166,6 +166,11 @@ if (not $User_Opt->{UNSAFE}) {
     Usage @errors if @errors;
 }
 
+if ($User_Opt->{'list-cas'} and $User_Opt->{'list-all-cas'}) {
+    Usage "The \"-list-cas\" and \"-list-all-cas\" options " .
+          "may not be used together\n";
+}
+
 my $Data_Dir = "$Install_Dir/gx-map-data";
 
 my $ca_conf_dir = "$Install_Dir/etc/gx-map/ca-config";
@@ -178,8 +183,9 @@ if (not defined $CA_Info) {
     die "Error reading CA information from $ca_conf_dir\n"
 }
 
-if ($User_Opt->{'list-cas'}) {
+if ($User_Opt->{'list-cas'} or $User_Opt->{'list-all-cas'}) {
     foreach my $hash (sort keys %$CA_Info) {
+        next if $User_Opt->{'list-cas'} and Disabled $CA_Info;
         my $short_ca_name = $CA_Info->{$hash}->{_SHORT_CA_NAME};
         my $ca_name = $CA_Info->{$hash}->{CA_NAME};
         print "$hash # $ca_name ($short_ca_name)\n";
