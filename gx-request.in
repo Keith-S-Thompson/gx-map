@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.54 2006-10-05 16:13:57-07 kst Exp $
+# $Id: gx-request.in,v 1.55 2006-10-05 16:59:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -990,14 +990,7 @@ sub Get_Options_From_Command_Line() {
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
                    (defined $User_Opt->{'default-dn'} ? 1 : 0);
 
-    if ($OP eq 'set' and
-        ( defined $User_Opt->{'certificate-file'} or
-          defined $User_Opt->{'default-dn'} ))
-    {
-        Usage "Do not use \"-certificate-file\" or \"-default-dn\" " .
-              "with \"-set\"\n";
-    }
-    elsif ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
+    if ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
         Usage "Do not specify a user name with \"-$OP\"\n";
     }
     elsif ($OP eq 'remove-user' and $dn_count > 0) {
@@ -1066,7 +1059,7 @@ sub Get_Options_From_Command_Line() {
     }
 
     if ($OP ne 'remove-user') {
-        if (@dn_list or $OP eq 'set') {
+        if (@dn_list) {
             $Options->{dn} = \@dn_list;
         }
         else {
