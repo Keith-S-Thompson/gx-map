@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.3 2006-01-31 19:34:14-08 kst Exp $
+# $Id: bug-0064,v 1.4 2006-10-05 13:06:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -17,20 +17,21 @@ but it could cause some problems.  For one, a user could map someone
 else's DN to his own account; this could deny the victim access
 to his own account (while simultaneously giving the victim access
 to the attacker's account, so it's not a very effective attack).
-For another, it could create problems for any software that treats
-the grid-mapfile as a mapping from user names to DNs, rather than
-just DNs to user names.
+For another, it could create security problems for any software that
+treats the grid-mapfile as a mapping from user names to DNs, rather
+than just DNs to user names (which *shouldn't* be done).  Finally,
+it introduces the possibility of typos.
 
 Consider requiring the user running gx-request to prove that he
 owns, or at least can use, the certificate with the requested DN.
 For example, require the user to specify a certificate file (or use
 the default $HOME/.globus/usercert.pem) and prompt for its passphrase.
 
-Or make it a configuration option.
+Make it an install-time configuration option.
 
 Since gx-request is not privileged, validation is non-trivial.
-Presumably, once the user enters a passphrase, it could use the user's
-certificate to cryptographically sign a file, storing the signed
+Presumably, once the user enters a passphrase, gx-request could use the
+user's certificate to cryptographically sign a file, storing the signed
 file along with a copy of the certificate (*not* the private key)
 in the request file.  gx-check-requests could then confirm that the
 file in the request was actually signed by the certificate, and that
@@ -38,7 +39,64 @@ the certificate was signed by a recognized CA (so the system on which
 gx-check-requests runs has to have its /etc/grid-security/certificates
 directory set up properly).
 
-A gx-map administrator could still request mappings without confirming
-the certificate, as is done currently.
+A gx-map administrator could still request mappings without
+confirming the certificate, as is done currently.  I might also
+consider requiring an administrator to sign any requests, using a
+configured DN.  For automated use, the certificate would have to have
+no passphrase, and the private key would have to be carefully guarded;
+perhaps this could be restricted to a secure server.  Possibly this
+could be another install-time configuration option.
 
 Obviously this requires more thought and work.
+
+More thoughts:
+
+I think the way to do this is to have the user sign the request
+file itself.  I had been thinking of signing a copy of /dev/null
+(we'd care about the signature, not the contents), but a link to an
+external signed file is too dangerous; someone might forge a request
+file that points to somebody else's signed file.
+
+To sign a file, including a copy of the user certificate in the
+signed file:
+
+    openssl smime -sign \
+                  -text \
+                  -in FILE \
+                  -out FILE.signed \
+                  -signer $HOME/.globus/usercert.pem \
+                  -inkey $HOME/.globus/userkey.pem
+
+This will prompt for the user's passphrase.
+
+Note that this is intended for e-mail, and seems to assume that
+the input file is text (fortunately, a request file is plain text).
+It adds '\r' characters, so we haved to make sure we allow for that.
+
+To verify a signature:
+
+    openssl smime -verify \
+                  -text \
+                  -in FILE.signed \
+		  -out FILE.recovered \
+                  -CApath /etc/grid-security/certificates
+
+To extract the signer's DN (this does *not* verify the signature):
+
+    openssl smime -pk7out -in motd.signed | \
+    openssl pkcs7 -print_certs -noout
+
+So gx-request will have to deal with both signed and unsigned request
+files.  Use a naming convention to distinguish between them, and (if
+configured) don't accept unsigned requests from non-administrators.
+For unsigned requests, everything works as it does not.  For signed
+requests, the signed request itself is moved to the good-requests
+(or bad-requests) directory, but only information from the contained
+request is appended to requests.log -- along with a new attribute
+indicating that the signature was verified.
+
+This could be broken if someone is able to introduce a hacked copy
+of openssl, which makes it very important for the specified PATH to
+be secure.  Emphasize this in the documentation, and in sample.conf.
+(gx-map currently uses openssl, but not in any security-critical
+manner.)
