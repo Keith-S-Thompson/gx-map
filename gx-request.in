@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.53 2006-09-26 20:05:35-07 kst Exp $
+# $Id: gx-request.in,v 1.54 2006-10-05 16:13:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -119,7 +119,7 @@ else {
 # from command-line options or interactively.
 #
 # Fields are:
-#    operation (one of add, remove, remove-dn, remove-user, set, update)
+#    operation (one of add, remove, remove-dn, remove-user, update)
 #    username
 #    dn (an array)
 #    email (optional)
@@ -174,8 +174,8 @@ if (defined $User_Opt->{'quick-add'} or
     my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add' : 'quick-remove';
     my $conflict = 0;
     foreach my $other_opt ( qw( interactive add remove remove-dn
-                                remove-user set update default-dn
-                                certificate-file dn-list-file ) )
+                                remove-user update default-dn
+                                certificate-file ) )
     {
         if (defined $User_Opt->{$other_opt}) {
             $conflict = 1;
@@ -256,8 +256,7 @@ if ($Options->{operation} eq 'update') {
 
 if (( $Options->{operation} eq 'add' or
       $Options->{operation} eq 'remove' or
-      $Options->{operation} eq 'remove-user' or
-      $Options->{operation} eq 'set' )
+      $Options->{operation} eq 'remove-user' )
     and not defined $Options->{username})
 {
     if ($Is_Admin) {
@@ -311,8 +310,7 @@ foreach my $key (sort keys %$Options) {
 }
 
 #
-# The operation is either 'add', 'remove', 'remove-dn', 'remove-user',
-# or 'set'.
+# The operation is either 'add', 'remove', 'remove-dn', or 'remove-user'
 #
 
 my $requested_pw;
@@ -354,21 +352,7 @@ if (not $Options->{quiet}) {
     $| = 1;
     my $Mapping  = ( $Options->{force} ? 'Mapping'  : 'About to map' );
     my $Removing = ( $Options->{force} ? 'Removing' : 'About to remove' );
-    my $Setting  = ( $Options->{force} ? 'Setting'  : 'About to set' );
-    if ($Options->{operation} eq 'set') {
-        print "$Setting DN(s) for user\n",
-              "    $Options->{username}\n",
-              "to\n";
-        if (scalar @{$Options->{dn}} == 0) {
-            print "    empty list\n";
-        }
-        else {
-            foreach my $dn (@dn_list) {
-                print "    $dn\n";
-            }
-        }
-    }
-    elsif ($Options->{operation} eq 'add') {
+    if ($Options->{operation} eq 'add') {
         print "$Mapping distinguished name\n",
               "    \"$dn_list[0]\"\n",
               "to user\n",
@@ -452,36 +436,7 @@ $request->{email}    = $Options->{email}    if defined $Options->{email};
 $request->{comment}  = $Options->{comment}  if defined $Options->{comment};
 $request->{source}   = $Options->{source}   if defined $Options->{source};
 
-#
-# A 'set' request is expanded to a 'remove-user' request
-# followed by zero or more 'add' requests.  No 'set' request
-# will actually be written to a file.
-#
-if ($Options->{operation} eq 'set') {
-    $request->{operation} = 'remove-user';
-    delete $request->{dn};
-}
-
 my @requests = ( $request );
-
-my $previous_timestamp = $Timestamp;
-if ($Options->{operation} eq 'set') {
-    foreach my $dn (@dn_list) {
-        my $add_request = Clone $request;
-        $add_request->{operation} = 'add';
-        $add_request->{dn} = "\"$dn\"";
-
-        my $new_timestamp = Gridmap_Utils::Long_Time_Image
-                                Gridmap_Utils::Get_Time_Of_Day;
-        if ($new_timestamp eq $previous_timestamp) {
-            $new_timestamp = Gridmap_Utils::Increment_Timestamp $new_timestamp;
-        }
-        $add_request->{timestamp} = $new_timestamp;
-        $previous_timestamp = $new_timestamp;
-
-        push @requests, $add_request;
-    }
-}
 
 my $index = 0;
 
@@ -698,7 +653,6 @@ EOF
         > (u) Request an update of the grid-mapfiles
         > (x) Exit
 EOF
-#       > (The "set" operation is not currently available in interactive mode.)
         print "What do you want to do? [arux] ";
         chomp($response = lc scalar <STDIN>);
         if ($response =~ /^a/) {
@@ -1010,7 +964,7 @@ sub Get_Options_From_Command_Line() {
     my $Options = {};
 
     my @operations = ();
-    foreach my $op (qw(add remove remove-dn remove-user set update))
+    foreach my $op (qw(add remove remove-dn remove-user update))
     {
         push @operations, $op if $User_Opt->{$op};
     }
@@ -1025,27 +979,12 @@ sub Get_Options_From_Command_Line() {
         Usage "Specify only one of:\n",
               "    -add,\n",
               "    -remove, -remove-dn, -remove-user,\n",
-              "    -set\n",
               "    -update\n";
     }
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
 
-    if (defined $User_Opt->{'dn-list-file'} and $OP ne 'set') {
-        Usage "The \"-dn-list-file\" option can be used only with \"-set\"\n";
-    }
-
     my @dn_list = @{$User_Opt->{dn}};
-    if (defined $User_Opt->{'dn-list-file'}) {
-        if (scalar @dn_list > 0) {
-            Usage "The \"-dn\" and \"-dn-list-file\" options " .
-                  "cannot be used together\n";
-        }
-        else {
-            @dn_list = Gridmap_Utils::Get_DNs_From_List_File
-                           $User_Opt->{'dn-list-file'};
-        }
-    }
 
     my $dn_count = scalar @dn_list +
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
@@ -1348,30 +1287,5 @@ Note: If this help message has scrolled off the top of your screen, try
     $Program_Name -long-help | $pager
 EOF
     exit 1;
-
-#
-# The "-set" option was added in release 0.5.1 and removed in 0.5.2.
-# For now, the code that supports it is still here, but the command-line
-# option is disabled.
-#
-
-#   -interactive            : Run interactively.
-#                             The "set" operation is not currently
-#                             available in interactive mode.
-# ...
-#   -set                    : Set mappings for the specified user,
-#                             overriding any existing mappings.  Zero or
-#                             more DNs may be specified.  This is
-#                             equivalent to a "remove-user" request
-#                             followed by zero or more "add" requests.
-#                             The "-default-dn" and "-certificate-file" options
-#                             cannot be used with "-set".  This operation
-#                             is not available in "-interactive" mode.
-# ...
-#   -dn-list-file file      : Read a list of DNs from a specified text file,
-#                             one DN per line.  Use "-dn-list-file -" to read
-#                             from stdin.  This cannot be used with other
-#                             DN options (-dn, -default-dn, -certificate-file),
-#                             or with any operation other than "-set".
 
 } # Long_Usage
