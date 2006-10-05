@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.10 2006-05-19 22:43:45-07 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.11 2006-10-05 01:29:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -128,6 +128,10 @@ given multiple times.
 =item B<-list-cas>
 
 Show a list of available CAs and exit.
+
+=item B<-list-all-cas>
+
+Like B<-list-cas>, but include disabled CAs as well.
 
 =item B<-target-dir> I<dir>
 
