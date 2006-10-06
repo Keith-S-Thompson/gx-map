@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.55 2006-10-05 16:59:53-07 kst Exp $
+# $Id: gx-request.in,v 1.56 2006-10-05 17:40:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -73,8 +73,6 @@ sub Proxy_File_Name();
 sub User_Cert_File_Name();
 sub Gen_Request_File_Name($);
 sub DN_Is_Handled_Automatically($);
-sub Clone($);
-sub Unique(@);
 sub Die_Quietly(@);
 sub Debug(@);
 sub Debugf(@);
@@ -121,7 +119,7 @@ else {
 # Fields are:
 #    operation (one of add, remove, remove-dn, remove-user, update)
 #    username
-#    dn (an array)
+#    dn
 #    email (optional)
 #    comment (optional)
 # Plus the following flags:
@@ -130,7 +128,7 @@ else {
 #    force
 #
 
-my $User_Opt = { dn => [] };
+my $User_Opt = { };
 my @Opts = ( $User_Opt,
              qw( help long-help version
                  interactive
@@ -139,7 +137,7 @@ my @Opts = ( $User_Opt,
                  remove remove-dn remove-user
                  update
                  quiet force no-admin
-                 dn=s@ certificate-file=s default-dn
+                 dn=s certificate-file=s default-dn
                  username=s
                  directory=s
                  email=s
@@ -181,7 +179,7 @@ if (defined $User_Opt->{'quick-add'} or
             $conflict = 1;
         }
     }
-    if (scalar @{$User_Opt->{dn}} > 0) {
+    if (defined $User_Opt->{dn}) {
         $conflict = 1;
     }
     if ($conflict) {
@@ -271,25 +269,20 @@ if ( $Options->{operation} eq 'add' or
      $Options->{operation} eq 'remove' or
      $Options->{operation} eq 'remove-dn' )
 {
-    if (scalar @{$Options->{dn}} == 0) {
+    if (not defined$Options->{dn}) {
         Usage "No DN specified\n";
-    }
-    elsif (scalar @{$Options->{dn}} > 1) {
-        Usage "Cannot specify multiple DNs\n";
     }
 }
 
-{
+if (defined $Options->{dn}) {
     my @errors = ();
-    foreach my $dn (@{$Options->{dn}}) {
-        my @args = ();
-        push @args, '-check-syntax' if not defined $Options->{'force-dn'};
-        push @args, $dn;
-        my $dn_error = Gridmap_Utils::DN_Error @args;
-        if (defined $dn_error) {
-            push @errors, "Invalid DN \"$dn\"\n";
-            push @errors, "$dn_error\n";
-        }
+    my @args = ();
+    push @args, '-check-syntax' if not defined $Options->{'force-dn'};
+    push @args, $Options->{dn};
+    my $dn_error = Gridmap_Utils::DN_Error @args;
+    if (defined $dn_error) {
+        push @errors, "Invalid DN \"$Options->{dn}\"\n";
+        push @errors, "$dn_error\n";
     }
     Usage @errors if @errors;
 }
@@ -336,17 +329,13 @@ if ($Options->{operation} ne 'remove-dn') {
 }
 
 #
-# Translate the DN(s) to the proper form.
+# Translate the DN to the proper form.
 # Strip trailing components from a proxy DN.
 # Translate to the newer GT3/GT4 form.
 #
-if (not $Options->{'literal-dn'}) {
-    foreach my $dn (@{$Options->{dn}}) {
-        $dn = Gridmap_Utils::Normalize_DN $dn;
-    }
+if (defined $Options->{dn} and not $Options->{'literal-dn'}) {
+    $Options->{dn} = Gridmap_Utils::Normalize_DN $Options->{dn};
 }
-
-my @dn_list = Unique @{$Options->{dn}};
 
 if (not $Options->{quiet}) {
     $| = 1;
@@ -354,19 +343,19 @@ if (not $Options->{quiet}) {
     my $Removing = ( $Options->{force} ? 'Removing' : 'About to remove' );
     if ($Options->{operation} eq 'add') {
         print "$Mapping distinguished name\n",
-              "    \"$dn_list[0]\"\n",
+              "    \"$Options->{dn}\"\n",
               "to user\n",
               "    $Options->{username}\n";
     }
     elsif ($Options->{operation} eq 'remove') {
         print "$Removing mapping for distinguished name\n",
-              "    \"$dn_list[0]\"\n",
+              "    \"$Options->{dn}\"\n",
               "to user\n",
               "    $Options->{username}\n";
     }
     elsif ($Options->{operation} eq 'remove-dn') {
         print "$Removing all mappings for distinguished name\n",
-              "    \"$dn_list[0]\"\n";
+              "    \"$Options->{dn}\"\n";
     }
     elsif ($Options->{operation} eq 'remove-user') {
         print "$Removing all mappings for user $Options->{username}\n";
@@ -375,14 +364,13 @@ if (not $Options->{quiet}) {
 if (not $Options->{force}) {
     #
     # Warn if the DN is one that's handled automatically (i.e., matches
-    # a pattern in the etc/gx-map/auto.txt file).  We assume here that
-    # there's at most 1 DN, since the "set" option is no longer supported.
-    # (If there's more than one, we'll just check the first.)
+    # a pattern in the etc/gx-map/auto.txt file).
     #
-
-    if (scalar @dn_list >= 1 and DN_Is_Handled_Automatically $dn_list[0]) {
+    if (defined $Options->{dn} and
+        DN_Is_Handled_Automatically $Options->{dn})
+    {
         print "NOTE: The distinguished name\n",
-              "    \"$dn_list[0]\"\n",
+              "    \"$Options->{dn}\"\n",
               "should be handled automatically; this request\n",
               "is probably unnecessary\n";
     }
@@ -427,8 +415,7 @@ my $request = {
     hostname          => $hostname
 };
 if (defined $Options->{dn}) {
-    $request->{dn} = $Options->{dn};
-    map { $_ = "\"$_\"" } @{$request->{dn}};
+    $request->{dn} = '"' . $Options->{dn} . '"';
 }
 $request->{username} = $Options->{username} if defined $Options->{username};
 $request->{user_uid} = $requested_uid       if defined $requested_uid;
@@ -551,12 +538,12 @@ sub Gen_Request_File_Name($) {
 # If "-force-dn" option was not specified, do a minimal syntax check.
 #
 sub Is_Valid_DN($) {
-    my($DN) = @_;
+    my($dn) = @_;
 
-    return 0 if $DN !~ /^[ -~]*$/;
-    return 0 if $DN =~ /"/;
+    return 0 if $dn !~ /^[ -~]*$/;
+    return 0 if $dn =~ /"/;
     return 0 if defined $Options->{'force-dn'} and
-                $DN !~ m<^(/[^/=]+=[^=]+)+$>;
+                $dn !~ m<^(/[^/=]+=[^=]+)+$>;
     return 1;
 } # Is_Valid_DN
 
@@ -916,7 +903,7 @@ EOF
                 }
             }
 
-            $Options->{dn} = [ $dn ];
+            $Options->{dn} = $dn;
         }
 
         #
@@ -984,9 +971,7 @@ sub Get_Options_From_Command_Line() {
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
 
-    my @dn_list = @{$User_Opt->{dn}};
-
-    my $dn_count = scalar @dn_list +
+    my $dn_count = (defined $User_Opt->{dn} ? 1 : 0) +
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
                    (defined $User_Opt->{'default-dn'} ? 1 : 0);
 
@@ -1059,8 +1044,8 @@ sub Get_Options_From_Command_Line() {
     }
 
     if ($OP ne 'remove-user') {
-        if (@dn_list) {
-            $Options->{dn} = \@dn_list;
+        if (defined $User_Opt->{dn}) {
+            $Options->{dn} = $User_Opt->{dn};
         }
         else {
             my $cert_file;
@@ -1088,7 +1073,7 @@ sub Get_Options_From_Command_Line() {
                 #
                 # Get_DN_From_Certificate returned a valid DN
                 #
-                $Options->{dn} = [ $dn ];
+                $Options->{dn} = $dn;
             }
             else {
                 #
@@ -1138,36 +1123,6 @@ sub DN_Is_Handled_Automatically($) {
     close $AUTO;
     return 0;
 } # DN_Is_Handled_Automatically
-
-# ----------------------------------------------------------------------
-
-#
-# Given a hash reference, returns a new reference whose fields are copies
-# of the original.  Used in expanding a 'set' request so we can
-# generate a list of similar nodes.
-#
-sub Clone($) {
-    my($ref) = @_;
-    my $new_ref = {};
-    foreach my $key (keys %$ref) {
-        $new_ref->{$key} = $ref->{$key};
-    }
-    return $new_ref;
-} # Clone
-
-# ----------------------------------------------------------------------
-
-#
-# Given a list, returns a list with duplicate entries deleted.
-#
-sub Unique(@) {
-    my %seen = ();
-    my @result = ();
-    foreach my $elem (@_) {
-        push @result, $elem if not $seen{$elem}++;
-    }
-    return @result;
-} # Unique
 
 # ----------------------------------------------------------------------
 
