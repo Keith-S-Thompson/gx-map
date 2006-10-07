@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# $Id: list-open-bugs,v 1.1 2006-10-06 20:11:29-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/list-open-bugs,v $
+
+grep '^Title:' `grep -l '^Status: Open' bug-????`
