@@ -1,4 +1,4 @@
-# $Id: gx-watch-locks.8.pod,v 1.1 2006-10-06 18:51:14-07 kst Exp $
+# $Id: gx-watch-locks.8.pod,v 1.2 2006-10-06 19:50:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-watch-locks.8.pod,v $
 
 =for comment
@@ -57,7 +57,7 @@ S<gx-watch-locks -help>
 
 S<gx-watch-locks -version>
 
-S<gx-watch-locks [options]
+S<gx-watch-locks [options]>
 
 =head1 DESCRIPTION
 
