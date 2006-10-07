@@ -1,0 +1,160 @@
+# $Id: gx-watch-locks.8.pod,v 1.1 2006-10-06 18:51:14-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-watch-locks.8.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+gx-watch-locks - Watch status of B<gx-map> lock files
+
+=head1 SYNOPSIS
+
+S<gx-watch-locks -help>
+
+S<gx-watch-locks -version>
+
+S<gx-watch-locks [options]
+
+=head1 DESCRIPTION
+
+B<gx-watch-locks>, part of the B<gx-map> system, is an administrative
+command.  It checks for the existence of lock files created by several
+B<gx-map> commands.
+
+The following commands currently create lock files:
+
+=over
+
+=item B<gx-ca-update>
+
+=item B<gx-check-index>
+
+=item B<gx-check-requests>
+
+=item B<gx-db-check-requests>
+
+=back
+
+Lock files are used to prevent more than one instance of a program
+from executing concurrently and possibly corrupting data files.
+If one of these commands dies or hangs for any reason, it can leave
+a lock file in place, preventing the same command from running
+again.  This can freeze updates to the F<grid-mapfile> or to the
+F<grid-security/certificates> directory.
+
+In some circumstances, a command can legitimately take a long time
+to execute, so the existence of a lock file doesn't B<necessarily>
+indicate a problem.  A lock file contains a brief message which
+includes a time stamp, the name of the program that created it, and
+the name of the host on which it's running.  This should be examined
+to determine whether the lock is actually stale.
+
+The B<gx-watch-locks> command prints a list of current lock files.
+By default, lock files younger than 5 minutes are ignored, and the list
+is only displayed once.  Command-line options can change this behavior.
+
+Stale locks can be removed using the F<gx-remove-locks> command (q.v.).
+
+=head1 OPTIONS
+
+Option processing is done using the Perl B<Getopt::Long> module.
+
+Options may be specified with a single or double leading '-' character.
+Option names may be abbreviated to whatever is unique.  Arguments may
+be separated either by a blank or by an '=' character.  For example,
+"-foobar 42", "--foobar=42", and "-foob 42" would all be equivalent.
+
+=over
+
+=item B<-help>
+
+Display a usage message and exit.
+
+=item B<-version>
+
+Display the software version number and exit.
+
+=item B<-loop>
+
+Rather than displaying the current locks and exiting, check
+repeatedly, by default every 5 minutes.  The screen is cleared before
+each redisplay.  This is suitable for running in a separate terminal
+window to continuously monitor the current status.
+
+=item B<-interval> I<seconds>
+
+Check every I<interval> seconds rather than every 5 minutes.
+
+=item B<-beep>
+
+Beep if any lock is older than 5 minutes.
+
+=item B<-directory> I<dir>
+
+Specify a gx-map installation B<or> data directory.  The default is
+the installation containing this copy of B<gx-watch-locks>.
+
+=item B<-all>
+
+Show all lock files.  By default, lock files younger than 5 minutes
+are ignored.
+
+=back
+
+=head1 SEE ALSO
+
+gx-map(7), gx-remove-locks(8), gx-ca-update(8), gx-check-index(8),
+gx-check-requests(8), gx-db-check-requests(8)
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
