@@ -1,4 +1,4 @@
-# $Id: bug-0119,v 1.2 2006-09-27 20:57:00-07 kst Exp $
+# $Id: bug-0119,v 1.3 2006-10-06 18:52:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0119,v $
 
 gx-map bug 0119
@@ -6,7 +6,7 @@ Date: Wed 2006-09-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2.008
-Status: Open
+Status: Fixed 0.5.2.2.011
 Title: Add a gx-watch-locks command
 
 See also bug-0065.
@@ -33,3 +33,8 @@ locks.  Locks newer than, say, 1 minute are (optioally?) ignored;
 locks older than, say, 1 hour are highlighted.  Highlighting is
 probably a ">>> " prefix on the line, though I suppose I could use
 "tput" if I wanted to be fancy.
+
+Fixed:
+gx-watch-locks.in 1.3
+doc/gx-watch-locks.8.pod 1.1
+gx-map release 0.5.2.2.011
