@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-install-cadesc.in,v 1.3 2006-09-25 23:46:22-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.4 2006-10-09 22:13:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -81,12 +81,11 @@ my @Opts = ( $User_Opt,
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
-Usage if scalar @ARGV != 1;
-
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
+Usage if scalar @ARGV != 1;
 
 my $tarball = $ARGV[0];
 
