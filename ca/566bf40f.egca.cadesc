@@ -1,0 +1,18 @@
+# $Id: 566bf40f.egca.cadesc,v 1.1 2006-10-12 19:10:06-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/566bf40f.egca.cadesc,v $
+
+CA_NAME             Estonian Grid Certification Authority (EGCA)
+HOMEPAGE            http://grid.eenet.ee/CA/
+CONTACT             ?
+HASH                566bf40f
+SUBJECT             /C=EE/O=Grid/CN=Estonian Grid Certification Authority
+MAY_SIGN            /C=EE/O=Grid/*
+CERTIFICATE_MD5     A7:15:2E:C1:00:F3:F4:6D:E4:31:D4:88:DD:6E:95:03
+CERTIFICATE_SHA1    92:C7:A4:9D:0C:BB:DC:2A:25:50:76:A5:06:C5:4C:DD:89:55:7E:83
+CERTIFICATE_URL     http://grid.eenet.ee/CA/566bf40f.0
+SIGNING_POLICY_URL  http://grid.eenet.ee/CA/566bf40f.signing_policy
+CRL_URL             http://grid.eenet.ee/CA/566bf40f.r0
+CERT_EXPIRES        Mon 2014-02-17 15:46:38 UTC
+
+# MD5 and SHA1 fingerprints from 566bf40f.0, downloaded Tue 2006-09-26
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
