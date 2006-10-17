@@ -1,4 +1,4 @@
-# $Id: INSTALL,v 1.8 2006-06-30 16:55:11-07 kst Exp $
+# $Id: INSTALL,v 1.9 2006-10-16 17:34:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
 Installation instructions for gx-map 0.5.X
@@ -94,6 +94,14 @@ The following external commands are required:
     curl
     openssl
     mail or mailx (optional)
+
+A separate "gettimeofday" command may be used if the "Time::HiRes"
+Perl module is not available.  Since the Time::HiRes module is
+standard in recent versions of Perl, and can be installed via CPAN
+if it's not already there, this should rarely if ever be necessary.
+But if it is needed, a C source file "gettimeofday.c" is available
+in the distribution; compile it and install the executable somewhere
+in the specified PATH.
 
 A secure Unix user account will need to be chosen to own the
 installation and to run the cron jobs.  Anyone with access to this
