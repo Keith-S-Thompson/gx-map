@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.57 2006-10-17 16:50:59-07 kst Exp $
+# $Id: gx-request.in,v 1.58 2006-10-18 15:58:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -86,19 +86,6 @@ my $default_cert_file =
     defined $proxy_file     ? $proxy_file     :
     defined $user_cert_file ? $user_cert_file :
     undef;
-
-if ($Program_Name eq 'gx-request') {
-    # ok
-}
-elsif ($Program_Name eq 'gx-map') {
-    print ">>> The name \"gx-map\" for this client program is obsolescent.\n";
-    print "    It works for now, but will be disabled in a future release.\n";
-    print "    Use \"gx-request\" instead.\n";
-}
-else {
-    print ">>> Unexpected program name \"$Program_Name\".\n";
-    print "    Expected \"gx-request\".\n";
-}
 
 #
 # There are three variables dealing with command-line options.
