@@ -1,7 +1,61 @@
-e $Id: Relnotes,v 1.24 2006-08-19 16:43:14-07 kst Exp $
+e $Id: Relnotes,v 1.25 2006-10-17 18:23:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.5.3, ??? 2006-10-??
+
+    Miscellaneous minor bug fixes.
+
+    Improvements in locking code and cacheing code.
+
+    The "gx-map" command is no longer an alias for "gx-request".
+    It now simply prints an error message and exits.
+
+    If the Time::HiRes Perl module is not available, the "gettimeofday"
+    may be used instead (though it's recommended to install Time::HiRes
+    instead).  See INSTALL for details.
+
+    New command: gx-check-index
+	This incorporates the functionality of the "gx-map-cacl"
+	tool into gx-map.  This is primarily intended for use at
+	SDSC, but it could be used at other sites if a CA provides
+	an appropriate index file.
+
+    New command: gx-cron-job
+	Rather than invoking individual commands from a complex
+	set of cron jobs, you can just invoke gx-cron job every 1
+	or 5 minutes.  A configuration file controls which commands
+	are executed when.  gx-cron job may also be run as a daemon,
+	bypassing crond.
+
+    New command: gx-install-cadesc
+	Installs a gx-map-cadesc-*.tar.gz tarball, containing CA
+	description files, into an existing installation.  This removes
+	the need for a full new release of the gx-map package when
+	CA information changes.
+
+    New command: gx-util-test
+	This is a test program for some of the functions in the
+	Gridmap_Utils Perl module.
+
+    New command: gx-watch-lock
+	This watches for stale lock files.
+
+    gx-request:
+	Issue a warning for DNs that are handled automatically (e.g.,
+	ones handled by gx-check-index).  The set of DNS to warn about
+	can be configured by editing the file "etc/gx-map/auto.txt".
+	Added "-literal-dn" option (useful for removing certain
+	invalid entries).
+
+    gx-ca-update:
+	If no "-ca" or "-ca-list" option is specified, try to use a
+	".ca-list" file in the target directory.
+
+	The "-list-cas" option excludes disabled CAs.  The new
+	"-list-all-cas" option shows all CAs, including disabled ones
+	(what "-list-cas" formerly did).
 
 Release 0.5.2.2, Sat 2006-08-19
 
