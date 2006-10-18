@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.11 2006-10-05 01:29:16-07 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.12 2006-10-17 21:37:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -138,6 +138,16 @@ Like B<-list-cas>, but include disabled CAs as well.
 Specify the target directory.  Typically this will be either
 F</etc/grid-security/certificates> or a directory to which
 F</etc/grid-security/certificates> is a symbolic link.
+
+=item B<-[no]download>
+
+By default, B<gx-ca-update> attempts to download files as needed.
+With B<-nodownload>, use only existing files in the cache directory.
+
+This can be useful if multiple instances of B<gx-map> are being used
+on several systems with a shared data directory.  One instance can
+run in the default B<-download> mode, and all the others can depend
+on the cache files, saving time and network traffic.
 
 =item B<-permissions> I<perm>
 
