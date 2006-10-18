@@ -1,4 +1,4 @@
-e $Id: Relnotes,v 1.25 2006-10-17 18:23:53-07 kst Exp $
+e $Id: Relnotes,v 1.26 2006-10-17 21:37:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -50,6 +50,15 @@ Release 0.5.3, ??? 2006-10-??
 	invalid entries).
 
     gx-ca-update:
+	New option: -[no]download.
+	By default, gx-ca-update attempts to download files as needed.
+	With "-nodownload", it uses only existing files in the cache
+	directory.  This can be useful if multiple instances of gx-map
+	are being used on several systems with a shared data directory.
+	One instance can run in the default "-download" mode, and
+	all the others can depend on the cache files, saving time
+	and network traffic.
+
 	If no "-ca" or "-ca-list" option is specified, try to use a
 	".ca-list" file in the target directory.
 
