@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.86 2006-09-28 18:36:03-07 kst Exp $
+# $Id: install-gx-map.in,v 1.87 2006-10-18 21:42:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -213,7 +213,7 @@ if [ ! -h $INSTALL_DIR/gx-map-data ] ; then
 fi
 
 cadesc_tarball=`echo gx-map-cadesc-????-??-??.tar.gz`
-if [ ! -e "$cadesc_tarball" ] ; then
+if [ ! -f "$cadesc_tarball" ] ; then
     echo "Can't find cadesc tarball" 1>&2
     exit 1
 fi
