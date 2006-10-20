@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.11 2006-09-19 22:22:17-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.12 2006-10-19 19:32:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -191,12 +191,12 @@ sub Run_Jobs() {
         }
 
         foreach my $command (@commands) {
-	    #
-	    # Specify the patterns indirectly so configure-gx-map
-	    # doesn't try to substitute them.
-	    #
-	    my $hostname_pattern = '%' . 'HOSTNAME' . '%';
-	    my $version_pattern  = '%' . 'VERSION' . '%';
+            #
+            # Specify the patterns indirectly so configure-gx-map
+            # doesn't try to substitute them.
+            #
+            my $hostname_pattern = '%' . 'HOSTNAME' . '%';
+            my $version_pattern  = '%' . 'VERSION' . '%';
             $command =~ s/$hostname_pattern/$Hostname/g;
             $command =~ s/$version_pattern/$Gridmap_Utils::VERSION/g;
         }
@@ -208,7 +208,11 @@ sub Run_Jobs() {
                     print "... Execute $command\n";
                 }
                 else {
-                    my $status = system "$Install_Dir/sbin/$command";
+                    my $full_command = $command;
+                    if ($full_command !~ /^\//) {
+                        $full_command = "$Install_Dir/sbin/$command";
+                    }
+                    my $status = system $full_command;
                     if ($status != 0) {
                         my $message = Status_Image $status;
                         warn "$Program_Name: job $name failed: $message\n";
