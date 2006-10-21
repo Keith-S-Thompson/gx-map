@@ -1,4 +1,4 @@
-# $Id: gx-cron-job.8.pod,v 1.4 2006-10-19 19:33:44-07 kst Exp $
+# $Id: gx-cron-job.8.pod,v 1.5 2006-10-20 20:28:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-cron-job.8.pod,v $
 
 =for comment
@@ -124,14 +124,14 @@ F<etc/gx-map/gx-cron-job.conf> in the B<gx-map> installation directory.
 This file is not installed by default, but a sample configuration
 file is provided in the release as F<sample-gx-cron-job.conf>.
 
-The configuration file consists of a sequence of records.  Each record
-consists of a line containing only an opening brace '{', a sequence of
-lines each containing an attribute name followed by the corresponding
-attribute value, and a line consisting only of a closing brace '}'.
-(The similarity to the format of the F<requests.log> file is not a
-coincidence; the same code is used to parse both.)
+The configuration file consists of a sequence of sections.  Each
+section consists of a line containing only an opening brace '{', a
+sequence of lines each containing an attribute name followed by the
+corresponding attribute value, and a line consisting only of a closing
+brace '}'.  (The similarity to the format of the F<requests.log>
+file is not a coincidence; the same code is used to parse both.)
 
-Records are processed in the order specified in the
+Sections are processed in the order specified in the
 F<etc/gx-map/gx-cron-job.conf> file.  Multiple commands are executed
 in sequence, not concurrently.
 
@@ -141,7 +141,7 @@ The permitted attributes are:
 
 =item B<name> I<string>
 
-An arbitrary name for this record, used in error messages.
+An arbitrary name for this section, used in error messages.
 
 =item B<interval> I<minutes>
 
@@ -174,7 +174,7 @@ the result of the system F<hostname> command.
 
 =item B<command>
 
-There can be one or more commands in each record.  If no absolute
+There can be one or more commands in each section.  If no absolute
 path is specified (i.e., the command does not start with a '/'
 character), it is assumed to be in the F<sbin> directory of the
 B<gx-map> installation directory.  The commands are executed in the
