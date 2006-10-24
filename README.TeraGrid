@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.17 2006-06-30 16:55:11-07 kst Exp $
+# $Id: README.TeraGrid,v 1.18 2006-10-24 02:17:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
@@ -137,43 +137,87 @@ gx-map installation for each one).
 Cron Jobs:
 ==========
 
-Here is a preliminary set of cron jobs for SDSC's IA-64 TeraGrid
-system, tg-login2.sdsc.teragrid.org, running under the "gxmap"
-account.  Other TeraGrid sites should modify the paths and the
-namespace argument.  Non-TeraGrid sites will require customization
-as well, but can use this as a template.
+Previous releases of gx-map required multiple cron jobs for different
+commands.  As of release 0.5.3, you can instead have a single cron
+job that simply invokes the gx-cron-job command.  This requires you
+to create the etc/gx-map/gx-cron-job.conf file (so in a sense the
+complexity is merely pushed down a level).
 
-The lines are shown here with '\' continuation characters.  Crontab
-doesn't actualy allow this, so each command will need to be on a
-single line.
+Here's a sample cron job, running the gx-cron-job command once
+every minute:
 
-The "*/5" syntax is specific to the Linux version of crontab; it
-will have to be spelled out as 0,5,10,15,20,25,30,35,40,45,50,55 on,
-for example, Solaris and AIX systems.
+* * * * * /usr/local/apps/gx-map-0.5.3/sbin/gx-cron-job
 
-# minute hour mday month wday command
-*/5 * * * *  /usr/local/apps/gx-map-0.5.2/sbin/gx-gen-mapfile \
-	-gt2-compat /usr/local/apps/grid-security/grid-mapfile
-10,40 * * * * /usr/local/apps/gx-map-0.5.2/sbin/gx-ca-update \
-	-target-dir /usr/local/apps/grid-security/certificates \
-	-ca-list /usr/local/apps/grid-security/certificates/.list
+And here's a sample gx-cron-job.conf file (this is similar to the
+one for chester.sdsc.edu):
+============================== CUT HERE ==============================
+{
+    name DB
+    hostname chester.sdsc.edu
+    interval 60
+    command gx-db-request -full-query
+    command gx-db-check-requests
+}
 
-The gx-gen-mapfile command generates (when necessary)
-a new grid-mapfile.  I assume here that it's written
-to the /usr/local/apps/grid-security directory; the file
-/etc/grid-security/grid-mapfile then needs to be a symlink to
-/usr/local/apps/grid-security/grid-mapfile.
+{
+    name Check Index
+    hostname chester.sdsc.edu
+    interval 5+3
+    command gx-check-index -ca npaci -index /projects/security/PKI/ca-npaci/ca.db.index
+    command gx-check-index -ca sdsc  -index /projects/security/PKI/ca-sdsc/ca.db.index
+}
 
-Similar cron jobs will run on SDSC's BlueGene and DataStar systems.
+{
+    name Check Requests
+    interval 5+4
+    command gx-check-requests
+}
 
-The gx-ca-update command runs every 30 minutes and checks for
-CRL (Certificate Revocation List) updates.  I recommend running
-gx-ca-update once manually, with the "-verbose" option, to populate
-the certificates directory and see what messages are produced,
-before enabling the cron job.  The ".list" file contains a list of
-the CA certificates to be installed.  Each CA is specified by its
-8-digit hash.  This allows the set of supported CAs to be updated
-without modifying the cron job.
+{
+    name Generate mapfile (chester)
+    hostname chester.sdsc.edu
+    interval 5
+    command gx-gen-mapfile -gt2-compat /usr/local/apps/grid-security-%VERSION%/%HOSTNAME%.grid-mapfile
+    command gx-gen-mapfile -all        /usr/local/apps/grid-security-%VERSION%/ALL.grid-mapfile
+}
+
+{
+    name CA update (chester)
+    hostname chester.sdsc.edu
+    interval 30+5
+    command gx-ca-update -target-dir /usr/local/apps/grid-security-%VERSION%/certificates
+}
+============================== CUT HERE ==============================
+
+The "DB" section runs once an hour and downloads information from
+the TGCDB.  To avoid overloading the database server, other sites
+might want to stagger their DB jobs ("interval 60+5", "interval
+60+10", etc.).  The "hostname" line causes this to be done only on
+chester.sdsc.edu, even if gx-cron-job is run on other machines.
+As written, this does a full query of the database and looks for
+changes.  Other approaches are possible; see the gx-db-request(8)
+man page (also available on the gx-map web page) for more information.
+
+The "Check Index" section runs ever 5 minutes.  This is specific to
+SDSC; it processes updates in the index files for the NPACI and SDSC
+CAs (Certificate Authorities).
+
+The "Check Requests" section invokes gx-check-requests every 5 minutes.
+
+The "Generate mapfile" section generates new grid-mapfiles as needed.
+In this example, "%VERSION%" expands to the current version number
+for gx-map, and "%HOSTNAME%" expands to the current hostname.
+
+The "CA update" section invokes gx-ca-update to update the
+certificates directory.  /etc/grid-security/grid-mapfile and
+/etc/grid-security/certificates can be symbolic links into
+/usr/local/apps (or whererer you prefer to put things), or you can
+update the /etc/grid-security directory directly.
+
+Since SDSC uses a shared NFS-mounted data directory, other systems
+within SDSC can invoke gx-check-requests with the "-nodownload"
+option, to extract files from the cache rather than having each system
+re-download them.
 
 By default, gx-ca-update will not install a certificate if there is
 no current corresponding CRL.  If a CRL expires and a new one is not
@@ -190,15 +234,6 @@ for convenience.  See the gx-ca-update(8) man page for details.
 The gx-ca-update command writes log messages to the file
 gx-map-data/gx-ca-update.log under the gx-map installation directory.
 In a future release, it may optionally use the syslog facility as well.
-
-The gx-check-requests command is run on chester.sdsc.edu, an internal
-SDSC machine; the data directory is shared between SDSC's internal
-and TeraGrid systems.  The crontab for chester.sdsc.edu will include
-something similar to this:
-
-# minute hour mday month wday command
-4,9,14,19,24,29,34,39,44,49,54,59 * * * * \
-    /usr/local/apps/gx-map-0.5.2/sbin/gx-check-requests
 
 To process information from the TGCDB (either by querying the database
 directly or by processing AMIE packets), chester.sdsc.edu will run
