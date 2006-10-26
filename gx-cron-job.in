@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.12 2006-10-19 19:32:44-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.13 2006-10-26 00:15:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -212,6 +212,7 @@ sub Run_Jobs() {
                     if ($full_command !~ /^\//) {
                         $full_command = "$Install_Dir/sbin/$command";
                     }
+                    Debug "% $full_command\n";
                     my $status = system $full_command;
                     if ($status != 0) {
                         my $message = Status_Image $status;
