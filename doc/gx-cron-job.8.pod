@@ -1,4 +1,4 @@
-# $Id: gx-cron-job.8.pod,v 1.5 2006-10-20 20:28:30-07 kst Exp $
+# $Id: gx-cron-job.8.pod,v 1.6 2006-10-26 13:45:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-cron-job.8.pod,v $
 
 =for comment
@@ -92,10 +92,19 @@ Display the software version number and exit.
 Run in a continuous loop, checking for jobs once per minute.
 The default is a single execution, suitable for running in a cron job.
 
+In either mode, B<gx-cron-job> re-reads the config file on every
+iteration (if its timestamp has changed), so any changes to the
+F<gx-cron-job.conf> file will be reflected immediately.
+
 =item B<-config-file> I<file>
 
 Use the specified configuration file.  The default is
 F<etc/gx-map/gx-cron-job> in the B<gx-map> installation directory.
+
+=item B<-[no]check>
+
+By default, B<gx-cron-job> checks on startup that the specified
+commands are executable.  Use B<-nocheck> to disable this check.
 
 =item B<-dryrun>
 
