@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.14 2006-10-26 13:37:10-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.15 2006-10-26 16:16:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -183,7 +183,7 @@ sub Get_Jobs($) {
                 $job->{command} = [ $job->{command} ];
             }
 
-            foreach my $command (@{$job->{commands}}) {
+            foreach my $command (@{$job->{command}}) {
                 #
                 # Specify the patterns indirectly so configure-gx-map
                 # doesn't try to substitute them.
@@ -227,9 +227,7 @@ sub Run_Jobs() {
     die "$User_Opt->{'config-file'}: $!\n" if not defined $mtime;
 
     if ($mtime > $config_file_timestamp) {
-        Debug "Reading config file $User_Opt->{'config-file'}\n";
         @Jobs = Get_Jobs $User_Opt->{'config-file'};
-        Debug "Got ", scalar @Jobs, " job(s)\n";
         $config_file_timestamp = $mtime;
     }
 
