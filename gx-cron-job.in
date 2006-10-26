@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.13 2006-10-26 00:15:07-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.14 2006-10-26 13:37:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -56,6 +56,7 @@ use Getopt::Long ();
 sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
+sub Get_Jobs($);
 sub Run_Jobs();
 sub Status_Image($);
 
@@ -75,11 +76,13 @@ my $Default_Config_File = "$Install_Dir/etc/gx-map/gx-cron-job.conf";
 
 my $Program_Name = File::Basename::basename $0;
 
-my $User_Opt = { 'config-file' => $Default_Config_File };
+my $User_Opt = { 'config-file' => $Default_Config_File,
+                  check        => 1 };
 my @Opts = ( $User_Opt,
              qw( help
                  version
                  daemon!
+                 check!
                  dryrun!
                  debugging!
                  config-file=s ) );
@@ -121,51 +124,44 @@ else {
 
 ########################################################################
 
-sub Run_Jobs() {
-    my $now = time;
-    my $minutes = int($now / 60);
-
-    my $mtime = Gridmap_Utils::Get_mtime $User_Opt->{'config-file'};
-    die "$User_Opt->{'config-file'}: $!\n" if not defined $mtime;
-
-    if ($mtime > $config_file_timestamp) {
-        Debug "Reading config file $User_Opt->{'config-file'}\n";
-        @Jobs = Gridmap_Utils::Read_Records $User_Opt->{'config-file'};
-        Debug "Got ", scalar @Jobs, " job(s)\n";
-    }
+sub Get_Jobs($) {
+    my($config_file) = @_;
+    my @result = ();
 
     my %is_valid_field = map { $_ => 1 } qw(name interval hostname command);
 
-    JOB:
-    for (my $i = 0; $i <= $#Jobs; $i ++) {
-        my $job = $Jobs[$i];
-        die "No interval specified\n" if not defined $job->{interval};
-        die "No command specified\n"  if not defined $job->{command};
+    my @errors = ();
 
-        my $name;
-        if (defined $job->{name}) { 
-            $name = $job->{name};
-        }
-        else {
-            $name = "# " . ($i+1);
+    Debug "Reading config file $config_file\n";
+    @result = Gridmap_Utils::Read_Records $config_file;
+    Debug "Got ", scalar @Jobs, " job(s)\n";
+
+    for (my $i = 0; $i <= $#result; $i ++) {
+        my $job = $result[$i];
+
+        if (not defined $job->{name}) { 
+            $job->{name} = "# " . ($i+1);
         }
 
         foreach my $key (sort keys %$job) {
             if (not $is_valid_field{$key}) {
-                die "Invalid key \"$key\" in job $name\n";
+                push @errors, "Invalid key \"$key\" in job $job->{name}\n";
             }
         }
 
-        my $interval = $job->{interval};
-        my $offset;
-        if ($interval =~ /^\d+$/) {
-            $offset = 0;
+        if (not defined $job->{interval}) {
+            push @errors,  "No interval specified for job $job->{name}\n";
         }
-        elsif ($interval =~ /^(\d+)\+(\d+)$/) {
-            ($interval, $offset) = ($1, $2);
+        elsif ($job->{interval} =~ /^\d+$/) {
+            $job->{offset} = 0;
+        }
+        elsif ($job->{interval} =~ /^(\d+)\+(\d+)$/) {
+            $job->{interval} = $1;
+            $job->{offset}   = $2;
         }
         else {
-            die "Unrecognized interval: $interval\n";
+            push @errors, "Unrecognized interval $job->{interval} " .
+                          "in job $job->{name}\n";
         }
 
         if (defined $job->{hostname}) {
@@ -176,54 +172,98 @@ sub Run_Jobs() {
             else {
                 @hostnames = ( $job->{hostname} );
             }
-            if (not grep { $_ eq $Hostname } @hostnames) {
-                Debug "Skipping $name, hostname doesn't match\n";
-                next JOB;
-            }
+            $job->{match_hostname} = map { $_ => 1 } @hostnames;
         }
 
-        my @commands;
-        if (ref $job->{command} eq 'ARRAY') {
-            @commands = @{$job->{command}};
+        if (not defined $job->{command}) {
+            push @errors,  "No command specified for job $job->{name}\n";
         }
         else {
-            @commands = ( $job->{command} );
+            if (ref $job->{command} ne 'ARRAY') {
+                $job->{command} = [ $job->{command} ];
+            }
+
+            foreach my $command (@{$job->{commands}}) {
+                #
+                # Specify the patterns indirectly so configure-gx-map
+                # doesn't try to substitute them.
+                #
+                my $hostname_pattern = '%HOSTNAME' . '%';
+                my $version_pattern  = '%VERSION' . '%';
+                $command =~ s/$hostname_pattern/$Hostname/g;
+                $command =~ s/$version_pattern/$Gridmap_Utils::VERSION/g;
+
+                if ($command !~ /^\//) {
+                    $command = "$Install_Dir/sbin/$command";
+                }
+
+                if ($User_Opt->{check}) {
+                    my $executable;
+                    ($executable = $command) =~ s/\s.*$//;
+                    if (not -x $executable) {
+                        push @errors, "Missing command $executable in " .
+                                      "job $job->{name}\n";
+                    }
+                }
+            }
+        }
+    }
+
+    if (@errors) {
+        die "Reading $config_file:\n", @errors;
+    }
+    else {
+        return @result;
+    }
+} # Get_Jobs
+
+# ----------------------------------------------------------------------
+
+sub Run_Jobs() {
+    my $now = time;
+    my $minutes = int($now / 60);
+
+    my $mtime = Gridmap_Utils::Get_mtime $User_Opt->{'config-file'};
+    die "$User_Opt->{'config-file'}: $!\n" if not defined $mtime;
+
+    if ($mtime > $config_file_timestamp) {
+        Debug "Reading config file $User_Opt->{'config-file'}\n";
+        @Jobs = Get_Jobs $User_Opt->{'config-file'};
+        Debug "Got ", scalar @Jobs, " job(s)\n";
+        $config_file_timestamp = $mtime;
+    }
+
+    JOB:
+    foreach my $job (@Jobs) {
+        if (defined $job->{match_hostname} and
+            not $job->{match_hostname}->{$Hostname})
+        {
+            Debug "Skipping job $job->{name}, " .
+                  "hostname $Hostname doesn't match\n";
+            next JOB;
         }
 
-        foreach my $command (@commands) {
-            #
-            # Specify the patterns indirectly so configure-gx-map
-            # doesn't try to substitute them.
-            #
-            my $hostname_pattern = '%' . 'HOSTNAME' . '%';
-            my $version_pattern  = '%' . 'VERSION' . '%';
-            $command =~ s/$hostname_pattern/$Hostname/g;
-            $command =~ s/$version_pattern/$Gridmap_Utils::VERSION/g;
-        }
-
-        my $actual_offset = $minutes % $interval;
-        if ($actual_offset == $offset) {
-            foreach my $command (@commands) {
+        my $current_offset = $minutes % $job->{interval};
+        if ($current_offset == $job->{offset}) {
+            foreach my $command (@{$job->{command}}) {
                 if ($User_Opt->{dryrun}) {
                     print "... Execute $command\n";
                 }
                 else {
-                    my $full_command = $command;
-                    if ($full_command !~ /^\//) {
-                        $full_command = "$Install_Dir/sbin/$command";
-                    }
-                    Debug "% $full_command\n";
-                    my $status = system $full_command;
+                    Debug "% $command\n";
+                    my $status = system $command;
                     if ($status != 0) {
                         my $message = Status_Image $status;
-                        warn "$Program_Name: job $name failed: $message\n";
+                        warn "$Program_Name: job $job->{name} failed: " .
+                             "$message\n";
                     }
                 }
             }
         }
         else {
-            Debug "Skipping job $name, needed $offset mod $interval, " .
-                  "got $actual_offset mod $interval\n";
+            Debug "Skipping job $job->{name}, " .
+                  "needed $job->{offset} mod $job->{interval}, " .
+                  "got $current_offset mod $job->{interval}\n";
         }
     }
 } # Run_Jobs
@@ -257,6 +297,9 @@ Option names may be abbreviated.
                          (default is single execution, as from a cron job)
     -config-file file  : Use the specified configuration file; default is
                          $Default_Config_File
+    -[no]check         : By default, gx-cron-job checks that the specified
+                         commands are executable.  Use "-nocheck" to
+                         disable this check.
     -dryrun            : Display commands but don't run them.
     -debugging         : Display debugging messages
 EOF
