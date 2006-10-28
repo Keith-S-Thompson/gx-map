@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-cron-job.in,v 1.15 2006-10-26 16:16:28-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.16 2006-10-27 20:11:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -172,7 +172,9 @@ sub Get_Jobs($) {
             else {
                 @hostnames = ( $job->{hostname} );
             }
-            $job->{match_hostname} = map { $_ => 1 } @hostnames;
+            foreach my $hostname (@hostnames) {
+                $job->{match_hostname}->{$hostname} = 1;
+            }
         }
 
         if (not defined $job->{command}) {
