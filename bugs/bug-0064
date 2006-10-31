@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.4 2006-10-05 13:06:58-07 kst Exp $
+# $Id: bug-0064,v 1.5 2006-10-30 17:01:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -100,3 +100,11 @@ of openssl, which makes it very important for the specified PATH to
 be secure.  Emphasize this in the documentation, and in sample.conf.
 (gx-map currently uses openssl, but not in any security-critical
 manner.)
+
+Another thought:
+
+A user should *not* be required to prove he owns the certificate for a
+"remove" or "remove-user" request.  (A "remove-dn" request requires
+administrative privileges.)  If somebody has somehow managed to map
+his own DN to my account, I should be able to remove that mapping
+(obviously I can't provide I own the certificate in that case).
