@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.86 2006-09-18 17:28:11-07 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.87 2006-11-01 20:21:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -80,10 +80,11 @@ my $Dot_Update           = "$Data_Dir/new-requests/.update";
 
 my $Program_Name = File::Basename::basename $0;
 
-my $User_Opt = { 'requests-log' => [],
-                 'permissions'  => '444',
-                 'merge-file'   => [],
-                 'rcs'          => 1 };
+my $User_Opt = { 'requests-log'   => [],
+                 'permissions'    => '444',
+                 'merge-file'     => [],
+                 'multiple-users' => 1,
+                 'rcs'            => 1 };
 my @Opts = ( $User_Opt,
              qw( help
                  version
@@ -93,6 +94,7 @@ my @Opts = ( $User_Opt,
                  gt2-compatible!
                  gt3-compatible!
                  merge-file=s@
+                 multiple-users!
                  all!
                  real-name!
                  rcs!
@@ -146,7 +148,7 @@ if (@{$User_Opt->{'requests-log'}}) {
             # we're using a previously cached copy.
             #
             $log = $cache_result->{filename};
-	    push @cache_files, $log;
+            push @cache_files, $log;
         }
     }
 }
@@ -288,9 +290,17 @@ foreach my $dn (sort keys %$Mappings) {
     push @versions, 'GT3' if $User_Opt->{'gt3-compatible'};
     push @versions, 'GT4'; # do this unconditionally
     my @dn_list = Gridmap_Utils::DN_List $dn, @versions;
+    my $name_list = join(',', @names);
+    if (not $User_Opt->{'multiple-users'}) {
+        #
+        # Comment out everything after the first user name.
+        # As below, be sure there's a space before the '#' character.
+        #
+        $name_list =~ s/,/ # ,'/;
+    }
 
     foreach my $listed_dn (@dn_list) {
-        my $output_line = "$listed_dn " . join(',', @names);
+        my $output_line = "$listed_dn $name_list";
 
         if ($User_Opt->{'real-name'}) {
             my @real_names = ();
@@ -570,39 +580,43 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Program_Name [options] [files]
 Option names may be abbreviated.
-    -help              : Display this message and exit.
-    -version           : Display version information and exit.
-    -requests-log file : Use specified requests log file.
-                         May be given multiple times, e.g.,
-                             -req file1 -req file2
-                         If not specified, use the default
-                         $Default_Requests_Log
-                         which may be specified explicitly by the
-                         name "default" (which may not be abbreviated.)
-    -debugging         : Enable debugging output.
-    -permissions perm  : Specify permissions (in octal); default is 444
-    -gt2-compatible    : Generate a grid-mapfile compatible with both
-                         GT2 and GT3/GT4.  By default, the generated
-                         grid-mapfile is *not* compatible with GT2 for
-                         certain DNs.
-    -gt3-compatible    : Generate a grid-mapfile compatible both with
-                         GT3 WS (Web Services) and with GT4.  This is
-                         rarely necessary.  This option can be used
-                         together with the "-compatible" option.
-    -merge-file file   : Merge an existing grid-mapfile into the generated
-                         file.  May be given multiple times, e.g.,
-                             -merge file1 -merge file2
-    -all               : Include entries for nonexistent accounts
-                         (not normally recommended)
-    -real-name         : Include real names as comments.
-    -[no]rcs           : Check generated grid-mapfile(s) into RCS.
-                         The RCS subdirectory is created if necessary.
-                         The default is "-rcs"; use "-norcs" to disable.
-                         The file checked into RCS will have a ".rcs" suffix
-                         appended to its name.
-                         This has no effect if the file is written to stdout.
-    -force             : Force an update regardless of the timestamps of
-                         the input and output files.
+    -help               : Display this message and exit.
+    -version            : Display version information and exit.
+    -requests-log file  : Use specified requests log file.
+                          May be given multiple times, e.g.,
+                              -req file1 -req file2
+                          If not specified, use the default
+                          $Default_Requests_Log
+                          which may be specified explicitly by the
+                          name "default" (which may not be abbreviated.)
+    -debugging          : Enable debugging output.
+    -permissions perm   : Specify permissions (in octal); default is 444
+    -gt2-compatible     : Generate a grid-mapfile compatible with both
+                          GT2 and GT3/GT4.  By default, the generated
+                          grid-mapfile is *not* compatible with GT2 for
+                          certain DNs.
+    -gt3-compatible     : Generate a grid-mapfile compatible both with
+                          GT3 WS (Web Services) and with GT4.  This is
+                          rarely necessary.  This option can be used
+                          together with the "-compatible" option.
+    -merge-file file    : Merge an existing grid-mapfile into the generated
+                          file.  May be given multiple times, e.g.,
+                              -merge file1 -merge file2
+    -[no]multiple-users : Allow a DN to be mapped to multiple users.
+                          This is the default.  With "-nomultiple-users",
+                          all user names after the default one are
+                          commented out.
+    -all                : Include entries for nonexistent accounts
+                          (not normally recommended)
+    -real-name          : Include real names as comments.
+    -[no]rcs            : Check generated grid-mapfile(s) into RCS.
+                          The RCS subdirectory is created if necessary.
+                          The default is "-rcs"; use "-norcs" to disable.
+                          The file checked into RCS will have a ".rcs" suffix
+                          appended to its name.
+                          This has no effect if the file is written to stdout.
+    -force              : Force an update regardless of the timestamps of
+                          the input and output files.
 One or more output files may be specified on the command line.
 If no output files are specified, output is written to stdout.
 If output files are specified, they are generated only if necessary, i.e.,
