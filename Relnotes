@@ -1,4 +1,4 @@
-e $Id: Relnotes,v 1.27 2006-10-26 00:14:34-07 kst Exp $
+e $Id: Relnotes,v 1.28 2006-11-01 20:21:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -48,6 +48,12 @@ Release 0.5.3, ??? 2006-10-??
 	can be configured by editing the file "etc/gx-map/auto.txt".
 	Added "-literal-dn" option (useful for removing certain
 	invalid entries).
+
+    gx-gen-mapfile:
+	New option: -[no]multiple-users
+	By default, the generated grid-mapfile may map a single DN
+	to multiple account names.  With -nomultiple-users, all user
+	names after the default one are commented out.
 
     gx-ca-update:
 	New option: -[no]download.
