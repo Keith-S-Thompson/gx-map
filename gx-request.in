@@ -1,6 +1,6 @@
 #!%PERL% -w
 
-# $Id: gx-request.in,v 1.58 2006-10-18 15:58:52-07 kst Exp $
+# $Id: gx-request.in,v 1.59 2006-11-01 17:20:42-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -517,22 +517,6 @@ sub Gen_Request_File_Name($) {
     $result .= "-$$.request";
     return $result;
 } # Gen_Request_File_Name
-
-# ----------------------------------------------------------------------
-
-#
-# Always reject non-printable characters and '"' characters.
-# If "-force-dn" option was not specified, do a minimal syntax check.
-#
-sub Is_Valid_DN($) {
-    my($dn) = @_;
-
-    return 0 if $dn !~ /^[ -~]*$/;
-    return 0 if $dn =~ /"/;
-    return 0 if defined $Options->{'force-dn'} and
-                $dn !~ m<^(/[^/=]+=[^=]+)+$>;
-    return 1;
-} # Is_Valid_DN
 
 # ----------------------------------------------------------------------
 
