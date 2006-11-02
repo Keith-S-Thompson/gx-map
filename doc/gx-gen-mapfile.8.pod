@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.7 2006-06-22 19:28:32-07 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.8 2006-11-01 20:21:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -147,6 +147,12 @@ while also allowing users to add mappings for other certificates
 using B<gx-request>.  (Another option is to create a separate tool
 that invokes B<gx-request> automatically; for example, this is done
 at SDSC for certificates issued by the NPACI and SDSC CAs).
+
+=item B<-[no]multiple-users>
+
+By default, the generated grid-mapfile may map a single DN to multiple
+account names.  With B<-nomultiple-users>, all user names after the
+default one are commented out.
 
 =item B<-all>
 
