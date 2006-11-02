@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-gen-mapfile.in,v 1.87 2006-11-01 20:21:14-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.88 2006-11-01 20:50:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -296,7 +296,7 @@ foreach my $dn (sort keys %$Mappings) {
         # Comment out everything after the first user name.
         # As below, be sure there's a space before the '#' character.
         #
-        $name_list =~ s/,/ # ,'/;
+        $name_list =~ s/,/ # ,/;
     }
 
     foreach my $listed_dn (@dn_list) {
