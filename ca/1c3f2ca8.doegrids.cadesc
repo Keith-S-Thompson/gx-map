@@ -1,8 +1,8 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.18 2006-09-26 22:03:00-07 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.19 2006-11-02 21:29:56-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
-HOMEPAGE            http://pki1.doegrids.org/
+HOMEPAGE            http://www.doegrids.org/CA/
 CONTACT             trouble@es.net
 HASH                1c3f2ca8
 SIGNED_BY           /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Root CA 1
@@ -13,12 +13,12 @@ MAY_SIGN            /O=DOEGrids.org/*
 MAY_SIGN            /O=doegrids.org/*
 MAY_SIGN            /O=doesciencegrid.org/*
 MAY_SIGN            /DC=org/DC=doesciencegrid/*
-CERTIFICATE_MD5     B3:76:40:75:F6:C4:BF:AF:82:CA:9A:D5:1D:FC:00:97
-CERTIFICATE_SHA1    18:B9:75:4F:1D:61:AB:07:0A:8E:9B:1E:4F:A7:44:92:88:FA:D0:96
+CERTIFICATE_MD5     F3:76:00:EC:D0:8E:DB:20:BC:2B:E0:06:60:24:C4:9F
+CERTIFICATE_SHA1    2D:7C:01:FE:A8:40:6A:D0:2E:80:F5:08:E4:D2:EB:A3:A8:84:F8:90
 CERTIFICATE_URL     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
 SIGNING_POLICY_URL  http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.signing_policy
 CRL_URL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
-CERT_EXPIRES        Thu 2008-01-10 08:00:00 UTC
+CERT_EXPIRES        Fri 2013-01-25 08:00:00 UTC
 
 # Due to a bug on the pki1.doegrids.org web server, the
 # "HEAD" command doesn't work for the CRL_URL.
@@ -26,6 +26,20 @@ CERT_EXPIRES        Thu 2008-01-10 08:00:00 UTC
 # This problem is irrelevant for gx-map release 0.4.4 and later, and
 # 0.5.1 and later.
 
-# MD5 and SHA1 fingerprints from 1c3f2ca8.0 downloaded 2005-03-29
-# Re-verified Tue 2006-09-26
-# Verified against <https://www.tacar.org/md5.html> Tue 2006-09-26
+# The certificate file 1c3f2ca8.0 was updated Tue 2006-10-31
+# The MD5 and SHA1 fingerprints have changed, and the certificate's
+# lifetime has been extended by 5 years.  The attributes of the
+# old certificate were:
+# CERTIFICATE_MD5     B3:76:40:75:F6:C4:BF:AF:82:CA:9A:D5:1D:FC:00:97
+# CERTIFICATE_SHA1    18:B9:75:4F:1D:61:AB:07:0A:8E:9B:1E:4F:A7:44:92:88:FA:D0:96
+# CERT_EXPIRES        Thu 2008-01-10 08:00:00 UTC
+# The new certificate is compatible with the old one.
+
+# There is an error in the signing_policy file on the web site.
+# I've notified <trouble@es.net>.
+# The MAY_SIGN attributes here are based on an older (and presumably correct
+# copy of 1c3f2ca8.signing_policy.
+
+# MD5 and SHA1 fingerprints from 1c3f2ca8.0 downloaded Thu 2006-11-02
+# Verified against <http://www.doegrids.org/CA/1c3f2ca8/fingerprint>,
+# Thu 2006-11-02
