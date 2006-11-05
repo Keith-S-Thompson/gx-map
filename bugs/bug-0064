@@ -1,9 +1,9 @@
-# $Id: bug-0064,v 1.5 2006-10-30 17:01:36-08 kst Exp $
+# $Id: bug-0064,v 1.6 2006-11-05 12:09:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
 Date: Fri 2006-01-20
-Severity: Low
+Severity: High
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.0d0
 Status: Open
@@ -108,3 +108,7 @@ A user should *not* be required to prove he owns the certificate for a
 administrative privileges.)  If somebody has somehow managed to map
 his own DN to my account, I should be able to remove that mapping
 (obviously I can't provide I own the certificate in that case).
+
+Sun 2006-11-05
+Raised priority to High; planning to add this in the next release
+after 0.5.3.
