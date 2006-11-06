@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.4 2006-10-09 22:13:22-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.5 2006-11-06 01:51:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
