@@ -1,6 +1,6 @@
-#!%PERL% -wT
+#!%PERL% -T
 
-# $Id: gx-cleanup-logs.in,v 1.24 2006-01-05 16:31:53-08 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.25 2006-11-06 01:51:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use File::Copy ();
