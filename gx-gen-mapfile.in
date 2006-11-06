@@ -1,6 +1,6 @@
-#!%PERL% -wT
+#!%PERL% -T
 
-# $Id: gx-gen-mapfile.in,v 1.88 2006-11-01 20:50:29-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.89 2006-11-06 01:51:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use File::Copy ();
