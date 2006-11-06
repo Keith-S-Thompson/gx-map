@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL%
 
-# $Id: gx-watch-locks.in,v 1.3 2006-10-02 17:50:09-07 kst Exp $
+# $Id: gx-watch-locks.in,v 1.4 2006-11-06 01:51:46-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
