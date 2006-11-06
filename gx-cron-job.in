@@ -1,6 +1,6 @@
-#!%PERL% -wT
+#!%PERL% -T
 
-# $Id: gx-cron-job.in,v 1.16 2006-10-27 20:11:03-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.17 2006-11-06 01:51:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
