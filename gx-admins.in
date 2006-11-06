@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL%
 
-# $Id: gx-admins.in,v 1.10 2006-01-05 16:31:53-08 kst Exp $
+# $Id: gx-admins.in,v 1.11 2006-11-06 01:51:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
