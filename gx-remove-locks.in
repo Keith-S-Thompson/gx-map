@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL%
 
-# $Id: gx-remove-locks.in,v 1.6 2006-09-25 12:57:05-07 kst Exp $
+# $Id: gx-remove-locks.in,v 1.7 2006-11-06 01:51:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-remove-locks.in,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
