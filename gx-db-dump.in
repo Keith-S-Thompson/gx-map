@@ -1,6 +1,6 @@
-#!%PERL% -w
+#!%PERL%
 
-# $Id: gx-db-dump.in,v 1.4 2006-09-15 15:55:27-07 kst Exp $
+# $Id: gx-db-dump.in,v 1.5 2006-11-06 01:51:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-dump.in,v $
 
 ########################################################################
@@ -50,6 +50,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
