@@ -1,18 +1,17 @@
-# $Id: bug-0120,v 1.2 2006-11-01 17:18:40-08 kst dead $
+# $Id: bug-0120,v 1.3 2006-11-08 15:57:54-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0120,v $
 
 gx-map bug 0120
-Date: Wed 2006-11-01
+Date: Wed 2006-11-08
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
-Version: 0.5.2.2
+Version: 0.5.2.2.028
 Status: Open
-Title: Forbid '"' character in DN
+Title: gx-ingest needs better error checking
 
-A '"' character in a DN creates a syntax error.
-
-This commonly occurs as a result of user error, e.g., when a user tries
-to do a copy-and-paste from an entry in an existing grid-mapfile and
-catches the entire line rather than just the DN.
-
-Check for this in gx-request (if "-force-dn" hasn't been specified).
+If gx-ingest is invoked with a grid-mapfile that contains
+syntax errors, it quietly generates an invalid shell script;
+when the script is executed, the error may not be detected until
+a number of lines later.  The particular case I ran into was
+/etc/grid-security/grid-mapfile on co-login1.ncsa.teragrid.org,
+which has a stray quotation mark.
