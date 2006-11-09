@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.6 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-util-test.in,v 1.7 2006-11-08 21:34:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -123,6 +123,12 @@ elsif (Match $ARGV[0], 'Get_GR') {
     if (defined $gr) {
         foreach my $key (sort keys %$gr) {
             printf "%-7s %s\n", $key, $gr->{$key};
+            if (ref $gr->{$key} eq 'ARRAY') {
+                print join(' ', '(', @{$gr->{$key}}, ')'), "\n";
+            }
+            else {
+                print "$gr->{$key}\n";
+            }
         }
     }
     else {
