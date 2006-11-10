@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.60 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-request.in,v 1.61 2006-11-10 12:43:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -198,7 +198,7 @@ if ($< != $>) {
 # $PW is a reference to the password information (name, uid, etc)
 # of the user running this command.
 #
-my $PW = Gridmap_Utils::Get_PW $<;
+my $PW = Gridmap_Utils::Get_PW_UID $<;
 
 if ($PW->{uid} != $<) {
     die "Internal error, uid from passwd ($PW->{uid}) != real uid ($<)\n";
@@ -306,7 +306,7 @@ if ($Options->{operation} ne 'remove-dn') {
         # it may be for an account that doesn't exist on this machine;
         # it may not be possible to determine the uid.
         #
-        $requested_pw = Gridmap_Utils::Get_PW $Options->{username};
+        $requested_pw = Gridmap_Utils::Get_PW_Name $Options->{username};
         if (defined $requested_pw and
             $requested_pw->{name} ne $Options->{username})
         {
@@ -529,7 +529,7 @@ sub Gen_Request_File_Name($) {
 #
 sub Request_Update() {
     my $request_file = "$Requests_Dir/.update";
-    my $PW = Gridmap_Utils::Get_PW $<;
+    my $PW = Gridmap_Utils::Get_PW_UID $<;
     my $hostname = Gridmap_Utils::Get_Hostname();
     my $timestamp = Gridmap_Utils::Long_Time_Image $Now;
     my $info = "Update requested by $PW->{name} on $hostname at $timestamp\n";
