@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.252 2006-11-10 12:43:36-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.253 2006-11-10 13:02:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -122,6 +122,7 @@ sub Check_Data_Dir();
 sub Untaint(\$);
 
 sub Get_mtime($);
+sub Is_Valid_Username($);
 sub Get_PW_Name($);
 sub Get_PW_UID($);
 sub Get_Hostname();
@@ -327,6 +328,24 @@ sub Translate_PW(@) {
         return $result;
     }
 } # Translate_PW
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the argument is a valid Unix username.  It must be a
+# non-empty string consisting entirely of upper or lower case letters,
+# digits, '_', '-', '.'.  (Note that "123" is assumed to be a valid
+# user name.)
+#
+sub Is_Valid_Username($) {
+    my($name) = @_;
+    if ($name =~ /^[\w.-]+$/) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+} # Is_Valid_Username
 
 # ----------------------------------------------------------------------
 
