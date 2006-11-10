@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.251 2006-11-06 02:05:09-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.252 2006-11-10 12:43:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -122,9 +122,8 @@ sub Check_Data_Dir();
 sub Untaint(\$);
 
 sub Get_mtime($);
-sub Get_PW(;$);
-sub Get_GR(;$);
-sub Get_Groups($);
+sub Get_PW_Name($);
+sub Get_PW_UID($);
 sub Get_Hostname();
 sub Dir_Error($);
 sub Require_Owner($);
@@ -311,24 +310,10 @@ sub Get_mtime($) {
 # ----------------------------------------------------------------------
 
 #
-# A friendlier getpw* function
-# Calls getpwent, getpwuid, or getpwnam depending on arguments (if any)
-# Returns a hash reference; keys are 'name', 'passwd', etc.
-# Returns undef on failure.
+# A helper function for Get_PW_Name and Get_PW_UID, not externaly visible.
 #
-sub Get_PW(;$) {
-    my $user = @_ ? $_[0] : undef;
-    my @pw;
-   
-    if (not defined $user) {
-        @pw = getpwent;
-    }
-    elsif ($user =~ /^\d+$/) {
-        @pw = getpwuid($_[0]);
-    }
-    else {
-        @pw = getpwnam($_[0]);
-    }
+sub Translate_PW(@) {
+    my @pw = @_;
     if (scalar @pw < 9) {
         return undef;
     }
@@ -341,75 +326,31 @@ sub Get_PW(;$) {
         }
         return $result;
     }
-} # Get_PW
+} # Translate_PW
 
 # ----------------------------------------------------------------------
 
 #
-# A friendlier getgr* function
-# Calls getgrent, getgruid, or getgrnam depending on arguments (if any)
+# A friendlier getpwnam function
 # Returns a hash reference; keys are 'name', 'passwd', etc.
-# 'members' is a ref to an array of member names
 # Returns undef on failure.
 #
-sub Get_GR(;$) {
-    my $group = @_ ? $_[0] : undef;
-    my @gr;
-
-    if (not defined $group) {
-        @gr = getgrent;
-    }
-    elsif ($_[0] =~ /^\d+$/) {
-        @gr = getgrgid($group);
-    }
-    else {
-        @gr = getgrnam($group);
-    }
-    if (scalar @gr < 4) {
-        return undef;
-    }
-    else {
-        my $result;
-        $result->{name}   = $gr[0];
-        $result->{passwd} = $gr[1];
-        $result->{gid}    = $gr[2];
-        my @members = split / /, $gr[3];
-        $result->{members} = \@members;
-        return $result;
-    }
-} # Get_GR
+sub Get_PW_Name($) {
+    my($user) = @_;
+    return Translate_PW getpwnam $user;
+} # Get_PW_Name
 
 # ----------------------------------------------------------------------
 
 #
-# Returns a list of the groups to which the specified user belongs.
-# Groups are specified by name, not by number.
+# A friendlier getpwuid function
+# Returns a hash reference; keys are 'name', 'passwd', etc.
+# Returns undef on failure.
 #
-sub Get_Groups($) {
-    my($user) = @_;
-    my %is_member = ();
-    my $pw = Get_PW($user);
-    return () if not defined $pw;
-    my $primary_gid = $pw->{gid};
-    my $primary_group = Get_GR $primary_gid;
-    if (defined $primary_group) {
-        $is_member{$primary_group->{name}} = 1;
-    }
-
-    setgrent;
-    while (my $group = Get_GR()) {
-        MEMBER:
-        foreach my $member (@{$group->{members}}) {
-            if ($member eq $pw->{name}) {
-                $is_member{$group->{name}} = 1;
-                last MEMBER;
-            }
-        }
-    }
-    endgrent;
-
-    return sort keys %is_member;
-} # Get_Groups
+sub Get_PW_UID($) {
+    my($UID) = @_;
+    return Translate_PW getpwuid $UID;
+} # Get_PW_UID
 
 # ----------------------------------------------------------------------
 
