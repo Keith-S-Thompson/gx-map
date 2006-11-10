@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-convert-log.in,v 1.31 2006-11-06 01:51:44-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.32 2006-11-10 12:43:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -95,7 +95,7 @@ my $Is_Old_Admin = undef;
 if (defined $User_Opt->{'old-admins'}) {
     foreach my $name (split /,/, $User_Opt->{'old-admins'}) {
         if (not $User_Opt->{force}) {
-            my $pw = Gridmap_Utils::Get_PW $name;
+            my $pw = Gridmap_Utils::Get_PW_Name $name;
             push @missing_accounts, $name if not defined $pw;
         }
         $Is_Old_Admin->{$name} = 1;
@@ -108,7 +108,7 @@ if (defined $User_Opt->{'new-admin'}) {
         Usage "The \"-new-admin\" option takes only a single account\n";
     }
     else {
-        my $pw = Gridmap_Utils::Get_PW $User_Opt->{'new-admin'};
+        my $pw = Gridmap_Utils::Get_PW_Name $User_Opt->{'new-admin'};
         if (defined $pw) {
             $new_admin_uid = $pw->{uid};
         }
