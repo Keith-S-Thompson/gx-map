@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.98 2006-11-06 01:51:44-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.99 2006-11-10 12:43:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -243,7 +243,7 @@ if (-x $propagate) {
             ( defined $request->{OWNER_NAME} and
               Gridmap_Utils::Is_Admin_Account $request->{OWNER_NAME} );
         if (not $owner_is_admin and defined $request->{username}) {
-            my $user_pw = Gridmap_Utils::Get_PW $request->{username};
+            my $user_pw = Gridmap_Utils::Get_PW_Name $request->{username};
             if (not defined $user_pw) {
                 $request->{PROPAGATION}
                     = "failed: $request->{username} " .
@@ -252,7 +252,7 @@ if (-x $propagate) {
                 next REQUEST;
             }
             my $requested_by_pw
-                = Gridmap_Utils::Get_PW $request->{requested_by_name};
+                = Gridmap_Utils::Get_PW_Name $request->{requested_by_name};
             if (not defined $requested_by_pw) {
                 $request->{PROPAGATION}
                     = "failed: $request->{requested_by_name} " .
@@ -582,7 +582,7 @@ sub Get_Request_Info($) {
         die "stat failed: $!\n";
     }
     $result->{OWNER_UID} = $stat[4];
-    my $OWNER_pw = Gridmap_Utils::Get_PW $result->{OWNER_UID};
+    my $OWNER_pw = Gridmap_Utils::Get_PW_UID $result->{OWNER_UID};
     if (defined $OWNER_pw and defined $OWNER_pw->{name}) {
         $result->{OWNER_NAME} = $OWNER_pw->{name};
     }
@@ -591,9 +591,9 @@ sub Get_Request_Info($) {
     my $requested_by_pw;
 
     if (defined $result->{username}) {
-        $user_pw = Gridmap_Utils::Get_PW $result->{username};
+        $user_pw = Gridmap_Utils::Get_PW_Name $result->{username};
     }
-    $requested_by_pw = Gridmap_Utils::Get_PW $result->{requested_by_uid};
+    $requested_by_pw = Gridmap_Utils::Get_PW_UID $result->{requested_by_uid};
 
     #
     # Check that username matches user_uid (if the account exists).
@@ -634,7 +634,7 @@ sub Get_Request_Info($) {
             push @{$result->{ERRORS}}, "Cannot map to root";
         }
         else {
-            my $pw = Gridmap_Utils::Get_PW $result->{username};
+            my $pw = Gridmap_Utils::Get_PW_Name $result->{username};
             if (defined $pw and $pw->{uid} == 0) {
                 push @{$result->{ERRORS}}, "Cannot map to UID 0";
             }
