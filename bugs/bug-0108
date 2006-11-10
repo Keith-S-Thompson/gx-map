@@ -1,9 +1,9 @@
-# $Id: bug-0108,v 1.2 2006-09-21 19:38:42-07 kst Exp $
+# $Id: bug-0108,v 1.3 2006-11-09 18:38:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0108,v $
 
 gx-map bug 0108
 Date: Wed 2006-08-02
-Severity: Med
+Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.1
 Status: Fixed 0.5.2.2.006
