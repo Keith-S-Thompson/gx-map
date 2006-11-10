@@ -1,0 +1,22 @@
+# $Id: bug-0122,v 1.1 2006-11-09 19:19:27-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0122,v $
+
+gx-map bug 0122
+Date: Thu 2006-11-09
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.2.022
+Status: Open
+Title: Need to check for bad user names
+
+The gx-request, gx-check-requests, and gx-gen-mapfile commands
+do little or no checking for legal user names.  gx-gen-mapfile by
+default includes only accounts that actually exist, but sufficiently
+bizarre user names could cause other problems.  For example, a name
+containing a newline, quotation mark, or '/' character could cause
+internal errors, or even corrupt the requests.log file.
+
+Figure out a reasonable set of characters that can be allowed in Unix
+account names (at least upper and lower case letters, digits, '-',
+'_', possibly others, but all-digits is forbidden), and enforce this
+is gx-request, gx-check-requests, and gx-gen-mapfile.
