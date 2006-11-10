@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.8 2006-11-10 12:43:36-08 kst Exp $
+# $Id: gx-util-test.in,v 1.9 2006-11-10 13:04:03-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -102,6 +102,17 @@ elsif (Match $ARGV[0], 'Get_mtime') {
     Usage if scalar @ARGV != 2;
     my $mtime = Gridmap_Utils::Get_mtime $ARGV[1];
     print Image $mtime, "\n";
+}
+
+elsif (Match $ARGV[0], 'Is_Valid_Username') {
+    Usage if scalar @ARGV != 2;
+    my $result = Gridmap_Utils::Is_Valid_Username $ARGV[1];
+    if ($result) {
+        print "yes\n";
+    }
+    else {
+        print "no\n";
+    }
 }
 
 elsif (Match $ARGV[0], 'Get_PW_Name') {
