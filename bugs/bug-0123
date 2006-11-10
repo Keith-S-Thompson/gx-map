@@ -1,0 +1,26 @@
+# $Id: bug-0123,v 1.1 2006-11-09 19:28:45-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0123,v $
+
+gx-map bug 0123
+Date: Thu 2006-11-09
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.2.022
+Status: Open
+Title: Cleanup Get_PW, Get_GR, Get_Groups functions
+
+These are all functions in the Gridmap_Utils package.
+
+The Get_PW function is more flexible than it needs to be, leading
+to potential errors.  With no arguments, it calls getpwent (I don't
+think this is ever used).  With one argument, it calls either getpwuid
+or getpwnam, depending on whether its argument is numeric.  In all
+cases, the caller already knows this.  Confirm this, then drop the
+getpwent functionality and split Get_PW into separate Get_PW_UID and
+Get_PW_Name functions.
+
+The Get_GR function is analagous to Get_PW, but for groups.
+It's called only from Get_Groups.  The Get_Groups function itself is
+never used.  Confirm this, then delete both functions.
+
+Update gx-util-test.in to reflect these changes.
