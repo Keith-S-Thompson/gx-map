@@ -1,4 +1,4 @@
-# $Id: bug-0123,v 1.1 2006-11-09 19:28:45-08 kst Exp $
+# $Id: bug-0123,v 1.2 2006-11-10 12:45:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0123,v $
 
 gx-map bug 0123
@@ -6,7 +6,7 @@ Date: Thu 2006-11-09
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2.022
-Status: Open
+Status: Fixed 0.5.3
 Title: Cleanup Get_PW, Get_GR, Get_Groups functions
 
 These are all functions in the Gridmap_Utils package.
@@ -24,3 +24,12 @@ It's called only from Get_Groups.  The Get_Groups function itself is
 never used.  Confirm this, then delete both functions.
 
 Update gx-util-test.in to reflect these changes.
+
+Fixed:
+Gridmap_Utils.pm.in 1.252
+gx-check-requests.in 1.99
+gx-convert-log.in 1.32
+gx-gen-mapfile.in 1.90
+gx-request.in 1.61
+gx-util-test.in 1.8
+gx-map release 0.5.3
