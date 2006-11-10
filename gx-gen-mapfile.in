@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-gen-mapfile.in,v 1.89 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.90 2006-11-10 12:43:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -552,7 +552,7 @@ sub Identical_Files($$) {
 # ----------------------------------------------------------------------
 
 sub User_Real_Name($) {
-    my $pw = Gridmap_Utils::Get_PW $_[0];
+    my $pw = Gridmap_Utils::Get_PW_Name $_[0];
     return undef if not $pw;
     my $gcos = $pw->{gcos};
     return undef if $gcos eq '';
