@@ -1,9 +1,9 @@
-# $Id: bug-0101,v 1.2 2006-09-18 17:28:23-07 kst Exp $
+# $Id: bug-0101,v 1.3 2006-11-09 18:38:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0101,v $
 
 gx-map bug 0101
 Date: Mon 2006-07-17
-Severity: Med
+Severity: Medium
 Reported by: Ti Leggett <leggett@mcs.anl.gov>
 Version: 0.5.2.1
 Status: Fixed 0.5.2.2.006
