@@ -1,0 +1,25 @@
+# $Id: bug-0121,v 1.1 2006-11-09 18:16:43-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0121,v $
+
+gx-map bug 0121
+Date: Thu 2006-11-09
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.2.022
+Status: Open
+Title: gx-ca-update always leaves a lock file when it dies
+
+The gx-ca-update command always leaves a lock file in place when it
+dies prematurely.  In some cases, this isn't necessary.  In particular,
+there have been some recent problems on lctb1.sdsc.edu, where the root
+file system has filled up.  gx-ca-update fails trying to copy a file,
+and dies.  In this particular case, no sharable resources need to
+remain locked, so it should be able to remove the lock before dying.
+
+The new "-nodownload" feature should alleviate this particular problem,
+but the general problem is still there.
+
+For each command that creates a lock file, look at all the ways it can
+die, and consider whether the lock should be released.  This probably
+requires an "Unlock_And_Die" routine.  Also consider how long the
+lock really needs to be held.
