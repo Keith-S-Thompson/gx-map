@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.7 2006-11-08 21:34:45-08 kst Exp $
+# $Id: gx-util-test.in,v 1.8 2006-11-10 12:43:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -104,42 +104,30 @@ elsif (Match $ARGV[0], 'Get_mtime') {
     print Image $mtime, "\n";
 }
 
-elsif (Match $ARGV[0], 'Get_PW') {
+elsif (Match $ARGV[0], 'Get_PW_Name') {
     Usage if scalar @ARGV != 2;
-    my $pw = Gridmap_Utils::Get_PW $ARGV[1];
+    my $pw = Gridmap_Utils::Get_PW_Name $ARGV[1];
     if (defined $pw) {
         foreach my $key (sort keys %$pw) {
             printf "%-7s %s\n", $key, $pw->{$key};
         }
     }
     else {
-        print "Get_PW --> undef\n";
+        print "Get_PW_Name --> undef\n";
     }
 }
 
-elsif (Match $ARGV[0], 'Get_GR') {
+elsif (Match $ARGV[0], 'Get_PW_UID') {
     Usage if scalar @ARGV != 2;
-    my $gr = Gridmap_Utils::Get_GR $ARGV[1];
-    if (defined $gr) {
-        foreach my $key (sort keys %$gr) {
-            printf "%-7s %s\n", $key, $gr->{$key};
-            if (ref $gr->{$key} eq 'ARRAY') {
-                print join(' ', '(', @{$gr->{$key}}, ')'), "\n";
-            }
-            else {
-                print "$gr->{$key}\n";
-            }
+    my $pw = Gridmap_Utils::Get_PW_UID $ARGV[1];
+    if (defined $pw) {
+        foreach my $key (sort keys %$pw) {
+            printf "%-7s %s\n", $key, $pw->{$key};
         }
     }
     else {
-        print "Get_GR --> undef\n";
+        print "Get_PW_UID --> undef\n";
     }
-}
-
-elsif (Match $ARGV[0], 'Get_Groups') {
-    Usage if scalar @ARGV != 2;
-    my @groups = Gridmap_Utils::Get_Groups $ARGV[1];
-    print join(' ', '(', @groups, ')'), "\n";
 }
 
 elsif (Match $ARGV[0], 'Get_Hostname') {
@@ -350,9 +338,8 @@ Option names may be abbreviated.
 Command names are case-insensitive; underscores and hyphens are ignored.
     Check_Data_Dir            directory
     Get_mtime                 filename
-    Get_PW                    user|UID
-    Get_GR                    group|GID
-    Get_Groups                user|UID
+    Get_PW_Name               user
+    Get_PW_UID                UID
     Get_Hostname
     Dir_Error                 directory
     Require_Owner
