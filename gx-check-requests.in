@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.99 2006-11-10 12:43:36-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.100 2006-11-13 02:25:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -543,6 +543,14 @@ sub Get_Request_Info($) {
         push @{$result->{ERRORS}}, "Missing dn field";
     }
 
+    #
+    # The username must be legal.
+    #
+    if (defined $result->{username} and
+        not Gridmap_Utils::Is_Legal_Username $result->{username})
+    {
+        push @{$result->{ERRORS}}, 'Illegal username';
+    }
     #
     # A DN (as stored in the log file) must start and end with a '"'
     # character; the string between the quotation marks must be valid.
