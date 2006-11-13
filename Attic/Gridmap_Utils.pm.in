@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.255 2006-11-13 02:33:52-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.256 2006-11-13 02:44:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -448,7 +448,7 @@ sub Dir_Error($) {
 sub Require_Owner($) {
     my($program_name) = @_;
     my $owner = $Gridmap_Utils::Config{GX_MAP_OWNER}; 
-    my $owner_pw = Gridmap_Utils::Get_PW $owner;
+    my $owner_pw = Gridmap_Utils::Get_PW_Name $owner;
     my $owner_uid = $owner_pw->{uid};
     #
     # Both real and effective UIDs must match.
@@ -1212,7 +1212,7 @@ sub Gen_Mappings(@) {
         if (defined $request->{OWNER_UID} and
             not defined $request->{OWNER_NAME})
         {
-            my $pw = Gridmap_Utils::Get_PW($request->{OWNER_UID});
+            my $pw = Gridmap_Utils::Get_PW_UID $request->{OWNER_UID};
             if (defined $pw->{name}) {
                 Debug "    Setting OWNER_NAME to $pw->{name}\n";
                 $request->{OWNER_NAME} = $pw->{name};
@@ -1229,7 +1229,7 @@ sub Gen_Mappings(@) {
         }
 
         if (defined $request->{username}) {
-            my $pw = Gridmap_Utils::Get_PW $request->{username};
+            my $pw = Gridmap_Utils::Get_PW_Name $request->{username};
             if (not defined $pw and not $All) {
                 Debug "Reject, no account on this system\n";
                 next REQUEST;
