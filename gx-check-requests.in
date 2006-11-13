@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.100 2006-11-13 02:25:25-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.101 2006-11-13 02:43:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -755,7 +755,7 @@ sub Check_Admin_Accounts() {
     foreach my $admin (@admins) {
         #
         # Since we're just checking whether the account exists, there's
-        # no need to use Gridmap_Utils::Get_PW.
+        # no need to use Gridmap_Utils::Get_PW_Name.
         #
         my @pw = getpwnam $admin;
         if (not @pw) {
