@@ -1,4 +1,4 @@
-# $Id: bug-0120,v 1.5 2006-11-09 18:38:26-08 kst Exp $
+# $Id: bug-0120,v 1.6 2006-11-13 02:33:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0120,v $
 
 gx-map bug 0120
@@ -6,7 +6,7 @@ Date: Wed 2006-11-08
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.2.2.022
-Status: Open
+Status: Fixed 0.5.3
 Title: gx-ingest needs better error checking
 
 If gx-ingest is invoked with a grid-mapfile that contains
@@ -15,3 +15,7 @@ when the script is executed, the error may not be detected until
 a number of lines later.  The particular case I ran into was
 /etc/grid-security/grid-mapfile on co-login1.ncsa.teragrid.org,
 which has a stray quotation mark.
+
+Fixed:
+gx-ingest.in 1.25
+gx-map release 0.5.3
