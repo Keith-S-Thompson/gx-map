@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.253 2006-11-10 13:02:51-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.254 2006-11-12 21:24:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -122,7 +122,7 @@ sub Check_Data_Dir();
 sub Untaint(\$);
 
 sub Get_mtime($);
-sub Is_Valid_Username($);
+sub Is_Legal_Username($);
 sub Get_PW_Name($);
 sub Get_PW_UID($);
 sub Get_Hostname();
@@ -332,12 +332,13 @@ sub Translate_PW(@) {
 # ----------------------------------------------------------------------
 
 #
-# Returns true if the argument is a valid Unix username.  It must be a
-# non-empty string consisting entirely of upper or lower case letters,
-# digits, '_', '-', '.'.  (Note that "123" is assumed to be a valid
-# user name.)
+# Returns true if the argument is a syntactically legal Unix username.
+# It must be a non-empty string consisting entirely of upper or lower
+# case letters, digits, '_', '-', '.'.  (Note that "123" is assumed
+# to be a valid user name.)  The actual legality rules are unclear,
+# and may vary from system to system.
 #
-sub Is_Valid_Username($) {
+sub Is_Legal_Username($) {
     my($name) = @_;
     if ($name =~ /^[\w.-]+$/) {
         return 1;
@@ -345,7 +346,7 @@ sub Is_Valid_Username($) {
     else {
         return 0;
     }
-} # Is_Valid_Username
+} # Is_Legal_Username
 
 # ----------------------------------------------------------------------
 
