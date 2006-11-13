@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.62 2006-11-13 01:40:22-08 kst Exp $
+# $Id: gx-request.in,v 1.63 2006-11-13 02:25:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -781,7 +781,12 @@ EOF
                     $Options->{username} = $PW->{name};
                 }
                 else {
-                    $Options->{username} = $response;
+                    if (Gridmap_Utils::Is_Legal_Username $response) {
+                        $Options->{username} = $response;
+                    }
+                    else {
+                        print ">>> \"$response\" is not a legal user name\n";
+                    }
                 }
             }
         }
@@ -1000,7 +1005,12 @@ sub Get_Options_From_Command_Line() {
         if (not $Is_Admin and $User_Opt->{username} ne $PW->{name}) {
             Usage "You may not specify a user name other than your own\n";
         }
-        $Options->{username} = $User_Opt->{username};
+        elsif (not Is_Legal_Username $User_Opt->{username}) {
+            Usage "\"$User_Opt->{username}\" is not a legal user name\n";
+        }
+        else {
+            $Options->{username} = $User_Opt->{username};
+        }
     }
     else {
         if ($OP ne 'remove-dn') {
