@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-ingest.in,v 1.24 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-ingest.in,v 1.25 2006-11-13 02:32:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -119,8 +119,13 @@ while (<>) {
         #
         $dn = Gridmap_Utils::GT4_Subject $dn;
         my @users = reverse split /,/, $users;
+        USER:
         foreach my $user (@users) {
             next if $seen{"$dn $user"}++;
+            if (not Gridmap_Utils::Is_Legal_Username $user) {
+                print "# >>> Illegal user name \"$user\" on line $.\n";
+                next USER;
+            }
             my $command = "\$gx_request -add -force ";
             $command .= "-comment \"\$comment\" ";
             $command .= sprintf "-username %-8s ", $user;
