@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.256 2006-11-13 02:44:10-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.257 2006-11-14 18:48:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1084,16 +1084,29 @@ sub Sort_By_Timestamp(@) {
 
 #
 # Requests generated from slurped grid-mapfiles have timestamps starting
-# at 0 (1970-01-01) so that, in case of conflict, they'll be overridden
-# by requests from the log files.  (I might consider instead using the
-# timestamp of the input file, or optionally allowing slurped requests
-# to be processed last.)
+# at either 0 (1970-01-01) or one hour in the future; this is controlled
+# by a first argument of '-before' or '-after'.  With '-before', requests
+# are overridden by requests from the requests.log file; with '-after',
+# requests override requests from the requests.log file.
 #
-my $Slurp_Timestamp = Gridmap_Utils::Timestamp_Of 0;
+# For '-after', we arbitrarily start one hour in the future to avoid any
+# clock skew problems.
+#
+my $Slurp_Timestamp_Before = Gridmap_Utils::Timestamp_Of 0;
+my $Slurp_Timestamp_After  = Gridmap_Utils::Timestamp_Of
+                                 (Get_Time_Of_Day() + 3600);
 
-sub Slurp_File($) {
-    my($filename) = @_;
-    Debug "Slurp_File $filename\n";
+sub Slurp_File($$) {
+    Debug "Slurp_File @_\n";
+    my ($starting_point, $filename) = @_;
+    if ($starting_point ne '-before' and
+        $starting_point ne '-after')
+    {
+        die "Internal error: Bad argument \"$starting_point\" to Slurp_File\n";
+    }
+    my $Slurp_Timestamp = ( $starting_point eq '-before'
+                            ? \$Slurp_Timestamp_Before
+                            : \$Slurp_Timestamp_After );
     my @result = ();
     my %seen = ();
     open my $File, '<', $filename or die "${filename}: $!\n";
@@ -1126,12 +1139,12 @@ sub Slurp_File($) {
             $request->{operation} = 'add';
             $request->{dn} = $dn;
             $request->{username} = $user;
-            $request->{timestamp} = $Slurp_Timestamp;
+            $request->{timestamp} = $$Slurp_Timestamp;
             $request->{OWNER_NAME} = $Gridmap_Utils::Config{GX_MAP_OWNER};
             $request->{NAMESPACE} = $Gridmap_Utils::Config{NAMESPACE};
-            Debug "Adding dn=$dn user=$user timestamp=$Slurp_Timestamp\n";
-            $Slurp_Timestamp
-                = Gridmap_Utils::Increment_Timestamp $Slurp_Timestamp;
+            Debug "Adding dn=$dn user=$user timestamp=$$Slurp_Timestamp\n";
+            $$Slurp_Timestamp
+                = Gridmap_Utils::Increment_Timestamp $$Slurp_Timestamp;
             push @result, $request;
         }
     }
@@ -1148,9 +1161,18 @@ sub Slurp_File($) {
 # generated even for accounts that don't exist on the current system.
 #
 # The files are assumed to be request logs by default.  An argument of
-# '-gridmap' causes following files to be treated as grid-mapfiles;
-# an argument of '-log' causes following files to be treated as request
-# log files.
+# '-gridmap-before' or '-gridmap-after' causes following files to be
+# treated as grid-mapfiles; an argument of '-log' causes following files
+# to be treated as request log files.
+#
+# An argument of '-gridmap-before' causes mappings from a following
+# input grid-mapfile to be treated as starting in the past, so they'll
+# be overridden by any conflicting mappings from a request log file.
+# An argument of '-gridmap-after' causes mappings from a following
+# input grid-mapfile to be treated as starting in the future, so they'll
+# override any conflicting mappings from a request log file.  Neither of
+# these arguments affects the timestamps of mappings from a requests
+# log file.
 #
 # The result is a reference to a hash; keys are DNs, values are hash
 # references { username => timestamp }.  Using a hash for each entry
@@ -1161,26 +1183,28 @@ sub Gen_Mappings(@) {
     my(@args) = @_;
     Debug "Entering Gen_Mappings(@args)\n";
     my $All = 0;
-    if (scalar @args >= 1 and $args[0] eq '-all') {
-        $All = 1;
-        shift @args;
-    }
-
     my $kind = 'log';
+
     my @requests = ();
 
     foreach my $arg (@args) {
-        if ($arg eq '-log') {
-            $kind = 'log';
+        if ($arg eq '-all') {
+            $All = 1;
         }
-        elsif ($arg eq '-gridmap') {
-            $kind = 'gridmap';
+        elsif ($arg eq '-log' or
+               $arg = '-gridmap-before' or
+               $arg = '-gridmap-after')
+        {
+            $kind = $arg;
         }
         elsif ($kind eq 'log') {
             push @requests, Gridmap_Utils::Read_Records '-multiple', $arg;
         }
-        elsif ($kind eq 'gridmap') {
-            push @requests, Gridmap_Utils::Slurp_File $arg;
+        elsif ($kind eq 'gridmap-before') {
+            push @requests, Gridmap_Utils::Slurp_File -before, $arg;
+        }
+        elsif ($kind eq 'gridmap-after') {
+            push @requests, Gridmap_Utils::Slurp_File -after, $arg;
         }
         else {
             die "Internal error, \$kind = \"$kind\"\n";
