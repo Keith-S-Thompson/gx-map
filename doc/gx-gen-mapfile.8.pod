@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.8 2006-11-01 20:21:32-08 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.9 2006-11-14 18:48:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -130,23 +130,35 @@ for DNs containing this field.
 
 Since GT3 has been superseded by GT4, this option is rarely useful.
 
-=item B<-merge-file file>
+=item B<-merge-before file>
 
-Merge an existing grid-mapfile into the generated file.  This option
+=item B<-merge-after file>
+
+Merge an existing grid-mapfile into the generated file.  These options
 may be given multiple times, e.g.:
 
-    -merge file1 -merge file2
+    -merge-before file1 -merge-before file2 -merge-after file3
 
-Since the B<gx-map> system is designed to have complete control
-over the F<grid-mapfile>, this allows other mechanisms to be used
-along with B<gx-map>.  For example, if a site automatically issues
-certificates for all users, an external process might maintain a
-B<grid-mapfile> containing all those entries.  Using this option
-allows this information to be integrated into the F<grid-mapfile>,
-while also allowing users to add mappings for other certificates
-using B<gx-request>.  (Another option is to create a separate tool
-that invokes B<gx-request> automatically; for example, this is done
-at SDSC for certificates issued by the NPACI and SDSC CAs).
+Mappings from files specified with the B<-merge-before> option at
+treated as if they were submitted in the past, so they'll be overridden
+by conflicting mappings from any request log files.
+
+Mappings from files specified with the B<-merge-after> option at
+treated as if they were submitted in the future (one hour after the
+current time, to avoid clock skew problems), so they'll override
+conflicting mappings from any request log files.
+
+Since the B<gx-map> system is designed to have complete control over
+the F<grid-mapfile>, the B<-merge-before> and B<-merge-after> options
+allow other mechanisms to be used along with B<gx-map>.  For example,
+if a site automatically issues certificates for all users, an external
+process might maintain a B<grid-mapfile> containing all those entries.
+Using this option allows this information to be integrated into the
+F<grid-mapfile>, while also allowing users to add mappings for other
+certificates using B<gx-request>.  (Another option is to create a
+separate tool that invokes B<gx-request> automatically; for example,
+this is done at SDSC for certificates issued by the NPACI and SDSC
+CAs, using the B<gx-check-index> command).
 
 =item B<-[no]multiple-users>
 
@@ -187,7 +199,8 @@ C<gx-request update> will force an update to this file.)
 
 =head1 SEE ALSO
 
-gx-map(7), gx-request(1), gx-check-requests(8), gx-map-security(7)
+gx-map(7), gx-request(1), gx-check-requests(8), gx-map-security(7),
+gx-check-index(8)
 
 =head1 AUTHOR
 
