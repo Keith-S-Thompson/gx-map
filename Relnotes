@@ -1,4 +1,4 @@
-e $Id: Relnotes,v 1.29 2006-11-08 16:52:39-08 kst Exp $
+e $Id: Relnotes,v 1.30 2006-11-14 18:48:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
@@ -54,6 +54,15 @@ Release 0.5.3, ??? 2006-11-??
 	By default, the generated grid-mapfile may map a single DN
 	to multiple account names.  With -nomultiple-users, all user
 	names after the default one are commented out.
+
+	New options: -merge-before file
+	             -merge-after  file
+	These replace the "-merge-file" option.  With "-merge-before",
+	mappings from the input external grid-mapfile are overridden
+	by any conflicting mappings from any request log files;
+	this is the old (undocumented) behavior of "-merge-file".
+	With "-merge-after", mappings from the external file override
+	any conflicting mappings from any request log files.
 
     gx-ca-update:
 	New option: -[no]download.
