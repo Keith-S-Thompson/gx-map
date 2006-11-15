@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.258 2006-11-14 18:50:24-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.259 2006-11-14 22:15:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1192,18 +1192,18 @@ sub Gen_Mappings(@) {
             $All = 1;
         }
         elsif ($arg eq '-log' or
-               $arg = '-gridmap-before' or
-               $arg = '-gridmap-after')
+               $arg eq '-gridmap-before' or
+               $arg eq '-gridmap-after')
         {
             $kind = $arg;
         }
-        elsif ($kind eq 'log') {
+        elsif ($kind eq '-log') {
             push @requests, Gridmap_Utils::Read_Records '-multiple', $arg;
         }
-        elsif ($kind eq 'gridmap-before') {
+        elsif ($kind eq '-gridmap-before') {
             push @requests, Gridmap_Utils::Slurp_File -before, $arg;
         }
-        elsif ($kind eq 'gridmap-after') {
+        elsif ($kind eq '-gridmap-after') {
             push @requests, Gridmap_Utils::Slurp_File -after, $arg;
         }
         else {
