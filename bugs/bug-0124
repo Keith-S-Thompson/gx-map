@@ -1,0 +1,31 @@
+# $Id: bug-0124,v 1.1 2006-11-14 18:20:59-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0124,v $
+
+gx-map bug 0124
+Date: Tue 2006-11-14
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.2.2.023
+Status: Fixed 0.5.3
+Title: gx-gen-mapfile: add -merge-before, -merge-after
+
+Currently, the "-merge-file" option to gx-gen-mapfile treats mappings
+from the external grid-mapfile as if they were submitted in the
+past, so they'll be overridden by any conflicting mappings from
+the requests.log file.  This is not always the desired behavior
+(particularly at ANL, according to a recent e-mail discussion with
+JP Navarro).
+
+Drop the "-merge-file" option and replace it with new "-merge-before"
+and "-merge-after" options.  The "-merge-before" option behaves like
+the old "-merge-file" options, treating mappings as having timestamps
+starting at 0 (1970-01-01).  The "-merge-after" option treats mappings
+as having timestampts starting one hour after the current time (to
+avoid any problems with clock skew).
+
+Fixed:
+Gridmap_Utils.pm.in 1.257
+Relnotes 1.30
+gx-gen-mapfile.in 1.91
+gx-gen-mapfile.8.pod 1.9
+gx-map release 0.5.3
