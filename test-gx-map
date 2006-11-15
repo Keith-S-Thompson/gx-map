@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: test-gx-map,v 1.15 2006-04-12 19:19:59-07 kst Exp $
+# $Id: test-gx-map,v 1.16 2006-11-14 18:40:37-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/test-gx-map,v $
 
 use strict;
@@ -111,7 +111,9 @@ my @commands = ();
 if (Version_String $version ge Version_String '0.4.5') {
     push @commands, 'bin/gx-request';
 }
-push @commands, 'bin/gx-map';
+if ($Opt{'gx-map'}) {
+    push @commands, 'bin/gx-map';
+}
 
 if (Version_String $version gt Version_String '0.4.5') {
     push @commands, 'sbin/gx-admins';
@@ -226,6 +228,8 @@ Installs and tests a gx-map release.
                   curl rcs ci openssl hostname
     -tmpdir ...   Temporary directory (will be created)
                   Default is $default_tmpdir (may vary)
+    -gx-map       By default, the "bin/gx-map" command is not tested.
+                  Use "-gx-map" to test it.
     -[no]verbose  Produce verbose output
                   Default is -noverbose
     -[no]cleanup  Delete temporary directory when done
