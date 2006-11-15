@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.260 2006-11-15 00:30:13-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.261 2006-11-15 03:12:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1089,12 +1089,14 @@ sub Sort_By_Timestamp(@) {
 # are overridden by requests from the requests.log file; with '-after',
 # requests override requests from the requests.log file.
 #
-# For '-after', we arbitrarily start one hour in the future to avoid any
-# clock skew problems.
+# For '-after', we arbitrarily start one hour in the future to
+# avoid any clock skew problems.  (Note that we use time() rather
+# than Get_Time_Of_Day so we don't lose precision when adding 3600;
+# Timestamp_Of requires exactly 6 digits after the decimal point if
+# there is one).
 #
 my $Slurp_Timestamp_Before = Gridmap_Utils::Timestamp_Of 0;
-my $Slurp_Timestamp_After  = Gridmap_Utils::Timestamp_Of
-                                 (Get_Time_Of_Day() + 3600);
+my $Slurp_Timestamp_After  = Gridmap_Utils::Timestamp_Of(time + 3600);
 
 sub Slurp_File($$) {
     Debug "Slurp_File @_\n";
