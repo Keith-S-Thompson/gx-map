@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-map.in,v 1.44 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-map.in,v 1.45 2006-11-15 20:01:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
@@ -51,5 +51,45 @@
 use strict;
 use warnings;
 
-die ">>> The name \"gx-map\" for this client program is obsolete.\n" .
+use File::Basename ();
+use Getopt::Long ();
+
+my $Install_Dir;
+BEGIN {
+    $Install_Dir = '%INSTALL_DIR%';
+    unshift @INC, "$Install_Dir/lib";
+}
+use Gridmap_Utils ();
+
+sub Usage(@);
+
+my $Program_Name = File::Basename::basename $0;
+
+$| = 1;
+
+my $User_Opt = {};
+my @Opts = ( $User_Opt, qw( help! version! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    exit 0;
+}
+
+die ">>> The \"gx-map\" client program is obsolete.\n" .
     "    Use \"gx-request\" instead.\n";
+
+########################################################################
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+    -help      Display this message and exit.
+    -version   Display version information and exit.
+
+This command is obsolete; use "gx-request" instead.
+EOF
+    exit 1;
+} # Usage
