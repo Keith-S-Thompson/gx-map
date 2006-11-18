@@ -1,8 +1,8 @@
-# $Id: README.TeraGrid,v 1.18 2006-10-24 02:17:40-07 kst Exp $
+# $Id: README.TeraGrid,v 1.19 2006-11-17 18:57:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
-0.5.2 release of gx-map.
+0.5.3 release of gx-map.
 
 If you have any questions, please feel free to contact me,
 Keith Thompson, <kst@sdsc.edu>.
@@ -60,7 +60,7 @@ Consult the TeraGrid accounting group for the specific values to use.
 Initial Deployment Plan:
 ========================
 
-One obvious way to deploy gx-map 0.5.2 across TeraGrid sites would
+One obvious way to deploy gx-map 0.5.3 across TeraGrid sites would
 be to install it, enable propagation via gx-propagate, and feed
 the existing grid-mapfiles into the system via gx-ingest (see the
 corresponding man pages for more information).  The problem with
@@ -69,7 +69,7 @@ some of which need to be processed manually).
 
 So the plan (at least at SDSC) is:
 
-1. Install and deploy gx-map 0.5.2.  Use gx-convert-logs and
+1. Install and deploy gx-map 0.5.3.  Use gx-convert-logs and
    gx-cleanup-log to create a new requests.log file (bypassing
    gx-check-requests and gx-propagate), so existing mappings
    are not propagated through the TGCDB.
@@ -100,7 +100,7 @@ it to maintain its certificates directory, keeping CRLs up to date.
 Cross-Site Propagation:
 =======================
 
-gx-map 0.5.2 includes support for cross-site propagation
+gx-map 0.5.3 includes support for cross-site propagation
 of grid-mapfile entries, via an optional plug-in program
 called "gx-propagate".  The TeraGrid-specific version is
 "gx-propagate.in.teragrid", which can be specified in the installation
@@ -240,8 +240,8 @@ directly or by processing AMIE packets), chester.sdsc.edu will run
 cron jobs similar to the following:
 
 # minute hour mday month wday command
-0 * * * * /usr/local/apps/gx-map-0.5.1.015/sbin/gx-db-request -full-query ; \
-	  /usr/local/apps/gx-map-0.5.1.015/sbin/gx-db-check-requests
+0 * * * * /usr/local/apps/gx-map-0.5.3/sbin/gx-db-request -full-query ; \
+	  /usr/local/apps/gx-map-0.5.3/sbin/gx-db-check-requests
 
 This causes a full query of the TGCDB to be performed once an
 hour, invoking the gx-request command as needed for any changes.
@@ -263,4 +263,4 @@ run on each system that needs a grid-mapfile.
 The gx-gen-mapfile and gx-ca-update commands need to be run on each
 system that needs a grid-mapfile and a certificates directory.
 
-                -- Keith Thompson <kst@sdsc.edu> Fri 2006-06-30
+                -- Keith Thompson <kst@sdsc.edu> Fri 2006-11-17
