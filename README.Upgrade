@@ -1,4 +1,4 @@
-# $Id: README.Upgrade,v 1.9 2006-06-30 16:55:11-07 kst Exp $
+# $Id: README.Upgrade,v 1.10 2006-11-17 18:57:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.Upgrade,v $
 
 As of release 0.4.5, the client command for the gx-map system has been
@@ -50,4 +50,4 @@ README.TeraGrid for details.
 
 If you have any questions, please feel free to contact me.
 
-                -- Keith Thompson <kst@sdsc.edu> Fri 2006-06-30
+                -- Keith Thompson <kst@sdsc.edu> Fri 2006-11-17
