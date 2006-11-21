@@ -1,10 +1,10 @@
-# $Id: tgcdb.db-config,v 1.2 2006-11-21 00:24:55-08 kst Exp $
+# $Id: tgcdb.db-config,v 1.3 2006-11-21 14:56:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/tgcdb.db-config,v $
 
 #
-# These values must be filled in before gx-map or gx-map-tgcdb can
-# interact with the TGCDB (TeraGrid Central Database).  Consult an
-# administrator for the correct values.
+# These values must be filled in before gx-map can interact with the
+# TGCDB (TeraGrid Central Database).  Consult an administrator for the
+# correct values.
 #
 # This file must be kept secure; its permissions *must* be
 # either 600 or 400.
