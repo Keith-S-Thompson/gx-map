@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.263 2006-11-17 18:57:57-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.264 2006-11-21 00:24:54-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2605,6 +2605,8 @@ sub Get_TGCDB_Config($) {
     my @keys = sort keys %$db_config;
     my @required_keys = qw(host port dbname resource_name user password);
     my %required_key = map { $_ => 1 } @required_keys;
+    my @allowed_keys = ( @required_keys, qw(resource_wildcard) );
+    my %allowed_key = map { $_ => 1 } @allowed_keys;
     my @errors = ();
 
     my @missing = ();
@@ -2616,7 +2618,7 @@ sub Get_TGCDB_Config($) {
         }
     }
     foreach my $key (sort keys %$db_config) {
-        if (not $required_key{$key}) {
+        if (not $allowed_key{$key}) {
             push @unrecognized, $key;
         }
         if ($db_config->{$key} eq '-' or $db_config->{$key} eq '') {
