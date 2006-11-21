@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-dump.in,v 1.5 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-db-dump.in,v 1.6 2006-11-21 00:24:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-dump.in,v $
 
 ########################################################################
@@ -168,10 +168,13 @@ sub Get_Mappings_From_DB($) {
         };
     }
     else {
+        my $wildcard = defined $DB_Config->{resource_wildcard}
+                             ? $DB_Config->{resource_wildcard}
+                             : $DB_Config->{resource_name};
         $query = qq {
-            select dn, username
+            select distinct dn, username
             from   gxmap.dns, gxmap.users
-            where  users.resource_name = '$DB_Config->{resource_name}'
+            where  users.resource_name like '$wildcard'
             and    dns.person_id = users.person_id
             and    dns.is_active
         };
