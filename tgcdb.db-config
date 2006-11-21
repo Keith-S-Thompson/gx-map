@@ -1,4 +1,4 @@
-# $Id: tgcdb.db-config,v 1.1 2006-05-17 19:23:57-07 kst Exp $
+# $Id: tgcdb.db-config,v 1.2 2006-11-21 00:24:55-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/tgcdb.db-config,v $
 
 #
@@ -10,9 +10,10 @@
 # either 600 or 400.
 #
 
-host           -
-port           -
-dbname         -
-resource_name  -
-user           -
-password       -
+host               -
+port               -
+dbname             -
+resource_name      -
+# resource_wildcard  -
+user               -
+password           -
