@@ -1,0 +1,155 @@
+# $Id: gx-map-db-config.5.pod,v 1.1 2006-11-21 12:10:57-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gx-map-db-config.5.pod,v $
+
+=for comment
+Make sure the license text appears in the generated man pages.
+
+=begin roff
+
+.\" @Copyright@
+.\"
+.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions are
+.\" met:
+.\"
+.\" 1. Redistributions of source code must retain the above copyright
+.\" notice, this list of conditions and the following disclaimer.
+.\"
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\" notice, this list of conditions and the following disclaimer in the
+.\" documentation and/or other materials provided with the distribution.
+.\"
+.\" 3. All advertising materials mentioning features or use of this
+.\" software must display the following acknowledgement: This product
+.\" includes software developed by the Advanced Cyberinfrastructure
+.\" Laboratory at the San Diego Supercomputer Center and its contributors.
+.\"
+.\" 4. Neither the name of the Center nor the names of its contributors
+.\" may be used to endorse or promote products derived from this software
+.\" without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+.\" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+.\" THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+.\" PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+.\" BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+.\" CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+.\" SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+.\" BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+.\" WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+.\" OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+.\" IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+.\"
+.\" @Copyright@
+
+=end roff
+
+=head1 NAME
+
+gx-map db-config - The db-config file format used by B<gx-map>
+
+=head1 DESCRIPTION
+
+A F<db-config> file is a plain text file containing the information
+needed for the B<gx-propagate>, B<gx-db-check-requests>,
+and B<gx-db-dump> commands to work with a database.  This is
+TeraGrid-specific.
+
+If the B<gx-map> system is configured to work with the TGCDB
+(TeraGrid Central Database), then a dummy F<tgcdb.db-config> file
+will be installed in the F<etc/gx-map> directory.  The fields must
+be filled in before B<gx-map> can interact with the TGCDB.
+
+This is a plain text file where each line contains an attribute
+name followed by the corresponding attribute value.  Blank lines
+are ignored.  Comments are introduced by the '#' character.  Specific
+values for these attributes are not specified here; consult a TeraGrid
+administrator for the correct values.
+
+Since this file contains a plain-text password, it B<must> be kept
+secure; its permissions must be either 600 or 400.
+
+=head1 ATTRIBUTES
+
+This is a list of the allowed attributes in a F<db-config> file.
+Most attributes are mandatory; the "resource_wildcard" attribute
+is optional.
+
+=over
+
+=item host
+
+The host name of the database server.
+
+=item port
+
+The port number for the database server.
+
+=item dbname
+
+The database name.
+
+=item resource_name
+
+The resource name, used within the database to map user names to people
+and vice versa.  This should not be a wildcard (it should not contain a
+'%' character).
+
+=item resource_wildcard (optional)
+
+If specified, this is a wildcard (using a '%' character) that specifies
+a set of resource names.  If a site has multiple resources, this
+allows mappings for all those resources to be retrieved.
+
+Use this B<only> if all specified resources are in the same
+B<NAMESPACE>.  A B<namespace>, specified when B<gx-map> is installed,
+is a consistent mapping of Unix user names to people.  If a given Unix
+user name is guaranteed to belong to the same person on all systems
+within a site, then the site has a single namespace.  If, for example,
+the Unix user name "fred" might belong to Fred Smith foo.yoursite.edu,
+and to Fred Jones on bar.yoursite.edu, then you do not have a single
+namespace; you must have distinct, disjoint installations of gx-map
+on those two systems, and you should not specify a B<resource_wildcard>.
+
+If the B<resource_wildcard> is not specified, it will default to
+the B<resource_name>.
+
+=item user
+
+The user name used to connect to the database.  This is a PostgreSQL
+user name, not a Unix user nam e.
+
+=item password
+
+The password associated with the user name.  Do not reveal this
+password.
+
+=back
+
+=head1 SECURITY
+
+As mentioned above, the F<tgcdb.db-config> file must be kept secure.
+It must be owned by the owner of the gx-map installation (specified
+as B<OWNER_NAME> in the installation configuration file), and
+its permissions must be either 600 or 400.  If it has any other
+permissions, any programs that use it will refuse to run -- but by
+that time, it could be too late.  The file, by necessity, contains a
+clear-text database password.  An attacker with access to this file
+could add or remove information from the TGCDB, and possibly break
+into systems.
+
+=head1 SEE ALSO
+
+gx-map(8), gx-propagate(8), gx-db-check-requests(8), B<gx-db-dump>
+
+=head1 AUTHOR
+
+Keith Thompson, San Diego Supercomputer Center, <kst@sdsc.edu>
+
+=head1 COPYRIGHT AND LICENSE
+
+See the file F<LICENSE> in the B<gx-map> distribution, installed in
+the F<etc/gx-map> subdirectory.
