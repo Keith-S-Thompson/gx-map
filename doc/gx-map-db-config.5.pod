@@ -1,4 +1,4 @@
-# $Id: gx-map-db-config.5.pod,v 1.1 2006-11-21 12:10:57-08 kst Exp $
+# $Id: gx-map-db-config.5.pod,v 1.2 2006-11-21 18:55:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-db-config.5.pod,v $
 
 =for comment
@@ -106,13 +106,14 @@ allows mappings for all those resources to be retrieved.
 
 Use this B<only> if all specified resources are in the same
 B<NAMESPACE>.  A B<namespace>, specified when B<gx-map> is installed,
-is a consistent mapping of Unix user names to people.  If a given Unix
-user name is guaranteed to belong to the same person on all systems
-within a site, then the site has a single namespace.  If, for example,
-the Unix user name "fred" might belong to Fred Smith foo.yoursite.edu,
-and to Fred Jones on bar.yoursite.edu, then you do not have a single
-namespace; you must have distinct, disjoint installations of gx-map
-on those two systems, and you should not specify a B<resource_wildcard>.
+is a consistent mapping of Unix user names to people.  If a given
+Unix user name is guaranteed to belong to the same person on all
+systems within a site, then the site has a single namespace.  If,
+for example, the Unix user name "fred" might belong to Fred Smith on
+foo.yoursite.edu, and to Fred Jones on bar.yoursite.edu, then you
+do not have a single namespace; you must have distinct, disjoint
+installations of gx-map on those two systems, and you should not
+specify a B<resource_wildcard>.
 
 If the B<resource_wildcard> is not specified, it will default to
 the B<resource_name>.
