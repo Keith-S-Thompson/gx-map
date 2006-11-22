@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.19 2006-11-17 18:57:58-08 kst Exp $
+# $Id: README.TeraGrid,v 1.20 2006-11-21 18:52:48-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
@@ -56,6 +56,21 @@ below.)
 During installation, you will be instructed to edit the tgcdb.db-config
 file.  This file contains information that enables access to the TGCDB.
 Consult the TeraGrid accounting group for the specific values to use.
+
+As of release 0.5.3.1, the tgcdb.db-config file contains a new optional
+attribute, "resource_wildcard".  This may be used to retrieve mapping
+information for all resources at a site.  (The generated grid-mapfile
+on each system will still contain entries only for users who actually
+have accounts on that system.)  A wildcard may be specified with
+a '%' character; for example, the resource_wildcard for SDSC is
+"%.sdsc.teragrid".
+
+Use this *only* if you have consistent Unix user names across all
+resources at your site.  If, for example, the Unix user name "fred"
+might belong to Fred Smith on foo.yoursite.edu, and to Fred Jones on
+bar.yoursite.edu, then you do not have a single namespace; you must
+have distinct, disjoint installations of gx-map on those two systems,
+and you should not specify a B<resource_wildcard>.
 
 Initial Deployment Plan:
 ========================
@@ -128,11 +143,9 @@ the following TGCDB resource names are associated with SDSC:
     datastar-p655.sdsc.teragrid
     dtf.sdsc.teragrid
 
-For the interaction between gx-map and the TGCDB, I intend to use only
-the "dtf.sdsc.teragrid" resource name.  It's possible that this could
-cause some problems.  Other sites can either do something similar,
-or use a different resource name for each system (with a different
-gx-map installation for each one).
+The new resource_wildcard attribute, added in gx-map 0.5.3.1,
+addresses this issue.  Other sites can either do something similar,
+or use separate a gx-map installation for each resource.
 
 Cron Jobs:
 ==========
