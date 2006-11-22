@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.9 2006-11-10 13:04:03-08 kst Exp $
+# $Id: gx-util-test.in,v 1.10 2006-11-21 19:46:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -379,7 +379,7 @@ Command names are case-insensitive; underscores and hyphens are ignored.
     Release_Lock              (not supported)
     Install_Die_Handler
     Install_Warn_Handler
-    Register_Handler_Function
+    Register_Handler_Function (not supported)
     Get_TGCDB_Config          (not supported)
 EOF
     exit 1;
