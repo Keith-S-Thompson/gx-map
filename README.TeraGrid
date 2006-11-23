@@ -1,8 +1,8 @@
-# $Id: README.TeraGrid,v 1.20 2006-11-21 18:52:48-08 kst Exp $
+# $Id: README.TeraGrid,v 1.21 2006-11-22 21:32:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
-0.5.3 release of gx-map.
+0.5.3.1 release of gx-map.
 
 If you have any questions, please feel free to contact me,
 Keith Thompson, <kst@sdsc.edu>.
@@ -75,7 +75,7 @@ and you should not specify a B<resource_wildcard>.
 Initial Deployment Plan:
 ========================
 
-One obvious way to deploy gx-map 0.5.3 across TeraGrid sites would
+One obvious way to deploy gx-map 0.5.3.1 across TeraGrid sites would
 be to install it, enable propagation via gx-propagate, and feed
 the existing grid-mapfiles into the system via gx-ingest (see the
 corresponding man pages for more information).  The problem with
@@ -84,7 +84,7 @@ some of which need to be processed manually).
 
 So the plan (at least at SDSC) is:
 
-1. Install and deploy gx-map 0.5.3.  Use gx-convert-logs and
+1. Install and deploy gx-map 0.5.3.1.  Use gx-convert-logs and
    gx-cleanup-log to create a new requests.log file (bypassing
    gx-check-requests and gx-propagate), so existing mappings
    are not propagated through the TGCDB.
@@ -115,7 +115,7 @@ it to maintain its certificates directory, keeping CRLs up to date.
 Cross-Site Propagation:
 =======================
 
-gx-map 0.5.3 includes support for cross-site propagation
+gx-map 0.5.3.1 includes support for cross-site propagation
 of grid-mapfile entries, via an optional plug-in program
 called "gx-propagate".  The TeraGrid-specific version is
 "gx-propagate.in.teragrid", which can be specified in the installation
@@ -159,7 +159,7 @@ complexity is merely pushed down a level).
 Here's a sample cron job, running the gx-cron-job command once
 every minute:
 
-* * * * * /usr/local/apps/gx-map-0.5.3/sbin/gx-cron-job
+* * * * * /usr/local/apps/gx-map-0.5.3.1/sbin/gx-cron-job
 
 And here's a sample gx-cron-job.conf file (this is similar to the
 one for chester.sdsc.edu):
@@ -276,4 +276,4 @@ run on each system that needs a grid-mapfile.
 The gx-gen-mapfile and gx-ca-update commands need to be run on each
 system that needs a grid-mapfile and a certificates directory.
 
-                -- Keith Thompson <kst@sdsc.edu> Fri 2006-11-17
+                -- Keith Thompson <kst@sdsc.edu> Wed 2006-11-22
