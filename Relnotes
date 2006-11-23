@@ -1,7 +1,15 @@
-# $Id: Relnotes,v 1.32 2006-11-17 18:57:58-08 kst Exp $
+# $Id: Relnotes,v 1.33 2006-11-22 21:32:44-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.5.3.1, Wed 2006-11-22
+
+    Added optional "resource_wildcard" to tgcdb.db-config file.
+    This is TeraGrid-specific.  See README.TeraGrid for details.
+
+    Added gx-map-db-config(5) man page to document tgcdb.db-config
+    file.
 
 Release 0.5.3, Fri 2006-11-17
 
