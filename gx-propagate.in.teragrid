@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.35 2006-11-28 21:01:57-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.36 2006-11-29 02:25:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -325,7 +325,7 @@ sub Get_User_Resource($) {
             where  resource_name like '$DB_Config->{resource_wildcard}'
             and    username = '$username'
         };
-        my $sth = $tg->prepare($query);
+        my $sth = $tg->dbh->prepare($query);
         $sth->execute();
         my @datarow = $sth->fetchrow();
         #
