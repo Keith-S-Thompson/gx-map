@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.34 2006-11-28 18:25:58-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.35 2006-11-28 21:01:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -59,6 +59,7 @@ sub Quote(@);
 sub Init_Mappings();
 sub Get_User_List($);
 sub Get_DN_List($);
+sub Get_User_Resource($);
 sub Add_Mapping($$$);
 sub Remove_Mapping($$$);
 sub Debug(@);
@@ -305,16 +306,55 @@ sub Get_DN_List($) {
 
 # ----------------------------------------------------------------------
 
+#
+# Given a username, return a resource name for which that user has
+# an account.
+# If the resource_wildcard was specified in the db_config file, query
+# the DB to get a list of resource names, and arbitrarily return the
+# first one.
+# If no resource_wildcard was specified, or if the query returned an
+# empty list, just return the specified resource_name.
+#
+sub Get_User_Resource($) {
+    my($username) = @_;
+
+    if (defined $DB_Config->{resource_wildcard}) {
+        my $query = qq {
+            select resource_name
+            from   gxmap.users
+            where  resource_name like '$DB_Config->{resource_wildcard}'
+            and    username = '$username'
+        };
+        my $sth = $tg->prepare($query);
+        $sth->execute();
+        my @datarow = $sth->fetchrow();
+        #
+        # @datarow is a list containing the first row of the query
+        # results.  Because of the form of the query, the row contains
+        # only one element (or none if the query failed); we don't bother
+        # looping to obtain other rows.
+        # 
+        if (@datarow) {
+            return $datarow[0];
+        }
+    }
+
+    return $DB_Config->{resource_name};
+} # Get_User_Resource
+
+# ----------------------------------------------------------------------
+
 sub Add_Mapping($$$) {
     my($tg, $username, $dn) = @_;
+    my $resource = Get_User_Resource $username;
     my $message =
-        "\$tg->gxmap_add_dn($DB_Config->{resource_name}, $username, \"$dn\")\n";
+        "\$tg->gxmap_add_dn($resource, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
         print STDERR $message;
     }
     else {
         Debug $message;
-        $tg->gxmap_add_dn($DB_Config->{resource_name}, $username, $dn);
+        $tg->gxmap_add_dn($resource, $username, $dn);
     }
 } # Add_Mapping
 
@@ -322,14 +362,15 @@ sub Add_Mapping($$$) {
 
 sub Remove_Mapping($$$) {
     my($tg, $username, $dn) = @_;
+    my $resource = Get_User_Resource $username;
     my $message =
-        "\$tg->gxmap_remove_dn($DB_Config->{resource_name}, $username, \"$dn\")\n";
+        "\$tg->gxmap_remove_dn($resource, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
         print STDERR $message;
     }
     else {
         Debug "$message";
-        $tg->gxmap_remove_dn($DB_Config->{resource_name}, $username, $dn);
+        $tg->gxmap_remove_dn($resource, $username, $dn);
     }
 } # Remove_Mapping
 
