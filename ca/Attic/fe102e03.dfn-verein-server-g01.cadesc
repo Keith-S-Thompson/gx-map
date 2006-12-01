@@ -1,0 +1,25 @@
+# $Id: fe102e03.dfn-verein-server-g01.cadesc,v 1.1 2006-11-30 19:27:33-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/fe102e03.dfn-verein-server-g01.cadesc,v $
+
+CA_NAME             DFN-Verein Server CA Grid - G01
+HOMEPAGE            http://www.pca.dfn.de/
+CONTACT             dfnpki@dfn-cert.de
+HASH                fe102e03
+SIGNED_BY           /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein PCA Grid - G01
+SUBJECT             /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein Server CA Grid - G01
+MAY_SIGN            /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein Server CA Grid - G01
+MAY_SIGN            /C=DE/O=GridGermany/*
+CERTIFICATE_MD5     6F:74:91:7A:78:CE:93:E8:92:87:91:C0:5A:6E:25:82
+CERTIFICATE_SHA1    20:36:73:B7:15:93:15:28:5A:54:70:71:A1:DC:D7:B1:39:42:C5:09
+CERTIFICATE_URL     http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/certs/ca-server-cert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/crls/ca-server-crl.pem
+CERT_EXPIRES        Tue 2009-07-07 14:56:32 UTC
+
+# MD5 and SHA1 fingerprints from ca-server-cert.pem (fe102e03.0) downloaded
+# Thu 2006-11-30
+
+# I was unable to find a standalone fe102e03.signing_policy file.
+# the MAY_SIGN attributes are based on the fe102e03.signing_policy file
+# extracted from
+# <http://www.eugridpma.org/distribution/igtf/1.10/accredited/igtf-preinstalled-bundle-classic-1.10.tar.gz>
