@@ -1,0 +1,18 @@
+# $Id: a87d9192.naregi.cadesc,v 1.1 2006-11-30 19:27:33-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/a87d9192.naregi.cadesc,v $
+
+CA_NAME             NAREGI Certification Authority
+HOMEPAGE            https://www.naregi.org/ca/index.html
+CONTACT             ca-support@grid.nii.ac.jp
+HASH                a87d9192
+SUBJECT             /C=JP/O=National Research Grid Initiative/OU=CGRD/CN=NAREGI CA
+MAY_SIGN            /C=JP/O=National Research Grid Initiative/OU=CGRD/*
+CERTIFICATE_MD5     E2:B1:B7:B1:52:74:E1:78:5E:DF:61:82:F6:78:80:95
+CERTIFICATE_SHA1    FF:A5:3A:9D:C9:BB:8F:06:6E:AB:CE:A8:1E:DC:5A:91:3C:D7:5C:A1
+CERTIFICATE_URL     https://www.naregi.org/ca/a87d9192.crt
+SIGNING_POLICY_URL  https://www.naregi.org/ca/a87d9192.signing_policy
+CRL_URL             https://www.naregi.org/ca/out-CRL2.crl
+CERT_EXPIRES        Sat 2016-07-16 06:41:42 UTC
+
+# MD5 and SHA1 fingerprints from a87d9192.crt (a87d9192.0) downloaded 
+# Thu 2006-11-30
