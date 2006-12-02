@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.9 2006-11-29 19:37:19-08 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.10 2006-12-01 18:19:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -427,13 +427,10 @@ sub Get_Mappings_From_DB($) {
     #
     # See also acct.system_accounts.person_id
     #
-    my $wildcard = defined $DB_Config->{resource_wildcard}
-                         ? $DB_Config->{resource_wildcard}
-                         : $DB_Config->{resource_name};
     my $query = qq {
         select distinct dn, username
         from   gxmap.dns, gxmap.users
-        where  users.resource_name like '$wildcard'
+        where  users.resource_name like '$DB_Config->{resource_name}'
         and    dns.person_id = users.person_id
         and    dns.is_active
     };
