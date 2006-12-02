@@ -1,8 +1,8 @@
-# $Id: README.TeraGrid,v 1.21 2006-11-22 21:32:44-08 kst Exp $
+# $Id: README.TeraGrid,v 1.22 2006-12-01 18:19:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
-0.5.3.1 release of gx-map.
+0.5.3.2 release of gx-map.
 
 If you have any questions, please feel free to contact me,
 Keith Thompson, <kst@sdsc.edu>.
@@ -57,25 +57,26 @@ During installation, you will be instructed to edit the tgcdb.db-config
 file.  This file contains information that enables access to the TGCDB.
 Consult the TeraGrid accounting group for the specific values to use.
 
-As of release 0.5.3.1, the tgcdb.db-config file contains a new optional
-attribute, "resource_wildcard".  This may be used to retrieve mapping
-information for all resources at a site.  (The generated grid-mapfile
-on each system will still contain entries only for users who actually
-have accounts on that system.)  A wildcard may be specified with
-a '%' character; for example, the resource_wildcard for SDSC is
-"%.sdsc.teragrid".
+As of release 0.5.3.2, the resource_name in the tgcdb.db-config file
+may be a wildcard.  The '%' character is a wildcard that matches zero
+or more characters (like '*' in a Unix filename pattern).  This may
+be used to retrieve mapping information for all resources at a site.
+(The generated grid-mapfile on each system will still contain
+entries only for users who actually have accounts on that system.)
+A wildcard may be specified with a '%' character; for example, the
+resource_name for SDSC is "%.sdsc.teragrid".
 
-Use this *only* if you have consistent Unix user names across all
+Use a wildcard *only* if you have consistent Unix user names across all
 resources at your site.  If, for example, the Unix user name "fred"
 might belong to Fred Smith on foo.yoursite.edu, and to Fred Jones on
 bar.yoursite.edu, then you do not have a single namespace; you must
 have distinct, disjoint installations of gx-map on those two systems,
-and you should not specify a B<resource_wildcard>.
+and you should not specify a wildcard for the resource_name attribute.
 
 Initial Deployment Plan:
 ========================
 
-One obvious way to deploy gx-map 0.5.3.1 across TeraGrid sites would
+One obvious way to deploy gx-map 0.5.3.2 across TeraGrid sites would
 be to install it, enable propagation via gx-propagate, and feed
 the existing grid-mapfiles into the system via gx-ingest (see the
 corresponding man pages for more information).  The problem with
@@ -84,7 +85,7 @@ some of which need to be processed manually).
 
 So the plan (at least at SDSC) is:
 
-1. Install and deploy gx-map 0.5.3.1.  Use gx-convert-logs and
+1. Install and deploy gx-map 0.5.3.2.  Use gx-convert-logs and
    gx-cleanup-log to create a new requests.log file (bypassing
    gx-check-requests and gx-propagate), so existing mappings
    are not propagated through the TGCDB.
@@ -115,7 +116,7 @@ it to maintain its certificates directory, keeping CRLs up to date.
 Cross-Site Propagation:
 =======================
 
-gx-map 0.5.3.1 includes support for cross-site propagation
+gx-map 0.5.3.2 includes support for cross-site propagation
 of grid-mapfile entries, via an optional plug-in program
 called "gx-propagate".  The TeraGrid-specific version is
 "gx-propagate.in.teragrid", which can be specified in the installation
@@ -143,9 +144,9 @@ the following TGCDB resource names are associated with SDSC:
     datastar-p655.sdsc.teragrid
     dtf.sdsc.teragrid
 
-The new resource_wildcard attribute, added in gx-map 0.5.3.1,
-addresses this issue.  Other sites can either do something similar,
-or use separate a gx-map installation for each resource.
+The use of wildcards for the resource_name attribute, added in gx-map
+0.5.3.2, addresses this issue.  Other sites can either do something
+similar, or use separate a gx-map installation for each resource.
 
 Cron Jobs:
 ==========
@@ -159,7 +160,7 @@ complexity is merely pushed down a level).
 Here's a sample cron job, running the gx-cron-job command once
 every minute:
 
-* * * * * /usr/local/apps/gx-map-0.5.3.1/sbin/gx-cron-job
+* * * * * /usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job
 
 And here's a sample gx-cron-job.conf file (this is similar to the
 one for chester.sdsc.edu):
@@ -253,8 +254,8 @@ directly or by processing AMIE packets), chester.sdsc.edu will run
 cron jobs similar to the following:
 
 # minute hour mday month wday command
-0 * * * * /usr/local/apps/gx-map-0.5.3/sbin/gx-db-request -full-query ; \
-	  /usr/local/apps/gx-map-0.5.3/sbin/gx-db-check-requests
+0 * * * * /usr/local/apps/gx-map-0.5.3.2/sbin/gx-db-request -full-query ; \
+	  /usr/local/apps/gx-map-0.5.3.2/sbin/gx-db-check-requests
 
 This causes a full query of the TGCDB to be performed once an
 hour, invoking the gx-request command as needed for any changes.
@@ -276,4 +277,4 @@ run on each system that needs a grid-mapfile.
 The gx-gen-mapfile and gx-ca-update commands need to be run on each
 system that needs a grid-mapfile and a certificates directory.
 
-                -- Keith Thompson <kst@sdsc.edu> Wed 2006-11-22
+                -- Keith Thompson <kst@sdsc.edu> Fri 2006-12-01
