@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.36 2006-11-29 02:25:20-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.37 2006-12-01 18:19:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -309,20 +309,29 @@ sub Get_DN_List($) {
 #
 # Given a username, return a resource name for which that user has
 # an account.
-# If the resource_wildcard was specified in the db_config file, query
-# the DB to get a list of resource names, and arbitrarily return the
-# first one.
-# If no resource_wildcard was specified, or if the query returned an
-# empty list, just return the specified resource_name.
+#
+# If the resource_name is a wildcard containing one or more %' characters,
+# query the DB to get a list of resource names, and arbitrarily return
+# the first one.  If the query fails, return undef.
+#
+# If the resource_name is not a wildcard, just return the specified
+# resource_name.
+#
+# Note that SQL wildcard characters other than '%' are not currently
+# recognized.
+#
+# We could perform the same query for a non-wildcard resource_name,
+# but this approach saves the expense of a query when there's only one
+# possible result.
 #
 sub Get_User_Resource($) {
     my($username) = @_;
 
-    if (defined $DB_Config->{resource_wildcard}) {
+    if ($DB_Config->{resource_name} =~ /%/) {
         my $query = qq {
             select resource_name
             from   gxmap.users
-            where  resource_name like '$DB_Config->{resource_wildcard}'
+            where  resource_name like '$DB_Config->{resource_name}'
             and    username = '$username'
         };
         my $sth = $tg->dbh->prepare($query);
@@ -337,9 +346,13 @@ sub Get_User_Resource($) {
         if (@datarow) {
             return $datarow[0];
         }
+        else {
+            return undef;
+        }
     }
-
-    return $DB_Config->{resource_name};
+    else {
+        return $DB_Config->{resource_name};
+    }
 } # Get_User_Resource
 
 # ----------------------------------------------------------------------
@@ -347,6 +360,9 @@ sub Get_User_Resource($) {
 sub Add_Mapping($$$) {
     my($tg, $username, $dn) = @_;
     my $resource = Get_User_Resource $username;
+    if (not defined $resource) {
+        die "$Program_Name: Can't determine resource for user $username\n";
+    }
     my $message =
         "\$tg->gxmap_add_dn($resource, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
@@ -363,6 +379,9 @@ sub Add_Mapping($$$) {
 sub Remove_Mapping($$$) {
     my($tg, $username, $dn) = @_;
     my $resource = Get_User_Resource $username;
+    if (not defined $resource) {
+        die "$Program_Name: Can't determine resource for user $username\n";
+    }
     my $message =
         "\$tg->gxmap_remove_dn($resource, $username, \"$dn\")\n";
     if ($User_Opt->{dryrun}) {
