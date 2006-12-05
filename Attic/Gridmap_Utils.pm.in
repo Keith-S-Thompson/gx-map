@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.273 2006-12-04 22:37:30-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.274 2006-12-04 22:41:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2174,6 +2174,13 @@ sub DN_Error(@) {
     #
     if ($dn !~ /^[ -~]*$/) {
         return 'DN contains non-printing characters';
+    }
+
+    #
+    # Disallow leading and trailing whitespace
+    #
+    if ($dn =~ /^ / or $dn =~ / $/) {
+        return "DN has leading or trailing blanks";
     }
 
     #
