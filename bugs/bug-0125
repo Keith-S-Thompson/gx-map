@@ -1,4 +1,4 @@
-# $Id: bug-0125,v 1.1 2006-12-06 18:58:48-08 kst Exp $
+# $Id: bug-0125,v 1.2 2006-12-06 19:40:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0125,v $
 
 gx-map bug 0125
@@ -6,8 +6,12 @@ Date: Wed 2006-12-06
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.1.005
-Status: Open
+Status: Fixed 0.5.3.2
 Title: Temporary cache file left in place if CRL download fails
 
 In gx-ca-update, if the attempt to download a CRL fails, a temporary
 cache file for the certificate is left in place.
+
+Fixed:
+gx-ca-update.in 1.128
+gx-map release 0.5.3.2
