@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.128 2006-12-06 19:39:53-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.129 2006-12-06 20:17:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -856,6 +856,7 @@ sub Update_Certificate($) {
                             Gridmap_Utils::Get_mtime $cache_result->{filename},
                             "Can't get certificate information";
                 Gridmap_Utils::Release_Cache_File $cache_result->{filename};
+                delete $ref->{_CACHED_CERT_FILE};
                 return;
             }
             if (defined $cert_info->{enddate}) {
@@ -1249,6 +1250,7 @@ sub Install_Certificate($) {
     if ($ref->{_FATAL_ERROR}) {
         if (defined $ref->{_CACHED_CERT_FILE}) {
             Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
+            delete $ref->{_CACHED_CERT_FILE};
         }
     }
 
@@ -1268,6 +1270,7 @@ sub Install_Certificate($) {
             or Error $ref, undef, undef, "Failed to rename certificate: $!";
         $Certificate_Installed = 1;
         Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
+        delete $ref->{_CACHED_CERT_FILE};
     }
 } # Install_Certificate
 
