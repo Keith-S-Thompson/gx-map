@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.6 2006-11-05 12:09:00-08 kst Exp $
+# $Id: bug-0064,v 1.7 2006-12-06 18:22:54-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -107,7 +107,7 @@ A user should *not* be required to prove he owns the certificate for a
 "remove" or "remove-user" request.  (A "remove-dn" request requires
 administrative privileges.)  If somebody has somehow managed to map
 his own DN to my account, I should be able to remove that mapping
-(obviously I can't provide I own the certificate in that case).
+(obviously I can't prove I own the certificate in that case).
 
 Sun 2006-11-05
 Raised priority to High; planning to add this in the next release
