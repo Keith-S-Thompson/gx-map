@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.276 2006-12-06 19:40:41-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.277 2006-12-07 19:19:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2177,13 +2177,6 @@ sub DN_Error(@) {
     }
 
     #
-    # Disallow leading and trailing whitespace
-    #
-    if ($dn =~ /^ / or $dn =~ / $/) {
-        return "DN has leading or trailing blanks";
-    }
-
-    #
     # Disallow '"' and '\' characters.  These should be allowed if escaped
     # with a backslash, but we're going to disallow them until there's
     # a clear specification of the grid-mapfile syntax.  See bug-0069
@@ -2275,12 +2268,15 @@ sub GT4_Subject($) {
 # ----------------------------------------------------------------------
 
 #
-# Given a string, delete all trailing occurrences of "/CN=proxy" or
-# "/CN=[0-9]+", converting a DN for a proxy certificate to the DN for
-# the corresponding user certificate, and convert to GT4 form.
+# Given a string, delete leading and trailing whitespace, delete all
+# trailing occurrences of "/CN=proxy" or "/CN=[0-9]+" (converting a DN for
+# a proxy certificate to the DN for the corresponding user certificate),
+# and convert to GT4 form.
 # 
 sub Normalize_DN($) {
     my($string) = @_;
+    $string =~ s/^\s*//;
+    $string =~ s/\s*$//;
     while ($string =~ m</CN=proxy$> or $string =~ m</CN=[0-9]+$>) {
         $string =~ s</[^/]*$><>;
     }
