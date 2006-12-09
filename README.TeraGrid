@@ -1,4 +1,4 @@
-# $Id: README.TeraGrid,v 1.22 2006-12-01 18:19:58-08 kst Exp $
+# $Id: README.TeraGrid,v 1.23 2006-12-09 02:54:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.TeraGrid,v $
 
 This is an overview of TeraGrid-specific information for the new
@@ -277,4 +277,4 @@ run on each system that needs a grid-mapfile.
 The gx-gen-mapfile and gx-ca-update commands need to be run on each
 system that needs a grid-mapfile and a certificates directory.
 
-                -- Keith Thompson <kst@sdsc.edu> Fri 2006-12-01
+                -- Keith Thompson <kst@sdsc.edu> Sat 2006-12-09
