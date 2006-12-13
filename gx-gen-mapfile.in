@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-gen-mapfile.in,v 1.91 2006-11-14 18:48:37-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.92 2006-12-12 22:19:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -606,7 +606,7 @@ Option names may be abbreviated.
     -gt3-compatible     : Generate a grid-mapfile compatible both with
                           GT3 WS (Web Services) and with GT4.  This is
                           rarely necessary.  This option can be used
-                          together with the "-compatible" option.
+                          together with the "-gt2-compatible" option.
     -merge-before file  : Merge an existing grid-mapfile into
                           the generated file.  Mappings from the
                           input grid-mapfile are treated as if they
