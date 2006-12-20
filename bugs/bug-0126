@@ -1,4 +1,4 @@
-# $Id: bug-0126,v 1.1 2006-12-19 21:28:19-08 kst Exp $
+# $Id: bug-0126,v 1.2 2006-12-19 21:36:17-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0126,v $
 
 gx-map bug 0126
@@ -6,7 +6,7 @@ Date: Tue 2006-12-19
 Severity: Med
 Reported by: JP Navarro <navarro@mcs.anl.gov>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.?
 Title: gx-cleanup-logs dies with no filename argument
 
 % gx-cleanup-logs 
@@ -16,3 +16,7 @@ Traceback:
     .../sbin/gx-cleanup-logs:104
 
 Workaround: Give it a file name.
+
+Fixed:
+Gridmap_Utils.pm.in 1.280
+gx-map release 0.?
