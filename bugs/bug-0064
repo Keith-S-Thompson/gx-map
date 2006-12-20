@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.7 2006-12-06 18:22:54-08 kst Exp $
+# $Id: bug-0064,v 1.8 2006-12-19 21:40:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -112,3 +112,13 @@ his own DN to my account, I should be able to remove that mapping
 Sun 2006-11-05
 Raised priority to High; planning to add this in the next release
 after 0.5.3.
+
+Yet another thought:
+
+How do we handle requests made before this feature was implemented?
+Probably make it yet another configuration option (or perhaps a value
+"STRICT" for a single option?).  Each new request has a new attribute,
+indicating whether it's been signed and verified.  In strict mode,
+any unsigned user "add" request will be rejected.  In a looser mode,
+records for which this attribute is missing (i.e., old requests from
+before signing was implemented) are accepted.
