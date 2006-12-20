@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.279 2006-12-09 02:54:11-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.280 2006-12-19 21:35:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -919,7 +919,7 @@ sub Read_Records(@) {
         elsif ($_[$i] eq '-keep-comments') {
             $keep_comments = 1;
         }
-        elsif ($_[$i] =~ /^-/) {
+        elsif ($_[$i] =~ /^-./) {
             die "Read_Records: Unrecognized option \"$_[$i]\"\n";
         }
         else {
