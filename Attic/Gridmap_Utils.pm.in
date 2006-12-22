@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.280 2006-12-19 21:35:23-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.281 2006-12-22 03:39:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -97,7 +97,11 @@ BEGIN {
                 REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
                 GX_MAP_OWNER             => '%GX_MAP_OWNER%',
                 ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
-                ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
+                ADMIN_EMAIL              => '%ADMIN_EMAIL%',
+                REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
+                STRICT_SIGNATURES        => '%STRICT_SIGNATURES%',
+                CERTIFICATE_DIR          => '%CERTIFICATE_DIR%',
+                EXTRAS                   => '%EXTRAS%' );
     use File::Basename ();
     use Time::Local ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
