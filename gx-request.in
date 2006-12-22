@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.64 2006-11-13 02:40:51-08 kst Exp $
+# $Id: gx-request.in,v 1.65 2006-12-22 03:40:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -262,6 +262,12 @@ if ( $Options->{operation} eq 'add' or
     }
 }
 
+if ($Options->{operation} eq 'add' and
+    not defined $Options->{signature})
+{
+    $Options->{signature} = 'none';
+}
+
 if (defined $Options->{dn}) {
     my @errors = ();
     my @args = ();
@@ -405,11 +411,12 @@ my $request = {
 if (defined $Options->{dn}) {
     $request->{dn} = '"' . $Options->{dn} . '"';
 }
-$request->{username} = $Options->{username} if defined $Options->{username};
-$request->{user_uid} = $requested_uid       if defined $requested_uid;
-$request->{email}    = $Options->{email}    if defined $Options->{email};
-$request->{comment}  = $Options->{comment}  if defined $Options->{comment};
-$request->{source}   = $Options->{source}   if defined $Options->{source};
+$request->{username}  = $Options->{username}  if defined $Options->{username};
+$request->{user_uid}  = $requested_uid        if defined $requested_uid;
+$request->{email}     = $Options->{email}     if defined $Options->{email};
+$request->{comment}   = $Options->{comment}   if defined $Options->{comment};
+$request->{source}    = $Options->{source}    if defined $Options->{source};
+$request->{signature} = $Options->{signature} if defined $Options->{signature};
 
 my @requests = ( $request );
 
@@ -875,6 +882,15 @@ EOF
 
             $Options->{dn} = $dn;
         }
+        if (not $Is_Admin and
+            defined $Gridmap_Utils::Config{REQUIRE_SIGNATURES} and
+            $Gridmap_Utils::Config{REQUIRE_SIGNATURES} eq 'yes')
+        {
+            print ">>> Not yet implemented <<<\n";
+            print "Enter verification for \"$dn\"\n";
+            chomp($response = scalar <STDIN>);
+            $Options->{signature} = $response;
+        }
 
         #
         # Get e-mail address
@@ -1057,6 +1073,17 @@ sub Get_Options_From_Command_Line() {
                 Usage "$dn\n";
             }
         }
+    }
+
+    if (not $Is_Admin and
+        $OP eq 'add' and
+        defined $Gridmap_Utils::Config{REQUIRE_SIGNATURES} and
+        $Gridmap_Utils::Config{REQUIRE_SIGNATURES} eq 'yes')
+    {
+        print ">>> Not yet implemented <<<\n";
+        print "Enter verification for \"$dn\"\n";
+        chomp($response = scalar <STDIN>);
+        $Options->{signature} = $response;
     }
 
     if (defined $User_Opt->{email}) {
