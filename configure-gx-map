@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.51 2006-09-14 22:30:45-07 kst Exp $
+# $Id: configure-gx-map,v 1.52 2006-12-22 03:37:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -69,12 +69,21 @@ my $Program_Name = File::Basename::basename $0;
 my $Config_File = undef;
 my %Config = ();
 my @Required_Var_Names
-    = qw( PERL PATH
+    = qw( PERL
+          PATH
           NAMESPACE
-          INSTALL_DIR DATA_DIR
+          INSTALL_DIR
+          DATA_DIR
           REQUESTS_LOG_PERMISSIONS
-          GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
-my @Optional_Var_Names = qw( GX_PROPAGATE EXTRAS );
+          GX_MAP_OWNER
+          ADDITIONAL_ADMINS
+          ADMIN_EMAIL
+          REQUIRE_SIGNATURES );
+my @Optional_Var_Names
+    = qw( STRICT_SIGNATURES
+          CERTIFICATE_DIR
+          GX_PROPAGATE
+          EXTRAS );
 my @Var_Names = ( @Required_Var_Names, @Optional_Var_Names );
 my %Required_Var_Name = map { $_ => 1 } @Required_Var_Names;
 my %Valid_Var_Name    = map { $_ => 1 } @Var_Names;
@@ -198,9 +207,18 @@ if (defined $Config{PATH}) {
         }
     }
 }
-foreach my $name (qw(INSTALL_DIR DATA_DIR)) {
+foreach my $name (qw(INSTALL_DIR DATA_DIR CERTIFICATE_DIR)) {
     if (defined $Config{$name} and $Config{$name} !~ /^\//) {
         push @errors, "$Config_File: Bad value for \"$name\"\n";
+    }
+}
+foreach my $name (qw(REQUIRE_SIGNATURES STRICT_SIGNATURES)) {
+    if (defined $Config{$name}) {
+        my $lc_name = lc $Config{$name};
+        if ($lc_name ne 'yes' and $lc_name ne 'no') {
+            push @errors, "$Config_File: Bad value for \"$name\"\n";
+        }
+        $Config{$name} = $lc_name;
     }
 }
 if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
@@ -220,6 +238,17 @@ if (defined $Config{ADDITIONAL_ADMINS}) {
 }
 if ($Config{EXTRAS} ne '' and $Config{EXTRAS} ne 'TGCDB') {
     push @errors, "$Config_File: Bad value for EXTRAS\n";
+}
+
+if (defined $Config{REQUIRE_SIGNATURES}) {
+    if ($Config{REQUIRE_SIGNATURES} eq 'yes') {
+        if (not defined $Config{STRICT_SIGNATURES}) {
+            push @errors, "Missing definition for STRICT_SIGNATURES\n";
+        }
+        if (not defined $Config{CERTIFICATE_DIR}) {
+            push @errors, "Missing definition for CERTIFICATE_DIR\n";
+        }
+    }
 }
 
 die @errors if @errors;
