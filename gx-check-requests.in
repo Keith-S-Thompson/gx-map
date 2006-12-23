@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.101 2006-11-13 02:43:11-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.102 2006-12-22 17:40:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -143,7 +143,7 @@ my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
                    qw( dn username email comment
-                       user_uid source ) );
+                       user_uid source signature ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
@@ -685,10 +685,34 @@ sub Get_Request_Info($) {
         $result->{SOURCE} = $result->{source};
     }
     else {
-        $result->{SOURCE} = ( $owner_is_admin ? "admin" : "user" );
+        $result->{SOURCE} = ( $owner_is_admin ? 'admin' : 'user' );
     }
 
     $result->{NAMESPACE} = $Gridmap_Utils::Config{NAMESPACE};
+
+    if ($result->{SOURCE} eq 'user' and
+        $result->{operation} eq 'add' and
+        defined $Gridmap_Utils::Config{REQUIRE_SIGNATURES} and
+        $Gridmap_Utils::Config{REQUIRE_SIGNATURES} eq 'yes')
+    {
+        #
+        # Check signature (preliminary)
+        #
+        if (defined $result->{signature}) {
+            if ($result->{signature} ne 'verified') {
+                push @{$result->{ERRORS}},
+                     "Signature is not verified";
+            }
+        }
+        else {
+            if (defined $Gridmap_Utils::Config{STRICT_SIGNATURES} and
+                $Gridmap_Utils::Config{STRICT_SIGNATURES} eq 'yes')
+            {
+                push @{$result->{ERRORS}},
+                     "missing signature, strict checking requested";
+            }
+        }
+    }
 
     return $result;
 } # Get_Request_Info
