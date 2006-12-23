@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.65 2006-12-22 03:40:04-08 kst Exp $
+# $Id: gx-request.in,v 1.66 2006-12-22 16:11:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -411,11 +411,16 @@ my $request = {
 if (defined $Options->{dn}) {
     $request->{dn} = '"' . $Options->{dn} . '"';
 }
+if ($User_Opt->{'no-admin'} and not defined $request->{source}) {
+    $request->{source} = 'user';
+}
+elsif (defined $Options->{source}) {
+    $request->{source} = $Options->{source};
+}
 $request->{username}  = $Options->{username}  if defined $Options->{username};
 $request->{user_uid}  = $requested_uid        if defined $requested_uid;
 $request->{email}     = $Options->{email}     if defined $Options->{email};
 $request->{comment}   = $Options->{comment}   if defined $Options->{comment};
-$request->{source}    = $Options->{source}    if defined $Options->{source};
 $request->{signature} = $Options->{signature} if defined $Options->{signature};
 
 my @requests = ( $request );
@@ -887,7 +892,8 @@ EOF
             $Gridmap_Utils::Config{REQUIRE_SIGNATURES} eq 'yes')
         {
             print ">>> Not yet implemented <<<\n";
-            print "Enter verification for \"$dn\"\n";
+            print "Enter verification for \"$Options->{dn}\"\n";
+            my $response;
             chomp($response = scalar <STDIN>);
             $Options->{signature} = $response;
         }
@@ -1081,7 +1087,8 @@ sub Get_Options_From_Command_Line() {
         $Gridmap_Utils::Config{REQUIRE_SIGNATURES} eq 'yes')
     {
         print ">>> Not yet implemented <<<\n";
-        print "Enter verification for \"$dn\"\n";
+        print "Enter verification for \"$Options->{dn}\"\n";
+        my $response;
         chomp($response = scalar <STDIN>);
         $Options->{signature} = $response;
     }
