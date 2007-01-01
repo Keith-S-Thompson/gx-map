@@ -1,4 +1,4 @@
-# $Id: gx-check-requests.8.pod,v 1.7 2006-06-09 21:44:49-07 kst Exp $
+# $Id: gx-check-requests.8.pod,v 1.8 2007-01-01 13:01:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-check-requests.8.pod,v $
 
 =for comment
@@ -8,7 +8,7 @@ Make sure the license text appears in the generated man pages.
 
 .\" @Copyright@
 .\"
-.\" Copyright (c) 2006 The Regents of the University of California. All
+.\" Copyright (c) 2007 The Regents of the University of California. All
 .\" rights reserved.
 .\"
 .\" Redistribution and use in source and binary forms, with or without
