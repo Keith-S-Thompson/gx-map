@@ -1,12 +1,12 @@
 #!%PERL%
 
-# $Id: gx-map.in,v 1.45 2006-11-15 20:01:02-08 kst Exp $
+# $Id: gx-map.in,v 1.46 2007-01-01 13:01:34-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.in,v $
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2006 The Regents of the University of California. All
+# Copyright (c) 2007 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
