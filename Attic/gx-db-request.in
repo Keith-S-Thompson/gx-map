@@ -1,12 +1,12 @@
 #!%PERL%
 
-# $Id: gx-db-request.in,v 1.5 2006-11-06 01:51:45-08 kst Exp $
+# $Id: gx-db-request.in,v 1.6 2007-01-01 13:01:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-request.in,v $
 
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2006 The Regents of the University of California. All
+# Copyright (c) 2007 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
