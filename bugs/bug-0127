@@ -1,0 +1,16 @@
+# $Id: bug-0127,v 1.1 2007-01-04 01:23:34-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0127,v $
+
+gx-map bug 0127
+Date: Thu 2007-01-04
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Fixed 0.?
+Title: gx-cron-job -daemon dies if a job fails
+
+The gx-cron-job command dies if a job fails.  In normal mode, this
+is ok; in daemon mode, it's a problem.  (It prints a warning message,
+which causes it to die because of the handler.)
+
+Suggested solution: Don't invoke Install_Die_Handler in daemon mode.
