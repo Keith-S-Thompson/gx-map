@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.67 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-request.in,v 1.68 2007-01-05 16:54:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -365,7 +365,7 @@ if (not $Options->{force}) {
     {
         print ">>> NOTE: The distinguished name\n",
               "    \"$Options->{dn}\"\n",
-              "should be handled automatically; this request",
+              "should be handled automatically; this request ",
               "is probably unnecessary.\n";
     }
 
