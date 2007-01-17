@@ -1,0 +1,71 @@
+# $Id: multi-file,v 1.1 2007-01-17 02:49:16-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/multi-file,v $
+
+Layout for gx-map "multifile".
+
+A tar file would work, but that would create a dependency on the
+"tar" command, and I'm not 100% certain that tar is consistent
+across systems.  Perl is good at handling files anyway.
+
+Curly braces are used to delimit subfiles, and the file as a whole.
+Tags are associated with the braces to ensure that a curly brace
+within a subfile doesn't cause problems.  Only one level is
+(currently) supported.  This is designed specifically to support
+gx-map requirements, not as a general-purpose file format.
+
+Example:
+
+BEGIN multifile {
+
+BEGIN subfile "file1" {
+... contents of file1 ...
+} END subfile "file1"
+
+BEGIN subfile "file2" {
+... contents of file2 ...
+} END subfile "file2"
+
+BEGIN subfile "file3" {
+... contents of file3 ...
+} END subfile "file3"
+
+} END multifile
+
+The multifile as a whole begins with a line consisting of
+    BEGIN multifile {
+and ends with a line consisting of
+    } END multifile
+Case is significant; leading and trailing whitespace are not.
+
+Each subfile consists of a line consisting of:
+    BEGIN subfile "<filename>" {
+followed by zero or more lines of content, followed by a line
+consisting of 
+    } END subfile "<filename>"
+Whitespace is treated as for the multifile BEGIN and END lines.
+The beginning and ending filenames are enclosed in quotation marks
+(and may not contain quotation marks) and must match exactly.  The file
+name does not contain a directory component (no '/' characters).
+
+Blank lines may be inserted between subfiles and are ignored; blank
+lines within a subfile are part of the subfile contents.
+
+Indentation is not used.  Subfiles are assumed to be plain text;
+each subfile is a sequence of lines, and must end in a newline.
+
+The initial use of multifiles will be for signed requests (see
+bug-0064).  The first subfile will be a signed request file; the
+others will be copies of one or more certificates (public keys).
+(The certificates will be extracted and installed in a temporary
+certificates directory, to be used to verify the signature; the DN
+will be extracted from the first included certificate.)
+
+The Write_Multifile function will take a list of arguments.  The first
+argument is the name of the multifile to create.  Each following
+argument is either a file name to be included, or a reference to a
+file name and its contents (not sure about the latter).
+
+The Read_Multifile function will take the multifile name as an
+argument, and will return an array of records (hash references);
+each record will indicate the name and contents of a subfile, in the
+order in which they appear.
