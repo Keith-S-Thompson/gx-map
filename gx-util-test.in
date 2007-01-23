@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.11 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-util-test.in,v 1.12 2007-01-22 22:13:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -226,7 +226,10 @@ elsif (Match $ARGV[0], 'Write_Records') {
 }
 
 elsif (Match $ARGV[0], 'Read_Records') {
-    die "Read_Records test not implemented\n";
+    my @args = @ARGV;
+    shift @args;
+    my @result = Gridmap_Utils::Read_Records @args;
+    print "Got ", scalar @result, " record(s)\n";
 }
 
 elsif (Match $ARGV[0], 'Sort_By_Timestamp') {
