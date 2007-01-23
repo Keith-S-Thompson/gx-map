@@ -1,0 +1,32 @@
+# $Id: bug-0129,v 1.1 2007-01-22 18:04:56-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0129,v $
+
+gx-map bug 0129
+Date: Mon 2007-01-22
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Check for admin requests in gx-check-requests, not gx-gen-mapfile
+
+Currently, gx-check-requests records the owner of each request,
+and gx-gen-mapfile checks whether the owner is an administrator.
+The ownership information being checked by gx-gen-mapfile could
+be years old (the oldest existing request is from 2003-07-26).
+This won't matter much if the set of administrators remains constant
+over the years.  However, some sites prefer to allow individual users
+to act as administrators, and even at SDSC has changed from "globus"
+to "gxmap".
+
+This led to the requirement for the "-old-admins" and "-new-admin"
+options to the gx-convert-log command.  It can make it necessary to
+use gx-convert-log when it would not otherwise be needed, for example,
+if a former administrator leaves the organization.  Finally, it's
+error-prone; at least one site has removed an administrator but not
+updated requests.log.
+
+Instead, the check for an administrator should be done only in
+gx-check-requests, immediately after the request was submitted.
+If the owner is an administrator, set a new attribute.  An alternative
+would be to use the "SOURCE" attribute for this; any value other than
+"user" implies an administrator request.
