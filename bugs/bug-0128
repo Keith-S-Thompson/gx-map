@@ -1,0 +1,29 @@
+# $Id: bug-0128,v 1.1 2007-01-22 17:57:36-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0128,v $
+
+gx-map bug 0128
+Date: Mon 2007-01-22
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: gx-gen-mapfile getpwnam performance bottleneck
+
+The getpwnam function appears to be a performance bottleneck (more
+so on some platforms than on others).
+
+A solution is to load the entire passwd file (or equivalent) into
+an internal data structure on startup, and query that data structure
+rather than calling getpwnam (or getpwuid).  Fortunately getpwnam and
+getpwuid are already called via wrappers, Get_PW_Name and Get_PW_UID
+in the Gridmap_Utils package.
+
+I tested this using the current SDSC requests.log file.  On
+uffda.sdsc.edu (a 2.8 GHz Xeon system) this reduced both CPU time
+and wall clock time for "gx-gen-mapfile" from 10.3 to 2.7 seconds,
+or to about 26% of the original.
+
+On bg-login1.sdsc.teragrid.org (Power3, 375MHz), CPU time was reduced
+from 9.8 to 7.85 seconds  or about 80% of the original; wall clock
+time, by contrast, was reduced from 35.4 seconds to 7.9 seconds,
+or about 22% of the original.
