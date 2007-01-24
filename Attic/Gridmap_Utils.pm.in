@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.285 2007-01-23 16:55:51-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.286 2007-01-23 18:28:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -318,27 +318,6 @@ sub Get_mtime($) {
 # ----------------------------------------------------------------------
 
 #
-# A helper function for Get_PW_Name and Get_PW_UID, not externaly visible.
-#
-sub Translate_PW(@) {
-    my @pw = @_;
-    if (scalar @pw < 9) {
-        return undef;
-    }
-    else {
-        my $result;
-        my @fields = qw(name passwd uid gid quota comment gcos dir shell expire);
-        my $last_field = ($#pw < $#fields ? $#pw : $#fields);
-        for (my $i = 0; $i <= $last_field; $i ++) {
-            $result->{$fields[$i]} = $pw[$i];
-        }
-        return $result;
-    }
-} # Translate_PW
-
-# ----------------------------------------------------------------------
-
-#
 # Returns true if the argument is a syntactically legal Unix username.
 # It must be a non-empty string consisting entirely of upper or lower
 # case letters, digits, '_', '-', '.'.  (Note that "123" is assumed
@@ -358,13 +337,63 @@ sub Is_Legal_Username($) {
 # ----------------------------------------------------------------------
 
 #
+# A helper function for Init_PW_Info, not externaly visible.
+#
+sub Translate_PW(@) {
+    my @pw = @_;
+    if (scalar @pw < 9) {
+        return undef;
+    }
+    else {
+        my $result;
+        my @fields = qw(name passwd uid gid quota
+                        comment gcos dir shell expire);
+        my $last_field = ($#pw < $#fields ? $#pw : $#fields);
+        for (my $i = 0; $i <= $last_field; $i ++) {
+            $result->{$fields[$i]} = $pw[$i];
+        }
+        return $result;
+    }
+} # Translate_PW
+
+# ----------------------------------------------------------------------
+
+#
+# Variables used by Init_PW_Info
+#
+my $pw_info_initialized = 0;
+my %pw_by_name = ();
+my %pw_by_uid = ();
+
+# ----------------------------------------------------------------------
+
+#
+# A helper function for Get_PW_Name and Get_PW_UID, not meant to be
+# externally visible.
+#
+sub Init_PW_Info() {
+    my @pw;
+    setpwent;
+    while (@pw = getpwent) {
+        my $pw = Translate_PW @pw;
+        $pw_by_name{$pw->{name}} = $pw;
+        $pw_by_uid{$pw->{uid}} = $pw;
+    }
+    endpwent;
+    $pw_info_initialized = 1;
+} # Init_PW_Info
+
+# ----------------------------------------------------------------------
+
+#
 # A friendlier getpwnam function
 # Returns a hash reference; keys are 'name', 'passwd', etc.
 # Returns undef on failure.
 #
 sub Get_PW_Name($) {
     my($user) = @_;
-    return Translate_PW getpwnam $user;
+    Init_PW_Info if not $pw_info_initialized;
+    return $pw_by_name{$user};
 } # Get_PW_Name
 
 # ----------------------------------------------------------------------
@@ -375,8 +404,9 @@ sub Get_PW_Name($) {
 # Returns undef on failure.
 #
 sub Get_PW_UID($) {
-    my($UID) = @_;
-    return Translate_PW getpwuid $UID;
+    my($uid) = @_;
+    Init_PW_Info if not $pw_info_initialized;
+    return $pw_by_uid{$uid};
 } # Get_PW_UID
 
 # ----------------------------------------------------------------------
