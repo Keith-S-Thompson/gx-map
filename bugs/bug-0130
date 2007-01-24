@@ -1,0 +1,32 @@
+# $Id: bug-0130,v 1.1 2007-01-23 17:45:39-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0130,v $
+
+gx-map bug 0130
+Date: Tue 2007-01-23
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Consider restricting whitespace in requests.log
+
+Currently, Gridmap_Utils::Read_Records allows and ignores arbitrary
+whitespace at the beginning and end of each line, and between a key
+and value.  There are several regexps containing "\s*" or "\s+".
+
+Consider eliminating this, requiring either no whitespace or a fixed
+amount.  This could make the file smaller and make reading it faster.
+It could make it more difficult for humans to read and edit, but that's
+not a huge drawback; the file is machine-generated, and it would be
+easy enough to provide a filter to add whitespace for readability.
+
+Things to think about:
+
+What about comments?
+
+We should still allow for possible CR-LF line endings (currently a
+trailing CR is stripped as whitespace).
+
+How much would performance be improved?  A quick and dirty test
+suggests a couple of seconds for several thousand records; this was
+a substantial fraction of the time to read the file, but may be less
+significant when processing time is considered.
