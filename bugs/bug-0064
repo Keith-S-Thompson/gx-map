@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.9 2007-01-11 18:50:24-08 kst Exp $
+# $Id: bug-0064,v 1.10 2007-01-23 20:34:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -71,7 +71,7 @@ This will prompt for the user's passphrase.
 
 Note that this is intended for e-mail, and seems to assume that
 the input file is text (fortunately, a request file is plain text).
-It adds '\r' characters, so we haved to make sure we allow for that.
+It adds '\r' characters, so we have to make sure we allow for that.
 
 To verify a signature:
 
@@ -122,6 +122,14 @@ indicating whether it's been signed and verified.  In strict mode,
 any unsigned user "add" request will be rejected.  In a looser mode,
 records for which this attribute is missing (i.e., old requests from
 before signing was implemented) are accepted.
+
+    Tue 2007-01-23
+    A simpler but less flexible approach is to handle this in
+    gx-convert-log.  The next version of gx-map will have new request
+    attributes, so gx-convert log will be necessary for an upgrade
+    anyway.  Add an command-line option to specify whether unverified
+    requests in the input log will be marked as verified or not.
+    (Note that admin requests do not require verification.)
 
 Thu 2007-01-11
 In the summary above, I wrote that mapping someone else's DN to
