@@ -1,4 +1,4 @@
-# $Id: bug-0128,v 1.1 2007-01-22 17:57:36-08 kst Exp $
+# $Id: bug-0128,v 1.2 2007-01-23 18:28:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0128,v $
 
 gx-map bug 0128
@@ -6,7 +6,7 @@ Date: Mon 2007-01-22
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.5.3.2.001
 Title: gx-gen-mapfile getpwnam performance bottleneck
 
 The getpwnam function appears to be a performance bottleneck (more
@@ -27,3 +27,7 @@ On bg-login1.sdsc.teragrid.org (Power3, 375MHz), CPU time was reduced
 from 9.8 to 7.85 seconds  or about 80% of the original; wall clock
 time, by contrast, was reduced from 35.4 seconds to 7.9 seconds,
 or about 22% of the original.
+
+Fixed:
+Gridmap_Utils.pm.in 1.286
+gx-map release 0.5.3.2.001
