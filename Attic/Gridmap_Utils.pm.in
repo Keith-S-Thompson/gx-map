@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.284 2007-01-01 13:01:32-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.285 2007-01-23 16:55:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -148,6 +148,9 @@ sub Get_DNs_From_List_File($);
 
 sub Write_Records($$@);
 sub Read_Records(@);
+
+sub Write_Multifile(@);
+sub Read_Multifile($);
 
 sub Sort_By_Timestamp(@);
 
@@ -1061,6 +1064,89 @@ sub Read_Records(@) {
         return $ref;
     }
 } # Read_Records
+
+# ----------------------------------------------------------------------
+
+sub Write_Multifile(@) {
+    die "Gridmap_Utils::Write_Multifile is not yet implemented.\n";
+} # Write_Multifile
+
+# ----------------------------------------------------------------------
+
+sub Read_Subfile($) {
+    my($File) = @_;
+    my $in_subfile = 0;
+    my $subfile_name = undef;
+    my $content = '';
+    while (<$File>) {
+        if (not $in_subfile) {
+            if (/^\s*$/) {
+                next;
+            }
+            elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {
+                $subfile_name = $1;
+                $in_subfile = 1;
+            }
+            elsif (/^\s*}\s+END\s+multifile\s*$/) {
+                return { EOF => 1 };
+            }
+            else {
+                return { ERROR => "Error at line $." };
+            }
+        }
+        else {
+            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\\s*$/) {
+                if ($1 ne $subfile_name) {
+                    return { ERROR => "Name mismatch at line $." };
+                }
+                return { name => $subfile_name, content => $content };
+            }
+            else {
+                $content .= $_;
+            }
+        }
+    }
+    return { ERROR => "Incomplete subfile at EOF, line $." };
+} # Read_Subfile
+
+# ----------------------------------------------------------------------
+
+sub Read_Multifile($) {
+    my($filename) = @_;
+    my @result = ();
+    my $in_multifile = 0;
+    open my $File, '<', $filename or die "${filename}: $!\n";
+    while (<$File>) {
+        if (not $in_multifile) {
+            if (/^\s*$/) {
+                next;
+            }
+            elsif (/^\s*BEGIN\s+multifile\s+{\s*$/) {
+                $in_multifile = 1;
+            }
+            else {
+                return { ERROR => "Error at line $." };
+            }
+        }
+        else {
+            while (1) {
+                my $subfile = Read_Subfile $File;
+                if (defined $subfile->{ERROR}) {
+                    close $File;
+                    return $subfile;
+                }
+                elsif (defined $subfile->{EOF}) {
+                    close $File;
+                    return @result;
+                }
+                else {
+                    push @result, $subfile;
+                }
+            }
+        }
+    }
+    return { ERROR => "Syntax error at line $." };
+} # Read_Multifile
 
 # ----------------------------------------------------------------------
 
