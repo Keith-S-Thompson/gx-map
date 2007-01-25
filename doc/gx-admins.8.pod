@@ -1,4 +1,4 @@
-# $Id: gx-admins.8.pod,v 1.3 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-admins.8.pod,v 1.4 2007-01-25 15:50:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-admins.8.pod,v $
 
 =for comment
@@ -68,8 +68,10 @@ for which the user making the request differs from the user to which
 the request applies, it determines which accounts were enabled as
 administrative accounts.
 
-The B<gx-admins> command can be used in conjunction with the
-B<gx-convert-log> command.
+In previous releases, the B<gx-admins> command was useful in
+association with the B<gx-convert-log> command.  As of release 0.6.X,
+this is no longer necessary, but the B<gx-admins> command is still
+provided for informational purposes.
 
 =head1 OPTIONS
 
