@@ -1,4 +1,4 @@
-# $Id: gx-convert-log.8.pod,v 1.6 2007-01-01 13:01:35-08 kst Exp $
+# $Id: gx-convert-log.8.pod,v 1.7 2007-01-25 15:50:39-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-convert-log.8.pod,v $
 
 =for comment
@@ -85,20 +85,6 @@ Display a usage message and exit.
 
 Display the software version number and exit.
 
-=item B<-old-admins> I<name,name>
-
-Specify a list of Unix accounts treated as administrators in the
-input log.  (See B<gx-admins(8)>.)
-
-=item B<-new-admin> I<name>
-
-The administrative account for the output log (only one may be specified).
-
-=item <-force>
-
-The arguments to the B<-old-admins> and B<-new-admin> options must be
-existing accounts on the system; B<-force> overrides that check.
-
 =back
 
 =head1 USAGE
@@ -109,18 +95,15 @@ file has changed between the 0.4.X and 0.5.X series of releases;
 using B<gx-convert-log>, you can convert your old log to the new
 format and use it in the new installation.
 
-It also allows you to change the set of users recognized as
-administrators.  The recommended practice is to define a single
-administrative account, preferably not a user account.  The "globus"
-account is often a good choice, or you can create a dedicated "gxmap"
-account.  The B<-old-admins> and B<-new-admin> options give you an
-opportunity to replace any existing administrative accounts with a
-single account.  If you want to leave the administrative accounts
-alone, you don't need to use these options.
+Previous versions allowed you to change the set of users recognized
+as administrators; as of release 0.6.X, this is no longer necessary
+due to a change in the way requests are processed.
 
-If you're not sure which accounts were configured as administrative
-accounts in your old installation, you can use the B<gx-admins>
-command (q.v.).
+The B<gx-convert-log> command does not works with F<requests.log>
+files from B<gx-map> releases prior to 0.4.0.  (In the extremely
+unlikely event that you need to process a log from an earlier version,
+you can do so in two steps using the B<gx-convert-log> command from
+an intermediate release.)
 
 After running the B<gx-convert-log> command, you can optionally use
 B<gx-cleanup-logs> to delete or comment out any redundant requests.
@@ -128,8 +111,9 @@ B<gx-cleanup-logs> to delete or comment out any redundant requests.
 An alternative to using B<gx-convert-log> is to use B<gx-ingest>
 (q.v.)  to read an existing grid-mapfile, translating it into a
 sequence of B<gx-request> commands (from which a new F<requests.log>
-file is generated).  One disadvantage of this approach is that it loses
-much of the audit trail information from the old F<requests.log> file.
+file is generated).  One disadvantage of this approach is that it
+loses much of the audit trail information from the old F<requests.log>
+file, but you can always save a copy of the old file.
 
 =head1 SEE ALSO
 
