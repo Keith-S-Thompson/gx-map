@@ -1,4 +1,4 @@
-# $Id: bug-0129,v 1.1 2007-01-22 18:04:56-08 kst Exp $
+# $Id: bug-0129,v 1.2 2007-01-24 20:13:21-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0129,v $
 
 gx-map bug 0129
@@ -6,7 +6,7 @@ Date: Mon 2007-01-22
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.5.3.2.005
 Title: Check for admin requests in gx-check-requests, not gx-gen-mapfile
 
 Currently, gx-check-requests records the owner of each request,
@@ -27,6 +27,18 @@ updated requests.log.
 
 Instead, the check for an administrator should be done only in
 gx-check-requests, immediately after the request was submitted.
-If the owner is an administrator, set a new attribute.  An alternative
-would be to use the "SOURCE" attribute for this; any value other than
-"user" implies an administrator request.
+Use the "SOURCE" attribute for this; any value other than "user"
+implies an administrator request.  (It becomes important to make sure
+this continues to be true.)
+
+The gx-convert-log command no longer needs to concern itself with
+who is or isn't an administrator so the "-old-admins", "-new-admin",
+and "-force" options can be deleted.  It can no longer set the
+SOURCE attribute for records that don't already have one, but all
+requests.log files going back to release 0.4.0 should already have
+SOURCE attributes; print an error message and die if any don't.
+
+Fixed:
+Gridmap_Utils.pm.in 1.290
+gx-convert-log.in 1.33
+gx-map release 0.65.3.2.005
