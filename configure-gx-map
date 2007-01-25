@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.54 2007-01-24 17:29:47-08 kst Exp $
+# $Id: configure-gx-map,v 1.55 2007-01-24 18:00:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -219,15 +219,6 @@ foreach my $acct (split /\s+/, $Config{ADDITIONAL_ADMINS}) {
 
 if ($Config{EXTRAS} ne '' and $Config{EXTRAS} ne 'TGCDB') {
     push @errors, "$Config_File: Bad value for EXTRAS\n";
-}
-
-if ($Config{REQUIRE_SIGNATURES} eq 'yes') {
-    if (not defined $Config{STRICT_SIGNATURES}) {
-        push @errors, "Missing definition for STRICT_SIGNATURES\n";
-    }
-    if (not defined $Config{CERTIFICATE_DIR}) {
-        push @errors, "Missing definition for CERTIFICATE_DIR\n";
-    }
 }
 
 die @errors if @errors;
