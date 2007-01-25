@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.289 2007-01-24 17:30:06-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.290 2007-01-24 19:24:48-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1374,6 +1374,11 @@ sub Gen_Mappings(@) {
             next REQUEST;
         }
 
+        if (not defined $request->{SOURCE}) {
+            Debug "Reject, no SOURCE\n";
+            next REQUEST;
+        }
+
         if (defined $request->{username}) {
             my $pw = Gridmap_Utils::Get_PW_Name $request->{username};
             if (not defined $pw and not $All) {
@@ -1389,9 +1394,9 @@ sub Gen_Mappings(@) {
                 next REQUEST;
             }
             if ($request->{OWNER_NAME} ne $request->{username} and
-                not Gridmap_Utils::Is_Admin_Account($request->{OWNER_NAME}))
+                $request->{SOURCE} eq 'user')
             {
-                Debug "Reject, $request->{OWNER_NAME} is not an admin\n";
+                Debug "Reject, user request for other than self\n";
                 next REQUEST;
             }
         }
