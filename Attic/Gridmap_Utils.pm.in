@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.291 2007-01-24 20:13:36-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.292 2007-01-25 19:28:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -149,7 +149,7 @@ sub Get_DNs_From_List_File($);
 sub Write_Records($$@);
 sub Read_Records(@);
 
-sub Write_Multifile(@);
+sub Write_Multifile($@);
 sub Read_Multifile($);
 
 sub Sort_By_Timestamp(@);
@@ -1097,14 +1097,37 @@ sub Read_Records(@) {
 
 # ----------------------------------------------------------------------
 
-sub Write_Multifile(@) {
-    die "Gridmap_Utils::Write_Multifile is not yet implemented.\n";
+#
+# Write a multifile.
+# The first argument is the name of the output file.
+# Other arguments are names of files to be incorporated as subfiles.
+#
+sub Write_Multifile($@) {
+    my ($output_file, @file_list) = @_;
+    open my $OUT, '>', $output_file or die "$output_file: $!\n";
+
+    print $OUT "BEGIN multifile {\n\n" or die "$output_file: $!\n";;
+
+    foreach my $file (@file_list) {
+        print $OUT "BEGIN subfile \"$file\" {\n" or die "$output_file: $!\n";
+        open my $FILE, '<', $file or die "${file}: $!\n";
+        while (<$FILE>) {
+            print $OUT $_ or die "$output_file: $!\n";;
+        }
+        close $FILE;
+        print $OUT "} end subfile \"$file\"\n\n" or die "$output_file: $!\n";;
+    }
+
+    print $OUT "} END multifile\n" or die "$output_file: $!\n";
 } # Write_Multifile
 
 # ----------------------------------------------------------------------
 
-sub Read_Subfile($) {
-    my($File) = @_;
+#
+# Helper function for Read_Multifile
+#
+sub Read_Subfile($$) {
+    my($filename, $File) = @_;
     my $in_subfile = 0;
     my $subfile_name = undef;
     my $content = '';
@@ -1121,13 +1144,13 @@ sub Read_Subfile($) {
                 return { EOF => 1 };
             }
             else {
-                return { ERROR => "Error at line $." };
+                die "Error at line $. of $filename\n";
             }
         }
         else {
             if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\\s*$/) {
                 if ($1 ne $subfile_name) {
-                    return { ERROR => "Name mismatch at line $." };
+                    die "Name mismatch at line $. of $filename\n";
                 }
                 return { name => $subfile_name, content => $content };
             }
@@ -1136,11 +1159,15 @@ sub Read_Subfile($) {
             }
         }
     }
-    return { ERROR => "Incomplete subfile at EOF, line $." };
+    die "Incomplete subfile at EOF, line $. of $filename\n";
 } # Read_Subfile
 
 # ----------------------------------------------------------------------
 
+#
+# Reads a "multifile".
+# Die if an error occurs.
+# 
 sub Read_Multifile($) {
     my($filename) = @_;
     my @result = ();
@@ -1155,17 +1182,13 @@ sub Read_Multifile($) {
                 $in_multifile = 1;
             }
             else {
-                return { ERROR => "Error at line $." };
+                die "Error at line $. of $filename\n";
             }
         }
         else {
             while (1) {
-                my $subfile = Read_Subfile $File;
-                if (defined $subfile->{ERROR}) {
-                    close $File;
-                    return $subfile;
-                }
-                elsif (defined $subfile->{EOF}) {
+                my $subfile = Read_Subfile $filename, $File;
+                if ($subfile->{EOF}) {
                     close $File;
                     return @result;
                 }
@@ -1175,7 +1198,7 @@ sub Read_Multifile($) {
             }
         }
     }
-    return { ERROR => "Syntax error at line $." };
+    die "Syntax error at line $. of $filename\n";
 } # Read_Multifile
 
 # ----------------------------------------------------------------------
