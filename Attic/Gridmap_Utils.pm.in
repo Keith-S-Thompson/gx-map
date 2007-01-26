@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.293 2007-01-25 19:29:01-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.294 2007-01-25 19:34:13-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1109,13 +1109,16 @@ sub Write_Multifile($@) {
     print $OUT "BEGIN multifile {\n\n" or die "$output_file: $!\n";;
 
     foreach my $file (@file_list) {
-        print $OUT "BEGIN subfile \"$file\" {\n" or die "$output_file: $!\n";
+        my $basename = File::Basename::basename $file;
+        print $OUT "BEGIN subfile \"$basename\" {\n"
+            or die "$output_file: $!\n";
         open my $FILE, '<', $file or die "${file}: $!\n";
         while (<$FILE>) {
             print $OUT $_ or die "$output_file: $!\n";;
         }
         close $FILE;
-        print $OUT "} end subfile \"$file\"\n\n" or die "$output_file: $!\n";;
+        print $OUT "} end subfile \"$basename\"\n\n"
+            or die "$output_file: $!\n";;
     }
 
     print $OUT "} END multifile\n" or die "$output_file: $!\n";
