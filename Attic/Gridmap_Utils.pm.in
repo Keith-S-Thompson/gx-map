@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.295 2007-01-25 19:35:46-08 kst Exp $
+ $Id: Gridmap_Utils.pm.in,v 1.296 2007-01-25 19:44:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1151,7 +1151,7 @@ sub Read_Subfile($$) {
             }
         }
         else {
-            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\\s*$/) {
+            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
                 if ($1 ne $subfile_name) {
                     die "Name mismatch at line $. of $filename\n";
                 }
