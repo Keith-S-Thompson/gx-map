@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.294 2007-01-25 19:34:13-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.295 2007-01-25 19:35:46-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -1117,7 +1117,7 @@ sub Write_Multifile($@) {
             print $OUT $_ or die "$output_file: $!\n";;
         }
         close $FILE;
-        print $OUT "} end subfile \"$basename\"\n\n"
+        print $OUT "} END subfile \"$basename\"\n\n"
             or die "$output_file: $!\n";;
     }
 
