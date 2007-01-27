@@ -1,0 +1,24 @@
+# $Id: 7b2d086c.swisssign-root.cadesc,v 1.1 2007-01-26 20:41:14-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/7b2d086c.swisssign-root.cadesc,v $
+
+CA_NAME             SwissSign Root
+HOMEPAGE            http://swisssign.net/
+CONTACT             http://swisssign.net/cgi-bin/support/mail (web form)
+HASH                7b2d086c
+SUBJECT             /C=CH/O=SwissSign/CN=SwissSign CA (RSA IK May 6 1999 18:00:58)/emailAddress=ca@SwissSign.com
+MAY_SIGN            /CN=SwissSign Bronze CA/emailAddress=bronze@swisssign.com/O=SwissSign/C=CH
+CERTIFICATE_MD5     D6:60:E4:56:2A:FA:E5:F7:10:D3:F7:1E:7E:B8:2A:46
+CERTIFICATE_SHA1    56:4B:6F:8C:56:38:DC:05:5B:BA:2B:A1:39:0F:7E:31:95:4A:55:50
+CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=96D771CD392AD4FC88B18AAB537869EF8F477E16
+SIGNING_POLICY_URL  ?
+CRL_URL             http://swisssign.net/cgi-bin/authority/crl/96D771CD392AD4FC88B18AAB537869EF8F477E16
+CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+
+# MD5 and SHA1 fingerprints from 7b2d086c.0 downloaded Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 7b2d086c.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against 7b2d086c.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against 75304a28.info.
