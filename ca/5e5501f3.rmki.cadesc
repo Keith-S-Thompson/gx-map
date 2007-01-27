@@ -1,4 +1,4 @@
-# $Id: 5e5501f3.rmki.cadesc,v 1.1 2007-01-26 20:05:23-08 kst Exp $
+# $Id: 5e5501f3.rmki.cadesc,v 1.2 2007-01-26 21:52:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e5501f3.rmki.cadesc,v $
 
 CA_NAME             KFKI RMKI CA
@@ -13,17 +13,6 @@ CERTIFICATE_URL     http://pki.kfki.hu/pki0/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://pki.kfki.hu/pki0/pub/crl/cacrl.crl
 CERT_EXPIRES        Wed 2009-10-28 12:46:29 UTC
-
-File name        /home/kst/cvs-kst/tools/gx-map/ca/.igtf/igtf-policy-installation-bundle-1.11/src/accredited/5e5501f3.0
-File type        Certificate, PEM format
-hash             5e5501f3
-md5 fingerprint  CF:A4:84:8C:37:38:97:0B:62:FB:06:F3:61:86:1B:13
-sha1 fingerprint 75:5C:C0:6E:E4:E8:F0:EA:EE:44:AE:85:2F:DE:60:3E:BD:CE:84:40
-issuer           /C=HU/O=KFKI RMKI CA/CN=KFKI RMKI CA
-subject          /C=HU/O=KFKI RMKI CA/CN=KFKI RMKI CA
-not before       Fri 2004-10-29 12:46:29 UTC
-not after        Wed 2009-10-28 12:46:29 UTC
-lifetime         1825d 00h 00m 00s, 44.91% used
 
 # MD5 and SHA1 fingerprints from cacert.pem (5e5501f3.0) downloaded
 # Fri 2007-01-26
