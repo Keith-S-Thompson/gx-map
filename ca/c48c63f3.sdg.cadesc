@@ -1,0 +1,25 @@
+# $Id: c48c63f3.sdg.cadesc,v 1.1 2007-01-26 21:23:53-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/c48c63f3.sdg.cadesc,v $
+
+CA_NAME             Scientific Data Grid CA
+HOMEPAGE            http://ca.sdg.grid.cn/en/
+CONTACT             sdgca@cnic.cn
+HASH                c48c63f3
+SIGNED_BY           /DC=CN/DC=Grid/CN=Root Certificate Authority at CNIC
+SUBJECT             /DC=CN/DC=Grid/DC=SDG/CN=Scientific Data Grid CA
+MAY_SIGN            /DC=CN/DC=Grid/DC=SDG/*
+CERTIFICATE_MD5     B9:25:A4:78:74:51:FD:8F:EC:C3:D9:E1:25:35:06:BD
+CERTIFICATE_SHA1    56:C2:85:51:67:78:6D:7D:F3:33:23:9E:89:12:21:5F:27:D5:33:47
+CERTIFICATE_URL     http://ca.sdg.grid.cn/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://ca.sdg.grid.cn/crl/cacrl.pem
+CERT_EXPIRES        Sat 2016-02-27 05:36:05 UTC
+
+# MD5 and SHA1 fingerprints from c48c63f3.0, downloaded Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from c48c63f3.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against c48c63f3.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against c48c63f3.info.
