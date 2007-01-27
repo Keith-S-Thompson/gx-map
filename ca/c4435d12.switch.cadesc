@@ -1,0 +1,29 @@
+# $Id: c4435d12.switch.cadesc,v 1.1 2007-01-26 21:18:07-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/c4435d12.switch.cadesc,v $
+
+CA_NAME             SWITCH
+HOMEPAGE            http://swisssign.net/
+CONTACT             pki@switch.ch
+HASH                c4435d12
+SIGNED_BY           /CN=SwissSign Silver CA/emailAddress=silver@swisssign.com/O=SwissSign/C=CH
+SUBJECT             /CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Personal CA/emailAddress=switch.personal.ca@switch.ch
+MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Server CA/emailAddress=switch.server.ca@switch.ch
+MAY_SIGN            /CN=SWITCH Personal CA/emailAddress=switch.personal.ca@switch.ch/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+MAY_SIGN            /CN=SWITCH Server CA/emailAddress=switch.server.ca@switch.ch/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+CERTIFICATE_MD5     C9:0A:3A:50:1F:BC:64:7F:6B:6F:31:53:EA:D2:0C:FF
+CERTIFICATE_SHA1    05:F4:B5:27:41:42:CF:9D:7B:B6:EF:B5:B3:62:92:BF:8F:12:60:F1
+CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=25C907F5142CD02905EF95F54243D5EA908D7373
+SIGNING_POLICY_URL  ?
+CRL_URL             http://swisssign.net/cgi-bin/authority/crl/25C907F5142CD02905EF95F54243D5EA908D7373
+CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+
+# MD5 and SHA1 fingerprints from c4435d12.0, downloaded Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from c4435d12.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against c4435d12.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against c4435d12.info.
+
