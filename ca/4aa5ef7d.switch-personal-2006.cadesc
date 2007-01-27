@@ -1,4 +1,4 @@
-# $Id: 4aa5ef7d.switch-personal-2006.cadesc,v 1.1 2007-01-26 18:11:11-08 kst Exp $
+# $Id: 4aa5ef7d.switch-personal-2006.cadesc,v 1.2 2007-01-26 22:29:06-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4aa5ef7d.switch-personal-2006.cadesc,v $
 
 CA_NAME             SWITCH Personal 2006
@@ -36,6 +36,10 @@ CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&fo
 SIGNING_POLICY_URL  ?
 CRL_URL             http://swisssign.net/cgi-bin/authority/crl/631A26BF8AF3916D7189FF22C7A6BB3D6DBF2C95
 CERT_EXPIRES        Thu 2008-03-13 12:39:04 UTC
+DISABLE             yes
+
+# The CRL is in DER format.  This CA is marked as disabled until I can
+# find a PEM-format CRL or handle DER format files in gx-ca-update.
 
 # MD5 and SHA1 fingerprints from 4aa5ef7d.0, downloaded Fri 2007-01-26
 
