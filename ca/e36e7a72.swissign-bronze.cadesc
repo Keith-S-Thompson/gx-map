@@ -1,4 +1,4 @@
-# $Id: e36e7a72.swissign-bronze.cadesc,v 1.1 2007-01-26 21:38:08-08 kst Exp $
+# $Id: e36e7a72.swissign-bronze.cadesc,v 1.2 2007-01-26 22:29:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e36e7a72.swissign-bronze.cadesc,v $
 
 CA_NAME             SwissSign Bronze CA
@@ -14,6 +14,10 @@ CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&fo
 SIGNING_POLICY_URL  ?
 CRL_URL             http://swisssign.net/cgi-bin/authority/crl/E2DE8E8AE3FF7141C7533C93DA8D6EB1D241484A
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+DISABLE             yes
+
+# The CRL is in DER format.  This CA is marked as disabled until I can
+# find a PEM-format CRL or handle DER format files in gx-ca-update.
 
 # MD5 and SHA1 fingerprints from e36e7a72.0, downloaded Fri 2007-01-26
 
