@@ -1,4 +1,4 @@
-# $Id: c4435d12.switch.cadesc,v 1.1 2007-01-26 21:18:07-08 kst Exp $
+# $Id: c4435d12.switch.cadesc,v 1.2 2007-01-26 22:29:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c4435d12.switch.cadesc,v $
 
 CA_NAME             SWITCH
@@ -17,6 +17,10 @@ CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&fo
 SIGNING_POLICY_URL  ?
 CRL_URL             http://swisssign.net/cgi-bin/authority/crl/25C907F5142CD02905EF95F54243D5EA908D7373
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+DISABLE             yes
+
+# The CRL is in DER format.  This CA is marked as disabled until I can
+# find a PEM-format CRL or handle DER format files in gx-ca-update.
 
 # MD5 and SHA1 fingerprints from c4435d12.0, downloaded Fri 2007-01-26
 
