@@ -1,0 +1,23 @@
+# $Id: ba2f39ca.ihep.cadesc,v 1.1 2007-01-26 21:12:15-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/ba2f39ca.ihep.cadesc,v $
+
+CA_NAME             IHEP Certification Authority
+HOMEPAGE            https://gridca.ihep.ac.cn/
+CONTACT             gridca@ihep.ac.cn
+HASH                ba2f39ca
+SUBJECT             /C=CN/O=HEP/CN=gridca-cn/emailAddress=gridca@ihep.ac.cn
+MAY_SIGN            /C=CN/O=HEP/*
+CERTIFICATE_MD5     54:26:1D:82:10:AE:F1:BB:C9:1D:E5:8C:40:13:16:D0
+CERTIFICATE_SHA1    A8:44:99:DE:0E:EA:A3:68:BF:4A:29:15:BD:D7:C0:59:B6:04:FB:BB
+CERTIFICATE_URL     https://gridca.ihep.ac.cn/cacert/cacert.pem
+SIGNING_POLICY_URL  https://gridca.ihep.ac.cn/globus/ba2f39ca.signing_policy
+CRL_URL             http://gridca.ihep.ac.cn/cacrl.pem
+CERT_EXPIRES        Sun 2015-05-24 11:49:14 UTC
+
+# MD5 and SHA1 fingerprints from ba2f39ca.0, downloaded Fri 2007-01-26
+
+# Information on this CA can be found in
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>.
+# The MD5 and SHA1 fingerprints have also been verified against ba2f39ca.0
+# in that tarball, and the SHA1 fingerprint has been verified against
+# ba2f39ca.info.
