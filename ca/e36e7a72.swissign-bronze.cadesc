@@ -1,0 +1,25 @@
+# $Id: e36e7a72.swissign-bronze.cadesc,v 1.1 2007-01-26 21:38:08-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/e36e7a72.swissign-bronze.cadesc,v $
+
+CA_NAME             SwissSign Bronze CA
+HOMEPAGE            http://swisssign.net/
+CONTACT             pki@switch.ch
+HASH                e36e7a72
+SIGNED_BY           /C=CH/O=SwissSign/CN=SwissSign CA (RSA IK May 6 1999 18:00:58)/emailAddress=ca@SwissSign.com
+SUBJECT             /CN=SwissSign Bronze CA/emailAddress=bronze@swisssign.com/O=SwissSign/C=CH
+MAY_SIGN            /CN=SwissSign Silver CA/emailAddress=silver@swisssign.com/O=SwissSign/C=CH
+CERTIFICATE_MD5     41:EC:B6:15:20:35:B2:58:44:70:57:99:62:B1:8F:63
+CERTIFICATE_SHA1    D9:0F:51:04:EE:8F:94:6D:DA:CA:EE:5B:22:06:27:A2:CE:3E:19:0D
+CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=E2DE8E8AE3FF7141C7533C93DA8D6EB1D241484A
+SIGNING_POLICY_URL  ?
+CRL_URL             http://swisssign.net/cgi-bin/authority/crl/E2DE8E8AE3FF7141C7533C93DA8D6EB1D241484A
+CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+
+# MD5 and SHA1 fingerprints from e36e7a72.0, downloaded Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from e36e7a72.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against e36e7a72.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against e36e7a72.info.
