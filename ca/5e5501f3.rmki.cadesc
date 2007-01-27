@@ -1,0 +1,36 @@
+# $Id: 5e5501f3.rmki.cadesc,v 1.1 2007-01-26 20:05:23-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/5e5501f3.rmki.cadesc,v $
+
+CA_NAME             KFKI RMKI CA
+HOMEPAGE            http://pki.kfki.hu/
+CONTACT             kadlec@sunserv.kfki.hu
+HASH                5e5501f3
+SUBJECT             /C=HU/O=KFKI RMKI CA/CN=KFKI RMKI CA
+MAY_SIGN            /C=HU/O=KFKI RMKI CA/*
+CERTIFICATE_MD5     CF:A4:84:8C:37:38:97:0B:62:FB:06:F3:61:86:1B:13
+CERTIFICATE_SHA1    75:5C:C0:6E:E4:E8:F0:EA:EE:44:AE:85:2F:DE:60:3E:BD:CE:84:40
+CERTIFICATE_URL     http://pki.kfki.hu/pki0/pub/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://pki.kfki.hu/pki0/pub/crl/cacrl.crl
+CERT_EXPIRES        Wed 2009-10-28 12:46:29 UTC
+
+File name        /home/kst/cvs-kst/tools/gx-map/ca/.igtf/igtf-policy-installation-bundle-1.11/src/accredited/5e5501f3.0
+File type        Certificate, PEM format
+hash             5e5501f3
+md5 fingerprint  CF:A4:84:8C:37:38:97:0B:62:FB:06:F3:61:86:1B:13
+sha1 fingerprint 75:5C:C0:6E:E4:E8:F0:EA:EE:44:AE:85:2F:DE:60:3E:BD:CE:84:40
+issuer           /C=HU/O=KFKI RMKI CA/CN=KFKI RMKI CA
+subject          /C=HU/O=KFKI RMKI CA/CN=KFKI RMKI CA
+not before       Fri 2004-10-29 12:46:29 UTC
+not after        Wed 2009-10-28 12:46:29 UTC
+lifetime         1825d 00h 00m 00s, 44.91% used
+
+# MD5 and SHA1 fingerprints from cacert.pem (5e5501f3.0) downloaded
+# Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 5e5501f3.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against 5e5501f3.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against 75304a28.info.
