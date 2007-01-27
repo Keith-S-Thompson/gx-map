@@ -1,4 +1,4 @@
-# $Id: 55994d72.rdig.cadesc,v 1.1 2007-01-26 19:53:20-08 kst Exp $
+# $Id: 55994d72.rdig.cadesc,v 1.2 2007-01-27 01:42:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/55994d72.rdig.cadesc,v $
 
 CA_NAME             Russian Data Intensive Grid
@@ -15,14 +15,8 @@ SIGNING_POLICY_URL  ?
 CRL_URL             http://ice.grid.kiae.ru/ca/RDIG/cacrl.pem
 CERT_EXPIRES        Fri 2015-08-07 14:44:37 UTC
 
-# As of Fri 2007-01-26, the link for the CA certificate is
-# currently broken; I get a "403 Forbidden" error.  I've
-# notified <rdig-ca-support@grid.kiae.ru> of this problem.
-# I am able to download a DER format certificate from
-# <http://ca.grid.kiae.ru/RDIG/certificates/root_cert.sh>.
-
-# MD5 and SHA1 fingerprints from root_cert.sh downloaded Fri 2007-01-26
-# I'll re-verify the PEM format certificate once I'm able to access it.
+# MD5 and SHA1 fingerprints from cacrt.pem (55994d72.0) downloaded
+# Fri 2007-01-26
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 55994d72.signing_policy, extracted from
