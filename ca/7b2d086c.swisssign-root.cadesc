@@ -1,4 +1,4 @@
-# $Id: 7b2d086c.swisssign-root.cadesc,v 1.1 2007-01-26 20:41:14-08 kst Exp $
+# $Id: 7b2d086c.swisssign-root.cadesc,v 1.2 2007-01-26 22:29:06-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7b2d086c.swisssign-root.cadesc,v $
 
 CA_NAME             SwissSign Root
@@ -13,6 +13,10 @@ CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&fo
 SIGNING_POLICY_URL  ?
 CRL_URL             http://swisssign.net/cgi-bin/authority/crl/96D771CD392AD4FC88B18AAB537869EF8F477E16
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+DISABLE             yes
+
+# The CRL is in DER format.  This CA is marked as disabled until I can
+# find a PEM-format CRL or handle DER format files in gx-ca-update.
 
 # MD5 and SHA1 fingerprints from 7b2d086c.0 downloaded Fri 2007-01-26
 
