@@ -1,4 +1,4 @@
-# $Id: 75304a28.dutchdemo.cadesc,v 1.1 2007-01-26 16:35:37-08 kst Exp $
+# $Id: 75304a28.dutchdemo.cadesc,v 1.2 2007-01-26 18:11:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/75304a28.dutchdemo.cadesc,v $
 
 CA_NAME             DutchDemo worthless CA
@@ -25,6 +25,6 @@ DISABLE             yes
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 75304a28.signing_policy, extracted from
 # <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The SHA1 fingerprint has also been verified against 75304a28.info in
-# that same tarball, and the SHA1 and MD5 fingerprints have been verified
-# against 75304a28.0.
+# The SHA1 and MD5 fingerprints have been verified against 75304a28.0
+# in the same tarball, and the SHA1 fingerprint has also been verified
+# against 75304a28.info.
