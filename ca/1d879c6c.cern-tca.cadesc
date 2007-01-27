@@ -1,4 +1,4 @@
-# $Id: 1d879c6c.cern-tca.cadesc,v 1.1 2007-01-26 17:38:54-08 kst Exp $
+# $Id: 1d879c6c.cern-tca.cadesc,v 1.2 2007-01-26 21:47:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1d879c6c.cern-tca.cadesc,v $
 
 CA_NAME             CERN Trusted Certification Authority
@@ -21,7 +21,7 @@ DISABLE             yes
 # eventually be updated to translate from DER to PEM format automatically
 # (using the openssl command); until then, this CA is marked as disabled.
 
-# MD5 and SHA1 fingerprints from (1d879c6c.0) downloaded
+# MD5 and SHA1 fingerprints from DER-format certificate downloaded
 # Fri 2007-01-26
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
