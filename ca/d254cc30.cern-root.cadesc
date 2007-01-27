@@ -1,4 +1,4 @@
-# $Id: d254cc30.cern-root.cadesc,v 1.1 2007-01-26 21:32:29-08 kst Exp $
+# $Id: d254cc30.cern-root.cadesc,v 1.2 2007-01-26 21:33:19-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d254cc30.cern-root.cadesc,v $
 
 CA_NAME             CERT Root CA
@@ -13,6 +13,7 @@ CERTIFICATE_URL     https://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crt
 SIGNING_POLICY_URL  ?
 CRL_URL             http://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crl
 CERT_EXPIRES        Sat 2026-10-03 09:00:49 UTC
+DISABLE             yes
 
 # The available certificate and CRL files are in DER format, not in
 # the PEM format required by Globus.  The gx-ca-update command will
