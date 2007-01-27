@@ -1,0 +1,36 @@
+# $Id: 747183a5.signet-old.cadesc,v 1.1 2007-01-26 20:35:11-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/747183a5.signet-old.cadesc,v $
+
+CA_NAME             SiGNET CA (old?)
+HOMEPAGE            http://signet-ca.ijs.si/
+CONTACT             signet-ca@ijs.si
+HASH                747183a5
+SUBJECT             /C=SI/O=SiGNET/CN=SiGNET CA/emailAddress=signet-ca@ijs.si
+MAY_SIGN            /C=SI/O=SiGNET/*
+CERTIFICATE_MD5     01:82:CE:A1:16:47:A3:12:B7:C3:73:E7:CC:85:1F:2F
+CERTIFICATE_SHA1    8E:CC:79:71:3F:FD:9D:05:3C:D0:EE:D2:45:3A:43:B0:8E:82:13:17
+CERTIFICATE_URL     http://signet-ca.ijs.si/pub/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://signet-ca.ijs.si/pub/crl/cacrl.crl
+CERT_EXPIRES        Sat 2009-10-17 17:10:31 UTC
+DISABLE             yes
+
+# This CA is included in
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# but it appears to be obsolete.  The CRL is available at the specified URL, but the
+# cacert.pem file is not (it's an empty file), and there's no mention of this CA
+# on the web page.  The CA is marked as disabled until this is resolved.
+
+# This CA appears to have been replaced by a newer one, available at
+# the same web page; see 3d5be7bc.signet.cadesc.
+
+# MD5 and SHA1 fingerprints from 747183a5.0, extracted from
+# igtf-policy-installation-bundle-1.11.tar.gz, downloaded 
+# Fri 2007-01-26.
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 747183a5.signing_policy, extracted from
+# igtf-policy-installation-bundle-1.11.tar.gz.  The MD5 and SHA1
+# fingerprints have also been verified against 747183a5.0 in that
+# same tarball, and the SHA1 fingerprint has been verified against
+# 75304a28.info.
