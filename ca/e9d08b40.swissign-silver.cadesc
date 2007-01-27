@@ -1,0 +1,25 @@
+# $Id: e9d08b40.swissign-silver.cadesc,v 1.1 2007-01-26 21:41:49-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/e9d08b40.swissign-silver.cadesc,v $
+
+CA_NAME             SwissSign Silver CA
+HOMEPAGE            http://swisssign.net/
+CONTACT             pki@switch.ch
+HASH                e9d08b40
+SIGNED_BY           /CN=SwissSign Bronze CA/emailAddress=bronze@swisssign.com/O=SwissSign/C=CH
+SUBJECT             /CN=SwissSign Silver CA/emailAddress=silver@swisssign.com/O=SwissSign/C=CH
+MAY_SIGN            /CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+CERTIFICATE_MD5     E9:9D:D7:B1:DD:D2:90:35:44:6E:8F:32:83:DE:12:F5
+CERTIFICATE_SHA1    F8:D0:F1:02:33:D4:1D:FD:DE:77:EB:D6:66:2F:6F:C0:85:F5:AC:47
+CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=CDA1AC23BFD03B208A5481CDFBDB4126E34A705A
+SIGNING_POLICY_URL  ?
+CRL_URL             http://swisssign.net/cgi-bin/authority/crl/CDA1AC23BFD03B208A5481CDFBDB4126E34A705A
+CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
+
+# MD5 and SHA1 fingerprints from e9d08b40.0, downloaded Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from e9d08b40.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against e9d08b40.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against e9d08b40.info.
