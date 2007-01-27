@@ -1,0 +1,32 @@
+# $Id: 55994d72.rdig.cadesc,v 1.1 2007-01-26 19:53:20-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/55994d72.rdig.cadesc,v $
+
+CA_NAME             Russian Data Intensive Grid
+HOMEPAGE            http://ca.grid.kiae.ru/RDIG
+CONTACT             rdig-ca-support@grid.kiae.ru
+HASH                55994d72
+SUBJECT             /C=RU/O=RDIG/CN=Russian Data-Intensive Grid CA
+MAY_SIGN            /C=RU/O=RDIG/CN=Russian Data-Intensive Grid CA
+MAY_SIGN            /C=RU/O=RDIG/*
+CERTIFICATE_MD5     01:E9:EF:5E:F2:B6:9C:56:1F:1C:89:2E:B6:0A:F1:FC
+CERTIFICATE_SHA1    CB:00:03:30:76:2E:94:31:07:D4:D7:DE:EC:55:FB:A0:E2:8B:73:94
+CERTIFICATE_URL     http://ca.grid.kiae.ru/RDIG/cacrt.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://ice.grid.kiae.ru/ca/RDIG/cacrl.pem
+CERT_EXPIRES        Fri 2015-08-07 14:44:37 UTC
+
+# As of Fri 2007-01-26, the link for the CA certificate is
+# currently broken; I get a "403 Forbidden" error.  I've
+# notified <rdig-ca-support@grid.kiae.ru> of this problem.
+# I am able to download a DER format certificate from
+# <http://ca.grid.kiae.ru/RDIG/certificates/root_cert.sh>.
+
+# MD5 and SHA1 fingerprints from root_cert.sh downloaded Fri 2007-01-26
+# I'll re-verify the PEM format certificate once I'm able to access it.
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 55994d72.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against 55994d72.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against 75304a28.info.
