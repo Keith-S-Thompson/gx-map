@@ -1,0 +1,30 @@
+# $Id: 75304a28.dutchdemo.cadesc,v 1.1 2007-01-26 16:35:37-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/75304a28.dutchdemo.cadesc,v $
+
+CA_NAME             DutchDemo worthless CA
+HOMEPAGE            http://ca.dutchgrid.nl/dutchdemo/
+CONTACT             ca@dutchgrid.nl
+HASH                75304a28
+SUBJECT             /O=DutchGrid/OU=Certificate Authorities/CN=DutchDemo worthless CA
+MAY_SIGN            /O=DutchGrid/OU=Certificate Authorities/CN=DutchDemo worthless CA
+MAY_SIGN            /O=dutchgrid/O=users/*
+MAY_SIGN            /O=dutchgrid/O=hosts/*
+CERTIFICATE_MD5     CD:14:FD:4C:41:F1:DA:5E:C9:9F:31:C8:8C:2E:D6:CD
+CERTIFICATE_SHA1    E5:B5:65:93:A8:CF:E4:59:A9:D1:0F:19:F6:87:22:C4:98:0A:55:F0
+CERTIFICATE_URL     http://ca.dutchgrid.nl/dutchdemo/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://ca.dutchgrid.nl/dutchdemo/cacrl.pem
+CERT_EXPIRES        Wed 2011-03-02 14:17:51 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from cacert.pem (75304a28.0) downloaded
+# Fri 2007-01-26
+
+# As the name implies, this CA should be enabled only at your own risk.
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 75304a28.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The SHA1 fingerprint has also been verified against 75304a28.info in
+# that same tarball, and the SHA1 and MD5 fingerprints have been verified
+# against 75304a28.0.
