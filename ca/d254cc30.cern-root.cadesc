@@ -1,0 +1,30 @@
+# $Id: d254cc30.cern-root.cadesc,v 1.1 2007-01-26 21:32:29-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/d254cc30.cern-root.cadesc,v $
+
+CA_NAME             CERT Root CA
+HOMEPAGE            http://www.cern.ch/ca/
+CONTACT             cern-ca-managers@cern.ch
+HASH                d254cc30
+SUBJECT             /DC=ch/DC=cern/CN=CERN Root CA
+MAY_SIGN            /DC=ch/DC=cern/CN=CERN Trusted Certification Authority
+CERTIFICATE_MD5     A2:CE:DC:7C:F5:60:D7:2C:5E:A5:29:74:9D:52:E9:49
+CERTIFICATE_SHA1    DA:D8:7F:63:95:90:A1:E4:D4:1D:B9:48:3D:F4:C3:5C:FC:6B:BF:A3
+CERTIFICATE_URL     https://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crt
+SIGNING_POLICY_URL  ?
+CRL_URL             http://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crl
+CERT_EXPIRES        Sat 2026-10-03 09:00:49 UTC
+
+# The available certificate and CRL files are in DER format, not in
+# the PEM format required by Globus.  The gx-ca-update command will
+# eventually be updated to translate from DER to PEM format automatically
+# (using the openssl command); until then, this CA is marked as disabled.
+
+# MD5 and SHA1 fingerprints from DER-format certificate downloaded
+# Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from d254cc30.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The SHA1 and MD5 fingerprints have been verified against d254cc30.0
+# in the same tarball, and the SHA1 fingerprint has also been verified
+# against d254cc30.info.
