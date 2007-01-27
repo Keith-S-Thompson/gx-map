@@ -1,0 +1,47 @@
+# $Id: 7c0f6d74.switch-personal.cadesc,v 1.1 2007-01-26 20:48:10-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/7c0f6d74.switch-personal.cadesc,v $
+
+CA_NAME             SWITCH Personal
+HOMEPAGE            http://swisssign.net/
+CONTACT             http://swisssign.net/cgi-bin/support/mail (web form)
+HASH                7c0f6d74
+SIGNED_BY           CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+SUBJECT             /CN=SWITCH Personal CA/emailAddress=switch.personal.ca@switch.ch/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+MAY_SIGN            /C=CH/O=ETH Swiss Federal Institute of Technology Zurich/*
+MAY_SIGN            /C=CH/O=Paul-Scherrer-Institut (PSI)/*
+MAY_SIGN            /C=CH/O=Universita della Svizzera Italiana/*
+MAY_SIGN            /C=CH/O=Universitaet Basel/*
+MAY_SIGN            /C=CH/O=Universitaet Bern/*
+MAY_SIGN            /C=CH/O=Universitaet Luzern/*
+MAY_SIGN            /C=CH/O=Universitaet St. Gallen/*
+MAY_SIGN            /C=CH/O=Universitaet Zuerich/*
+MAY_SIGN            /C=CH/O=Universite de Fribourg - Universitaet Freiburg/*
+MAY_SIGN            /C=CH/O=Universite de Geneve/*
+MAY_SIGN            /C=CH/O=Universite de Lausanne/*
+MAY_SIGN            /C=CH/O=Universite de Neuchatel/*
+MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/*
+MAY_SIGN            /C=CH/O=Berner Fachhochschule - Haute ecole specialisee bernoise/*
+MAY_SIGN            /C=CH/O=FHS St. Gallen Hochschule fuer Angewandte Wissenschaften/*
+MAY_SIGN            /C=CH/O=Fachhochschule Aargau Nordwestschweiz/*
+MAY_SIGN            /C=CH/O=Fachhochschule Solothurn Nordwestschweiz/*
+MAY_SIGN            /C=CH/O=Fachhochschule Zentralschweiz/*
+MAY_SIGN            /C=CH/O=Fachhochschule beider Basel/*
+MAY_SIGN            /C=CH/O=Paedagogische Hochschule Thurgau/*
+MAY_SIGN            /C=CH/O=Scuola universitaria professionale della Svizzera italiana SUPSI/*
+MAY_SIGN            /C=CH/O=Stiftung Hochschule fuer Technik und Wirtschaft (HTW) Chur/*
+MAY_SIGN            /C=CH/O=Universitaetsspital Zuerich/*
+CERTIFICATE_MD5     57:9F:FA:6C:37:DB:37:0D:B5:8C:DD:29:6F:A3:21:07
+CERTIFICATE_SHA1    78:14:F9:67:60:C9:C6:CA:78:AF:13:4C:33:13:06:82:85:98:B9:F4
+CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?ca=97C65D55159F2F5A28F39B1EFC5F68DA8AA297C1&into=file&format=pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://swisssign.net/cgi-bin/authority/crl/97C65D55159F2F5A28F39B1EFC5F68DA8AA297C1
+CERT_EXPIRES        Thu 2007-03-15 05:00:14 UTC
+
+# MD5 and SHA1 fingerprints from 7c0f6d74.0 downloaded Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 7c0f6d74.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against 7c0f6d74.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against 75304a28.info.
