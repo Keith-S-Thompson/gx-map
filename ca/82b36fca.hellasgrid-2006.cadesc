@@ -1,11 +1,11 @@
-# $Id: 82b36fca.hellasgrid-2006.cadesc,v 1.1 2007-01-26 20:58:28-08 kst Exp $
+# $Id: 82b36fca.hellasgrid-2006.cadesc,v 1.2 2007-01-26 22:29:06-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/82b36fca.hellasgrid-2006.cadesc,v $
 
 CA_NAME             HellasGrid CA 2006
 HOMEPAGE            http://www.grid.auth.gr/pki/hellasgrid-ca-2006/
 CONTACT             contact@grid.auth.gr
 HASH                82b36fca
-SIGNED_BY           C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid Root CA 2006
+SIGNED_BY           /C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid Root CA 2006
 SUBJECT             /C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid CA 2006
 MAY_SIGN            /C=GR/O=HellasGrid/*
 CERTIFICATE_MD5     C9:AA:38:57:F0:C2:28:DA:81:3C:F0:39:56:4C:F7:7E
