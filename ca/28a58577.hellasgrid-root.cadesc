@@ -1,0 +1,25 @@
+# $Id: 28a58577.hellasgrid-root.cadesc,v 1.1 2007-01-26 17:48:53-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/28a58577.hellasgrid-root.cadesc,v $
+
+CA_NAME             HellasGrid Root CA 2006
+HOMEPAGE            http://www.grid.auth.gr/pki/hellasgrid-root-ca-2006/
+CONTACT             hellasgrid-root-ca@grid.auth.gr
+HASH                28a58577
+SUBJECT             /C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid Root CA 2006
+MAY_SIGN            /C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid CA 2006
+CERTIFICATE_MD5     05:71:0E:52:20:7E:D7:9E:C9:E5:9C:3F:A6:0E:89:72
+CERTIFICATE_SHA1    9F:35:7D:30:A0:9A:C1:8F:84:22:A4:C9:26:F5:B2:B9:E1:0F:2D:DE
+CERTIFICATE_URL     http://www.grid.auth.gr/pki/hellasgrid-root-ca-2006/cacert/28a58577.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://crl.grid.auth.gr/hellasgrid-root-ca-2006/28a58577.pem
+CERT_EXPIRES        Wed 2026-07-15 07:00:00 UTC
+
+# MD5 and SHA1 fingerprints from cacert.pem (28a58577.0) downloaded
+# Fri 2007-01-26
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 28a58577.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# The SHA1 and MD5 fingerprints have been verified against 28a58577.0
+# in the same tarball, and the SHA1 fingerprint has also been verified
+# against 28a58577.info.
