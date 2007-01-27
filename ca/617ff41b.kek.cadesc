@@ -1,0 +1,24 @@
+# $Id: 617ff41b.kek.cadesc,v 1.1 2007-01-26 20:13:49-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/617ff41b.kek.cadesc,v $
+
+CA_NAME             KEK GRID CA
+HOMEPAGE            https://gridca.kek.jp/
+CONTACT             Prof. Takashi Sasaki <Takashi.Sasaki@kek.jp>
+HASH                617ff41b
+SUBJECT             /C=JP/O=KEK/OU=CRC/CN=KEK GRID Certificate Authority
+MAY_SIGN            /C=JP/O=KEK/OU=CRC/*
+CERTIFICATE_MD5     DF:A3:0A:1D:D8:73:FB:72:46:B2:5E:C6:CC:C6:14:78
+CERTIFICATE_SHA1    2B:A3:DC:2A:E5:81:3B:54:05:3D:5E:12:1F:9D:42:AA:6E:CF:F5:C7
+CERTIFICATE_URL     http://gridca.kek.jp/repository/617ff41b.0
+SIGNING_POLICY_URL  https://gridca.kek.jp/repository/617ff41b.signing_policy
+CRL_URL             http://gridca.kek.jp/repository/617ff41b.r0
+CERT_EXPIRES        Thu 2011-03-31 15:00:00 UTC
+
+# MD5 and SHA1 fingerprints from 617ff41b.0 downloaded Fri 2007-01-26
+
+# Information about this CA is also available in
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>.
+# The MD5 and SHA1 fingerprints have also been verified
+# against 617ff41b.0 in that same tarball, and the SHA1
+# fingerprint has been verified against 75304a28.info and
+# <https://gridca.kek.jp/repository/617ff41b.finger_print>.
