@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.133 2007-01-28 02:40:23-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.134 2007-01-28 02:59:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -692,7 +692,7 @@ sub CRL_Info($$$) {
     #
     open my $Pipe, '-|',
          "openssl crl -in '$CRL_file' -inform $CRL_form -noout " .
-         "-hash -issuer -lastupdate -nextupdate 2>&1"
+         "-hash -issuer -lastupdate -nextupdate 2>/dev/null"
         or return undef;
     while (<$Pipe>) {
         chomp;
@@ -727,7 +727,8 @@ sub CRL_Info($$$) {
     #
     if (defined $cert_file and -r $cert_file) {
         open my $Pipe, '-|',
-             "openssl crl -in '$CRL_file' -noout -CAfile $cert_file 2>&1";
+             "openssl crl -in '$CRL_file' -noout " .
+             "-CAfile $cert_file 2>/dev/null";
         while (<$Pipe>) {
             if (/verify ok/i) {
                 $result->{verified} = 1;
@@ -763,8 +764,8 @@ sub Certificate_Info($$) {
     $cert_form = 'PEM' if not defined $cert_form;
     my $result = {};
     open my $Pipe1, '-|',
-         "openssl x509 -in '$cert_file' -inform $cert_form -noout " .
-         "-hash -issuer -subject -md5 -fingerprint -startdate -enddate";
+         "openssl x509 -in '$cert_file' -inform $cert_form -noout -hash " .
+         "-issuer -subject -md5 -fingerprint -startdate -enddate 2>/dev/null";
     while (<$Pipe1>) {
         chomp;
         if (/^[\da-f]{8}$/) {
@@ -793,7 +794,8 @@ sub Certificate_Info($$) {
     # command (unless it reads commands from stdin).
     #
     open my $Pipe2, '-|',
-         "openssl x509 -in '$cert_file' -noout -sha1 -fingerprint";
+         "openssl x509 -in '$cert_file' -inform $cert_form " .
+         "-noout -sha1 -fingerprint 2>/dev/null";
     while (<$Pipe2>) {
         if (/^sha1.*=\s*(.*)$/i) {
             $result->{sha1sum} = $1;
@@ -1386,7 +1388,8 @@ sub Check_Dependencies() {
         Gridmap_Utils::Untaint $certificate_file;
         my $Pipe = undef;
         if (not open $Pipe, '-|',
-                     "openssl verify -CApath $target_dir '$certificate_file'")
+                     "openssl verify -CApath $target_dir " .
+                     "'$certificate_file' 2>/dev/null")
         {
             Error $ref, undef, undef,
                   "Check_Dependencies failed to invoke openssl";
