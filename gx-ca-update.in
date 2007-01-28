@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.131 2007-01-27 21:26:47-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.132 2007-01-27 23:31:48-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1138,7 +1138,8 @@ sub Update_And_Install_CRL($) {
                 or Error $ref, undef, undef, "Failed to copy CRL: $!";
         }
         else {
-            my $result = system "openssl crl -inform $ref->{CRL_FORM} " .
+            my $result = system "openssl crl " .
+                                "-inform $ref->{CRL_FORM} " .
                                 "-in '$cache_result->{filename}' " .
                                 "-outform PEM " .
                                 "-out '$temp_file' " .
@@ -1281,8 +1282,9 @@ sub Install_Certificate($) {
                 or Error $ref, undef, undef, "Failed to copy certificate: $!";
         }
         else {
-            my $result = system "openssl x509 -inform $ref->{CRL_FORM} " .
-                                "-in '$cache_result->{filename}' " .
+            my $result = system "openssl x509 " .
+                                "-inform $ref->{CRL_FORM} " .
+                                "-in '$ref->{_CACHED_CERT_FILE}' " .
                                 "-outform PEM " .
                                 "-out '$temp_file' " .
                                 "2>/dev/null";
