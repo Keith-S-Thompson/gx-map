@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.130 2007-01-01 13:01:32-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.131 2007-01-27 21:26:47-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1133,8 +1133,21 @@ sub Update_And_Install_CRL($) {
         Vprint    "Installing $ref->{_CRL_FILE}\n";
         Log $ref, "Installing $ref->{_CRL_FILE}\n";
         my $temp_file = "$ref->{_CRL_FILE}.$$";
-        File::Copy::copy $cache_result->{filename}, $temp_file
-            or Error $ref, undef, undef, "Failed to copy CRL: $!";
+        if (not defined $ref->{CRL_FORM} or $ref->{CRL_FORM} eq 'PEM') {
+            File::Copy::copy $cache_result->{filename}, $temp_file
+                or Error $ref, undef, undef, "Failed to copy CRL: $!";
+        }
+        else {
+            my $result = system "openssl crl -inform $ref->{CRL_FORM} " .
+                                "-in '$cache_result->{filename}' " .
+                                "-outform PEM " .
+                                "-out '$temp_file' " .
+                                "2>/dev/null";
+            if ($result != 0) {
+                Error $ref, undef, undef,
+                      "Failed to translate CRL, system() returned $result";
+            }
+        }
         chmod $Permissions, $temp_file
             or Error $ref, undef, undef,
                      "chmod $Octal_Permissions, $temp_file: $!";
@@ -1261,8 +1274,24 @@ sub Install_Certificate($) {
         Vprint    "Installing $ref->{_CERT_FILE}\n";
         Log $ref, "Installing $ref->{_CERT_FILE}\n";
         my $temp_file = "$ref->{_CERT_FILE}.$$";
-        File::Copy::copy $ref->{_CACHED_CERT_FILE}, $temp_file
-            or Error $ref, undef, undef, "Failed to copy certificate: $!";
+        if (not defined $ref->{CERTIFICATE__FORM} or
+            $ref->{CERTIFICATE__FORM} eq 'PEM')
+        {
+            File::Copy::copy $ref->{_CACHED_CERT_FILE}, $temp_file
+                or Error $ref, undef, undef, "Failed to copy certificate: $!";
+        }
+        else {
+            my $result = system "openssl x509 -inform $ref->{CRL_FORM} " .
+                                "-in '$cache_result->{filename}' " .
+                                "-outform PEM " .
+                                "-out '$temp_file' " .
+                                "2>/dev/null";
+            if ($result != 0) {
+                Error $ref, undef, undef,
+                      "Failed to translate certificate, " .
+                      "system() returned $result";
+            }
+        }
         chmod $Permissions, $temp_file
             or Error $ref, undef, undef,
                      "chmod $Octal_Permissions, $temp_file: $!";
