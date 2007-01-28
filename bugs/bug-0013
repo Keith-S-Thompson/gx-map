@@ -1,4 +1,4 @@
-# $Id: bug-0013,v 1.4 2005-12-13 00:01:59-08 kst Exp $
+# $Id: bug-0013,v 1.5 2007-01-27 23:18:32-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0013,v $
 
 gx-map bug 0013
@@ -6,7 +6,7 @@ Date: Tue 2005-03-29
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
-Status: Open
+Status: Fixed 0.5.3.2.007
 Title: gx-ca-update should allow DER and NET format certificates
 
 Summary:
@@ -19,3 +19,8 @@ format of the downloaded file and convert to PEM if necessary.
 
 The CESNET CA's CRL (Czech Republic) is available only in DER format;
 see ed99a497.cesnet.cadesc.
+
+Fixed:
+Gridmap_Utils.pm.in 1.297
+gx-ca-update.in 1.131
+gx-map release 0.5.3.2.007
