@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.299 2007-01-27 23:21:06-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.300 2007-01-28 02:40:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2504,8 +2504,9 @@ EOF
 # ----------------------------------------------------------------------
 
 #
-# Given the name of a cadesc file, returns a reference to a hash containing
-# information about the CA.
+# Given the name of a cadesc file, returns a reference to a hash
+# containing information about the CA.  CERTIFICATE_FORM and CRL_FORM
+# are set to 'PEM' if they're not specified in the file.
 #
 # If there's an error, return an error message as reference to an array
 # of strings.
@@ -2580,11 +2581,17 @@ sub Get_CA_Ref($) {
                  qq(Value for CERTIFICATE_FORM must be "PEM", "DER", or "NET");
         }
     }
+    else {
+        $ref->{CERTIFICATE_FORM} = 'PEM';
+    }
     if (defined $ref->{CRL_FORM}) {
         my %valid = ( PEM => 1, DER => 1 );
         if (not $valid{$ref->{CRL_FORM}}) {
             push @errors, qq(Value for CRL_FORM must be "PEM" or "DER");
         }
+    }
+    else {
+        $ref->{CRL_FORM} = 'PEM';
     }
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
         push @errors, qq(Value for DISABLE must be "yes" or "no");
