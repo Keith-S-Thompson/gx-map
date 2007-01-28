@@ -1,4 +1,4 @@
- $Id: Gridmap_Utils.pm.in,v 1.298 2007-01-27 23:18:58-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.299 2007-01-27 23:21:06-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2574,14 +2574,14 @@ sub Get_CA_Ref($) {
         push @errors, "Invalid HASH";
     }
     if (defined $ref->{CERTIFICATE_FORM}) {
-        my %valid = ( PEM => 1, DER => 1, NET => 1 };
+        my %valid = ( PEM => 1, DER => 1, NET => 1 );
         if (not $valid{$ref->{CERTIFICATE_FORM}}) {
             push @errors,
                  qq(Value for CERTIFICATE_FORM must be "PEM", "DER", or "NET");
         }
     }
     if (defined $ref->{CRL_FORM}) {
-        my %valid = ( PEM => 1, DER => 1 };
+        my %valid = ( PEM => 1, DER => 1 );
         if (not $valid{$ref->{CRL_FORM}}) {
             push @errors, qq(Value for CRL_FORM must be "PEM" or "DER");
         }
