@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.136 2007-01-30 04:34:58-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.137 2007-01-30 04:40:27-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -941,7 +941,7 @@ sub Update_And_Install_Certificate($) {
     $ref->{_TEMP_CERT_FILE} = "$ref->{_CERT_FILE}.$$";
     Vprint    "Installing $ref->{_TEMP_CERT_FILE}\n";
     Log $ref, "Installing $ref->{_TEMP_CERT_FILE}\n";
-    if ($ref->{CERTIFICATE__FORM} eq 'PEM') {
+    if ($ref->{CERTIFICATE_FORM} eq 'PEM') {
         File::Copy::copy $ref->{_CACHED_CERT_FILE},
                          $ref->{_TEMP_CERT_FILE}
             or Error $ref, undef, undef, "Failed to copy certificate: $!";
