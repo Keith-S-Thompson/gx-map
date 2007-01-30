@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.135 2007-01-29 17:58:36-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.136 2007-01-30 04:34:58-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -76,9 +76,9 @@ sub Disabled($);
 sub Allow_Missing_CRL($);
 sub CRL_Info($$$);
 sub Certificate_Info($$);
-sub Update_Certificate($);
+sub Update_And_Install_Certificate($);
 sub Update_And_Install_CRL($);
-sub Install_Certificate($);
+sub Finalize_Certificate($);
 sub Update_And_Install_Signing_Policy($);
 sub Check_Dependencies();
 sub Log($$);
@@ -377,9 +377,9 @@ foreach my $ref (@ca_list) {
         $ref->{_SIGNING_POLICY_FILE} = "$prefix.signing_policy";
         $ref->{_CRL_FILE}            = "$prefix.r0";
 
-        Update_Certificate     $ref;
-        Update_And_Install_CRL $ref;
-        Install_Certificate    $ref;
+        Update_And_Install_Certificate    $ref;
+        Update_And_Install_CRL            $ref;
+        Finalize_Certificate              $ref;
         Update_And_Install_Signing_Policy $ref;
 
     }
@@ -817,7 +817,8 @@ sub Certificate_Info($$) {
 
 #
 # Update CA certificate if necessary.
-# Don't install it yet; wait until after we've checked the CRL.
+# Don't install it to its final location yet; wait until after we've
+# checked the CRL.  Instead, install it with a ".$$" suffix.
 # (We need the certificate to validate the CRL, but we want to see whether
 # we have a CRL before installing the certificate, since installing a
 # certificate without a CRL causes all revocations to be ignored.)
@@ -826,7 +827,7 @@ sub Certificate_Info($$) {
 # Refuse to install an expired certificate, but leave it alone if
 # it's already installed.
 #
-sub Update_Certificate($) {
+sub Update_And_Install_Certificate($) {
     my($ref) = @_;
 
     Debug "Update_Certificate, CA_NAME = ",
@@ -930,7 +931,41 @@ sub Update_Certificate($) {
     else {
         Vprint "No URL given for certificate\n";
     }
-} # Update_Certificate
+
+    #
+    # Don't install the certificate file if there are any errors.
+    #
+    if ($ref->{_FATAL_ERROR}) {
+        return;
+    }
+    $ref->{_TEMP_CERT_FILE} = "$ref->{_CERT_FILE}.$$";
+    Vprint    "Installing $ref->{_TEMP_CERT_FILE}\n";
+    Log $ref, "Installing $ref->{_TEMP_CERT_FILE}\n";
+    if ($ref->{CERTIFICATE__FORM} eq 'PEM') {
+        File::Copy::copy $ref->{_CACHED_CERT_FILE},
+                         $ref->{_TEMP_CERT_FILE}
+            or Error $ref, undef, undef, "Failed to copy certificate: $!";
+    }
+    else {
+        my $result = system "openssl x509 " .
+                            "-inform $ref->{CRL_FORM} " .
+                            "-in '$ref->{_CACHED_CERT_FILE}' " .
+                            "-outform PEM " .
+                            "-out '$ref->{_TEMP_CERT_FILE}' " .
+                            "2>/dev/null";
+        if ($result != 0) {
+            Error $ref, undef, undef,
+                  "Failed to translate certificate, " .
+                  "system() returned $result";
+        }
+    }
+    chmod $Permissions, $ref->{_TEMP_CERT_FILE}
+        or Error $ref, undef, undef,
+                 "chmod $Octal_Permissions, $ref->{_TEMP_CERT_FILE}: $!";
+    $Certificate_Installed = 1;
+    Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
+    delete $ref->{_CACHED_CERT_FILE};
+} # Update_And_Install_Certificate
 
 # ----------------------------------------------------------------------
 
@@ -948,11 +983,11 @@ sub Update_And_Install_CRL($) {
           "\n";
 
     #
-    # _CACHED_CERT_FILE, if set, is the newly downloaded or cached
+    # _TEMP_CERT_FILE, if set, is the newly installed temporary
     # certificate.  Otherwise, _CERT_FILE is the installed certificate.
     #
-    if (defined $ref->{_CACHED_CERT_FILE} and -e $ref->{_CACHED_CERT_FILE}) {
-        $cert_file = $ref->{_CACHED_CERT_FILE};
+    if (defined $ref->{_TEMP_CERT_FILE} and -e $ref->{_TEMP_CERT_FILE}) {
+        $cert_file = $ref->{_TEMP_CERT_FILE};
     }
     elsif (-e $ref->{_CERT_FILE}) {
         $cert_file = $ref->{_CERT_FILE};
@@ -1267,57 +1302,35 @@ sub Update_And_Install_CRL($) {
 
 # ----------------------------------------------------------------------
 
-sub Install_Certificate($) {
+#
+# If the certificate has been installed with a temporary name,
+# rename it to its final name if there have been no errors.
+# If there have been any errors, delete the temporary certificate.
+#
+sub Finalize_Certificate($) {
     my($ref) = @_;
 
-    #
-    # Don't install the certificate file if there are any errors.
-    # This includes a missing CRL if the "-allow-missing-crl" option
-    # was not specified and the ALLOW_MISSING_CRL attribute is not set.
-    #
     if ($ref->{_FATAL_ERROR}) {
-        if (defined $ref->{_CACHED_CERT_FILE}) {
-            Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
-            delete $ref->{_CACHED_CERT_FILE};
+        if (defined $ref->{_TEMP_CERT_FILE}) {
+            delete $ref->{_TEMP_CERT_FILE};
         }
     }
 
     elsif (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
         Vprint "Certificate $ref->{HASH}.0 is already installed\n";
     }
+
     else {
         Vprint    "Installing $ref->{_CERT_FILE}\n";
         Log $ref, "Installing $ref->{_CERT_FILE}\n";
-        my $temp_file = "$ref->{_CERT_FILE}.$$";
-        if (not defined $ref->{CERTIFICATE__FORM} or
-            $ref->{CERTIFICATE__FORM} eq 'PEM')
-        {
-            File::Copy::copy $ref->{_CACHED_CERT_FILE}, $temp_file
-                or Error $ref, undef, undef, "Failed to copy certificate: $!";
-        }
-        else {
-            my $result = system "openssl x509 " .
-                                "-inform $ref->{CRL_FORM} " .
-                                "-in '$ref->{_CACHED_CERT_FILE}' " .
-                                "-outform PEM " .
-                                "-out '$temp_file' " .
-                                "2>/dev/null";
-            if ($result != 0) {
-                Error $ref, undef, undef,
-                      "Failed to translate certificate, " .
-                      "system() returned $result";
-            }
-        }
-        chmod $Permissions, $temp_file
+        chmod $Permissions, $ref->{_TEMP_CERT_FILE}
             or Error $ref, undef, undef,
-                     "chmod $Octal_Permissions, $temp_file: $!";
-        rename $temp_file, $ref->{_CERT_FILE}
+                     "chmod $Octal_Permissions, $ref->{_TEMP_CERT_FILE}: $!";
+        rename $ref->{_TEMP_CERT_FILE}, $ref->{_CERT_FILE}
             or Error $ref, undef, undef, "Failed to rename certificate: $!";
         $Certificate_Installed = 1;
-        Gridmap_Utils::Release_Cache_File $ref->{_CACHED_CERT_FILE};
-        delete $ref->{_CACHED_CERT_FILE};
     }
-} # Install_Certificate
+} # Finalize_Certificate
 
 # ----------------------------------------------------------------------
 
