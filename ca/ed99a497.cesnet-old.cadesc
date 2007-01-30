@@ -1,4 +1,4 @@
-# $Id: ed99a497.cesnet-old.cadesc,v 1.2 2006-07-10 18:19:02-07 kst Exp $
+# $Id: ed99a497.cesnet-old.cadesc,v 1.3 2007-01-30 04:31:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ed99a497.cesnet-old.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -12,10 +12,9 @@ CERTIFICATE_MD5     7F:93:95:FE:9D:76:F5:98:80:9E:5F:4B:93:1F:A8:51
 CERTIFICATE_SHA1    C9:00:88:24:CA:2F:99:BA:C8:CF:FB:8E:06:29:8A:38:FA:AC:AD:75
 CERTIFICATE_URL     http://www.cesnet.cz/pki/certs/cca.pem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/ed99a497.signing_policy
-CRL_URL             ?
+CRL_URL             http://www.cesnet.cz/pki/crl/cca.crl
+CRL_FORM            DER
 CERT_EXPIRES        Tue 2006-06-27 13:15:12 UTC
 DISABLE             yes
-
-# CRL is available in DER format at <http://www.cesnet.cz/pki/crl/cca.crl>.
 
 # MD5 and SHA1 fingerprints from cca.pem.c (ed99a497.0) downloaded 2005-03-29
