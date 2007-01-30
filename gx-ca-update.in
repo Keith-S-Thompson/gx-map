@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.134 2007-01-28 02:59:10-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.135 2007-01-29 17:58:36-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -676,7 +676,7 @@ sub CRL_Info($$$) {
           (defined $CRL_file ? $CRL_file : 'undef'),
           ", ",
           (defined $cert_file ? $cert_file : 'undef'),
-          ")\n";
+          ", $CRL_form)\n";
     if ($User_Opt->{debugging}) {
         my @files = ();
         push @files, $CRL_file if defined $CRL_file;
@@ -727,8 +727,8 @@ sub CRL_Info($$$) {
     #
     if (defined $cert_file and -r $cert_file) {
         open my $Pipe, '-|',
-             "openssl crl -in '$CRL_file' -noout " .
-             "-CAfile $cert_file 2>/dev/null";
+             "openssl crl -in '$CRL_file' -inform $CRL_form -noout " .
+             "-CAfile '$cert_file' 2>/dev/null";
         while (<$Pipe>) {
             if (/verify ok/i) {
                 $result->{verified} = 1;
@@ -1186,12 +1186,13 @@ sub Update_And_Install_CRL($) {
 
     #
     # Just to be sure, re-fetch CRL info from the target CRL file
-    # (which may or may not have just been updated).
+    # (which may or may not have just been updated).  This is the
+    # installed CRL, so it's in PEM format.
     #
     if (-r $ref->{_CRL_FILE}) {
         Debug "%%% Re-fetching CRL info for $ref->{_CRL_FILE}\n";
         my $crl_info
-            = CRL_Info $ref->{_CRL_FILE}, $cert_file, $ref->{CRL_FORM};
+            = CRL_Info $ref->{_CRL_FILE}, $cert_file, 'PEM';
         Debug "%%% After CRL_Info\n";
         my $remaining = $crl_info->{next_update} - $now;
         my $remove_crl = 0;
