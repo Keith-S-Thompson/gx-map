@@ -1,4 +1,4 @@
-# $Id: d254cc30.cern-root.cadesc,v 1.2 2007-01-26 21:33:19-08 kst Exp $
+# $Id: d254cc30.cern-root.cadesc,v 1.3 2007-01-30 04:31:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d254cc30.cern-root.cadesc,v $
 
 CA_NAME             CERT Root CA
@@ -10,15 +10,11 @@ MAY_SIGN            /DC=ch/DC=cern/CN=CERN Trusted Certification Authority
 CERTIFICATE_MD5     A2:CE:DC:7C:F5:60:D7:2C:5E:A5:29:74:9D:52:E9:49
 CERTIFICATE_SHA1    DA:D8:7F:63:95:90:A1:E4:D4:1D:B9:48:3D:F4:C3:5C:FC:6B:BF:A3
 CERTIFICATE_URL     https://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crt
+CERTIFICATE_FORM    DER
 SIGNING_POLICY_URL  ?
 CRL_URL             http://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crl
+CRL_FORM            DER
 CERT_EXPIRES        Sat 2026-10-03 09:00:49 UTC
-DISABLE             yes
-
-# The available certificate and CRL files are in DER format, not in
-# the PEM format required by Globus.  The gx-ca-update command will
-# eventually be updated to translate from DER to PEM format automatically
-# (using the openssl command); until then, this CA is marked as disabled.
 
 # MD5 and SHA1 fingerprints from DER-format certificate downloaded
 # Fri 2007-01-26
