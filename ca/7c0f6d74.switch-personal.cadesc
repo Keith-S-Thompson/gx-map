@@ -1,11 +1,11 @@
-# $Id: 7c0f6d74.switch-personal.cadesc,v 1.3 2007-01-30 04:30:59-08 kst Exp $
+# $Id: 7c0f6d74.switch-personal.cadesc,v 1.4 2007-01-30 05:06:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7c0f6d74.switch-personal.cadesc,v $
 
 CA_NAME             SWITCH Personal
 HOMEPAGE            http://swisssign.net/
 CONTACT             http://swisssign.net/cgi-bin/support/mail (web form)
 HASH                7c0f6d74
-SIGNED_BY           CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+SIGNED_BY           /CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
 SUBJECT             /CN=SWITCH Personal CA/emailAddress=switch.personal.ca@switch.ch/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/C=CH
 MAY_SIGN            /C=CH/O=ETH Swiss Federal Institute of Technology Zurich/*
 MAY_SIGN            /C=CH/O=Paul-Scherrer-Institut (PSI)/*
@@ -46,3 +46,4 @@ CERT_EXPIRES        Thu 2007-03-15 05:00:14 UTC
 # The MD5 and SHA1 fingerprints have also been verified against 7c0f6d74.0
 # in that same tarball, and the SHA1 fingerprint has been verified
 # against 75304a28.info.
+
