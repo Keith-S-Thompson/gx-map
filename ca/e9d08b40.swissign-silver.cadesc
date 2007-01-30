@@ -1,4 +1,4 @@
-# $Id: e9d08b40.swissign-silver.cadesc,v 1.2 2007-01-26 22:29:07-08 kst Exp $
+# $Id: e9d08b40.swissign-silver.cadesc,v 1.3 2007-01-30 04:31:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e9d08b40.swissign-silver.cadesc,v $
 
 CA_NAME             SwissSign Silver CA
@@ -13,11 +13,8 @@ CERTIFICATE_SHA1    F8:D0:F1:02:33:D4:1D:FD:DE:77:EB:D6:66:2F:6F:C0:85:F5:AC:47
 CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=CDA1AC23BFD03B208A5481CDFBDB4126E34A705A
 SIGNING_POLICY_URL  ?
 CRL_URL             http://swisssign.net/cgi-bin/authority/crl/CDA1AC23BFD03B208A5481CDFBDB4126E34A705A
+CRL_FORM            DER
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
-DISABLE             yes
-
-# The CRL is in DER format.  This CA is marked as disabled until I can
-# find a PEM-format CRL or handle DER format files in gx-ca-update.
 
 # MD5 and SHA1 fingerprints from e9d08b40.0, downloaded Fri 2007-01-26
 
