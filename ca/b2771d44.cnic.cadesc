@@ -1,4 +1,4 @@
-# $Id: b2771d44.cnic.cadesc,v 1.1 2007-01-26 21:06:29-08 kst Exp $
+# $Id: b2771d44.cnic.cadesc,v 1.2 2007-01-30 18:24:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b2771d44.cnic.cadesc,v $
 
 CA_NAME             CNIC Grid CA
@@ -14,11 +14,11 @@ SIGNING_POLICY_URL  ?
 CRL_URL             http://ca.grid.cn/crl/cacrl.pem
 CERT_EXPIRES        Fri 2026-02-27 04:59:37 UTC
 
-# MD5 and SHA1 fingerprints from b2771d44.0, downloaded Fri 2007-01-26
+# MD5 and SHA1 fingerprints from b2771d44.0, downloaded Tue 2007-01-30
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from b2771d44.signing_policy, extracted from
 # <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
 # The MD5 and SHA1 fingerprints have also been verified against b2771d44.0
 # in that same tarball, and the SHA1 fingerprint has been verified
-# against 75304a28.info.
+# against b2771d44.info.
