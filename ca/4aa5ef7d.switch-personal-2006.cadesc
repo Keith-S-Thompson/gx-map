@@ -1,4 +1,4 @@
-# $Id: 4aa5ef7d.switch-personal-2006.cadesc,v 1.3 2007-01-30 04:30:59-08 kst Exp $
+# $Id: 4aa5ef7d.switch-personal-2006.cadesc,v 1.4 2007-01-30 18:24:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4aa5ef7d.switch-personal-2006.cadesc,v $
 
 CA_NAME             SWITCH Personal 2006
@@ -38,11 +38,11 @@ CRL_URL             http://swisssign.net/cgi-bin/authority/crl/631A26BF8AF3916D7
 CRL_FORM            DER
 CERT_EXPIRES        Thu 2008-03-13 12:39:04 UTC
 
-# MD5 and SHA1 fingerprints from 4aa5ef7d.0, downloaded Fri 2007-01-26
+# MD5 and SHA1 fingerprints from 4aa5ef7d.0, downloaded Tue 2007-01-30
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 4aa5ef7d.signing_policy, extracted from
 # <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
 # The MD5 and SHA1 fingerprints have also been verified against 4aa5ef7d.0
 # in that same tarball, and the SHA1 fingerprint has been verified
-# against 75304a28.info.
+# against 4aa5ef7d.info.
