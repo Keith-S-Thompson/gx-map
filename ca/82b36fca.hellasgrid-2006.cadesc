@@ -1,4 +1,4 @@
-# $Id: 82b36fca.hellasgrid-2006.cadesc,v 1.2 2007-01-26 22:29:06-08 kst Exp $
+# $Id: 82b36fca.hellasgrid-2006.cadesc,v 1.3 2007-01-30 18:24:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/82b36fca.hellasgrid-2006.cadesc,v $
 
 CA_NAME             HellasGrid CA 2006
@@ -15,7 +15,7 @@ SIGNING_POLICY_URL  ?
 CRL_URL             http://crl.grid.auth.gr/hellasgrid-ca-2006/82b36fca.pem
 CERT_EXPIRES        Fri 2016-07-15 09:00:00 UTC
 
-# MD5 and SHA1 fingerprints from 82b36fca.0, downloaded Fri 2007-01-26
+# MD5 and SHA1 fingerprints from 82b36fca.0, downloaded Tue 2007-01-30
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 82b36fca.signing_policy, extracted from
@@ -23,4 +23,4 @@ CERT_EXPIRES        Fri 2016-07-15 09:00:00 UTC
 # The MD5 and SHA1 fingerprints have also been verified
 # against 82b36fca.0 in that same tarball and information on
 # <http://www.grid.auth.gr/pki/hellasgrid-ca-2006/cacert/>, and the SHA1
-# fingerprint has been verified against 75304a28.info in the tarball.
+# fingerprint has been verified against 82b36fca.info in the tarball.
