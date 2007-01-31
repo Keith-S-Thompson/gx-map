@@ -1,4 +1,4 @@
-# $Id: 5e5501f3.rmki.cadesc,v 1.3 2007-01-26 22:19:16-08 kst Exp $
+# $Id: 5e5501f3.rmki.cadesc,v 1.4 2007-01-30 17:25:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e5501f3.rmki.cadesc,v $
 
 CA_NAME             KFKI RMKI CA
@@ -11,7 +11,7 @@ CERTIFICATE_MD5     CF:A4:84:8C:37:38:97:0B:62:FB:06:F3:61:86:1B:13
 CERTIFICATE_SHA1    75:5C:C0:6E:E4:E8:F0:EA:EE:44:AE:85:2F:DE:60:3E:BD:CE:84:40
 CERTIFICATE_URL     http://pki.kfki.hu/pki0/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
-CRL_URL             http://pki.kfki.hu/pki0/pub/cacert/cacert.pem
+CRL_URL             http://pki.kfki.hu/pki0/pub/crl/cacrl.crl
 CERT_EXPIRES        Wed 2009-10-28 12:46:29 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (5e5501f3.0) downloaded
