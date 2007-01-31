@@ -1,4 +1,4 @@
-# $Id: f93666d2.kisti-ca2.cadesc,v 1.5 2006-01-13 17:07:29-08 kst Exp $
+# $Id: f93666d2.kisti-ca2.cadesc,v 1.6 2007-01-30 18:24:24-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f93666d2.kisti-ca2.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA2
@@ -14,11 +14,16 @@ CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/f93666d2.0
 SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/f93666d2.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Thu 2013-03-14 00:39:41 UTC
+DISABLE             yes
 
 # There appears to be no CRL.
 
-# The 82da68f0.signing_policy says the CA may also sign certificates
+# The f93666d2.signing_policy says the CA may also sign certificates
 # matching "/O=Grid/O=Globus/*", which overlaps the namespace for the
 # old Globus CA.  I have not included that here.
 
-# MD5 and SHA1 fingerprints from f93666d2.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from f93666d2.0 downloaded Tue 2005-03-29
+
+# As of Tue 2007-01-30, I am unable to connect to
+# <http://gridca.gridcenter.or.kr/>.  I don't know the current status
+# of this CA.  I am marking it as disabled until this is resolved.
