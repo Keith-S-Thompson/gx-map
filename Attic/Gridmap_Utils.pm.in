@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.301 2007-01-30 04:35:11-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.302 2007-01-30 21:38:07-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -2523,6 +2523,9 @@ sub Get_CA_Ref($) {
     $short_name =~ s/^[^.]*\.//;
     $ref->{_SHORT_CA_NAME} = $short_name;
 
+    $ref->{CERTIFICATE_FORM} = 'PEM' if not defined $ref->{CERTIFICATE_FORM};
+    $ref->{CRL_FORM}         = 'PEM' if not defined $ref->{CRL_FORM};
+
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes') {
         return $ref;
     }
@@ -2574,24 +2577,18 @@ sub Get_CA_Ref($) {
     if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
         push @errors, "Invalid HASH";
     }
-    if (defined $ref->{CERTIFICATE_FORM}) {
+    {
         my %valid = ( PEM => 1, DER => 1, NET => 1 );
         if (not $valid{$ref->{CERTIFICATE_FORM}}) {
             push @errors,
                  qq(Value for CERTIFICATE_FORM must be "PEM", "DER", or "NET");
         }
     }
-    else {
-        $ref->{CERTIFICATE_FORM} = 'PEM';
-    }
-    if (defined $ref->{CRL_FORM}) {
+    {
         my %valid = ( PEM => 1, DER => 1 );
         if (not $valid{$ref->{CRL_FORM}}) {
             push @errors, qq(Value for CRL_FORM must be "PEM" or "DER");
         }
-    }
-    else {
-        $ref->{CRL_FORM} = 'PEM';
     }
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
         push @errors, qq(Value for DISABLE must be "yes" or "no");
