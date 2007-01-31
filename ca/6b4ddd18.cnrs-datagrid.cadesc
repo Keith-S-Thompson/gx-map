@@ -1,4 +1,4 @@
-# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.12 2006-01-13 17:07:25-08 kst Exp $
+# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.13 2007-01-30 21:40:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6b4ddd18.cnrs-datagrid.cadesc,v $
 
 CA_NAME             CNRS-DataGrid
@@ -7,21 +7,20 @@ CONTACT             Sophie.Nicoud@urec.cnrs.fr
 HASH                6b4ddd18
 SIGNED_BY           /C=FR/O=CNRS/CN=CNRS-Projets
 SUBJECT             /C=FR/O=CNRS/CN=Datagrid-fr
-MAY_SIGN            ?
+MAY_SIGN            /C=FR/O=CNRS*
+MAY_SIGN            /C=FR/O=INRIA/*
+MAY_SIGN            /C=AT/O=MUG/OU=DMPHB/*
 CERTIFICATE_MD5     A4:1C:C2:BB:43:34:AB:F1:C5:BD:D6:A8:50:9E:E7:2A
 CERTIFICATE_SHA1    B9:70:D8:2C:CF:AA:DD:FC:75:07:3A:FC:8C:24:75:74:63:C3:3B:84
 CERTIFICATE_URL     http://crls.services.cnrs.fr/Datagrid-fr/getpem.crt
-SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/6b4ddd18.signing_policy
+SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/6b4ddd18.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/Datagrid-fr/getpem.crl
 CERT_EXPIRES        Mon 2011-04-25 05:51:06 UTC
-DISABLE             yes
 
-#
-# The signing_policy file provided by www.nbi.dk specifies that the CA
-# may sign any certificate.  Because of this, I'm leaving this CA
-# disabled by default.
-#
+# The signing_policy file is from a different site, not from the CA's
+# own site.
+
 # The CA web page doesn't provide easy access to the various files.
-#
 
-# MD5 and SHA1 fingerprints from getpem.crt (6b4ddd18.0) downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from getpem.crt (6b4ddd18.0) downloaded
+# Tue 2005-03-29, re-verified Tue 2007-01-30
