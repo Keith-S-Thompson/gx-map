@@ -1,4 +1,4 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.20 2006-11-03 12:21:36-08 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.21 2007-01-30 18:24:23-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
@@ -17,6 +17,8 @@ CERTIFICATE_URL     http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.0
 SIGNING_POLICY_URL  http://www.doegrids.org/CA/1c3f2ca8/1c3f2ca8.signing_policy
 CRL_URL             http://pki1.doegrids.org/CRL/1c3f2ca8.r0
 CERT_EXPIRES        Fri 2013-01-25 08:00:00 UTC
+
+# The MD5 and SHA1 fingerprints are from 1c3f2ca8.0, downloaded Tue 2007-01-30.
 
 # Due to a bug on the pki1.doegrids.org web server, the
 # "HEAD" command doesn't work for the CRL_URL.
