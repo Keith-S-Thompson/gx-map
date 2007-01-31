@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.137 2007-01-30 04:40:27-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.138 2007-01-30 21:39:57-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -728,7 +728,7 @@ sub CRL_Info($$$) {
     if (defined $cert_file and -r $cert_file) {
         open my $Pipe, '-|',
              "openssl crl -in '$CRL_file' -inform $CRL_form -noout " .
-             "-CAfile '$cert_file' 2>/dev/null";
+             "-CAfile '$cert_file' 2>&1";
         while (<$Pipe>) {
             if (/verify ok/i) {
                 $result->{verified} = 1;
@@ -830,11 +830,12 @@ sub Certificate_Info($$) {
 sub Update_And_Install_Certificate($) {
     my($ref) = @_;
 
-    Debug "Update_Certificate, CA_NAME = ",
+    Debug "Update_And_Install_Certificate, CA_NAME = ",
           (defined $ref->{CA_NAME} ? $ref->{CA_NAME} : '???'),
           "\n";
     if (not $User_Opt->{force} and -e $ref->{_CERT_FILE}) {
         Vprint "Skipping existing $ref->{_CERT_FILE}\n";
+        return;
     }
     elsif ($ref->{CERTIFICATE_URL} =~ m<(https?|ftp)://>) {
         my $download_arg = $User_Opt->{download}
@@ -930,6 +931,7 @@ sub Update_And_Install_Certificate($) {
     }
     else {
         Vprint "No URL given for certificate\n";
+        return;
     }
 
     #
