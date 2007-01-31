@@ -1,4 +1,4 @@
-# $Id: a78484ef.europki.cadesc,v 1.1 2006-09-26 22:51:53-07 kst Exp $
+# $Id: a78484ef.europki.cadesc,v 1.2 2007-01-30 21:40:25-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a78484ef.europki.cadesc,v $
 
 CA_NAME             EuroPKI
@@ -12,7 +12,6 @@ CERTIFICATE_SHA1    FB:BC:4C:69:E4:3D:E4:23:58:F6:FB:92:AA:15:E7:5B:8B:FB:33:08
 CERTIFICATE_URL     http://www.europki.org/ca/root/ca_cert/ca_cert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.europki.org/ca/root/crl/crl.pem
-# ALLOW_MISSING_CRL   yes
 CERT_EXPIRES        Fri 2010-12-31 12:00:00 UTC
 DISABLE             yes
 
