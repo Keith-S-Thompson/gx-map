@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.7 2007-01-31 19:35:49-08 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.8 2007-01-31 20:12:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -189,6 +189,14 @@ sub Backup($) {
     return undef if not -e $filename;
     my $timestamp = Timestamp_Of Gridmap_Utils::Get_mtime $filename;
     my $backup_name = "$filename-$timestamp";  
+    if (-e $backup_name) {
+        #
+        # Don't need a stack traceback
+        #
+        Gridmap_Utils::Uninstall_Handlers;
+        die "$backup_name already exists\n",
+            "Remove or rename it and try again\n";
+    }
     rename $filename, $backup_name or die "$backup_name: $!\n";
     return $backup_name;
 } # Backup
