@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.305 2007-01-31 19:36:46-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.306 2007-01-31 20:22:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -185,6 +185,7 @@ sub Release_Lock($);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
+sub Uninstall_Handlers();
 sub Register_Handler_Function($);
 
 #
@@ -2745,6 +2746,13 @@ sub Install_Die_Handler() {
 sub Install_Warn_Handler() {
     $SIG{__WARN__} = \&Gridmap_Utils::Die_Handler;
 } # Install_Warn_Handler
+
+# ----------------------------------------------------------------------
+
+sub Uninstall_Handlers() {
+    delete $SIG{__DIE__};
+    delete $SIG{__WARN__};
+} # Uninstall_Handlers
 
 # ----------------------------------------------------------------------
 
