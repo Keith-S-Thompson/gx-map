@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.139 2007-01-31 17:06:15-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.140 2007-01-31 18:53:05-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -71,7 +71,8 @@ sub Read_CA_List_File($);
 sub String_To_Seconds($);
 sub Seconds_To_String($);
 sub Signing_Policy($);
-sub Get_CA_Info($);
+sub CA_Config_Dir_List();
+sub Get_CA_Info(@);
 sub Disabled($);
 sub Allow_Missing_CRL($);
 sub CRL_Info($$$);
@@ -180,9 +181,9 @@ my $ca_conf_dir = "$Install_Dir/etc/gx-map/ca-config";
 Gridmap_Utils::Install_Die_Handler;
 Gridmap_Utils::Install_Warn_Handler;
 
-my $CA_Info = Get_CA_Info $ca_conf_dir;
+my $CA_Info = Get_CA_Info CA_Config_Dir_List;
 if (not defined $CA_Info) {
-    die "Error reading CA information from $ca_conf_dir\n"
+    die "Error reading CA information\n"
 }
 
 if ($User_Opt->{'list-cas'} or $User_Opt->{'list-all-cas'}) {
@@ -556,60 +557,103 @@ sub Signing_Policy($) {
 # ----------------------------------------------------------------------
 
 #
-# Given a directory name, reads all *.cadesc files in that directory
-# (excluding any whose names begin with "00000000.").  If there are any
-# errors, prints a message and dies.  Otherwise, returns a reference to
-# a hash: keys are hashes (8 hex digits), values are CA references as
-# returned by Gridmap_Utils::Get_CA_Ref().
+# Returns the list of CA config directories in the installation.
+# Directories are under the etc/gx-map subdirectory, and are either named
+# "ca-config" or have names ending in ".ca-config".  The "ca-config"
+# directory always appears first, followed by the others in sorted order.
 #
-sub Get_CA_Info($) {
-    my($dir) = @_;
-    opendir my $DIR, $dir or die "${dir}: $!\n";
-    my @cadesc_files = sort
-                           grep { /\.cadesc$/ and not /^00000000\./ }
-                               readdir $DIR;
+sub CA_Config_Dir_List() {
+    my @result = ();
+    my $etc_dir = "$Install_Dir/etc/gx-map";
+    opendir my $DIR, "$Install_Dir/etc/gx-map"
+        or die "$Install_Dir/etc/gx-map: $!\n";
+    my @list = grep /\.ca-config$/, sort readdir $DIR;
     closedir $DIR;
+    foreach my $dir ('ca-config', @list) {
+        push @result, "$etc_dir/$dir" if -d "$etc_dir/$dir";
+    }
+    return @list;
+} # CA_Config_Dir_List
+
+# ----------------------------------------------------------------------
+
+#
+# Given a list of directory names, reads all *.cadesc files in those
+# directories, excluding any whose names begin with "00000000.".
+# If there are any errors, prints a message and dies (unless the
+# "-ignore-bad-cadesc" option is set).  Otherwise, returns
+# a reference to a hash: keys are hashes (8 hex digits), values are CA
+# references as returned by Gridmap_Utils::Get_CA_Ref().
+#
+sub Get_CA_Info(@) {
+    my(@dir_list) = @_;
+    my @cadesc_files = ();
+    my %basename = ();
+    foreach my $dir (@dir_list) {
+        opendir my $DIR, $dir or die "${dir}: $!\n";
+        foreach my $file (sort readdir $DIR) {
+            next if $file !~ /\.cadesc$/;
+            next if $file =~ /^00000000\./;
+            push @cadesc_files, "$dir/$file";
+            $basename{"$dir/$file"} = $file;
+        }
+        closedir $DIR;
+    }
+
+    if (scalar @cadesc_files == 0) {
+        die "No *.cadesc files found\n";
+    }
 
     my $result = ();
     my @errors = ();
 
-    if (scalar @cadesc_files == 0) {
-        die "No *.cadesc files in $dir\n";
-    }
-
     FILE:
     foreach my $file (@cadesc_files) {
+        my $basename = $basename{$file};
         my($hash, $short_name);
-        if ($file =~ /^([0-9a-f]{8})\.(.*)\.cadesc$/) {
+        if ($basename =~ /^([0-9a-f]{8})\.(.*)\.cadesc$/) {
             ($hash, $short_name) = ($1, $2);
         }
         else {
             push @errors, "Bad file name: $file\n";
             next FILE;
         }
-        my $ref = Gridmap_Utils::Get_CA_Ref "$dir/$file";
+        my $ref = Gridmap_Utils::Get_CA_Ref $file;
         if (ref $ref eq 'ARRAY') {
             #
             # The returned value is an error message, not a hash reference.
             #
             my $s = (scalar @$ref == 1 ? '' : 's');
-            push @errors, "Error$s in $dir/${file}:\n";
+            push @errors, "Error$s in ${file}:\n";
             foreach my $error (@$ref) {
                 push @errors, "    $error\n";
             }
         }
         elsif (ref $ref eq 'HASH') {
+            #
+            # Point of possible confusion:
+            # The value 'HASH' returned by "ref $ref" indicates a Perl
+            # hash (associative array).
+            # The key value 'HASH', as in "$ref->{HASH}", is the 8-digit
+            # hexadecimal hash value for the CA certificate.
+            #
             if ($ref->{HASH} ne $hash) {
                 push @errors,
                      "Inconsistent hash value $ref->{HASH} for file $file\n";
                 next FILE;
             }
-            if (defined $result->{$hash}) {
-                my $orig_name = $result->{$hash}->{_FILE_BASENAME};
-                push @errors, "Conflicting file names in ${dir}:\n",
-                              "$orig_name vs. $file\n";
-                next FILE;
-            }
+            #
+            # Previously, having two cadesc files with the same hash
+            # was considered an error.  With the added ability to use
+            # multiple ca-config directories, we instead let later cadesc
+            # files quietly override earlier ones.
+            #
+            # if (defined $result->{$hash}) {
+            #     my $orig_name = $result->{$hash}->{_FILE_BASENAME};
+            #     push @errors, "Conflicting file names in ${dir}:\n",
+            #                   "$orig_name vs. $file\n";
+            #     next FILE;
+            # }
             $result->{$hash} = $ref;
         }
         else {
@@ -618,7 +662,7 @@ sub Get_CA_Info($) {
         }
     }
     if (@errors and not $User_Opt->{'ignore-bad-cadesc'}) {
-        die @errors;
+        die @errors, "Fix or use \"-ignore-bad-cadesc\"\n";
     }
     else {
         return $result;
