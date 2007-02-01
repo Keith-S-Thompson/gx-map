@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.6 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.7 2007-01-31 19:35:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -79,6 +79,8 @@ my @Opts = ( $User_Opt,
              qw( help
                  version
                  install-dir=s
+                 name=s
+                 primary!
                  debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -87,6 +89,26 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 Usage if scalar @ARGV != 1;
+
+if (not defined $User_Opt->{name} and not defined $User_Opt->{primary}) {
+    Usage qq(Either "-name" or "-primary" must be specified\n);
+}
+elsif (defined $User_Opt->{name} and defined $User_Opt->{primary}) {
+    Usage qq(The "-name" and "-primary" options may not both be specified\n);
+}
+
+my $Config_Dir;
+if (defined $User_Opt->{primary}) {
+    $Config_Dir = 'ca-config';
+}
+else {
+    if ($User_Opt->{name} =~ /^[\w.-_]+$/) {
+        $Config_Dir = "$User_Opt->{name}.ca-config";
+    }
+    else {
+        Usage qq(Bad value for -name option: "$User_Opt->{name}"\n);
+    }
+}
 
 my $tarball = $ARGV[0];
 
@@ -113,8 +135,8 @@ chdir "$User_Opt->{'install-dir'}/etc/gx-map"
     or die "$User_Opt->{'install-dir'}: $!\n";
 
 my $backup_ca_config_dir = undef;
-if (-d 'ca-config') {
-    $backup_ca_config_dir = Backup 'ca-config';
+if (-d $Config_Dir) {
+    $backup_ca_config_dir = Backup $Config_Dir;
 }
 
 print "% gzip -d < $tarball | tar xf -\n";
@@ -122,19 +144,19 @@ my $result = system "gzip -d < $tarball | tar xf -";
 die "Command failed\n" if $result != 0;
 die "Directory $dir not created\n" if not -d $dir;
 
-rename $dir, 'ca-config' or die "Renaming $dir to ca-config: $!\n";
+rename $dir, $Config_Dir or die "Renaming $dir to $Config_Dir: $!\n";
 
 if (defined $backup_ca_config_dir) {
     print <<"EOF";
 Your existing directory
-    $User_Opt->{'install-dir'}/etc/gx-map/ca-config
+    $User_Opt->{'install-dir'}/etc/gx-map/$Config_Dir
 has been renamed to
     $User_Opt->{'install-dir'}/etc/gx-map/$backup_ca_config_dir
 and a new directory has been created and populated in its place.
 
 If you've created or customized any *.cadesc files, you can copy them
-from the backup directory to the new ca-config directory.  If not,
-you can remove the backup directory.
+from the backup directory to the new $Config_Dir directory.
+If not, you can remove the backup directory.
 EOF
 }
 
@@ -179,11 +201,14 @@ sub Usage(@) {
 Usage: $Program_Name [options] filename
 The file must have a name ending in ".tar.gz".
 Option names may be abbreviated.
-    -help            : Display this message and exit.
-    -version         : Display version information and exit.
-    -install-dir dir : gx-map installation directory
-                       Default is $Install_Dir
-    -debugging       : Display debugging messages
+    -help             Display this message and exit
+    -version          Display version information and exit
+    -install-dir DIR  gx-map installation directory
+                      Default is $Install_Dir
+    -name NAME        Install directory as "NAME.ca-config"
+    -primary          Install directory as "ca-config"
+                      Either "-name" or "-primary" must be given
+    -debugging        Display debugging messages
 EOF
     exit 1;
 } # Usage
