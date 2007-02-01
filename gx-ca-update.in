@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.138 2007-01-30 21:39:57-08 kst Exp $
+# $Id: gx-ca-update.in,v 1.139 2007-01-31 17:06:15-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -121,6 +121,7 @@ my @Opts = ( $User_Opt,
                  force!
                  ignore-disable!
                  email!
+                 ignore-bad-cadesc!
                  verbose!
                  debugging! ) );
 $Getopt::Long::ignorecase = 0; # options are case-sensitive
@@ -616,7 +617,7 @@ sub Get_CA_Info($) {
                 "Gridmap_Utils::Get_CA_Ref: $ref\n";
         }
     }
-    if (@errors) {
+    if (@errors and not $User_Opt->{'ignore-bad-cadesc'}) {
         die @errors;
     }
     else {
@@ -1717,6 +1718,9 @@ Usage: $Program_Name [options]
                        Requires "-UNSAFE".
     -email             Send e-mail to configured ADMIN_EMAIL address on errors.
                        Default is "-email"; use "-noemail" to disable.
+    -ignore-bad-cadesc By default, a syntax error in a cadesc file causes
+                       gx-ca-update to die with an error message.  With
+                       this option, cadesc files with errors are ignored.
     -verbose           Print verbose messages.
     -debugging         Enable debugging output.
 EOF
