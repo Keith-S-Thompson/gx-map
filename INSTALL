@@ -1,4 +1,4 @@
-# $Id: INSTALL,v 1.10 2006-10-24 01:47:38-07 kst Exp $
+# $Id: INSTALL,v 1.11 2007-02-02 22:58:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/INSTALL,v $
 
 Installation instructions for gx-map 0.5.X
@@ -84,6 +84,8 @@ The required Perl modules are:
 
     File::Basename  (standard)
     File::Copy      (standard)
+    File::Path      (standard)
+    File::Temp      (standard)
     Getopt::Long    (standard)
     Time::Local     (standard)
     Cwd             (standard)
