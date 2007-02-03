@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.308 2007-02-02 22:59:02-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.309 2007-02-02 23:06:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -321,6 +321,94 @@ sub Make_Temp_Dir() {
 sub Delete_Temp_Dir($) {
     File::Path::rmtree($_[0]);
 } # Delete_Temp_Dir
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of a certificate file, returns a reference to information
+# about the certificate:
+#     hash
+#     issuer
+#     subject
+#     md5sum
+#     sha1sum
+#     startdate (raw timestamp)
+#     enddate   (raw timestamp)
+#
+# The second argument specifies the form of the certificate, either 'PEM',
+# 'DER', or 'NET'.
+#
+# The optional third argument, if set to 'nomd5', causes the md5sum
+# to be omitted (any other argument value is a fatal error).
+#
+# Returns undef if any of these fields cannot be determined.
+#
+sub Certificate_Info($$;$) {
+    my($cert_file, $cert_form, $third_arg) = @_;
+    return undef if not -r $cert_file;
+    my $need_md5 = 1;
+    if (defined $third_arg) {
+        if ($third_arg eq 'nomd5') {
+            $need_md5 = 0;
+        }
+        else {
+            die "Bad 3rd argument to Certificate_Info() $third_arg\n";
+        }
+    }
+    Use_Commands 'openssl';
+    my $result = {};
+    open my $Pipe1, '-|',
+         "openssl x509 -in '$cert_file' -inform $cert_form -noout -hash " .
+         "-issuer -subject -sha1 -fingerprint -startdate -enddate 2>/dev/null";
+    while (<$Pipe1>) {
+        chomp;
+        if (/^[\da-f]{8}$/) {
+            $result->{hash} = $_;
+        }
+        elsif (/^issuer=\s*(.*)$/) {
+            $result->{issuer} = Gridmap_Utils::GT4_Subject $1;
+        }
+        elsif (/^subject=\s*(.*)$/) {
+            $result->{subject} = Gridmap_Utils::GT4_Subject $1;
+        }
+        elsif (/^sha1.*=\s*(.*)$/i) {
+            $result->{sha1sum} = $1;
+        }
+        elsif (/^notBefore=\s*(.*)$/) {
+            $result->{startdate} = Gridmap_Utils::Time_Value $1;
+        }
+        elsif (/^notAfter=\s*(.*)$/) {
+            $result->{enddate} = Gridmap_Utils::Time_Value $1;
+        }
+    }
+    close $Pipe1;
+
+    #
+    # openssl won't display both md5 and sha1 fingerprints in a single
+    # command (unless it reads commands from stdin).
+    #
+    if ($need_md5) {
+        open my $Pipe2, '-|',
+             "openssl x509 -in '$cert_file' -inform $cert_form " .
+             "-noout -md5 -fingerprint 2>/dev/null";
+        while (<$Pipe2>) {
+            if (/^md5.*=\s*(.*)$/i) {
+                $result->{md5sum} = $1;
+            }
+        }
+        close $Pipe2;
+    }
+
+    foreach my $key (qw(hash issuer subject
+                        sha1sum
+                        startdate enddate))
+    {
+        return undef if not defined $result->{$key};
+    }
+    return undef if $need_md5 and not defined $result->{md5sum};
+
+    return $result;
+} # Certificate_Info
 
 # ----------------------------------------------------------------------
 
