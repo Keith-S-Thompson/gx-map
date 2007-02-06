@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.309 2007-02-02 23:06:49-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.310 2007-02-06 02:26:40-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -129,6 +129,9 @@ sub Untaint(\$);
 
 sub Make_Temp_Dir();
 sub Delete_Temp_Dir($);
+
+sub OpenSSL_Version();
+sub Certificate_Info($$;$);
 
 sub Get_mtime($);
 sub Is_Legal_Username($);
@@ -321,6 +324,37 @@ sub Make_Temp_Dir() {
 sub Delete_Temp_Dir($) {
     File::Path::rmtree($_[0]);
 } # Delete_Temp_Dir
+
+# ----------------------------------------------------------------------
+
+#
+# Invokes "openssl version" and computes a numeric version number.
+# The result is similar to the value of the OPENSSL_VERSION_NUMBER macro
+# defined in <openssl/opensslv.h>, but the patch and status fields are
+# ignored (since we don't currently make use of that information).
+#
+sub OpenSSL_Version() {
+    my($command) = @_;
+    my $version_string;
+    Use_Commands 'openssl';
+    open my $Pipe, '-|', 'openssl', 'version';
+    while (<$Pipe>) {
+        if (/^OpenSSL\s+(\S+)/) {
+            $version_string = $1;
+        }
+    }
+    close $Pipe;
+    if (defined $version_string and
+        $version_string =~ /^(\d+)\.(\d+)\.(\d+)/)
+    {
+        my($major, $minor, $fix) = ($1, $2, $3);
+        foreach my $v ($major, $minor, $fix) {
+            return undef if $v < 0 or $v > 99;
+        }
+        return ($major<<28) + ($minor<<20) + ($fix<<12);
+    }
+    return undef;
+} # OpenSSL_Version
 
 # ----------------------------------------------------------------------
 
