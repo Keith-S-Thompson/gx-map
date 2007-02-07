@@ -1,0 +1,20 @@
+# $Id: 8a047de1.nectec.cadesc,v 1.1 2007-02-06 22:42:43-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/8a047de1.nectec.cadesc,v $
+
+CA_NAME             NECTEC GOC CA, Thailand
+HOMEPAGE            http://gridca.hpcc.nectec.or.th/
+CONTACT             Sornthep Vannarat <sornthep@nectec.or.th>
+HASH                8a047de1
+SUBJECT             /C=TH/O=NECTEC/OU=GOC/CN=NECTEC GOC CA
+MAY_SIGN            /C=TH/O=NECTEC/*
+CERTIFICATE_MD5     7B:0C:D0:64:A2:C9:4A:CD:5B:00:5B:E5:75:40:DC:DF
+CERTIFICATE_SHA1    83:0F:E9:1A:5E:4D:DC:A3:63:B4:84:5A:A9:9E:D5:A2:81:07:57:20
+CERTIFICATE_URL     http://gridca.hpcc.nectec.or.th/pub/cacert/8a047de1.0
+SIGNING_POLICY_URL  http://gridca.hpcc.nectec.or.th/pub/globus_bundle/8a047de1.signing_policy
+CRL_URL             http://gridca.hpcc.nectec.or.th/pub/crl/8a047de1.r0
+CERT_EXPIRES        Mon 2017-01-02 03:24:57 UTC
+
+# Homepage and contact information from APGrid PMA,
+# <https://www.apgrid.org/CA/CertificateAuthorities.html>
+
+# MD5 and SHA1 fingerprints from 8a047de1.0 downloaded Tue 2007-02-06
