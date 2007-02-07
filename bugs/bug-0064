@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.10 2007-01-23 20:34:33-08 kst Exp $
+# $Id: bug-0064,v 1.11 2007-02-06 19:28:52-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -127,7 +127,7 @@ before signing was implemented) are accepted.
     A simpler but less flexible approach is to handle this in
     gx-convert-log.  The next version of gx-map will have new request
     attributes, so gx-convert log will be necessary for an upgrade
-    anyway.  Add an command-line option to specify whether unverified
+    anyway.  Add a command-line option to specify whether unverified
     requests in the input log will be marked as verified or not.
     (Note that admin requests do not require verification.)
 
