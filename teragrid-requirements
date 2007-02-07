@@ -1,4 +1,4 @@
- $Id: teragrid-requirements,v 1.14 2006-08-15 21:15:14-07 kst Exp $
+ $Id: teragrid-requirements,v 1.15 2007-02-06 19:11:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/teragrid-requirements,v $
 
 Missing requirements for gx-map on TeraGrid systems
@@ -16,15 +16,19 @@ NCSA:
 	(This may not be a problem if the DB interaction can be done on
 	another node with a shared filesystem -- but NCSA is not
 	inclined to do that).
-	Had "/usr/bin/crontab: permission denied", but that's fixed.
+	Had "/usr/bin/crontab: permission denied", but that's fixed --
+	but now it's broken again.
+	:05
     co-login1.ncsa.teragrid.org (Cobalt)
-	:55
+	/usr/bin/crontab: Permission denied.
+	:06
 	ok
     login-w.ncsa.teragrid.org (Tungsten)
-	:20
+	Missing Time::HiRes
+	:07
 	ok
     login-cu.ncsa.teragrid.org (Copper)
-	:5
+	:08
 	No curl command (I installed it separately).
 
     TG Ticket 124268
@@ -89,9 +93,8 @@ IU:
 
 ORNL:
     tg-login1.ornl.teragrid.org
-	:40
-	/usr/bin/crontab: Permission denied (now ok).
-	ok
+	:35
+	Perl doesn't have DBD::Pg (it was previously ok).
 
     TG Ticket 124273 (closed)
 
@@ -102,15 +105,14 @@ PURDUE:
 
 TACC:
     lonestar2.tacc.utexas.edu
-	:25
-	Perl doesn't have Time::HiRes (lonestar only; lonestar2 is ok)
-	(DB connection ok)
+	:12
+	ok
     maverick.tacc.utexas.edu
-	Library problem with "curl" command (see TeraGrid Ticket #
-	123699), now fixed.
-	no pg_hba.conf entry for host "129.114.50.3
+	:10
+	The openssl command isn't installed in any obvious location;
+	there are copies in the gsi-openssh-3.6-r1 and globus-4.0.1-r3
+	installation directories, but gx-map probably shouldn't
+	depend on those paths.	I recommend installing a new OpenSSL
+	under /usr/local/apps, and possibly creating a symlink in
+	/usr/local/bin.
 	Perl code using DBI needs /usr/local/lib in $LD_LIBRARY_PATH
-
-    TG Ticket 124275
-    Time::HiRes installed on Lonestar and Lonestar2
-    (Lonestar2?)
