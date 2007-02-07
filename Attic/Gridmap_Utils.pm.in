@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.310 2007-02-06 02:26:40-08 kst Exp $
+# $Id: Gridmap_Utils.pm.in,v 1.311 2007-02-06 23:51:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -99,7 +99,7 @@ BEGIN {
                 ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
                 ADMIN_EMAIL              => '%ADMIN_EMAIL%',
                 REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
-                CERTIFICATE_DIR          => '%CERTIFICATE_DIR%',
+                CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
                 GX_PROPAGATE             => '%GX_PROPAGATE%',
                 EXTRAS                   => '%EXTRAS%' );
     use File::Basename ();
