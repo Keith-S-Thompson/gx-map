@@ -1,0 +1,27 @@
+# $Id: bug-0132,v 1.1 2007-02-07 18:47:09-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0132,v $
+
+gx-map bug 0132
+Date: Wed 2007-02-07
+Severity: Med
+Reported by: Abe Singer <abe@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Consider disallowing re-mapping of DNs.
+
+Currently, gx-map allows a DN to be remapped from one account to
+another.  In other words, if a DN is mapped to user1, and user2 maps
+that same DN to his own acount, then that overrides the original
+mapping *without user1's permission*.
+
+Note that the DN will actually be mapped to both accounts, but
+in the current implementation the mapping will be "user2,user1".
+
+Consider how to address this.  Should an attempt to re-map an existing
+DN be ignored?  Should it be allowed only for an administrator?
+Should multiple usernames be listed in chronological order rather
+than reverse chronological order?
+
+Requiring users to prove that they own the certificates they're
+mapping (see bug-0064) will address much of this, but it's still
+worth thinking about.
