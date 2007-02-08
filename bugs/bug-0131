@@ -1,4 +1,4 @@
-# $Id: bug-0131,v 1.1 2007-02-07 18:47:09-08 kst Exp $
+# $Id: bug-0131,v 1.2 2007-02-07 19:17:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0131,v $
 
 gx-map bug 0131
@@ -27,5 +27,10 @@ On the other hand, running as a non-root user can reduce the damage
 caused by software bugs.  If some privileged gx-map command has a
 bug that can cause it to clobber the /etc/passwd file, for example,
 that bug won't cause problems unless it's running as root.
+
+If this were to be done, it would make sense to run as some non-root
+user (which one?) as much as possible, dropping privileges for anything
+that doesn't require root access.  See the Execute() function in
+gpt-wizard for some information on this.
 
 To do: Think about this.
