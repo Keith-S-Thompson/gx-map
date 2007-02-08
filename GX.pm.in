@@ -1,0 +1,2987 @@
+# $Id: GX.pm.in,v 1.1 2007-02-08 12:25:42-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2007 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+
+package GX;
+
+################ Module Preamble ################
+
+#
+# In gx-map release 0.5.3.2 and earlier, this package was named
+# "Gridmap_Utils".
+#
+# This package does not use the Exporter module, so any code that uses
+# entities declared here must use an explicit "GX::" prefix.
+#
+# The value of the VERSION variable is the version number for the entire
+# gx-map system.
+#
+# The %Config hash contains values generated before installation by
+# configure-gx-map.  Note that the PERL and INSTALL_DIR options are
+# necessarily expanded directly in each file; other options should be
+# referenced via the %GX::Config hash.
+# 
+
+#
+# Some Perl installations don't have the Net::Domain module.  We want
+# to use it in the Get_Hostname function if it's available; otherwise
+# we'll fall back to the "hostname" command.
+#
+# Normally we use the Time::HiRes module to get timestamps with
+# microsecond resolution.  If this module is not available, we can fall
+# back to an external gettimeofday program, which must be installed
+# separately.
+#
+
+my $Have_Net_Domain_Module;
+my $Have_Time_HiRes_Module;
+
+BEGIN {
+    require 5.006;
+    use vars qw($VERSION $Debugging %Config $Registered_Handler_Function);
+
+    #
+    # The layout of the following line is significant; see configure-gx-map.
+    #
+    $VERSION = '0.5.3.2.012';
+
+    $Debugging = undef; 
+    %Config = ( PERL                     => '%PERL%',
+                PATH                     => '%PATH%',
+                NAMESPACE                => '%NAMESPACE%',
+                INSTALL_DIR              => '%INSTALL_DIR%',
+                DATA_DIR                 => '%DATA_DIR%',
+                REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
+                GX_MAP_OWNER             => '%GX_MAP_OWNER%',
+                ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
+                ADMIN_EMAIL              => '%ADMIN_EMAIL%',
+                REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
+                CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
+                GX_PROPAGATE             => '%GX_PROPAGATE%',
+                EXTRAS                   => '%EXTRAS%' );
+    use File::Basename ();
+    use File::Path ();
+    use File::Temp ();
+    use Time::Local ();
+    use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
+    eval 'use Time::HiRes ()';
+    $Have_Time_HiRes_Module = ( $@ eq '' );
+    eval 'require Net::Domain';
+    $Have_Net_Domain_Module = ( $@ eq '' );
+} 
+
+# ----------------------------------------------------------------------
+
+#
+# Get_Config (for runtime configuration) should be in the next major
+# release.
+#
+# sub Get_Config($);
+
+sub Check_Data_Dir();
+
+# sub Is_Tainted($);
+# sub Check_Tainting($$);
+sub Untaint(\$);
+
+sub Make_Temp_Dir();
+sub Delete_Temp_Dir($);
+
+sub OpenSSL_Version();
+sub Certificate_Info($$;$);
+
+sub Get_mtime($);
+sub Is_Legal_Username($);
+sub Get_PW_Name($);
+sub Get_PW_UID($);
+sub Get_Hostname();
+sub Dir_Error($);
+sub Require_Owner($);
+
+sub Is_Admin_Account($);
+
+sub Use_Commands(@);
+
+sub Increment_Timestamp($);
+sub Get_Time_Of_Day();
+sub Timestamp_Of($);
+sub Time_Image($);
+sub Long_Time_Image($);
+sub Time_Value($);
+
+sub Get_DNs_From_List_File($);
+
+sub Write_Records($$@);
+sub Read_Records(@);
+
+sub Write_Multifile($@);
+sub Read_Multifile($);
+
+sub Sort_By_Timestamp(@);
+
+sub Gen_Mappings(@);
+
+sub Is_URL($);
+
+sub Cache_File(@);
+sub Release_Cache_File($);
+
+#
+# Read_User_Map and Read_Admin_List were intended to allow gx-gen-mapfile
+# to read request logs from other sites, with other namespaces.  This has
+# never really been used, and is currently unsupported.
+#
+# sub Read_User_Map($;$);
+# sub Read_Admin_List($);
+
+sub DN_Error(@);
+sub GT2_Subject($);
+sub GT3_Subject($);
+sub GT4_Subject($);
+sub DN_List($@);
+sub Normalize_DN($);
+
+sub Send_Email($$$$);
+
+sub Get_CA_Ref($);
+
+sub Get_Lock($);
+sub Release_Lock($);
+
+sub Install_Die_Handler();
+sub Install_Warn_Handler();
+sub Uninstall_Handlers();
+sub Register_Handler_Function($);
+
+#
+# This function is TeraGrid-specific.
+# It should probably be in a separate TG-specific module, but we'll
+# leave it here for now.
+#
+sub Get_TGCDB_Config($);
+
+sub Debug(@);
+sub Debugf(@);
+
+########################################################################
+
+# sub Get_Config($) {
+#     my($config_file) = @_;
+#     my $result = {};
+#     my %valid_var_name = map { $_ => 1 }
+#                              qw( PERL
+#                                  PATH
+#                                  NAMESPACE
+#                                  INSTALL_DIR
+#                                  DATA_DIR
+#                                  REQUESTS_LOG_PERMISSIONS
+#                                  GX_MAP_OWNER
+#                                  ADDITIONAL_ADMINS
+#                                  ADMIN_EMAIL
+#                                  VALID_MAPPINGS_FILE
+#                                  GX_PROPAGATE );
+#     my %optional_var = ( VALID_MAPPINGS_FILE => 1 );
+#     open my $Config, '<', $config_file or die "$config_file: $!\n";
+#     while (<$Config>) {
+#         s/#.*$//;
+#         s/^\s+//;
+#         s/\s+$//;
+#         next if /^$/;
+#    
+#         chomp;
+#    
+#         if (/^(\w+)\s+(.*)$/) {
+#             my($name, $value) = ($1, $2);
+#             eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
+#             if ($@) {
+#                 chomp $@;
+#                 push @errors, "$@, $config_file line $.\n";
+#             }
+#             if ($valid_var_name{$name}) {
+#                 if (exists $Config{$name}) {
+#                     push @errors,
+#                          "Duplicate name \"$name\", $config_file line $.\n";
+#                 }
+#                 else {
+#                     $result->{$name} = $value;
+#                 }
+#             }
+#             else {
+#                 push @errors, "Invalid name \"$name\", $config_file line $.\n";
+#             }
+#             if ($value eq 'UNDEF' and not $optional_var{$name}) {
+#                 push @errors,
+#                      "Undefined value for \"$name\", $config_file line $.\n";
+#             }
+#         }
+#     }
+#     close $Config;
+#     die @errors if @errors;
+# } Get_Config
+
+# ----------------------------------------------------------------------
+
+#
+# Check that the data directory exists.
+# Die with an error message if it doesn't.
+#
+sub Check_Data_Dir() {
+   my $install_dir = $GX::Config{INSTALL_DIR};
+   my $data_dir    = $GX::Config{DATA_DIR};
+    if (    -l "$install_dir/gx-map-data" and
+        not -d "$install_dir/gx-map-data/.")
+    {
+        die "    $install_dir/gx-map-data\n" .
+            "is a symbolic link to\n" .
+            "    $data_dir\n" .
+            "which doesn't exist\n";
+    }
+} # Check_Data_Dir
+
+# ----------------------------------------------------------------------
+
+# sub Is_Tainted($) {
+#     my($arg) = @_;
+#     my $nada = substr($arg, 0, 0);  # zero-length
+#     local $@;  # preserve caller's version
+#     eval { eval "# $nada" };
+#     return length($@) != 0;
+# } # Is_Tainted
+
+# ----------------------------------------------------------------------
+
+# sub Check_Tainting($$) {
+#     my($name, $value) = @_;
+#     if (Is_Tainted $value) {
+#         die ">>> $name = \"$value\" is tainted\n";
+#     }
+# } # Check_Tainting
+
+# ----------------------------------------------------------------------
+
+sub Untaint(\$) {
+    my($ref) = @_;
+    ($$ref) = ($$ref =~ /(.*)/);
+} # Untaint
+
+# ----------------------------------------------------------------------
+
+#
+# Creates a temporary directory and returns its name.
+#
+sub Make_Temp_Dir() {
+    return File::Temp::tempdir();
+} # Make_Temp_Dir
+
+# ----------------------------------------------------------------------
+
+#
+# Removes a temporary directory and its contents.
+#
+sub Delete_Temp_Dir($) {
+    File::Path::rmtree($_[0]);
+} # Delete_Temp_Dir
+
+# ----------------------------------------------------------------------
+
+#
+# Invokes "openssl version" and computes a numeric version number.
+# The result is similar to the value of the OPENSSL_VERSION_NUMBER macro
+# defined in <openssl/opensslv.h>, but the patch and status fields are
+# ignored (since we don't currently make use of that information).
+#
+sub OpenSSL_Version() {
+    my($command) = @_;
+    my $version_string;
+    GX::Use_Commands 'openssl';
+    open my $Pipe, '-|', 'openssl', 'version';
+    while (<$Pipe>) {
+        if (/^OpenSSL\s+(\S+)/) {
+            $version_string = $1;
+        }
+    }
+    close $Pipe;
+    if (defined $version_string and
+        $version_string =~ /^(\d+)\.(\d+)\.(\d+)/)
+    {
+        my($major, $minor, $fix) = ($1, $2, $3);
+        foreach my $v ($major, $minor, $fix) {
+            return undef if $v < 0 or $v > 99;
+        }
+        return ($major<<28) + ($minor<<20) + ($fix<<12);
+    }
+    return undef;
+} # OpenSSL_Version
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of a certificate file, returns a reference to information
+# about the certificate:
+#     hash
+#     issuer
+#     subject
+#     md5sum
+#     sha1sum
+#     startdate (raw timestamp)
+#     enddate   (raw timestamp)
+#
+# The second argument specifies the form of the certificate, either 'PEM',
+# 'DER', or 'NET'.
+#
+# The optional third argument, if set to 'nomd5', causes the md5sum
+# to be omitted (any other argument value is a fatal error).
+#
+# Returns undef if any of these fields cannot be determined.
+#
+sub Certificate_Info($$;$) {
+    my($cert_file, $cert_form, $third_arg) = @_;
+    return undef if not -r $cert_file;
+    my $need_md5 = 1;
+    if (defined $third_arg) {
+        if ($third_arg eq 'nomd5') {
+            $need_md5 = 0;
+        }
+        else {
+            die "Bad 3rd argument to GX::Certificate_Info() $third_arg\n";
+        }
+    }
+    GX::Use_Commands 'openssl';
+    my $result = {};
+    open my $Pipe1, '-|',
+         "openssl x509 -in '$cert_file' -inform $cert_form -noout -hash " .
+         "-issuer -subject -sha1 -fingerprint -startdate -enddate 2>/dev/null";
+    while (<$Pipe1>) {
+        chomp;
+        if (/^[\da-f]{8}$/) {
+            $result->{hash} = $_;
+        }
+        elsif (/^issuer=\s*(.*)$/) {
+            $result->{issuer} = GX::GT4_Subject $1;
+        }
+        elsif (/^subject=\s*(.*)$/) {
+            $result->{subject} = GX::GT4_Subject $1;
+        }
+        elsif (/^sha1.*=\s*(.*)$/i) {
+            $result->{sha1sum} = $1;
+        }
+        elsif (/^notBefore=\s*(.*)$/) {
+            $result->{startdate} = GX::Time_Value $1;
+        }
+        elsif (/^notAfter=\s*(.*)$/) {
+            $result->{enddate} = GX::Time_Value $1;
+        }
+    }
+    close $Pipe1;
+
+    #
+    # openssl won't display both md5 and sha1 fingerprints in a single
+    # command (unless it reads commands from stdin).
+    #
+    if ($need_md5) {
+        open my $Pipe2, '-|',
+             "openssl x509 -in '$cert_file' -inform $cert_form " .
+             "-noout -md5 -fingerprint 2>/dev/null";
+        while (<$Pipe2>) {
+            if (/^md5.*=\s*(.*)$/i) {
+                $result->{md5sum} = $1;
+            }
+        }
+        close $Pipe2;
+    }
+
+    foreach my $key (qw(hash issuer subject
+                        sha1sum
+                        startdate enddate))
+    {
+        return undef if not defined $result->{$key};
+    }
+    return undef if $need_md5 and not defined $result->{md5sum};
+
+    return $result;
+} # Certificate_Info
+
+# ----------------------------------------------------------------------
+
+#
+# If the named file exists, returns its mtime.
+# If not, returns undef.
+#
+sub Get_mtime($) {
+    my($filename) = @_;
+    my @stat = stat $filename;
+    if (@stat) {
+        return $stat[9];
+    }
+    else {
+        return undef;
+    }
+} # Get_mtime
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the argument is a syntactically legal Unix username.
+# It must be a non-empty string consisting entirely of upper or lower
+# case letters, digits, '_', '-', '.'.  (Note that "123" is assumed
+# to be a valid user name.)  The actual legality rules are unclear,
+# and may vary from system to system.
+#
+sub Is_Legal_Username($) {
+    my($name) = @_;
+    if ($name =~ /^[\w.-]+$/) {
+        return 1;
+    }
+    else {
+        return 0;
+    }
+} # Is_Legal_Username
+
+# ----------------------------------------------------------------------
+
+#
+# A helper function for Init_PW_Info, not externaly visible.
+#
+sub Translate_PW(@) {
+    my @pw = @_;
+    if (scalar @pw < 9) {
+        return undef;
+    }
+    else {
+        my $result;
+        my @fields = qw(name passwd uid gid quota
+                        comment gcos dir shell expire);
+        my $last_field = ($#pw < $#fields ? $#pw : $#fields);
+        for (my $i = 0; $i <= $last_field; $i ++) {
+            $result->{$fields[$i]} = $pw[$i];
+        }
+        return $result;
+    }
+} # Translate_PW
+
+# ----------------------------------------------------------------------
+
+#
+# Variables used by Init_PW_Info
+#
+my $pw_info_initialized = 0;
+my %pw_by_name = ();
+my %pw_by_uid = ();
+
+# ----------------------------------------------------------------------
+
+#
+# A helper function for Get_PW_Name and Get_PW_UID, not meant to be
+# externally visible.
+#
+sub Init_PW_Info() {
+    my @pw;
+    setpwent;
+    while (@pw = getpwent) {
+        my $pw = GX::Translate_PW @pw;
+        $pw_by_name{$pw->{name}} = $pw;
+        $pw_by_uid{$pw->{uid}} = $pw;
+    }
+    endpwent;
+    $pw_info_initialized = 1;
+} # Init_PW_Info
+
+# ----------------------------------------------------------------------
+
+#
+# A friendlier getpwnam function
+# Returns a hash reference; keys are 'name', 'passwd', etc.
+# Returns undef on failure.
+#
+sub Get_PW_Name($) {
+    my($user) = @_;
+    GX::Init_PW_Info if not $pw_info_initialized;
+    return $pw_by_name{$user};
+} # Get_PW_Name
+
+# ----------------------------------------------------------------------
+
+#
+# A friendlier getpwuid function
+# Returns a hash reference; keys are 'name', 'passwd', etc.
+# Returns undef on failure.
+#
+sub Get_PW_UID($) {
+    my($uid) = @_;
+    GX::Init_PW_Info if not $pw_info_initialized;
+    return $pw_by_uid{$uid};
+} # Get_PW_UID
+
+# ----------------------------------------------------------------------
+
+#
+# Return the current hostname, as a fully qualified domain name if
+# possible.  Use the Net::Domain module if it's available; otherwise,
+# fall back to the hostname command.
+#
+sub Get_Hostname() {
+    if ($Have_Net_Domain_Module) {
+        #
+        # Workaround for Perl bug on Blue Gene/L (Linux/PPC64).
+        # Calls that depend on asm-ppc/unistd.ph result in spurious
+        # warning messages.  Temporarily redirect the warning handler
+        # to avoid this.
+        #
+        local($SIG{__WARN__}) = sub { };
+        #
+        # Net::Domain may try to invoke an external command.
+        # Use_Commands sets $PATH.
+        #
+        GX::Use_Commands();
+        return eval 'Net::Domain::hostfqdn()';
+    }
+    else {
+        GX::Use_Commands 'hostname';
+        my $hostname = `hostname 2>/dev/null`;
+        chomp $hostname;
+        return $hostname;
+    }
+} # Get_Hostname
+
+# ----------------------------------------------------------------------
+
+#
+# Argument is the name of a directory to be used as the
+# "new-requests" directory.
+# If the directory is ok, returns undef (denoting no error).
+# Otherwise, returns a message describing the problem.
+# Directory must have permissions 1733, non-root users must be able to
+# create files, and non-root users must *not* be able to use chown to
+# change the ownership of a file.
+#
+# A previous version of this function was designed to work when running
+# as root (it attempted to temporarily drop root privileges before
+# doing the chown).  The code was incorrect; see bug-0052.  Since this
+# function is called only from gx-ca-update, which cannot be run by
+# root (see bug-0053), the special-case code is no longer neccessary.
+#
+sub Dir_Error($) {
+    my($dir) = @_;
+    return "$dir does not exist"     if not -e $dir;
+    return "$dir is not a directory" if not -d $dir;
+    my @stat = stat $dir;
+    return "Cannot stat $dir" if not @stat;
+    my $mode = $stat[2] & 07777;
+    if ($mode != 01733) {
+        return "Bad permissions on $dir, should be 1733";
+    }
+
+    my $temp_file_name = "$dir/tmp-" . time . "-$$";
+    my $result = undef;
+    GX::Untaint $temp_file_name;
+    open my $Temp, '>', $temp_file_name or return "Cannot create file in $dir";
+    close $Temp;
+    if (chown(0, 0, $temp_file_name) == 1) {
+        $result = "$dir allows non-root chown";
+    }
+    unlink $temp_file_name;
+    return $result;
+} # Dir_Error
+
+# ----------------------------------------------------------------------
+
+sub Require_Owner($) {
+    my($program_name) = @_;
+    my $owner = $GX::Config{GX_MAP_OWNER}; 
+    my $owner_pw = GX::Get_PW_Name $owner;
+    my $owner_uid = $owner_pw->{uid};
+    #
+    # Both real and effective UIDs must match.
+    #
+    if ($< != $owner_uid or $> != $owner_uid) {
+        die "$program_name must be run by GX_MAP_OWNER ($owner)\n"; 
+    } 
+} # Require_Owner
+
+# ----------------------------------------------------------------------
+
+my %is_admin_account = ();
+
+sub Is_Admin_Account($) {
+    my($account) = @_;
+
+    if (scalar keys %is_admin_account == 0) {
+        my @admins = ();
+        push @admins, $GX::Config{GX_MAP_OWNER};
+        push @admins, split /\s+/, $GX::Config{ADDITIONAL_ADMINS};
+        %is_admin_account = map { $_ => 1 } @admins;
+    }
+
+    return $is_admin_account{$account};
+} # Is_Admin_Account
+
+# ----------------------------------------------------------------------
+
+#
+# Ensure that the specified command is available in the configured $PATH.
+# Call this before executing any external commands.
+#
+# Side effect: Sets $PATH environment variable.
+#
+sub Use_Commands(@) {
+    my(@commands) = @_;
+    my @unfound = ();
+    $ENV{PATH} = $GX::Config{PATH};
+    my @path = split /:/, $ENV{PATH};
+    foreach my $command (@commands) {
+        my $foundit = 0;
+        DIR:
+        foreach my $dir (@path) {
+            if (-x "$dir/$command") {
+                $foundit = 1;
+                last DIR;
+            }
+        }
+        push @unfound, $command if not $foundit;
+    }
+    if (@unfound) {
+        die "Can't find command(s) (@unfound)\n" .
+            "in configured \$PATH ($ENV{PATH})\n";
+    }
+} # Use_Commands
+
+# ----------------------------------------------------------------------
+
+#
+# Returns the current raw time with exactly 10 digits before the decimal
+# point and 6 digits after.  Uses Time::HiRes::gettimeofday if possible;
+# otherwise falls back to an external gettimeofday command.
+#
+sub Get_Time_Of_Day() {
+    my($sec, $usec);
+    if ($Have_Time_HiRes_Module) {
+        ($sec, $usec) = eval 'Time::HiRes::gettimeofday()';
+    }
+    else {
+        GX::Use_Commands 'gettimeofday';
+        my $output = `gettimeofday`;
+        if ($? != 0) {
+            die "Failed to execute gettimeofday command\n";
+        }
+        chomp $output;
+        if ($output =~ /^(\d+)\.(\d{6})$/) {
+            ($sec, $usec) = ($1, $2);
+        }
+        else {
+            die "Unexpected output from gettimeofday command\n";
+        }
+    }
+    return sprintf "%010d.%06d", $sec, $usec;
+} # Get_Time_Of_Day
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, constructs a valid timestamp string in the same
+# format used by Long_Time_Image.
+# The required input format is:
+#     1-10 decimal digits (good until 2286-11-20)
+#     optionally:
+#         a decimal point followed by exactly 6 decimal digits
+#     optionally:
+#         a space followed by arbitrary text (which is ignored)
+#
+# If the input string is invalid, returns undef.
+#
+sub Timestamp_Of($) {
+    my($s) = @_;
+    $s =~ s/ .*$//;
+    my($sec, $usec);
+    if ($s =~ /^(\d+)\.(\d+)$/) {
+        ($sec, $usec) = ($1, $2);
+    }
+    elsif ($s =~ /^\d+$/) {
+        ($sec, $usec) = ($s, '000000');
+    }
+    else {
+        return undef;
+    }
+    return undef if length $sec > 10;
+    return undef if length $usec != 6;
+    return GX::Long_Time_Image sprintf "%010d.%06d", $sec, $usec;
+} # Timestamp_Of
+
+# ----------------------------------------------------------------------
+
+#
+# For a given time (integer seconds only), returns a string of the form
+#     Ddd YYYY-MM-DD hh:mm:ss UTC"
+#
+sub Time_Image($) {
+    my($time) = @_;
+    my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+        = gmtime $time;
+
+    return sprintf "%s %04d-%02d-%02d %02d:%02d:%02d UTC",
+                   (qw(Sun Mon Tue Wed Thu Fri Sat))[$wday],
+                   1900+$year, 1+$mon, $mday, $hour, $min, $sec;
+} # Time_Image
+
+# ----------------------------------------------------------------------
+
+#
+# For a given time, either an integer or a high-resolution
+# floating-point string, returns a string of the form
+#     "ssssssssss.uuuuuu Ddd YYYY-MM-DD hh:mm:ss UTC"
+# where "ssssssssss" is the raw Unix timestamp, and
+# "uuuuuu" is in microseconds (as returned by gettimeofday().
+#
+sub Long_Time_Image($) {
+    my($time) = @_;
+    my $seconds;
+    my $microseconds;
+    if ($time =~ /^(\d+)\.(\d{6})$/) {
+        ($seconds, $microseconds) = ($1, $2);
+    }
+    elsif ($time =~ /^\d+$/) {
+        ($seconds, $microseconds) = ($time, 0);
+    }
+    else {
+        die "Invalid timestamp \"$time\"\n";
+    }
+
+    return sprintf "%010d.%06d %s", 
+                   $seconds,
+                   $microseconds,
+                   GX::Time_Image $seconds;
+} # Long_Time_Image
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string representing a time, returns the corresponding
+# raw Unix timestamp (seconds since the epoch).
+# This currently handles the formats printed by OpenSSL:
+#     "Jan  1 01:23:45 2001 GMT"
+# and by curl:
+#     "Mon, 01 Jan 2001 01:23:45 GMT"
+#
+# There is some flexibility in the input formats accepted.
+# The emphasis is on properly converting valid strings,
+# not on diagnosing incorrect ones.
+#
+sub Time_Value($) {
+    my($timestamp) = @_;
+    my %month_num =
+        ( Jan => 0, Feb => 1, Mar =>  2, Apr =>  3,
+          May => 4, Jun => 5, Jul =>  6, Aug =>  7,
+          Sep => 8, Oct => 9, Nov => 10, Dec => 11 );
+    my $month_pat = join('|', keys %month_num);
+
+    my($year, $month, $mday, $hour, $minute, $second, $TZ);
+    my $ok = 0;
+
+    #
+    # Check for OpenSSL format
+    #
+    if ($timestamp =~
+            /^($month_pat) \s+
+              (\d+) \s+ 
+              (\d+\d+):(\d+\d+):(\d+\d+) \s+
+              (\d+) \s+
+              (\w+) $/ix )
+    {            
+        $ok = 1;
+        $month = $month_num{$1};
+        $mday = $2;
+        ($hour, $minute, $second) = ($3, $4, $5);
+        $year = $6;
+        $TZ = uc $7;
+    }
+
+    #
+    # Check for curl format
+    #
+    elsif ($timestamp =~
+               /^[a-z][a-z][a-z], \s+    # Don't capture day of week
+                (\d+) \s+
+                ($month_pat) \s+
+                (\d\d\d\d) \s+
+                (\d+\d+):(\d+\d+):(\d+\d+) \s+
+                (\w+) $/ix )
+    {
+        $ok = 1;
+        $mday = $1;
+        $month = $month_num{$2};
+        $year = $3;
+        ($hour, $minute, $second) = ($4, $5, $6);
+        $TZ = uc $7;
+    }
+    if ($ok) {
+        if ($TZ ne 'GMT' and $TZ ne 'UTC') {
+            $ok = 0;
+        }
+        elsif ($year >= 2038) {
+            $ok = 0;
+        }
+    }
+    if ($ok) {
+        return Time::Local::timegm
+                  $second, $minute, $hour, $mday, $month, $year;
+    }
+    else {
+        return undef;
+    }
+} # Time_Value
+
+# ----------------------------------------------------------------------
+
+#
+# Given a file name, reads a list of DNs listed in the file.
+#
+# Since the file is expected to be generated automatically, the format is
+# not fancy; one DN per line, no comments, no blank lines, no quotation
+# marks.  Each line must begin with a '/' and end with a non-whitespace
+# character.
+#
+sub Get_DNs_From_List_File($) {
+    my($file) = @_;
+    my $List_File;
+    if ($file eq '-') {
+        open $List_File, '<-' or die "stdin: $!\n";
+    }
+    else {
+        open $List_File, '<', $file or die "${file}: $!\n";
+    }
+    my @result = <$List_File>;
+    close $List_File;
+    chomp @result;
+
+    for (my $i = 0; $i <= $#result; $i ++) {
+        if ($result[$i] !~ m<^/.*\S$>) {
+            my $line_number = $i + 1;
+            die "Invalid DN, $file line $line_number\n";
+        }
+    }
+    return @result;
+} # Get_DNs_From_List_File
+
+# ----------------------------------------------------------------------
+
+#
+# The first argument must be either '-single' or '-multiple', specifying
+# the output format.
+#
+# The second argument is the name of a file to which the records are
+# to be written.  The file is created if it doesn't already exist;
+# the records are then appended to the file.
+#
+# The remaining arguments are the records to be written.  Each record
+# is either a reference to a hash, where the keys are field names,
+# or a reference to an array, which is treated as a list of strings
+# constituting a comment block.
+#
+# If the first argument is '-single', there must be exactly one record
+# (not a comment).  Each field is written as a single line consisting
+# of the field name, followed by spaces, followed by the value.
+#
+# If the first argument is '-multiple', there can be zero or more records.
+# The fields are written in the same manner as for '-single', but each
+# record is preceded and followed by lines containing a left and right
+# curly brace ('{', '}'), respectively.  For a comment block, each line
+# is written, with a "# " prefix added if it's not already there; the
+# comment block is surrounded by empty lines.
+#
+# Extra spaces and blank lines may be added for legibility.
+#
+sub Write_Records($$@) {
+    my($format, $filename, @refs) = @_;
+    my $multiple;
+    if ($format eq '-single') {
+        die "GX::Write_Records: expected a single record\n"
+            if scalar @refs != 1;
+        $multiple = 0;
+    }
+    elsif ($format eq '-multiple') {
+        return if not @refs;
+        $multiple = 1;
+    }
+    else {
+        die "GX::Write_Records: bad first argument\n";
+    }
+
+    my $output = '';
+
+    REF:
+    foreach my $ref (@refs) {
+        if (defined $ref->{operation} and $ref->{operation} eq 'comment') {
+            foreach my $line (@{$ref->{lines}}) {
+                if ($line !~ /^#/) {
+                    $line = "# $line";
+                }
+                elsif ($line =~ /^#\S/) {
+                    $line =~ s/^#/# /;
+                }
+                $output .= "$line\n";
+            }
+            $output .= "\n";
+        }
+        else {
+            my $deleted = exists $ref->{__DELETED__};
+
+            $output .= "# " if $deleted;
+            $output .= "{\n" if $multiple;
+
+            my $max_key_len = 0;
+            foreach my $key (keys %$ref) {
+                next if $key eq '__DELETED__';
+                $max_key_len = length $key if length $key > $max_key_len;
+            }
+
+            foreach my $key (sort keys %$ref) {
+                next if $key eq '__DELETED__';
+                my $value = $ref->{$key};
+                my @values = (ref $value eq 'ARRAY' ? @$value : ($value));
+                foreach my $item (@values) {
+                    $output .= "# " if $deleted;
+                    $output .= "\t" if $multiple;
+                    $output .= sprintf "%-${max_key_len}s  %s\n", $key, $item;
+                }
+            }
+
+            $output .= "# " if $deleted;
+            $output .= "}\n\n" if $multiple;
+        }
+    }
+
+    #
+    # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
+    #
+    my $File = undef;
+    if ($filename eq '-') {
+        open $File, '>-' or die "stdout: $!\n";
+    }
+    else {
+        open $File, '>>', $filename or die "${filename}: $!\n";
+    }
+    print $File $output or die "printing to ${filename}: $!\n";
+    close $File or die "closing ${filename}: $!\n";
+} # Write_Records
+
+# ----------------------------------------------------------------------
+
+#
+# Increment a timestamp by 1 microsecond.
+#
+sub Increment_Timestamp($) {
+    my($timestamp) = @_;
+    $timestamp =~ s/ .*$//;
+    my($sec, $usec);
+    if ($timestamp =~ /^(\d+)\.(\d+)$/) {
+        ($sec, $usec) = ($1, $2);
+    }
+    elsif ($timestamp =~ /^\d+$/) {
+        ($sec, $usec) = ($timestamp, 0);
+    }
+    else {
+        die "Invalid timestamp \"$timestamp\"\n";
+    }
+    if ($usec < 999999) {
+        $usec ++;
+    }
+    else {
+        $sec ++;
+        $usec = 0;
+    }
+    return GX::Long_Time_Image sprintf "%010d.%06d", $sec, $usec;
+} # Increment_Timestamp
+
+# ----------------------------------------------------------------------
+
+#
+# The first zero or more arguments are option names starting with a
+# '-' character.  Recognized options, which may not be abbreviated, are:
+#
+#   '-single'
+#           Read a single record without '{' and '}' delimiters.
+#
+#   '-multiple'
+#           Read zero or more records delimited by '{' and '}'.
+#           This is the default.
+#
+#   '-keep-comments'
+#           Treat comment blocks as pseudo-records.  A contiguous
+#           sequence of comment lines is stored as a record with
+#           three fields:
+#               'operation':
+#                   Set to 'comment'.
+#               'timestamp':
+#                   An artificial timestamp set to the timestamp of
+#                   the previous record plus 1 microsecond (or 0 for a
+#                   header comment).
+#               'lines':
+#                   a reference to an array of lines.
+#
+#           The 'timestamp' field makes it possible to sort an array
+#           of records by timestamp even if some of them are comment
+#           blocks.
+#
+#           The '-keep-comments' option may not be specified with
+#           '-single'.
+#
+#           Comments are ignored by default.
+#
+# The last argument is the name of the file from which to read the
+# record or records.  '-' denotes stdin.
+#
+# Leading and trailing whitespace are ignored.
+#
+# Comments start with a '#' character, and are either ignored or stored as
+# comment records, depending on whether '-keep-comments' is specified.
+# A comment must be on a line by itself; end-of-line comments are not
+# supported on lines containing other data (so '#' characters can be
+# used in field values).  Comments are not allowed within records (i.e.,
+# between a '{' line and a '}' line).
+#
+# An empty line terminates a comment block but is otherwise ignored.
+# 
+# For '-single', the record read from the file is returned as a hash
+# reference.
+# For '-multiple', the records read from the file are returned as a list
+# of hash references.
+#
+sub Read_Records(@) {
+    my $filename;
+    my $multiple = 1;
+    my $keep_comments = 0;
+    for (my $i = 0; $i <= $#_; $i ++) {
+        if ($_[$i] eq '-single') {
+            $multiple = 0;
+        }
+        elsif ($_[$i] eq '-multiple') {
+            $multiple = 1;
+        }
+        elsif ($_[$i] eq '-keep-comments') {
+            $keep_comments = 1;
+        }
+        elsif ($_[$i] =~ /^-./) {
+            die "GX::Read_Records: Unrecognized option \"$_[$i]\"\n";
+        }
+        else {
+            if ($i == $#_) {
+                $filename = $_[$i];
+            }
+            else {
+                die "GX::Read_Records: Usage error\n";
+            }
+        }
+    }
+    if ($keep_comments and not $multiple) {
+        die "GX::Read_Records: Usage error, -keep-comments vs. -single\n";
+    }
+
+    #
+    # If we see a syntax error while reading a record, report it only
+    # if the record is completed by a closing brace.  If we read the
+    # file while it's being written to, we want to quietly ignore any
+    # trailing partial line or record.  See bug-0080.
+    #
+    my $syntax_error = undef;
+
+    #
+    # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
+    #
+    my $File = undef;
+    if ($filename eq '-') {
+        open $File, '<-' or die "stdin: $!\n";
+    }
+    else {
+        open $File, '<', $filename or die "${filename}: $!\n";
+    }
+    my @result = ();
+    my $ref = ( $multiple ? undef : {} );
+    #
+    # $context indicates where we are.  Values are:
+    #     'record' (indicating that we're between a '{' and a '}'),
+    #     'comment' (indicating that we're in a comment), and
+    #     'none' (otherwise).
+    #
+    my $context = $multiple ? 'none' : 'record';
+    LINE:
+    while (<$File>) {
+        chomp;
+        s/^\s+//;
+        s/\s+$//;
+
+        if (/^#/) {
+            if (not $multiple) {
+                next LINE;
+            }
+            elsif ($keep_comments and $context eq 'none') {
+                $context = 'comment';
+                $ref = { operation => 'comment', lines => [] };
+                if (@result) {
+                    my $previous = $result[$#result];
+                    if (defined $previous->{timestamp}) {
+                        $ref->{timestamp}
+                            = GX::Increment_Timestamp $previous->{timestamp};
+                    }
+                }
+                if (not defined $ref->{timestamp}) {
+                    $ref->{timestamp} = GX::Long_Time_Image 0;
+                }
+            }
+            elsif ($context eq 'record') {
+                die "Comment not allowed within record " .
+                    "at line $. of $filename\n";
+            }
+            push @{$ref->{lines}}, $_ if $keep_comments
+        }
+        elsif ($_ eq '') {
+            if ($keep_comments and $context eq 'comment') {
+                $context = 'none';
+                push @result, $ref;
+                undef $ref;
+            }
+        }
+        elsif ($multiple and $context ne 'record' and $_ eq '{') { # '}'
+            if ($context eq 'comment') {
+                push @result, $ref;
+            }
+            $context = 'record';
+            $ref = {};
+        }
+        elsif ($context eq 'record') {
+            # '{'
+            if ($multiple and $_ eq '}') {
+                if (defined $syntax_error) {
+                    die $syntax_error;
+                }
+                push @result, $ref;
+                undef $ref;
+                $context = 'none';
+            }
+            elsif (/^(\w+)\s+(.*)$/) {
+                my($key, $value) = ($1, $2);
+                if (defined $ref->{$key}) {
+                    if (ref $ref->{$key} ne 'ARRAY') {
+                        $ref->{$key} = [ $ref->{$key} ];
+                    }
+                    push @{$ref->{$key}}, $value;
+                }
+                else {
+                    $ref->{$key} = $value;
+                }
+            }
+            else {
+                $syntax_error = "Syntax error at line $. of $filename\n";
+            }
+        }
+        else {
+            if ($multiple) {
+                if ($_ eq '{') { # '}'
+                    $ref = {};
+                    $context = 'record';
+                }
+                else {
+                    die "Syntax error (expected '{' or EOF) " . # '}'
+                        "at line $. of $filename\n";
+                }
+            }
+        }
+    }
+    close $File;
+    if ($keep_comments and $context eq 'comment') {
+        push @result, $ref;
+        $context = 'none';
+    }
+    if ($multiple) {
+        return @result;
+    }
+    else {
+        return $ref;
+    }
+} # Read_Records
+
+# ----------------------------------------------------------------------
+
+#
+# Write a multifile.
+# The first argument is the name of the output file.
+# Other arguments are names of files to be incorporated as subfiles.
+#
+sub Write_Multifile($@) {
+    my ($output_file, @file_list) = @_;
+    open my $OUT, '>', $output_file or die "$output_file: $!\n";
+
+    print $OUT "BEGIN multifile {\n\n" or die "$output_file: $!\n";;
+
+    foreach my $file (@file_list) {
+        my $basename = File::Basename::basename $file;
+        print $OUT "BEGIN subfile \"$basename\" {\n"
+            or die "$output_file: $!\n";
+        open my $FILE, '<', $file or die "${file}: $!\n";
+        while (<$FILE>) {
+            print $OUT $_ or die "$output_file: $!\n";;
+        }
+        close $FILE;
+        print $OUT "} END subfile \"$basename\"\n\n"
+            or die "$output_file: $!\n";;
+    }
+
+    print $OUT "} END multifile\n" or die "$output_file: $!\n";
+} # Write_Multifile
+
+# ----------------------------------------------------------------------
+
+#
+# Helper function for Read_Multifile
+#
+sub Read_Subfile($$) {
+    my($filename, $File) = @_;
+    my $in_subfile = 0;
+    my $subfile_name = undef;
+    my $content = '';
+    while (<$File>) {
+        if (not $in_subfile) {
+            if (/^\s*$/) {
+                next;
+            }
+            elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {
+                $subfile_name = $1;
+                $in_subfile = 1;
+            }
+            elsif (/^\s*}\s+END\s+multifile\s*$/) {
+                return { EOF => 1 };
+            }
+            else {
+                die "Error at line $. of $filename\n";
+            }
+        }
+        else {
+            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
+                if ($1 ne $subfile_name) {
+                    die "Name mismatch at line $. of $filename\n";
+                }
+                return { name => $subfile_name, content => $content };
+            }
+            else {
+                $content .= $_;
+            }
+        }
+    }
+    die "Incomplete subfile at EOF, line $. of $filename\n";
+} # Read_Subfile
+
+# ----------------------------------------------------------------------
+
+#
+# Reads a "multifile".
+# Die if an error occurs.
+# 
+sub Read_Multifile($) {
+    my($filename) = @_;
+    my @result = ();
+    my $in_multifile = 0;
+    open my $File, '<', $filename or die "${filename}: $!\n";
+    while (<$File>) {
+        if (not $in_multifile) {
+            if (/^\s*$/) {
+                next;
+            }
+            elsif (/^\s*BEGIN\s+multifile\s+{\s*$/) {
+                $in_multifile = 1;
+            }
+            else {
+                die "Error at line $. of $filename\n";
+            }
+        }
+        else {
+            while (1) {
+                my $subfile = GX::Read_Subfile $filename, $File;
+                if ($subfile->{EOF}) {
+                    close $File;
+                    return @result;
+                }
+                else {
+                    push @result, $subfile;
+                }
+            }
+        }
+    }
+    die "Syntax error at line $. of $filename\n";
+} # Read_Multifile
+
+# ----------------------------------------------------------------------
+
+#
+# Given a list of references to request records, return the same list
+# sorted by timestamp.  Uses a stable sort.  Perl 5.6 or earlier uses an
+# unstable Quicksort; later Perls use a stable mergesort.  Rather than
+# depending on Perl to get this right, we annotate each record with an
+# __INDEX__ attribute, which we then delete before returning the result.
+#
+sub Sort_By_Timestamp(@) {
+    for (my $i = 0; $i <= $#_; $i ++) {
+        $_[$i]->{__INDEX__} = $i;
+    }
+    my @result = sort
+        { $a->{timestamp} cmp $b->{timestamp} ||
+          $a->{__INDEX__} <=> $b->{__INDEX__} } @_;
+    for (my $i = 0; $i <= $#_; $i ++) {
+        delete $result[$i]->{__INDEX__};
+    }
+    return @result;
+} # Sort_By_Timestamp
+
+# ----------------------------------------------------------------------
+
+#
+# Requests generated from slurped grid-mapfiles have timestamps starting
+# at either 0 (1970-01-01) or one hour in the future; this is controlled
+# by a first argument of '-before' or '-after'.  With '-before', requests
+# are overridden by requests from the requests.log file; with '-after',
+# requests override requests from the requests.log file.
+#
+# For '-after', we arbitrarily start one hour in the future to
+# avoid any clock skew problems.  (Note that we use time() rather
+# than Get_Time_Of_Day so we don't lose precision when adding 3600;
+# Timestamp_Of requires exactly 6 digits after the decimal point if
+# there is one).
+#
+my $Slurp_Timestamp_Before = GX::Timestamp_Of 0;
+my $Slurp_Timestamp_After  = GX::Timestamp_Of(time + 3600);
+
+sub Slurp_File($$) {
+    GX::Debug "GX::Slurp_File @_\n";
+    my ($starting_point, $filename) = @_;
+    if ($starting_point ne '-before' and
+        $starting_point ne '-after')
+    {
+        die "Internal error: Bad argument \"$starting_point\" " .
+            "to GX::Slurp_File\n";
+    }
+    my $Slurp_Timestamp = ( $starting_point eq '-before'
+                            ? \$Slurp_Timestamp_Before
+                            : \$Slurp_Timestamp_After );
+    my @result = ();
+    my %seen = ();
+    open my $File, '<', $filename or die "${filename}: $!\n";
+    while (<$File>) {
+        chomp;
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        my($dn, $users) = /^\s*("[^"]*")\s*(\S+)\s*$/;
+        next if not defined $dn or not defined $users;
+        #
+        # Normally, only one user is specified, but it's also possible
+        # to have a list of user name separated by commas.  In this case,
+        # add them in reverse order; the most recently added is treated
+        # as the default.
+        #
+        # We avoid duplicate mappings (common if the input grid-mapfile
+        # is compatible with both GT2 and GT3/GT4) using the %seen hash.
+        #
+        $dn = GX::GT4_Subject $dn;
+        my @users = reverse split /,/, $users;
+        foreach my $user (@users) {
+            next if $seen{"$dn $user"}++;
+            #
+            # Build a request record for the entry.
+            # There's no need to fill in all the fields.
+            #
+            my $request = { };
+            $request->{operation} = 'add';
+            $request->{dn} = $dn;
+            $request->{username} = $user;
+            $request->{timestamp} = $$Slurp_Timestamp;
+            $request->{OWNER_NAME} = $GX::Config{GX_MAP_OWNER};
+            $request->{NAMESPACE} = $GX::Config{NAMESPACE};
+            GX::Debug "Adding dn=$dn user=$user timestamp=$$Slurp_Timestamp\n";
+            $$Slurp_Timestamp
+                = GX::Increment_Timestamp $$Slurp_Timestamp;
+            push @result, $request;
+        }
+    }
+    GX::Debug "GX::Slurp_File returning ", scalar @result, " request(s)\n";
+    return @result;
+} # Slurp_File
+
+# ----------------------------------------------------------------------
+
+#
+# Given a list of input files, reads them and returns a mapping.
+#
+# An optional first argument of '-all' specifies that mappings will be
+# generated even for accounts that don't exist on the current system.
+#
+# The files are assumed to be request logs by default.  An argument of
+# '-gridmap-before' or '-gridmap-after' causes following files to be
+# treated as grid-mapfiles; an argument of '-log' causes following files
+# to be treated as request log files.
+#
+# An argument of '-gridmap-before' causes mappings from a following
+# input grid-mapfile to be treated as starting in the past, so they'll
+# be overridden by any conflicting mappings from a request log file.
+# An argument of '-gridmap-after' causes mappings from a following
+# input grid-mapfile to be treated as starting in the future, so they'll
+# override any conflicting mappings from a request log file.  Neither of
+# these arguments affects the timestamps of mappings from a requests
+# log file.
+#
+# The result is a reference to a hash; keys are DNs, values are hash
+# references { username => timestamp }.  Using a hash for each entry
+# allows for multiple usernames; the timestamp can be used to determine
+# the order for multiple usernames.
+# 
+sub Gen_Mappings(@) {
+    my(@args) = @_;
+    GX::Debug "Entering GX::Gen_Mappings(@args)\n";
+    my $All = 0;
+    my $kind = 'log';
+
+    my @requests = ();
+
+    foreach my $arg (@args) {
+        if ($arg eq '-all') {
+            $All = 1;
+        }
+        elsif ($arg eq '-log' or
+               $arg eq '-gridmap-before' or
+               $arg eq '-gridmap-after')
+        {
+            $kind = $arg;
+        }
+        elsif ($kind eq '-log') {
+            push @requests, GX::Read_Records '-multiple', $arg;
+        }
+        elsif ($kind eq '-gridmap-before') {
+            push @requests, GX::Slurp_File -before, $arg;
+        }
+        elsif ($kind eq '-gridmap-after') {
+            push @requests, GX::Slurp_File -after, $arg;
+        }
+        else {
+            die "Internal error, \$kind = \"$kind\"\n";
+        }
+    }
+
+    @requests = GX::Sort_By_Timestamp @requests;
+    
+    my %Mappings = ();
+    my %By_User = ();  # key = username, value = hash ref { DN => 1 }
+
+    REQUEST:
+    foreach my $request (@requests) {
+        my $operation = $request->{operation};
+
+        my $message = "Processing request $operation";
+        if (defined $request->{dn}) {
+            $message .= " $request->{dn}";
+        }
+        if (defined $request->{username}) {
+            $message .= " $request->{username}";
+        }
+        GX::Debug "$message\n";
+
+        #
+        # If OWNER_NAME wasn't set by gx-check-requests, try to set
+        # it here.
+        #
+        if (defined $request->{OWNER_UID} and
+            not defined $request->{OWNER_NAME})
+        {
+            my $pw = GX::Get_PW_UID $request->{OWNER_UID};
+            if (defined $pw->{name}) {
+                GX::Debug "    Setting OWNER_NAME to $pw->{name}\n";
+                $request->{OWNER_NAME} = $pw->{name};
+            }
+        }
+
+        #
+        # Validate the request
+        #
+
+        if (not defined $request->{OWNER_NAME}) {
+            GX::Debug "Reject, no OWNER_NAME\n";
+            next REQUEST;
+        }
+
+        if (not defined $request->{SOURCE}) {
+            GX::Debug "Reject, no SOURCE\n";
+            next REQUEST;
+        }
+
+        if (defined $request->{username}) {
+            my $pw = GX::Get_PW_Name $request->{username};
+            if (not defined $pw and not $All) {
+                GX::Debug "Reject, no account on this system\n";
+                next REQUEST;
+            }
+            if ($request->{username} eq 'root') {
+                GX::Debug "Reject, mapping to root\n";
+                next REQUEST;
+            }
+            if (defined $pw->{uid} and $pw->{uid} == 0) {
+                GX::Debug "Reject, mapping to UID 0\n";
+                next REQUEST;
+            }
+            if ($request->{OWNER_NAME} ne $request->{username} and
+                $request->{SOURCE} eq 'user')
+            {
+                GX::Debug "Reject, user request for other than self\n";
+                next REQUEST;
+            }
+        }
+        else {
+            if (not GX::Is_Admin_Account($request->{OWNER_NAME})) {
+                GX::Debug "Reject, $request->{OWNER_NAME} is not an admin\n";
+                next REQUEST;
+            }
+        }
+
+        if (not defined $request->{NAMESPACE}) {
+            GX::Debug "Reject, no NAMESPACE\n";
+            next REQUEST;
+        }
+        if ($request->{NAMESPACE} ne $GX::Config{NAMESPACE}) {
+            GX::Debug "Reject, bad NAMESPACE $request->{NAMESPACE}, " .
+                  "expected $GX::Config{NAMESPACE}\n";
+            next REQUEST;
+        }
+
+        my $dn
+            = exists $request->{dn} ? $request->{dn} : undef;
+        my $username
+            = exists $request->{username} ? $request->{username} : undef;
+        my $timestamp = $request->{timestamp};
+        $timestamp =~ s/ .*$//;
+
+        if ($operation eq 'add') {
+            #
+            # Add a mapping; we have a DN and a user name.
+            #
+            # The key is the user name; the value is the timestamp.
+            #
+            GX::Debug ">>> Add $dn --> $username\n";
+            $Mappings{$dn}->{$username} = $timestamp;
+            $By_User{$username}->{$dn} = 1;
+        }
+        elsif ($operation eq 'remove') {
+            if (exists $Mappings{$dn}) {
+                if (exists $Mappings{$dn}->{$username}) {
+                    delete $Mappings{$dn}->{$username};
+                    if (scalar keys %{$Mappings{$dn}} == 0) {
+                        delete $Mappings{$dn};
+                    }
+                    delete $By_User{$username}->{$dn};
+                    if (scalar keys %{$By_User{$username}} == 0) {
+                        delete $By_User{$username};
+                    }
+                }
+            }
+        }
+        elsif ($operation eq 'remove-dn') {
+            if (exists $Mappings{$dn}) {
+                GX::Debug ">>> Delete $dn\n";
+                foreach my $user (keys %{$Mappings{$dn}}) {
+                    delete $By_User{$user}->{$dn};
+                    if (scalar keys %{$By_User{$user}} == 0) {
+                        delete $By_User{$user};
+                    }
+                }
+                delete $Mappings{$dn};
+            }
+        }
+        elsif ($operation eq 'remove-user') {
+            foreach my $dn (keys %{$By_User{$username}}) {
+                if (exists $Mappings{$dn}->{$username}) {
+                    GX::Debug ">>> Delete $dn --> $username\n";
+                    delete $Mappings{$dn}->{$username};
+                    if (scalar keys %{$Mappings{$dn}} == 0) {
+                        delete $Mappings{$dn};
+                    }
+                }
+            }
+            delete $By_User{$username};
+        }
+        else {
+            die "Internal error, operation = \"$operation\"\n";
+        }
+
+        if ($Debugging) {
+            GX::Debug ">>> Current grid-mapfile entries:\n";
+            foreach my $dn (sort keys %Mappings) {
+                GX::Debug "* $dn\n";
+                my @items = ();
+                my $by_name = $Mappings{$dn}; # name --> timestamp
+                foreach my $name (sort { $by_name->{$a} <=> $by_name->{$b} }
+                                     keys %$by_name)
+                {
+                    push @items, "$name\@$by_name->{$name}";
+                }
+                GX::Debug "    @items\n";
+            }
+            GX::Debug "<<< END\n";
+
+        }
+    }
+
+    return \%Mappings;
+} # Gen_Mappings
+
+# ----------------------------------------------------------------------
+
+#
+# Translate an arbitrary string, such as a URL, to a form usable
+# as a file name, using something similar to Quoted-Printable encoding.
+#
+sub QP_Encode($) {
+    my($s) = @_;
+    my $result = '';
+    foreach my $ch (split //, $s) {
+        if ($ch =~ /[\w+,-._]/) {
+            $result .= $ch;
+        }
+        else {
+            $result .= sprintf "=%02X", ord $ch;
+        }
+    }
+    return $result;
+} # QP_Encode
+
+# ----------------------------------------------------------------------
+
+#
+# A helper function for Cache_File.
+#
+# The argument is the name of a cache file.  The function creates a
+# uniquely named hard link to the cache file, and returns the name of
+# the hard link.
+#
+sub Make_Hard_Link($) {
+    my($filename) = @_;
+    my $hostname = GX::Get_Hostname();
+    my $link_name = "$filename-$hostname-$$";
+    link $filename, $link_name or die "$link_name: $!\n";
+    return $link_name;
+} # Make_Hard_Link
+
+# ----------------------------------------------------------------------
+
+#
+# A helper function for Cache_File.
+# The arguments are the name of an error file and an error message.
+# If the error file doesn't exist, create it and write the message to it.
+# Return the error file's modification time.
+#
+sub Error_Timestamp($$) {
+    my($error_file, $message) = @_;
+    if (not -e $error_file) {
+        open my $File, '>', $error_file or die "$error_file: $!\n";
+        print $File "$message\n";
+        close $File;
+    }
+    return GX::Get_mtime $error_file;
+} # Error_Timestamp
+
+# ----------------------------------------------------------------------
+
+#
+# Messages for curl exit codes (from the man page).
+# Current as of curl release 7.15.5.
+#
+my %Curl_Error
+    = (  1 => "Unsupported protocol",
+         2 => "Failed to initialize",
+         3 => "URL malformat",
+         4 => "URL user malformatted",
+         5 => "Couldn't resolve proxy",
+         6 => "Couldn't resolve host",
+         7 => "Failed to connect to host",
+         8 => "FTP weird server  reply",
+         9 => "FTP access denied",
+        10 => "FTP user/password incorrect",
+        11 => "FTP weird PASS reply",
+        12 => "FTP weird USER reply",
+        13 => "FTP weird PASV reply",
+        14 => "FTP weird 227 format",
+        15 => "FTP can't get host",
+        16 => "FTP can't reconnect",
+        17 => "FTP  couldn't  set  binary",
+        18 => "Partial file",
+        19 => "FTP couldn't download/access the given file",
+        20 => "FTP write error",
+        21 => "FTP quote error",
+        22 => "HTTP page not retrieved",
+        23 => "Write error",
+        24 => "Malformed user",
+        25 => "FTP couldn't STOR file",
+        26 => "Read error",
+        27 => "Out of memory",
+        28 => "Operation timeout",
+        29 => "FTP couldn't set ASCII",
+        30 => "FTP PORT failed",
+        31 => "FTP couldn't use REST",
+        32 => "FTP couldn't use SIZE",
+        33 => "HTTP range error",
+        34 => "HTTP  post  error",
+        35 => "SSL connect error",
+        36 => "FTP bad download resume",
+        37 => "FILE couldn't read file",
+        38 => "LDAP cannot bind",
+        39 => "LDAP search failed",
+        40 => "Library not found",
+        41 => "Function not found",
+        42 => "Aborted by callback",
+        43 => "Internal error",
+        44 => "Internal error",
+        45 => "Interface error",
+        46 => "Bad password entered",
+        47 => "Too many redirects",
+        48 => "Unknown TELNET option specified",
+        49 => "Malformed telnet option",
+        51 => "The remote peer's SSL certificate wasn't ok",
+        52 => "No reply from server",
+        53 => "SSL crypto engine not found",
+        54 => "Cannot set SSL crypto engine as default",
+        55 => "Failed sending network data",
+        56 => "Failure in receiving network data",
+        57 => "Share is in use (internal error)",
+        58 => "Problem with the local certificate",
+        59 => "Couldn't use specified SSL cipher",
+        60 => "Problem with the CA cert",
+        61 => "Unrecognized transfer encoding",
+        62 => "Invalid LDAP URL",
+        63 => "Maximum file size exceeded",
+        64 => "Requested FTP SSL level failed",
+        65 => "Sending the data requires a rewind that failed",
+        66 => "Failed to initialise SSL Engine",
+        67 => "User, password or similar was not accepted",
+        68 => "File not found on TFTP server",
+        69 => "Permission problem on TFTP server",
+        70 => "Out of disk space on TFTP server",
+        71 => "Illegal TFTP operation",
+        72 => "Unknown TFTP transfer ID",
+        73 => "File already exists (TFTP)",
+        74 => "No such user (TFTP)",
+        75 => "Character conversion failed",
+        76 => "Character conversion functions required" );
+
+my $Curl_Supports_Insecure_Option = undef;
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the argument is a URL (either ftp, http, or https),
+# false otherwise.
+#
+sub Is_URL($) {
+    my($arg) = @_;
+    return 1 if $arg =~ m<^ftp://>;
+    return 1 if $arg =~ m<^http://>;
+    return 1 if $arg =~ m<^https://>;
+    return 0;
+} # Is_URL
+
+# ----------------------------------------------------------------------
+
+#
+# Takes one or more arguments.
+#
+# The first zero or more arguments are option names starting with a
+# '-' character.
+#     '-download'
+#         Attempt to download the file.  This is the default.
+#         'cached' or 'failed'.)
+#     '-nodownload'
+#         Do not attempt to download the file.  (status will be either
+#         'cached' or 'failed'.)
+# The final argument is a URL (there must be exactly one).
+#
+# Returns a hash reference with one or more of the following fields:
+#     status (always set)
+#         A brief description of the status, one of
+#             new    : File was newly downloaded
+#             cached : Cache is ok; file was not modified
+#             old    : Download failed; use old cached file
+#             failed : Download failed; no cached file is available.
+#     filename
+#         The full pathname of a local file containing a copy of the
+#         specified file.  Not set if the download failed and there's
+#         no previously downloaded cached copy.
+#     error
+#         An optional error message.
+#         Not set if status is 'new' or 'cached'.
+#         Set if status is 'old' or 'failed'.
+#     timestamp
+#         A timestamp associated with the cache file, used to avoid
+#         reporting the same error more than once.  If necessary,
+#         an error file is created and its timestamp is used; the
+#         error file is removed on success.
+#
+# Both elements can be defined if we already have a cached copy, but
+# the attempt to get a new copy failed.  The caller can use the cached
+# copy, but may wish to generate an error message of some sort.
+#
+# Uses the curl command.
+#
+# If the specified file has already been cached, we attempt to update it;
+# if the update fails, we still return the name of the old cached file,
+# if any.
+#
+# If the downloaded file is empty, it's considered an error.  (An empty
+# may be valid, but not for anything used by gx-map.)
+#
+# Note that we use curl's "--insecure" option, which allows us to download
+# files from https: URLs without checking the server's certificate.
+# A number of CAs use https servers with certificates that aren't included
+# with curl's default bundle.  Since we check checksums and signatures
+# for certificates and CRLs, bypassing SSL shouldn't be a problem.
+#
+# If successful, the file name returned by Cache_File is actually the
+# name of a uniquely named hard link, generated by the Make_Hard_Link
+# helper function.  The caller must pass this name to Release_Cache_File
+# when it's finished with it, so the hard link is deleted.  This addresses
+# a possible race condition if a client requests a cache file (presumably
+# with '-nodownload' while it's being updated; the update won't affect
+# the file referred to by the hard link.
+# 
+sub Cache_File(@) {
+    my $url = undef;
+    my $try_download = 1;
+
+    foreach my $arg (@_) {
+        if ($arg eq '-download') {
+            $try_download = 1;
+        }
+        elsif ($arg eq '-nodownload') {
+            $try_download = 0;
+        }
+        elsif ($arg =~ /^-/) {
+            die "GX::Cache_File: Usage error, unrecognized option \"$arg\"\n";
+        }
+        else {
+            if (defined $url) {
+                die "GX::Cache_File: Usage error, duplicate URL\n";
+            }
+            else {
+                $url = $arg;
+            }
+        }
+    }
+    die "GX::Cache_File: Usage error, missing URL\n" if not defined $url;
+
+    my $is_ftp = $url =~ /^ftp:/;
+
+    my $cache_dir = "$GX::Config{INSTALL_DIR}/gx-map-data/cache";
+    my $filename = GX::QP_Encode $url;
+
+    my $cached_file = "$cache_dir/$filename";
+    my $cached_file_exists = -e $cached_file;
+    my $cached_mtime = ($cached_file_exists
+                        ? GX::Get_mtime $cached_file
+                        : undef);
+
+    my $error_dir = "$cache_dir/errors";
+    my $error_file = "$error_dir/$filename";
+
+    if (not $try_download) {
+        if (-e $cached_file) {
+            return { status    => 'cached',
+                     filename  => GX::Make_Hard_Link $cached_file,
+                     timestamp => $cached_mtime };
+        }
+        else {
+            my $message = 'no cache file';
+            return { status    => 'failed',
+                     error     => $message,
+                     timestamp => GX::Error_Timestamp $error_file, $message };
+        }
+    }
+
+    my $temp_dir = "$cache_dir/tmp-" . time . "-$$";
+    my $temp_file = "$temp_dir/$filename";
+    my $info_file = "$temp_dir/$filename.info";
+
+    my $server_mtime = undef;
+
+    GX::Use_Commands 'curl';
+
+    #
+    # Older versions of curl don't support the "--insecure" option.
+    # More precisely, older versions don't attempt to verify server
+    # certificates for https URLs; newer versions do unless the
+    # "--insecure" option is specified.  We need to parse the output of
+    # "curl --help" to determine how to invoke the version we're using.
+    #
+    if (not defined $Curl_Supports_Insecure_Option) {
+        $Curl_Supports_Insecure_Option = 0;
+        open my $Pipe, '-|', 'curl --help';
+        while (<$Pipe>) {
+            if (/--insecure/) {
+                $Curl_Supports_Insecure_Option = 1;
+            }
+        }
+        close $Pipe;
+    }
+
+    mkdir $temp_dir, 0700 or die "${temp_dir}: $!\n";
+
+    #
+    # We invoke curl (potentially) twice, once to get the header info
+    # (particularly the timestamp), and once to download the file.
+    # Define a common set of options.
+    #
+    my @curl_opts = ( '--silent',
+                      '--fail',         # Fail on server errors
+                      '--location',     # Follow "Location:" hints
+                      '--max-time', '30' );
+    if ($Curl_Supports_Insecure_Option) {
+        push @curl_opts, '--insecure';  # Ignore server certificates
+    }
+
+    #
+    # Try to get the last-modified timestamp of the file from the server.
+    # Ignore any errors invoking curl or opening or reading the output
+    # file; if we can't read the mtime from the output file, we don't
+    # care why.
+    #
+    system 'curl', @curl_opts,
+                   '--head',     # Show document info only
+                   '--url', $url,
+                   '--output', $info_file;
+    if (open my $Info, '<', $info_file) {
+        while (<$Info>) {
+            if (/^Last-Modified: (.*)$/) {
+                $server_mtime = GX::Time_Value $1;
+            }
+        }
+        close $Info;
+    }
+    if (-e $info_file) {
+        unlink $info_file or die "$info_file: $!\n";
+    }
+
+    if (defined $server_mtime and
+        $cached_file_exists and
+        $cached_mtime == $server_mtime)
+    {
+        #
+        # We already have a cached copy of the file, and the
+        # timestamps match.  Use the cached copy; no need to
+        # download it again.
+        # 
+        rmdir $temp_dir or die "$temp_dir: $!\n";
+        if (-e $error_file) {
+            unlink $error_file or die "$error_file: $!\n";
+        }
+        return { status    => 'cached',
+                 filename  => GX::Make_Hard_Link $cached_file,
+                 timestamp => $cached_mtime };
+    }
+
+    #
+    # Either the timestamps didn't match, or we don't already have a
+    # cached copy, or we couldn't determine the timestamp from the server.
+    # Try to download the file.
+    #
+
+    my @curl_command = ( 'curl',
+                         @curl_opts,
+                         '--remote-time',   # Copy remote file's mtime
+                         '--url', $url,
+                         '--output', $temp_file );
+
+    my $curl_result = system @curl_command;
+
+    #
+    # With the "--fail" option, curl should return a non-zero exit status
+    # on a server failure.  We also check whether the newly-downloaded
+    # file exists and is non-empty (we assume that an empty file is
+    # an error).
+    #
+    if ($curl_result != 0 or not -e $temp_file or -z $temp_file) {
+        if (-e $temp_file) {
+            unlink $temp_file or die "$temp_file: $!\n";
+        }
+        rmdir  $temp_dir  or die "$temp_dir: $!\n";;
+        my $message = "curl failed";
+        if ($curl_result != 0) {
+            $message = 'curl failed';
+            if ($curl_result % 256 == 0) {
+                my $status = $curl_result / 256;
+                $message .= " (exit $status)";
+                if (defined $Curl_Error{$status}) {
+                    $message .= " ($Curl_Error{$status})";
+                }
+            }
+            else {
+                $message .= " (system() returned $curl_result)";
+            }
+        }
+        elsif (not -e $temp_file) {
+            $message = 'curl download failed';
+        }
+        elsif (-z $temp_file) {
+            $message = 'curl downloaded an empty file';
+        }
+        else {
+            #
+            # This shouldn't happen.
+            #
+            $message = 'curl, unknown failure';
+        }
+        if ($cached_file_exists) {
+            if (-e $error_file) {
+                unlink $error_file or die "$error_file: $!\n";
+            }
+            return { status    => 'old',
+                     filename  => GX::Make_Hard_Link $cached_file,
+                     error     => $message,
+                     timestamp => $cached_mtime };
+        }
+        else {
+            return { status    => 'failed',
+                     error     => $message,
+                     timestamp => GX::Error_Timestamp $error_file, $message };
+        }
+    }
+
+    #
+    # The download was succeessful.
+    # Rename the temporary file into the cache and return its name.
+    #
+    rename $temp_file, $cached_file
+        or die "rename $temp_file, $cached_file: $!\n";
+    rmdir $temp_dir or die "$temp_dir: $!\n";
+    if (-e $error_file) {
+        unlink $error_file or die "$error_file: $!\n";
+    }
+    return { status    => 'new',
+             filename  => GX::Make_Hard_Link $cached_file,
+             timestamp => $cached_mtime };
+} # Cache_File
+
+# ----------------------------------------------------------------------
+
+#
+# Delete a cache file returned by the Cache_File function.
+# This merely deletes a hard link; the actual file is not affected.
+#
+sub Release_Cache_File($) {
+    my($cache_file) = @_;
+    unlink $cache_file or die "$cache_file: $!\n";
+} # Release_Cache_File
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of a user map file, reads it and returns a reference
+# to a data structure containing the information from the file.
+# This data structure can be used to query mappings from user names
+# in one namespace to user names in another namespace (i.e., from one
+# site to another).
+#
+# If an error occurs on the attempt to open the file, returns a
+# string containing the error message (e.g., "No such file or directory").
+# On a syntax error, returns a string with an error message.  Thus
+# the "ref" operator can be used to determine whether the call was
+# successful.
+#
+# The result is a reference to a nested set of hashes.
+# At the outer level, the keys are namespace identifiers (the source
+# namespace).
+# At the next level, the keys are also namespace identifiers (the target
+# namespace).
+# At the innermost level, the keys are Unix user names or numeric UIDs
+# within the outer namespace, and the values are Unix user names within
+# the inner namespace.
+#
+# Sample usage, assuming that John Smith is "ux123456" at SDSC
+# and "jsmith" at NCSA:
+#
+#     my $Map = Read_User_Map 'user-map';
+#     if (ref $Map eq '') { # it returned a string error message
+#         die "Read_User_Map failed: $Map\n";
+#     }
+#     my $sdsc_name = $Map->{NCSA}->{SDSC}->{jsmith};
+#     if (defined $sdsc_name) {
+#         # Maps "jsmith" to "ux123456"
+#         print "jsmith at NCSA is $sdsc_name at SDSC\n";
+#     else {
+#         print "No mapping for NCSA user 'jsmith' to SDSC namespace\n";
+#     }
+#
+# Note that if a mapping does not exist (is not specified in the user map
+# file), checking for it will cause some keys in the referenced hashes
+# to "auto-vivify", with values set to undef.  This could be avoided by
+# checking the "exists" predicate at each level, but it's probably not
+# worth the effort; extra "undef" values should be harmless.
+# 
+# TO DO:
+#     Check for multiple occurences of the same namespace in a single
+#     entry.  (Actually, we might want to allow this.  More generally,
+#     we need to integrate the support for multiple user names in a
+#     grid-mapfile entry into the user map support.  Ick.  Think about
+#     it later.)
+#
+# sub Read_User_Map($;$) {
+#     my($filename, $this_namespace) = @_;
+#     #
+#     # $this_namespace may be undef
+#     #
+# 
+#     #
+#     # Each entry is a reference to a hash representing a single
+#     # brace-enclosed entry in the user map file.  The structure is:
+#     #     <entry>->{USERNAME} is a reference to a hash
+#     #         mapping namespaces to user names
+#     #     <entry>->{UID} is a reference to a hash
+#     #         mapping namespaces to numeric UIDs
+#     #     <entry>->{name} is the user's real name
+#     #
+#     # The %seen hash is used to avoid duplicate user@namespace or
+#     # uid@namespace mappings.
+#     # 
+#     my @Entries = ();
+#     my $curr_entry = undef;
+#     my %seen = ();              # user@namespace or UID@namespace seen
+# 
+#     open my $Map, '<', $filename or return $!;
+#     LINE:
+#     while (<$Map>) {
+#         #
+#         # First, parse the line into tokens.
+#         #
+#         chomp;
+#         s/#.*$//;
+# 
+#         my @tokens = ();
+# 
+#         TOKEN:
+#         while ($_ ne '') {
+#             if (/^\s*$/) {                          # No more tokens on line
+#                 last TOKEN;
+#             }
+#             elsif (/^\s*{\s*(.*)$/) {               # opening brace
+#                 push @tokens, '{';
+#                 $_ = $1;
+#             }
+#             elsif (/^\s*(\S+\@\w+)\s*(.*)$/) {      # user@NAMESPACE
+#                 push @tokens, $1;
+#                 $_ = $2;
+#             }
+#             elsif (/^\s*(\S+:\d+\@\w+)\s*(.*)$/) {  # user:UID@NAMESPACE
+#                 push @tokens, $1;
+#                 $_ = $2;
+#             }
+#             elsif (/^\s*("[^"]*")\s*(.*)$/) {       # "Real Name"
+#                 push @tokens, $1;
+#                 $_ = $2;
+#             }
+#             elsif (/^\s*}\s*(.*)$/) {               # closing brace
+#                 push @tokens, '}';
+#                 $_ = $1;
+#             }
+#             else {
+#                 return "Unrecognized token, line $.";
+#             }
+#         }
+# 
+#         #
+#         # Now process each token.
+#         #
+#         # '{' introduces a new entry; '}' specifies the end of an entry.
+#         #
+#         # user:UID@NAMESPACE or user@NAMESPACE specifies a user
+#         # identity.
+#         #
+#         # A string enclosed in double quotes is a user's real name.
+#         #
+#         # Any other token is an error.
+#         #
+#         foreach my $token (@tokens) {
+#             #
+#             # opening brace
+#             #
+#             if ($token eq '{') {
+#                 if (defined $curr_entry) {
+#                     return "Unexpected '{', line $.";
+#                 }
+#                 $curr_entry = {};
+#             }
+# 
+#             #
+#             # user:UID@NAMESPACE or user@NAMESPACE
+#             # (numeric UID is optional)
+#             #
+#             elsif ($token =~ /^([^:@\s]+)(:(\d+))?\@(\S+)$/) {
+#                 my($username, $uid, $namespace) = ($1, $3, $4);
+#                 if (not defined $curr_entry) {
+#                     return "Unexpected token \"$token\", line $."
+#                 }
+#                 if (defined $curr_entry->{USERNAME}->{$namespace}) {
+#                     return "Duplicate namespace within entry, line $.";
+#                 }
+#                 if ($seen{"$username\@$namespace"}) {
+#                     return "Duplicate entry for $username\@$namespace";
+#                 }
+#                 if (defined $uid and $seen{"$uid\@$namespace"}) {
+#                     return "Duplicate entry for $uid\@$namespace";
+#                 }
+#                 $curr_entry->{USERNAME}->{$namespace} = $username;
+#                 $seen{"$username\@$namespace"} = 1;
+#                 if (defined $uid) {
+#                     $curr_entry->{UID}->{$namespace} = $uid;
+#                     $seen{"$uid\@$namespace"} = 1;
+#                 }
+#             }
+# 
+#             #
+#             # "Real Name"
+#             #
+#             elsif ($token =~ /^".*"$/) {
+#                 if (not defined $curr_entry) {
+#                     return "Unexpected token \"$token\", line $."
+#                 }
+#                 if (defined $curr_entry->{name}) {
+#                     return "Name already defined, line $.";
+#                 }
+#                 $curr_entry->{name} = $token;
+#             }
+# 
+#             #
+#             # closing brace
+#             #
+#             elsif ($token eq '}') {
+#                 if (not defined $curr_entry) {
+#                     return "Unexpected '}'"
+#                 }
+#                 if (not defined $curr_entry->{name}) {
+#                     return "No name defined";
+#                 }
+#                 if (not defined $curr_entry->{USERNAME}) {
+#                     return "No user ids defined";
+#                 }
+#                 push @Entries, $curr_entry;
+#                 undef $curr_entry;
+#             }
+#             else {
+#                 return "Internal error";
+#             }
+#         }
+#     }
+#     close $Map;
+# 
+#     # Add a '{' to this comment so brace-matching works when I edit this.
+#     return "Missing '}' at end of file" if defined $curr_entry;
+# 
+#     #
+#     # Traverse the Entries array and build the Map data structure.
+#     # For a user with username "ux123456" (UID 123456) at SDSC and "jmith"
+#     # (UID 1234) at NCSA, we'll have
+#     #     $Map->{SDSC}->{NCSA}->{ux123456} eq "jsmith"
+#     #     $Map->{SDSC}->{NCSA}->{123456}   eq "jsmith"
+#     #     $Map->{NCSA}->{SDSC}->{jsmith}   eq "ux123456"
+#     #     $Map->{NCSA}->{SDSC}->{1234}     eq "ux123456"
+#     #
+# 
+#     my $Map = {};
+#     foreach my $entry (@Entries) {
+#         foreach my $namespace0 (sort keys %{$entry->{USERNAME}}) {
+#             foreach my $namespace1 (sort keys %{$entry->{USERNAME}}) {
+#                 if ($namespace0 eq $namespace1) {
+#                     #
+#                     # Don't bother mapping from a namespace to itself.
+#                     #
+#                     next;
+#                 }
+#                 if (defined $this_namespace and
+#                     $namespace1 ne $this_namespace)
+#                 {
+#                     #
+#                     # If specified, don't bother with mappings to any
+#                     # namespace other than this one.
+#                     #
+#                     next;
+#                 }
+#                 my $username0 = $entry->{USERNAME}->{$namespace0};
+#                 my $username1 = $entry->{USERNAME}->{$namespace1};
+#                 $Map->{$namespace0}->{$namespace1}->{$username0} = $username1;
+#                 if (defined $entry->{UID}->{$namespace0}) {
+#                     my $uid0 = $entry->{UID}->{$namespace0};
+#                     $Map->{$namespace0}->{$namespace1}->{$uid0} = $username1;
+#                 }
+#             }
+#         }
+#     }
+# 
+#     return $Map;
+# } # Read_User_Map
+
+# ----------------------------------------------------------------------
+
+# Given the name of an admin map file, reads it and returns a reference
+# to a data structure containing the information from the file.
+# This data structure can be used to determine whether a given user within
+# a specified namespace is an admin (i.e., is allowed to request mappings
+# on behalf of other users).
+#
+# Comments extend from a '#' character to the end of the line.
+# Leading and trailing whitespace and blank lines are ignored.
+# Each line consists of a single entry of the form "username@NAMESPACE"
+# (e.g., "globus@SDSC" or "root@NCSA").
+#
+# The list of admins for the current namespace should match the list
+# specified in the config file, but this is not currently enforced.
+# 
+# If an error occurs on the attempt to open the file, returns a
+# string containing the error message (e.g., "No such file or directory").
+# On a syntax error, returns a string with an error message.  Thus
+# the "ref" operator can be used to determine whether the call was
+# successful.
+#
+# The result is a reference to a hash.
+# The keys are of the form "username@NAMESPACE".
+# The values are 1 for valid administrators.
+#
+# (Future directions might include associating a range of timestamps with
+# an entry, so a given user is considered an admin only over a specified
+# range of time.)
+#
+# sub Read_Admin_List($) {
+#     my($filename) = @_;
+#     my $Map = {};
+#     open my $Map_File, '<', $filename or return $!;
+#     while (<$Map_File>) {
+#         chomp;
+#         s/#.*$//;
+#         s/^\s*//;
+#         s/\s*$//;
+#         next if /^$/;
+#         if (/^\S+\@\S+$/) {
+#             $Map->{$_} = 1;
+#         }
+#         else {
+#             my $line = $.;
+#             close MAP;
+#             return "Syntax error on line $line";
+#         }
+#     }
+#     close $Map_File;
+#     return $Map;
+# } # Read_Admin_List
+
+# ----------------------------------------------------------------------
+
+#
+# Check whether a DN is valid.  If check fails, return a brief error 
+# message.  If it's valid, return undef.
+# 
+# Always reject non-printable characters and '"' and '\' characters.
+#
+# If "-quoted" option is specified, require leading and trailing '"'
+# characters.
+#
+# If "-check-syntax" option is specified, do a minimal syntax check.
+#
+sub DN_Error(@) {
+    my $dn = undef;
+    my $check_syntax = 0;
+    my $quoted = 0;
+    foreach my $arg (@_) {
+        if ($arg eq '-check-syntax') {
+            $check_syntax = 1;
+        }
+        elsif ($arg eq '-quoted') {
+            $quoted = 1;
+        }
+        elsif (not defined $dn) {
+            $dn = $arg;
+        }
+        else {
+            die "Internal error: GX::DN_Error @_\n";
+        }
+    }
+    if (not defined $dn) {
+        die "Internal error: missing DN, GX::DN_Error @_\n";
+    }
+
+    if ($quoted) {
+        if ($dn =~ /^"(.*)"$/) {
+            $dn = $1;
+        }
+        else {
+            return 'Missing quotation marks in DN';
+        }
+    }
+
+    #
+    # Disallow a DN longer than 900 characters.
+    # Long DNs could cause problems parsing the grid-mapfile.
+    # See bug-0069 and Globus Bugzilla #4180 for more details.
+    #
+    if (length $dn > 900) {
+        return 'DN is too long';
+    }
+
+    #
+    # Disallow non-printing characters.  For now, we allow only printable
+    # 7-bit ASCII characters; consider allowing, e.g., accented letters.
+    #
+    if ($dn !~ /^[ -~]*$/) {
+        return 'DN contains non-printing characters';
+    }
+
+    #
+    # Disallow '"' and '\' characters.  These should be allowed if escaped
+    # with a backslash, but we're going to disallow them until there's
+    # a clear specification of the grid-mapfile syntax.  See bug-0069
+    # and Globus Bugzilla #4180 for more details.
+    # 
+    if ($dn =~ /"/) {
+        return "DN may not contain '\"' characters";
+    }
+    if ($dn =~ /\\/) {
+        return "DN may not contain '\\' characters";
+    }
+
+    #
+    # Do some minimal syntax checking if requested.
+    # 
+    if ($check_syntax and $dn !~ m<^(/[^/=]+=[^=]+)+$>) {
+        return 'Syntax error in DN (use "gx-request -force-dn" to override)';
+    }
+
+    #
+    # All done, no errors found
+    #
+    return undef;
+} # DN_Error
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, possibly containing one or more certificate subject
+# names, translates certain fields to be compatible with GT2 and
+# OpenSSL 0.9.6.  The input string may consist of multiple lines.
+# See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
+# 
+sub GT2_Subject($) {
+    my($string) = @_;
+    $string =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/USERID=)g;
+    $string =~ s(/UID=)(/USERID=)g;
+    $string =~ s(/emailAddress=)(/Email=)g;
+    $string =~ s(/EMAIL=)(/Email=)g;
+    $string =~ s(/E=)(/Email=)g;
+    return $string;
+} # GT2_Subject
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, possibly containing one or more
+# certificate subject names, translates certain fields to
+# be compatible with GT3 WS (Web Services).  According to
+# <http://www.globus.org/mail_archive/discuss/2004/04/msg00007.html>,
+# GT3 WS uses  /M=..." where GT4 uses "/emailAddress=..."; it's otherwise
+# the same as GT4.  (GT3 pre-WS matches GT4.)
+# The input string may consist of multiple lines.
+# This is rarely useful, since it applies only to GT3 WS (which
+# is superseded by GT4), so it's only used when specifically
+# requested by a command-line option.
+# See <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>
+# and bugs/bug-0090.
+# 
+sub GT3_Subject($) {
+    my($string) = @_;
+    $string =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=)g;
+    $string =~ s(/USERID=)(/UID=)g;
+    $string =~ s(/emailAddress=)(/E=)g;
+    $string =~ s(/EMAIL=)(/E=)g;
+    $string =~ s(/Email=)(/E=)g;
+    return $string;
+} # GT3_Subject
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, possibly containing one or more certificate
+# subject names, translates certain fields to be compatible
+# with GT4 (and also with GT3 pre-WS) and OpenSSL 0.9.7 (and newer).
+# The input string may consist of multiple lines.  See
+# <http://bugzilla.globus.org/bugzilla/show_bug.cgi?id=575>.
+# 
+sub GT4_Subject($) {
+    my($string) = @_;
+    $string =~ s(/0\.9\.2342\.19200300\.100\.1\.1=)(/UID=)g;
+    $string =~ s(/USERID=)(/UID=)g;
+    $string =~ s(/Email=)(/emailAddress=)g;
+    $string =~ s(/EMAIL=)(/emailAddress=)g;
+    $string =~ s(/E=)(/emailAddress=)g;
+    return $string;
+} # GT4_Subject
+
+# ----------------------------------------------------------------------
+
+#
+# Given a string, delete leading and trailing whitespace, delete all
+# trailing occurrences of "/CN=proxy" or "/CN=[0-9]+" (converting a DN for
+# a proxy certificate to the DN for the corresponding user certificate),
+# and convert to GT4 form.
+# 
+sub Normalize_DN($) {
+    my($string) = @_;
+    $string =~ s/^\s*//;
+    $string =~ s/\s*$//;
+    while ($string =~ m</CN=proxy$> or $string =~ m</CN=[0-9]+$>) {
+        $string =~ s</[^/]*$><>;
+    }
+    return GX::GT4_Subject $string;
+} # Normalize_DN
+
+# ----------------------------------------------------------------------
+
+#
+# Given a single DN, returns a list of one or more DNs compatitible
+# with GT2, GT3, and/or GT4, as specified by the following arguments.
+# 
+sub DN_List($@) {
+    my $dn = shift @_;
+
+    my %result = ();
+    foreach my $arg (@_) {
+        if ($arg eq 'GT2') {
+            $result{GX::GT2_Subject $dn} = 1;
+        }
+        elsif ($arg eq 'GT3') {
+            $result{GX::GT3_Subject $dn} = 1;
+        }
+        elsif ($arg eq 'GT4') {
+            $result{GX::GT4_Subject $dn} = 1;
+        }
+    }
+    return sort keys %result;
+} # DN_List
+
+# ----------------------------------------------------------------------
+
+#
+# (Attempt to) send an e-mail message.
+# Arguments are program_name, recipient, subject, body.
+# Use the "mailx" command if it exists; otherwise use "mail".
+# Failures are quietly ignored.
+# In addition, all messages are logged to mail.log in the data directory.
+#
+sub Send_Email($$$$) {
+    my($program_name, $recipient, $subject, $body) = @_;
+    my $data_dir = "$GX::Config{INSTALL_DIR}/gx-map-data";
+    my $mail_log = "$data_dir/$program_name-mail.log";
+
+    GX::Untaint $mail_log;
+
+    my $current_time = GX::Time_Image time;
+    my $hostname = GX::Get_Hostname;
+    open my $log, '>>', $mail_log or die "$mail_log: $!\n";
+    print $log <<"EOF";
+$current_time
+Sending e-mail message from $hostname
+Recipient: $recipient
+Subject: $subject
+
+$body
+[end of message]
+
+EOF
+    close $log;
+
+    foreach my $mail_program (qw(mailx mail)) {
+        eval { GX::Use_Commands $mail_program };
+        next if $@;
+        my $command = "$mail_program -s '$subject' $recipient";
+        GX::Untaint $command;
+        open my $Pipe, '|-', $command;
+        print $Pipe $body;
+        close $Pipe;
+        last;
+    }
+} # Send_Email
+
+# ----------------------------------------------------------------------
+
+#
+# Given the name of a cadesc file, returns a reference to a hash
+# containing information about the CA.  CERTIFICATE_FORM and CRL_FORM
+# are set to 'PEM' if they're not specified in the file.
+#
+# If there's an error, return an error message as reference to an array
+# of strings.
+#
+sub Get_CA_Ref($) {
+    my($filename) = @_;
+    my $ref = GX::Read_Records '-single', $filename;
+    my @errors = ();
+
+    $ref->{_FILENAME} = $filename;
+    $ref->{_FILE_BASENAME} = File::Basename::basename $filename;
+    my $short_name = $ref->{_FILE_BASENAME};
+    $short_name =~ s/\.cadesc$//;
+    $short_name =~ s/^[^.]*\.//;
+    $ref->{_SHORT_CA_NAME} = $short_name;
+
+    $ref->{CERTIFICATE_FORM} = 'PEM' if not defined $ref->{CERTIFICATE_FORM};
+    $ref->{CRL_FORM}         = 'PEM' if not defined $ref->{CRL_FORM};
+
+    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes') {
+        return $ref;
+    }
+
+    my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
+                                    SIGNED_BY SUBJECT MAY_SIGN
+                                    CERTIFICATE_MD5 CERTIFICATE_SHA1
+                                    CERTIFICATE_URL CERTIFICATE_FORM
+                                    SIGNING_POLICY_URL
+                                    CRL_URL CRL_FORM
+                                    ALLOW_MISSING_CRL
+                                    CERT_EXPIRES DISABLE
+                                    _FILENAME _FILE_BASENAME _SHORT_CA_NAME );
+    my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
+                       CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
+    my %remap = ( SIGNED_BY => 1,
+                  SUBJECT   => 1,
+                  MAY_SIGN  => 1 );
+                       
+    foreach my $key (@required) {
+        if (not defined $ref->{$key}) {
+            push @errors, "Missing key $key";
+        }
+    }
+
+    foreach my $key (sort keys %$ref) {
+        if (not $valid{$key}) {
+            push @errors, "Unrecognized key $key";
+        }
+        if ($key =~ /_URL$/) {
+            if ($ref->{$key} ne '?' and not GX::Is_URL $ref->{$key}) {
+                push @errors, "Bad value for $key (must be a URL)";
+            }
+        }
+        #
+        # Map subject names to GT4-compatible (and GT3-compatible) forms.
+        #
+        if ($remap{$key}) {
+            if (ref $ref->{$key} eq 'ARRAY') {
+                map { $_ = GX::GT4_Subject $_ } @{$ref->{$key}};
+            }
+            else {
+                $ref->{$key} = GX::GT4_Subject $ref->{$key};
+            }
+        }
+    }
+    if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
+        push @errors, "Invalid HASH";
+    }
+    {
+        my %valid = ( PEM => 1, DER => 1, NET => 1 );
+        if (not $valid{$ref->{CERTIFICATE_FORM}}) {
+            push @errors,
+                 qq(Value for CERTIFICATE_FORM must be "PEM", "DER", or "NET");
+        }
+    }
+    {
+        my %valid = ( PEM => 1, DER => 1 );
+        if (not $valid{$ref->{CRL_FORM}}) {
+            push @errors, qq(Value for CRL_FORM must be "PEM" or "DER");
+        }
+    }
+    if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
+        push @errors, qq(Value for DISABLE must be "yes" or "no");
+    }
+
+    if (@errors) {
+        return \@errors;
+    }
+    else {
+        return $ref;
+    }
+} # Get_CA_Ref
+
+# ----------------------------------------------------------------------
+
+#
+# Get a lock.
+# The argument is a program name (or possibly the name of some resource
+# to be locked).
+#
+# Create a uniquely named lock file, then attempt to create
+# the actual lock file as a hard link to it.  If this succeeds,
+# we have the lock; otherwise check the link count.
+#
+# The lock is created in INSTALL_DIR/gx-map-data.
+#
+# See bugs/bug-0081 for details about the locking mechanism.
+#
+sub Get_Lock($) {
+    my($name) = @_;
+    my $dir = "$GX::Config{INSTALL_DIR}/gx-map-data";
+    my $hostname = GX::Get_Hostname;
+    my $lock_file = "$dir/.$name.lock";
+    my $unique_lock_file = "$lock_file.$hostname.$$";
+    GX::Untaint $lock_file;
+    GX::Untaint $unique_lock_file;
+
+    my $timestamp = GX::Time_Image time;
+    open my $lock, '>', $unique_lock_file or die "$unique_lock_file: $!\n";
+    print $lock "$name (gx-map $GX::VERSION) ",
+                "PID=$$ on $hostname at $timestamp\n";
+    close $lock;
+    if (link $unique_lock_file, $lock_file) {
+        #
+        # Got lock
+        #
+        unlink $unique_lock_file;
+    }
+    else {
+        my $link_error = $!;
+        my @stat = stat $unique_lock_file;
+        if (@stat and $stat[3] == 2) {
+            #
+            # Got lock, but link failed.  This can happen due to
+            # NFS latencies; I'm not 100% sure of the details.
+            # See the Linux open(2) man page; see also the
+            # "Lock files on NFS" thread on comp.unix.programmer,
+            # starting Thu 2006-04-06.
+            #
+            unlink $unique_lock_file;
+            return;
+        }
+        else {
+            #
+            # Lock failed, most likely because the lock file already
+            # exists.
+            #
+            my $lock_time = GX::Get_mtime $lock_file;
+            my $message;
+            if (defined $lock_time) {
+                my $delta = time - $lock_time;
+                $message = "Locked since " .
+                           GX::Time_Image($lock_time) .
+                           " ($delta second(s))\n";
+                if (open my $old_lock, '<', $lock_file) {
+                    my $lock_info = scalar <$old_lock>;
+                    if (defined $lock_info) {
+                        chomp $lock_info;
+                        $message .= "$lock_info\n";
+                    }
+                    close $old_lock;
+                }
+                $message .= "Consider running gx-remove-locks\n";
+            }
+            else {
+                $message = "Failed to get lock: $link_error\n";
+            }
+            unlink $unique_lock_file;
+            die $message;
+        }
+    }
+} # Get_Lock
+
+# ----------------------------------------------------------------------
+
+#
+# Delete the lock file created by Get_Lock().
+#
+sub Release_Lock($) {
+    my($name) = @_;
+    my $dir = "$GX::Config{INSTALL_DIR}/gx-map-data";
+    my $lock_file = "$dir/.$name.lock";
+    GX::Untaint $lock_file;
+    unlink $lock_file or die "$lock_file: $!\n";
+} # Release_Lock
+
+# ----------------------------------------------------------------------
+
+sub Die_Handler($) {
+    die @_ if $^S;
+
+    if (defined $GX::Registered_Handler_Function) {
+        &$GX::Registered_Handler_Function;
+    }
+
+    print STDERR $_[0];
+
+    my @traceback = ();
+
+    my $i = 0;
+    while (1) {
+        my @caller = caller $i;
+        last if not @caller;
+        push @traceback, { file    => $caller[1],
+                           line    => $caller[2],
+                           subname => $caller[3] };
+        $i++;
+    }
+
+    print STDERR "Traceback:\n";
+    for (my $i = 0; $i <= $#traceback; $i++) {
+        my $curr = $traceback[$i];
+        if ($i < $#traceback) {
+            my $next = $traceback[$i+1];
+            print STDERR "    $curr->{file}:$curr->{line} in ",
+                         "$next->{subname}\n";
+        }
+        else {
+            print STDERR "    $curr->{file}:$curr->{line}\n";;
+        }
+    }
+
+    exit 1;
+} # Die_Handler
+
+# ----------------------------------------------------------------------
+
+sub Install_Die_Handler() {
+    $SIG{__DIE__} = \&GX::Die_Handler;
+} # Install_Die_Handler
+
+# ----------------------------------------------------------------------
+
+sub Install_Warn_Handler() {
+    $SIG{__WARN__} = \&GX::Die_Handler;
+} # Install_Warn_Handler
+
+# ----------------------------------------------------------------------
+
+sub Uninstall_Handlers() {
+    delete $SIG{__DIE__};
+    delete $SIG{__WARN__};
+} # Uninstall_Handlers
+
+# ----------------------------------------------------------------------
+
+sub Register_Handler_Function($) {
+    $GX::Registered_Handler_Function = $_[0];
+} # Register_Handler_Function
+
+# ----------------------------------------------------------------------
+
+#
+# This function is TeraGrid-specific.
+# It should probably be in separate a TG-specific module, but we'll
+# leave it here for now.
+#
+# Read database configuration information from the specified file
+# (typically "tgcdb.db-config").
+#
+sub Get_TGCDB_Config($) {
+    my($config_file) = @_;
+    GX::Debug "GX::Get_TGCDB_Config $config_file\n";
+
+    my @stat = stat $config_file;
+    die "$config_file: $!\n" if not @stat;
+    my $mode = $stat[2] & 0777;
+    if ($mode ne 0400 and $mode ne 0600) {
+        die "Bad mode for $config_file\n" .
+            "Mode must be 400 (r--------) or 600 (rw-------)\n";
+    }
+
+    my $db_config = GX::Read_Records '-single', $config_file;
+    my @keys = sort keys %$db_config;
+    my @required_keys = qw(host port dbname resource_name user password);
+    my %required_key = map { $_ => 1 } @required_keys;
+    my @errors = ();
+
+    my @missing = ();
+    my @unrecognized = ();
+    my @unset = ();
+    foreach my $key (@required_keys) {
+        if (not defined $db_config->{$key}) {
+            push @missing, $key;
+        }
+    }
+    foreach my $key (sort keys %$db_config) {
+        if (not $required_key{$key}) {
+            push @unrecognized, $key;
+        }
+        if ($db_config->{$key} eq '-' or $db_config->{$key} eq '') {
+            push @unset, $key;
+        }
+    }
+
+    if (@missing or @unrecognized or @unset) {
+        my $message = "Bad config file $config_file:\n";
+        if (@missing) {
+            my $s = scalar @missing == 1 ? '' : 's';
+            $message .= "Missing key$s: @missing\n";
+        }
+        if (@unrecognized) {
+            my $s = scalar @unrecognized == 1 ? '' : 's';
+            $message .= "Unrecognized key$s: @unrecognized\n";
+        }
+        if (@unset) {
+            my $s = scalar @unset == 1 ? '' : 's';
+            $message .= "Unset key$s: @unset\n";
+        }
+        die $message;
+    }
+
+    return $db_config;
+} # Get_TGCDB_Config
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $Debugging;
+} # Debug   
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $Debugging; 
+} # Debugf  
+
+1;
