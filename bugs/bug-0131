@@ -1,0 +1,31 @@
+# $Id: bug-0131,v 1.1 2007-02-07 18:47:09-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0131,v $
+
+gx-map bug 0131
+Date: Wed 2007-02-07
+Severity: Med
+Reported by: Abe Singer <abe@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Consider allowing gx-map to be owned by root
+
+Currently, gx-map may not be owned by root, and root cannot be a
+gx-map administrator.  This is based on the general principle of not
+doing as root anything that doesn't *need* to be done as root.
+
+Abe Singer points out that this might not be the best approach.
+
+Since the "gxmap" account effectively has many root-like powers,
+there's something to be said for restricting those powers to a single
+account, namely root, rather than requiring admins to maintain
+extremely strict security over a second account.  Furthermore,
+systems can provide some extra built-in protections for root, such as
+disallowing direct logins and disallowing root access on NFS partitions
+(though the latter can cause problems with gx-map's security model).
+
+On the other hand, running as a non-root user can reduce the damage
+caused by software bugs.  If some privileged gx-map command has a
+bug that can cause it to clobber the /etc/passwd file, for example,
+that bug won't cause problems unless it's running as root.
+
+To do: Think about this.
