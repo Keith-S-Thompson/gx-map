@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.12 2007-01-22 22:13:58-08 kst Exp $
+# $Id: gx-util-test.in,v 1.13 2007-02-08 17:33:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -70,7 +70,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 my $Program_Name = File::Basename::basename $0;
 
@@ -83,30 +83,30 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
-Gridmap_Utils::Install_Die_Handler;
-Gridmap_Utils::Install_Warn_Handler;
+GX::Install_Die_Handler;
+GX::Install_Warn_Handler;
 
 Usage if not @ARGV;
 
 if (Match $ARGV[0], 'Check_Data_Dir') {
     Usage if scalar @ARGV != 1;
-    Gridmap_Utils::Check_Data_Dir();
+    GX::Check_Data_Dir();
     print "ok\n";
 }
 
 elsif (Match $ARGV[0], 'Get_mtime') {
     Usage if scalar @ARGV != 2;
-    my $mtime = Gridmap_Utils::Get_mtime $ARGV[1];
+    my $mtime = GX::Get_mtime $ARGV[1];
     print Image $mtime, "\n";
 }
 
 elsif (Match $ARGV[0], 'Is_Valid_Username') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Is_Valid_Username $ARGV[1];
+    my $result = GX::Is_Valid_Username $ARGV[1];
     if ($result) {
         print "yes\n";
     }
@@ -117,7 +117,7 @@ elsif (Match $ARGV[0], 'Is_Valid_Username') {
 
 elsif (Match $ARGV[0], 'Get_PW_Name') {
     Usage if scalar @ARGV != 2;
-    my $pw = Gridmap_Utils::Get_PW_Name $ARGV[1];
+    my $pw = GX::Get_PW_Name $ARGV[1];
     if (defined $pw) {
         foreach my $key (sort keys %$pw) {
             printf "%-7s %s\n", $key, $pw->{$key};
@@ -130,7 +130,7 @@ elsif (Match $ARGV[0], 'Get_PW_Name') {
 
 elsif (Match $ARGV[0], 'Get_PW_UID') {
     Usage if scalar @ARGV != 2;
-    my $pw = Gridmap_Utils::Get_PW_UID $ARGV[1];
+    my $pw = GX::Get_PW_UID $ARGV[1];
     if (defined $pw) {
         foreach my $key (sort keys %$pw) {
             printf "%-7s %s\n", $key, $pw->{$key};
@@ -143,26 +143,26 @@ elsif (Match $ARGV[0], 'Get_PW_UID') {
 
 elsif (Match $ARGV[0], 'Get_Hostname') {
     Usage if scalar @ARGV != 1;
-    my $hostname = Gridmap_Utils::Get_Hostname();
+    my $hostname = GX::Get_Hostname();
     print Image $hostname, "\n";
 }
 
 elsif (Match $ARGV[0], 'Dir_Error') {
     Usage if scalar @ARGV != 2;
-    my $error = Gridmap_Utils::Dir_Error $ARGV[1];
+    my $error = GX::Dir_Error $ARGV[1];
     print Image $error, "\n";
 }
 
 elsif (Match $ARGV[0], 'Require_Owner') {
     Usage if scalar @ARGV != 1;
-    Gridmap_Utils::Require_Owner $Program_Name;
+    GX::Require_Owner $Program_Name;
     print "ok\n";
 }
 
 
 elsif (Match $ARGV[0], 'Is_Admin_Account') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Is_Admin_Account $ARGV[1];
+    my $result = GX::Is_Admin_Account $ARGV[1];
     if ($result) {
         print "yes\n";
     }
@@ -174,49 +174,49 @@ elsif (Match $ARGV[0], 'Is_Admin_Account') {
 elsif (Match $ARGV[0], 'Use_Commands') {
     Usage if scalar @ARGV < 2;
     shift;
-    Gridmap_Utils::Use_Commands @ARGV;
+    GX::Use_Commands @ARGV;
     print "ok\n";
 }
 
 elsif (Match $ARGV[0], 'Increment_Timestamp') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Increment_Timestamp $ARGV[1];
+    my $result = GX::Increment_Timestamp $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'Get_Time_Of_Day') {
     Usage if scalar @ARGV != 1;
-    my $result = Gridmap_Utils::Get_Time_Of_Day;
+    my $result = GX::Get_Time_Of_Day;
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'Timestamp_Of') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Timestamp_Of $ARGV[1];
+    my $result = GX::Timestamp_Of $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'Time_Image') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Time_Image $ARGV[1];
+    my $result = GX::Time_Image $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'Long_Time_Image') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Long_Time_Image $ARGV[1];
+    my $result = GX::Long_Time_Image $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'Time_Value') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Time_Value $ARGV[1];
+    my $result = GX::Time_Value $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'Get_DNs_From_List_File') {
     Usage if scalar @ARGV != 2;
-    my @DNs = Gridmap_Utils::Get_DNs_From_List_File $ARGV[1];
+    my @DNs = GX::Get_DNs_From_List_File $ARGV[1];
     print scalar @DNs, " DNs:\n";
     print join("\n", @DNs), "\n";
 }
@@ -228,7 +228,7 @@ elsif (Match $ARGV[0], 'Write_Records') {
 elsif (Match $ARGV[0], 'Read_Records') {
     my @args = @ARGV;
     shift @args;
-    my @result = Gridmap_Utils::Read_Records @args;
+    my @result = GX::Read_Records @args;
     print "Got ", scalar @result, " record(s)\n";
 }
 
@@ -246,37 +246,37 @@ elsif (Match $ARGV[0], 'Cache_File') {
 
 elsif (Match $ARGV[0], 'DN_Error') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::DN_Error $ARGV[1];
+    my $result = GX::DN_Error $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'GT2_Subject') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::GT2_Subject $ARGV[1];
+    my $result = GX::GT2_Subject $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'GT3_Subject') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::GT3_Subject $ARGV[1];
+    my $result = GX::GT3_Subject $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'GT4_Subject') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::GT4_Subject $ARGV[1];
+    my $result = GX::GT4_Subject $ARGV[1];
     print Image $result, "\n";
 }
 
 elsif (Match $ARGV[0], 'DN_List') {
     Usage if scalar @ARGV != 2;
-    my @result = Gridmap_Utils::DN_List $ARGV[1], 'GT2', 'GT3', 'GT4';
+    my @result = GX::DN_List $ARGV[1], 'GT2', 'GT3', 'GT4';
     print join("\n", @result), "\n";
 }
 
 elsif (Match $ARGV[0], 'Normalize_DN') {
     Usage if scalar @ARGV != 2;
-    my $result = Gridmap_Utils::Normalize_DN $ARGV[1];
+    my $result = GX::Normalize_DN $ARGV[1];
     print Image $result, "\n";
 }
 
@@ -293,12 +293,12 @@ elsif (Match $ARGV[0], 'Release_Lock') {
 }
 
 elsif (Match $ARGV[0], 'Install_Die_Handler') {
-    Gridmap_Utils::Install_Die_Handler;
+    GX::Install_Die_Handler;
     print "ok\n";
 }
 
 elsif (Match $ARGV[0], 'Install_Warn_Handler') {
-    Gridmap_Utils::Install_Warn_Handler;
+    GX::Install_Warn_Handler;
     print "ok\n";
 }
 
@@ -343,7 +343,7 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $Program_Name [options]
 Usage: $Program_Name command [argument ...]
-Exercise functions in the Gridmap_Utils package.
+Exercise functions in the GX package.
 Option names may be abbreviated.
     -help                     Display this message and exit.
     -version                  Display version information and exit.
@@ -399,4 +399,3 @@ sub Debug(@) {
 sub Debugf(@) {
     printf @_ if $User_Opt->{debugging};
 } # Debugf
-
