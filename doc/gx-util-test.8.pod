@@ -1,4 +1,4 @@
-# $Id: gx-util-test.8.pod,v 1.2 2007-01-01 13:01:36-08 kst Exp $
+# $Id: gx-util-test.8.pod,v 1.3 2007-02-08 17:33:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-util-test.8.pod,v $
 
 =for comment
@@ -49,7 +49,7 @@ Make sure the license text appears in the generated man pages.
 
 =head1 NAME
 
-gx-util-test - Test utility for Gridmap_Utils module
+gx-util-test - Test utility for GX module
 
 =head1 SYNOPSIS
 
@@ -63,12 +63,12 @@ S<gx-util-test command [options]>
 
 B<gx-util-test>, part of the B<gx-map> system, is intended for
 developer testing.  It allows unit testing of functions in the
-B<Gridmap_Utils> Perl package.
+B<GX> Perl package.
 
-Run with the B<-help> option for a list of commands.  Command names
-correspond to function names in the B<Gridmap_Utils> package, but
-are case-sensitive.  '-' and '_' characters are ignored.  Not all
-functions are supported.
+Run with the B<-help> option for a list of commands.  Command
+names correspond to function names in the B<GX> package, but are
+case-sensitive.  '-' and '_' characters are ignored.  Not all functions
+are supported.
 
 =head1 OPTIONS
 
@@ -97,7 +97,7 @@ Enable debugging output (this currently does nothing).
 
 =head1 SEE ALSO
 
-gx-map(7), gx-map-gridmap-utils(3)
+gx-map(7), GX(3)
 
 =head1 AUTHOR
 
