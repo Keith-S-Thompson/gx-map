@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-watch-locks.in,v 1.5 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-watch-locks.in,v 1.6 2007-02-08 17:33:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
 
 ########################################################################
@@ -59,7 +59,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 sub Usage(@);
 sub Beep();
@@ -83,7 +83,7 @@ Usage if $User_Opt->{help};
 Usage if @ARGV;
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
@@ -97,7 +97,7 @@ if (defined $User_Opt->{directory}) {
     }
 }
 else {
-    Gridmap_Utils::Check_Data_Dir;
+    GX::Check_Data_Dir;
     $Data_Dir = "$Install_Dir/gx-map-data";
 }
 
@@ -165,7 +165,7 @@ sub Lock_File_Info($$$) {
     my $result = {};
 
     $result->{name} = $filename;
-    $result->{mtime} = Gridmap_Utils::Get_mtime "$dir/$filename";
+    $result->{mtime} = GX::Get_mtime "$dir/$filename";
     return undef if not defined $result->{mtime};
     $result->{age} = $now - $result->{mtime};
 
@@ -180,7 +180,7 @@ sub Lock_File_Info($$$) {
 
 sub List_Lock_Files() {
     my $now = time;
-    print Gridmap_Utils::Time_Image $now, "\n";
+    print GX::Time_Image $now, "\n";
     print "Checking for locks in $Data_Dir\n";
     print "\n";
 
