@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.8 2007-01-31 20:12:04-08 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.9 2007-02-08 17:33:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -69,7 +69,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 use Cwd ();
 
 my $Program_Name = File::Basename::basename $0;
@@ -85,7 +85,7 @@ my @Opts = ( $User_Opt,
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 Usage if scalar @ARGV != 1;
@@ -121,10 +121,10 @@ if ($tarball !~ /^\//) {
     $tarball = "$cwd/$tarball";
 }
 
-Gridmap_Utils::Install_Die_Handler;
-Gridmap_Utils::Install_Warn_Handler;
+GX::Install_Die_Handler;
+GX::Install_Warn_Handler;
 
-Gridmap_Utils::Use_Commands 'gzip', 'tar';
+GX::Use_Commands 'gzip', 'tar';
 
 my $dir = File::Basename::basename $tarball;
 $dir =~ s/\.tar\.gz$//;
@@ -187,13 +187,13 @@ sub Backup($) {
     my @stat;   
     
     return undef if not -e $filename;
-    my $timestamp = Timestamp_Of Gridmap_Utils::Get_mtime $filename;
+    my $timestamp = Timestamp_Of GX::Get_mtime $filename;
     my $backup_name = "$filename-$timestamp";  
     if (-e $backup_name) {
         #
         # Don't need a stack traceback
         #
-        Gridmap_Utils::Uninstall_Handlers;
+        GX::Uninstall_Handlers;
         die "$backup_name already exists\n",
             "Remove or rename it and try again\n";
     }
