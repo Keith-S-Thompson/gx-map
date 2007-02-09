@@ -1,0 +1,13 @@
+# $Id: bug-0134,v 1.1 2007-02-09 11:41:32-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0134,v $
+
+gx-map bug 0134
+Date: Fri 2007-02-09
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Append information to lock file
+
+In Die_Handler(), if a lock file is open, append the error message
+to the lock file.
