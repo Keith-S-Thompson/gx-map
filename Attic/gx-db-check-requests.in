@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.11 2007-01-01 13:01:33-08 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.12 2007-02-08 17:33:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -61,7 +61,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     push @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 sub Usage(@);
 sub Debug(@);
@@ -88,7 +88,7 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
@@ -101,7 +101,7 @@ my $Mappings_File    = "$Data_Dir/tgcdb-mappings";
 
 my $gx_request_command = "$Install_Dir/bin/gx-request";
 
-Gridmap_Utils::Get_Lock $Program_Name;
+GX::Get_Lock $Program_Name;
 
 if (not -e $Mappings_File) {
     #
@@ -110,7 +110,7 @@ if (not -e $Mappings_File) {
     #
     open my $FILE, '>', $Mappings_File or die "$Mappings_File: $!\n";
     close $FILE;
-    Gridmap_Utils::Use_Commands 'ci';
+    GX::Use_Commands 'ci';
     system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
 }
 
@@ -180,14 +180,14 @@ if (not @removed_mappings and not @added_mappings) {
 #
 
 if (not $User_Opt->{dryrun}) {
-    my $Now = Gridmap_Utils::Time_Image time; 
-    my $Hostname = Gridmap_Utils::Get_Hostname;
+    my $Now = GX::Time_Image time; 
+    my $Hostname = GX::Get_Hostname;
     #
     # Split these string literals so CVS doesn't expand them.
     #
     my $Id_Keyword = '$Id' . ':$';
     my $Source_Keyword = '$Source' . ':$';
-    my $version = $Gridmap_Utils::VERSION;
+    my $version = $GX::VERSION;
 
     my $temp_file = "$Mappings_File.tmp";
 
@@ -214,7 +214,7 @@ EOF
     }
     close $FILE or die "Closing ${temp_file}: $!\n";
     rename $temp_file, $Mappings_File or die "renaming $temp_file: $!\n";
-    Gridmap_Utils::Use_Commands 'ci';
+    GX::Use_Commands 'ci';
     system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
 }
 
@@ -225,7 +225,7 @@ foreach my $mapping (@added_mappings) {
     Request 'add', $mapping;
 }
 
-Gridmap_Utils::Release_Lock $Program_Name;
+GX::Release_Lock $Program_Name;
 
 ########################################################################
 
@@ -241,7 +241,7 @@ sub Process_DB_Request($$) {
     my($mappings, $db_request_file) = @_;
     Debug "Process_DB_Request \"$db_request_file\"\n";
     my $result = $mappings;
-    my $info = Gridmap_Utils::Read_Records '-single', $db_request_file;
+    my $info = GX::Read_Records '-single', $db_request_file;
 
     my $request  = undef;
     my $username = undef;
@@ -275,7 +275,7 @@ sub Process_DB_Request($$) {
             }
             my %dn_seen = ();
             foreach my $dn (@dn_list) {
-                $dn_seen{Gridmap_Utils::GT4_Subject $dn} = 1;
+                $dn_seen{GX::GT4_Subject $dn} = 1;
             }
             #
             # No need to sort; order is irrelevant.
@@ -394,7 +394,7 @@ sub Get_Mappings_From_File($) {
         if (not defined $user or not defined $dn) {
             die "Syntax error in $filename, line $.\n"
         }
-        $dn = Gridmap_Utils::Normalize_DN $dn;
+        $dn = GX::Normalize_DN $dn;
         $result->{$user}->{$dn} = 1;
     }
     close $FILE;
@@ -418,7 +418,7 @@ sub Get_Mappings_From_DB($) {
     Debug "Get_Mappings_From_DB \"$db_config_file\"\n";
     my $result = {};
     my $db_info = {};
-    my $DB_Config = Gridmap_Utils::Get_TGCDB_Config $db_config_file;
+    my $DB_Config = GX::Get_TGCDB_Config $db_config_file;
     foreach my $key (keys %$DB_Config) {
         if ($key ne 'password') {
             $db_info->{$key} = $DB_Config->{$key};
@@ -449,7 +449,7 @@ sub Get_Mappings_From_DB($) {
 
     while (@datarow = $sth->fetchrow()) {
         if ($datarow[1] ne '') {
-            my $dn = Gridmap_Utils::Normalize_DN $datarow[0];
+            my $dn = GX::Normalize_DN $datarow[0];
             my $user = $datarow[1];
             $result->{$user}->{$dn} = 1;
         }
@@ -557,7 +557,7 @@ sub Cleanup() {
     foreach my $file (@processed_files) {
         rename "$New_Requests_Dir/$file", "$Old_Requests_Dir/$file";
     }
-    Gridmap_Utils::Release_Lock $Program_Name;
+    GX::Release_Lock $Program_Name;
 } # Cleanup
 
 # ----------------------------------------------------------------------
