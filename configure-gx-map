@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.55 2007-01-24 18:00:25-08 kst Exp $
+# $Id: configure-gx-map,v 1.56 2007-02-08 17:27:29-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -79,16 +79,16 @@ my @Var_Names
           ADDITIONAL_ADMINS
           ADMIN_EMAIL
           REQUIRE_SIGNATURES
-          CERTIFICATE_DIR
+          CERTIFICATES_DIR
           GX_PROPAGATE
           EXTRAS );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
 my %May_Be_Empty   = map { $_ => 1 } qw( ADDITIONAL_ADMINS
                                          GX_PROPAGATE
-                                         CERTIFICATE_DIR
+                                         CERTIFICATES_DIR
                                          EXTRAS );
 #
-# Note: CERTIFICATE_DIR may be empty only if REQUIRE_SIGNATURES is "no".
+# Note: CERTIFICATES_DIR may be empty only if REQUIRE_SIGNATURES is "no".
 #
 
 if (scalar @ARGV == 1 and -e $ARGV[0]) {
@@ -197,10 +197,10 @@ foreach my $name (qw(REQUIRE_SIGNATURES)) {
 }
 
 if ($Config{REQUIRE_SIGNATURES} eq 'yes') {
-    if ($Config{CERTIFICATE_DIR} !~ /^\// or
-        not -d $Config{CERTIFICATE_DIR})
+    if ($Config{CERTIFICATES_DIR} !~ /^\// or
+        not -d $Config{CERTIFICATES_DIR})
     {
-        push @errors, "$Config_File: Bad value for CERTIFICATE_DIR\n";
+        push @errors, "$Config_File: Bad value for CERTIFICATES_DIR\n";
     }
     
 }
