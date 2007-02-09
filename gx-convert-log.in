@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-convert-log.in,v 1.34 2007-01-24 20:13:03-08 kst Exp $
+# $Id: gx-convert-log.in,v 1.35 2007-02-08 17:32:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -70,7 +70,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 my $User_Opt = {};
 my @Opts = ( $User_Opt,
@@ -79,7 +79,7 @@ my @Opts = ( $User_Opt,
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 Usage if scalar @ARGV != 1;
@@ -87,8 +87,7 @@ my $Input_Log = $ARGV[0];
 
 Usage "Can't read file $Input_Log\n" if not -r $Input_Log;
 
-my @refs = Gridmap_Utils::Read_Records
-               '-multiple', '-keep-comments', $Input_Log;
+my @refs = GX::Read_Records '-multiple', '-keep-comments', $Input_Log;
 if (not @refs) {
     die "No records in logfile $Input_Log\n";
 }
@@ -114,7 +113,7 @@ if ($no_source_count != 0) {
         "have no SOURCE attribute.\n";
 }
 
-my $Now = Gridmap_Utils::Time_Image time;
+my $Now = GX::Time_Image time;
 
 my @header_comment_lines = ();
 if ($refs[0]->{operation} eq 'comment') {
@@ -134,7 +133,7 @@ if (not (defined $header_comment_lines[0] and
             '$' . 'Source:$',
 }
 push @header_comment_lines,
-     "Converted $Now by $Program_Name (gx-map $Gridmap_Utils::VERSION)",
+     "Converted $Now by $Program_Name (gx-map $GX::VERSION)",
      "Converting $record_count record(s)";
 
 if ($refs[0]->{operation} ne 'comment') {
@@ -148,10 +147,10 @@ foreach my $ref (@refs) {
     my $comment = (defined $ref->{comment} ? $ref->{comment} : '');
     my $new_comment = undef;
 
-    $ref->{timestamp} = Gridmap_Utils::Timestamp_Of $ref->{timestamp};
+    $ref->{timestamp} = GX::Timestamp_Of $ref->{timestamp};
 
     if (defined $ref->{dn}) {
-        $ref->{dn} = Gridmap_Utils::Normalize_DN $ref->{dn};
+        $ref->{dn} = GX::Normalize_DN $ref->{dn};
     }
     if (defined $ref->{secondary}) {
         delete $ref->{secondary};
@@ -187,9 +186,9 @@ foreach my $ref (@refs) {
     }
 }
 
-Gridmap_Utils::Write_Records '-multiple', '-', @refs;
+GX::Write_Records '-multiple', '-', @refs;
 
-print "# $Program_Name (gx-map $Gridmap_Utils::VERSION) done.\n\n";
+print "# $Program_Name (gx-map $GX::VERSION) done.\n\n";
 
 ########################################################################
 
