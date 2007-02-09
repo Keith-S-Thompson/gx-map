@@ -1,13 +1,13 @@
 #!/usr/bin/perl -w
 
-# $Id: get-version,v 1.1 2006-05-24 18:32:13-07 kst Exp $
+# $Id: get-version,v 1.2 2007-02-08 17:32:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/get-version,v $
 
 use strict;
 
 my $version = undef;
 
-my $module = 'Gridmap_Utils.pm.in';
+my $module = 'GX.pm.in';
 open my $MODULE, '<', $module or die "${module}: $!\n";
 while (<$MODULE>) {
     if (not defined $version and /\$VERSION = '(.*)'/) {
