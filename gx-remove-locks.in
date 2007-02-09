@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-remove-locks.in,v 1.8 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-remove-locks.in,v 1.9 2007-02-08 17:33:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-remove-locks.in,v $
 
 ########################################################################
@@ -59,7 +59,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 sub Usage(@);
 
@@ -73,7 +73,7 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
@@ -81,8 +81,8 @@ my $Data_Dir = "$Install_Dir/gx-map-data";
 
 $| = 1;
 
-Gridmap_Utils::Check_Data_Dir;
-Gridmap_Utils::Require_Owner $Program_Name;
+GX::Check_Data_Dir;
+GX::Require_Owner $Program_Name;
 
 my @lock_files = qw( .gx-ca-update.lock
                      .gx-check-requests.lock
@@ -97,14 +97,14 @@ foreach my $lock_file (@lock_files) {
     next if not -e $lock_file_path;
     $found_lock_file = 1;
 
-    my $mtime = Gridmap_Utils::Get_mtime $lock_file_path;
+    my $mtime = GX::Get_mtime $lock_file_path;
     my $modified = undef;
     my $line = undef;
     if (defined $mtime) {
         my $delta = $now - $mtime;
         my $s = ($delta == 1 ? '' : 's');
         $modified = "Modified at " .
-                    Gridmap_Utils::Time_Image($mtime) .
+                    GX::Time_Image($mtime) .
                     " ($delta second$s ago)";
     }
     if (open my $handle, '<', $lock_file_path) {
