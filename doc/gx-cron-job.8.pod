@@ -1,4 +1,4 @@
-# $Id: gx-cron-job.8.pod,v 1.7 2007-01-01 13:01:35-08 kst Exp $
+# $Id: gx-cron-job.8.pod,v 1.8 2007-02-08 17:33:02-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-cron-job.8.pod,v $
 
 =for comment
@@ -177,7 +177,7 @@ The B<interval> attribute is mandatory.
 
 Execute the command only if running on the specified
 host.  The hostname is checked against the result of the
-B<Gridmap_Utils::Get_Hostname> function, which may not be the same as
+B<GX::Get_Hostname> function, which may not be the same as
 the result of the system F<hostname> command.
 (Use S<C<gx-util-test get_hostname>> to check this.)
 
