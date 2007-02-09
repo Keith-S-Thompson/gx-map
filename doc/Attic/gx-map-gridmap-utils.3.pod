@@ -1,4 +1,4 @@
-# $Id: gx-map-gridmap-utils.3.pod,v 1.6 2007-01-01 13:01:36-08 kst Exp $
+# $Id: gx-map-gridmap-utils.3.pod,v 1.7 2007-02-08 17:36:02-08 kst dead $
 # $Source: /home/kst/gx-map-redacted/doc/Attic/gx-map-gridmap-utils.3.pod,v $
 
 =for comment
