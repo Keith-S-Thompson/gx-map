@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-index.in,v 1.13 2007-01-01 13:01:33-08 kst Exp $
+# $Id: gx-check-index.in,v 1.14 2007-02-08 17:32:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -60,7 +60,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 sub Usage(@);
 sub Debug(@);
@@ -83,7 +83,7 @@ my @Opts = ( $User_Opt, qw( help!
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 Usage if @ARGV;
@@ -91,8 +91,8 @@ if (not defined $User_Opt->{ca} or not defined $User_Opt->{index}) {
     Usage "Both \"-ca\" and \"-index\" must be specified\n";
 }
 
-Gridmap_Utils::Install_Die_Handler;
-Gridmap_Utils::Install_Warn_Handler;
+GX::Install_Die_Handler;
+GX::Install_Warn_Handler;
 
 my $CA = Get_CA_Info $User_Opt->{ca};
 if (ref $CA eq 'ARRAY') {
@@ -109,8 +109,8 @@ if (ref $CA eq 'ARRAY') {
 #
 my $Index_File;
 my $Index_Is_Cached = 0;
-if (Gridmap_Utils::Is_URL $User_Opt->{index}) {
-    my $result = Gridmap_Utils::Cache_File $User_Opt->{index};
+if (GX::Is_URL $User_Opt->{index}) {
+    my $result = GX::Cache_File $User_Opt->{index};
     if (defined $result->{filename}) {
         $Index_File = $result->{filename};
         $Index_Is_Cached = 1;
@@ -125,7 +125,7 @@ else {
 
 my $Data_Dir = "$Install_Dir/gx-map-data/ca-index";
 
-Gridmap_Utils::Get_Lock $Program_Name;
+GX::Get_Lock $Program_Name;
 
 my $Saved_File = "$Data_Dir/$CA->{HASH}.index";
 my $Error_File = "$Data_Dir/$CA->{HASH}.error";
@@ -162,7 +162,7 @@ if ($Saved_File_Size == $Index_File_Size and
     $Saved_File_Mtime == $Index_File_Mtime)
 {
     Debug "Index file has not been not updated, bailing out\n";
-    Gridmap_Utils::Release_Lock $Program_Name;
+    GX::Release_Lock $Program_Name;
     exit 0;
 }
 
@@ -213,13 +213,13 @@ if (@missing_serials or @changed_DNs) {
     print $ERROR $message;
     close $ERROR;
 
-    Gridmap_Utils::Send_Email $Program_Name,
-                              $Gridmap_Utils::Config{ADMIN_EMAIL},
-                              "$User_Opt->{ca} problem",
-                              $message;
+    GX::Send_Email $Program_Name,
+                   $GX::Config{ADMIN_EMAIL},
+                   "$User_Opt->{ca} problem",
+                   $message;
 
     File::Copy::copy $Saved_File, "$New_File.bad";
-    # Gridmap_Utils::Release_Lock $Program_Name;
+    # GX::Release_Lock $Program_Name;
     exit 1;
 }
 
@@ -261,18 +261,18 @@ if ($User_Opt->{dryrun}) {
 else {
     rename $New_File, $Saved_File;
     chdir $Data_Dir;
-    Gridmap_Utils::Use_Commands 'ci';
+    GX::Use_Commands 'ci';
     system "ci -l $Saved_File </dev/null >/dev/null 2>/dev/null";
 }
 
-Gridmap_Utils::Release_Lock $Program_Name;
+GX::Release_Lock $Program_Name;
 
 ########################################################################
 
 #
 # Given either a hexadecimal hash or a short name, search for
 # a matching *.cadesc file and return information about the CA
-# using Gridmap_Utils::Get_CA_Ref.
+# using GX::Get_CA_Ref.
 #
 sub Get_CA_Info($) {
     my($name) = @_;
@@ -305,7 +305,7 @@ sub Get_CA_Info($) {
         die "Multiple matches for CA name ${name}: @matches\n";
     }
 
-    return Gridmap_Utils::Get_CA_Ref "$ca_dir/$matching_filename";
+    return GX::Get_CA_Ref "$ca_dir/$matching_filename";
 } # Get_CA_Info
 
 # ----------------------------------------------------------------------
@@ -335,7 +335,7 @@ sub Get_Index_Info($) {
         $ref->{revoked}  = $fields[2];
         $ref->{serial}   = $fields[3];
         $ref->{unknown}  = $fields[4];
-        $ref->{dn}       = Gridmap_Utils::Normalize_DN $fields[5];
+        $ref->{dn}       = GX::Normalize_DN $fields[5];
         $ref->{is_valid} = $ref->{status} eq 'V';
 
         if ($ref->{dn} =~ m[/UID=([^/]+)]) {
