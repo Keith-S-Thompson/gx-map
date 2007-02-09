@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.38 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.39 2007-02-08 17:33:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -70,7 +70,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 my $DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
@@ -101,7 +101,7 @@ Usage if @ARGV;
 $| = 1 if $User_Opt->{debugging};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION ($Input_File)\n";
+    print "$Program_Name (gx-map) $GX::VERSION ($Input_File)\n";
     exit 0;
 }
 
@@ -110,7 +110,7 @@ if ($User_Opt->{version}) {
 # file is ok.
 #
 if ($User_Opt->{'check-config'}) {
-    my $ignored = Gridmap_Utils::Get_TGCDB_Config $DB_Config_File;
+    my $ignored = GX::Get_TGCDB_Config $DB_Config_File;
     #
     # If we get here, it's ok.
     #
@@ -150,7 +150,7 @@ if ($Operation ne 'remove-user' and not defined $User_Opt->{dn}) {
 }
 Usage $message if $message ne '';
 
-my $DB_Config = Gridmap_Utils::Get_TGCDB_Config $DB_Config_File;
+my $DB_Config = GX::Get_TGCDB_Config $DB_Config_File;
 
 Debug "Configuration:\n";
 foreach my $key (sort keys %$DB_Config) {
@@ -184,7 +184,7 @@ my $Mappings = undef;
 #
 my $logfile = "$Install_Dir/gx-map-data/gx-propagate.log";
 open LOG, ">>$logfile" || die "${logfile}: $!\n";
-print LOG "\n", Gridmap_Utils::Time_Image time, "\n";
+print LOG "\n", GX::Time_Image time, "\n";
 print LOG "$Program_Name ", Quote(@SAVED_ARGV), "\n";
 
 open SAVE_STDERR, '>&STDERR';
@@ -248,9 +248,9 @@ close LOG;
 
 sub Init_Mappings() {
     if (not defined $Mappings) {
-        Debug "Calling Gridmap_Utils::Gen_Mappings ",
+        Debug "Calling GX::Gen_Mappings ",
               "-all, $Install_Dir/gx-map-data/requests.log\n";
-        $Mappings = Gridmap_Utils::Gen_Mappings
+        $Mappings = GX::Gen_Mappings
                         '-all', "$Install_Dir/gx-map-data/requests.log";
     }
 } # Init_Mappings
