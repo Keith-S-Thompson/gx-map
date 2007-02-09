@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-cron-job.in,v 1.18 2007-01-01 13:01:33-08 kst Exp $
+# $Id: gx-cron-job.in,v 1.19 2007-02-08 17:33:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -71,7 +71,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 my $Default_Config_File = "$Install_Dir/etc/gx-map/gx-cron-job.conf";
 
@@ -91,14 +91,14 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
-Gridmap_Utils::Install_Die_Handler;
-Gridmap_Utils::Install_Warn_Handler;
+GX::Install_Die_Handler;
+GX::Install_Warn_Handler;
 
-my $Hostname = Gridmap_Utils::Get_Hostname();
+my $Hostname = GX::Get_Hostname();
 
 Debug "\$hostname = $Hostname\n";
 
@@ -134,7 +134,7 @@ sub Get_Jobs($) {
     my @errors = ();
 
     Debug "Reading config file $config_file\n";
-    @result = Gridmap_Utils::Read_Records $config_file;
+    @result = GX::Read_Records $config_file;
     Debug "Got ", scalar @Jobs, " job(s)\n";
 
     for (my $i = 0; $i <= $#result; $i ++) {
@@ -194,7 +194,7 @@ sub Get_Jobs($) {
                 my $hostname_pattern = '%HOSTNAME' . '%';
                 my $version_pattern  = '%VERSION' . '%';
                 $command =~ s/$hostname_pattern/$Hostname/g;
-                $command =~ s/$version_pattern/$Gridmap_Utils::VERSION/g;
+                $command =~ s/$version_pattern/$GX::VERSION/g;
 
                 if ($command !~ /^\//) {
                     $command = "$Install_Dir/sbin/$command";
@@ -226,7 +226,7 @@ sub Run_Jobs() {
     my $now = time;
     my $minutes = int($now / 60);
 
-    my $mtime = Gridmap_Utils::Get_mtime $User_Opt->{'config-file'};
+    my $mtime = GX::Get_mtime $User_Opt->{'config-file'};
     die "$User_Opt->{'config-file'}: $!\n" if not defined $mtime;
 
     if ($mtime > $config_file_timestamp) {
