@@ -1,4 +1,4 @@
-# $Id: bug-0131,v 1.2 2007-02-07 19:17:31-08 kst Exp $
+# $Id: bug-0131,v 1.3 2007-02-08 19:03:10-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0131,v $
 
 gx-map bug 0131
@@ -34,3 +34,31 @@ that doesn't require root access.  See the Execute() function in
 gpt-wizard for some information on this.
 
 To do: Think about this.
+
+Thu 2007-02-08
+
+I met with Abe this afternoon to discuss this further.
+
+Implementing this would be fairly straightforward; it should be just a
+matter of removing the check in configure-gx-map that currently forbids
+root from owning the gx-map installation (GX_MAP_OWNER).  One potential
+problem is that root typically does not have root privileges on
+NFS-mounted partitions; if the data directory is NFS-mounted (as it is
+at SDSC), then an administrative request by root will be rejected.
+This isn't a problem if gx-map doesn't use an NFS-mounted data
+directory (but then it's less useful if you have multiple nodes).
+If gx-map is owned by root and the data directory needs to be on
+an NFS partition, you can specify a non-root administrative account
+(ADDITIONAL_ADMINS), say "gxmap".  Administrators would then need to
+login to the "gxmap" account to submit requests.  Requests submitted
+by root would be rejected.  The installation would be owned by root,
+and the cron jobs would be executed by root.
+
+For the next release, I propose to:
+
+1. Allow GX_MAP_OWNER to be root.
+
+2. In gx-request, verify that the created request file is owned by
+   the current user; if not, remove it and die with an error message.
+
+3. Document the tradeoffs.
