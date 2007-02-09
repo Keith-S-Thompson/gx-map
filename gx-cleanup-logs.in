@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-cleanup-logs.in,v 1.26 2007-01-01 13:01:33-08 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.27 2007-02-08 17:32:59-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -70,7 +70,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 my $Program_Name = File::Basename::basename $0;
 
@@ -86,15 +86,15 @@ Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
-Gridmap_Utils::Install_Die_Handler;
-Gridmap_Utils::Install_Warn_Handler;
+GX::Install_Die_Handler;
+GX::Install_Warn_Handler;
 
 if ($User_Opt->{debugging}) {
-    $Gridmap_Utils::Debugging = 1;
+    $GX::Debugging = 1;
 }
 
 my @input_logs = ( @ARGV ? @ARGV : '-' );
@@ -102,7 +102,7 @@ my @input_logs = ( @ARGV ? @ARGV : '-' );
 my @requests;
 foreach my $log (@input_logs) {
     push @requests,
-         Gridmap_Utils::Read_Records '-multiple', '-keep-comments', $log;
+         GX::Read_Records '-multiple', '-keep-comments', $log;
 }
 
 if ($User_Opt->{debugging}) {
@@ -115,7 +115,7 @@ if ($User_Opt->{debugging}) {
 #
 # Sort by timestamp
 #
-@requests = Gridmap_Utils::Sort_By_Timestamp @requests;
+@requests = GX::Sort_By_Timestamp @requests;
 
 if ($User_Opt->{debugging}) { 
     Debug "After sorting:\n";
@@ -289,7 +289,7 @@ if ($User_Opt->{delete}) {
     @requests = grep { not exists $_->{__DELETED__} } @requests;
 }
 
-Gridmap_Utils::Write_Records '-multiple', '-', @requests;
+GX::Write_Records '-multiple', '-', @requests;
 
 ########################################################################
 
