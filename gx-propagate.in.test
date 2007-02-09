@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.test,v 1.14 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-propagate.in.test,v 1.15 2007-02-08 17:33:01-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 ########################################################################
@@ -69,7 +69,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use Gridmap_Utils ();
+use GX ();
 
 my $Program_Name = File::Basename::basename $0;
 my @SAVED_ARGV = @ARGV;
@@ -97,13 +97,13 @@ Usage if @ARGV;
 $| = 1 if $User_Opt->{debugging};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION ($Input_File)\n";
+    print "$Program_Name (gx-map) $GX::VERSION ($Input_File)\n";
     exit 0;
 }
 
 my $logfile = "$Install_Dir/gx-map-data/gx-propagate.log";
 open my $Log, ">>$logfile" or die "${logfile}: $!\n";
-print $Log "\n", Gridmap_Utils::Time_Image time, "\n";
+print $Log "\n", GX::Time_Image time, "\n";
 print $Log "$Program_Name ", Quote(@SAVED_ARGV), "\n";
 close $Log;
 
