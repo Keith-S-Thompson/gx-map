@@ -1,4 +1,4 @@
-# $Id: bug-0131,v 1.3 2007-02-08 19:03:10-08 kst Exp $
+# $Id: bug-0131,v 1.4 2007-02-12 15:46:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0131,v $
 
 gx-map bug 0131
@@ -62,3 +62,8 @@ For the next release, I propose to:
    the current user; if not, remove it and die with an error message.
 
 3. Document the tradeoffs.
+
+NOTE: See:
+    bug-0052 "Check for non-root chown fails when running as root"
+    bug-0053 "Consider disallowing root as an administrator"
+I'll need to solve the problem of detecting non-root chown.
