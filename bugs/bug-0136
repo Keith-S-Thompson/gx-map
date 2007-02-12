@@ -1,0 +1,12 @@
+# $Id: bug-0136,v 1.1 2007-02-12 15:46:05-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0136,v $
+
+gx-map bug 0136
+Date: Fri 2007-02-09
+Severity: Urgent
+Reported by: Benjamin Bennett <ben@psc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Unspecified bug in gx-gen-mapfile
+
+See e-mail exchange with ben@psc.edu starting Fri 2007-02-09.
