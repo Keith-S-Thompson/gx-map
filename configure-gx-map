@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.57 2007-02-08 17:32:59-08 kst Exp $
+# $Id: configure-gx-map,v 1.58 2007-02-14 02:19:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -367,20 +367,15 @@ sub Get_Version() {
 
 sub Check_Admin($$) {
     my($acct, $from) = @_;
-    if ($acct eq 'root') {
-        push @errors, "$Config_File: root is not allowed in $from\n";
+    my @pw = getpwnam $acct;
+    if (not @pw) {
+        push @errors,
+             "$Config_File: No user \"$acct\" in $from\n";
     }
-    else {
-        my @pw = getpwnam $acct;
-        if (not @pw) {
-            push @errors,
-                 "$Config_File: No user \"$acct\" in $from\n";
-        }
-        elsif ($pw[2] eq 0) {
-            push @errors,
-                 "$Config_File: User \"$acct\" has UID 0, " .
-                 "not allowed in $from\n";
-        }
+    elsif ($pw[2] eq 0) {
+        push @errors,
+             "$Config_File: User \"$acct\" has UID 0, " .
+             "not allowed in $from\n";
     }
 } # Check_Admin
 
