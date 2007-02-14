@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.69 2007-02-08 17:33:01-08 kst Exp $
+# $Id: gx-request.in,v 1.70 2007-02-14 02:19:31-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -436,10 +436,21 @@ foreach my $request (@requests) {
     # and has the proper permissions, rename it to the correct name.
     #
     my $request_file = Gen_Request_File_Name $request->{timestamp};
-    my $tmp_file = $request_file . ".tmp";
+    my $tmp_file = "$request_file.tmp";
     GX::Write_Records '-single', $tmp_file, $request;
-    chmod 0444, $tmp_file;
-    rename $tmp_file, $request_file;
+    if (not -o $tmp_file) {
+        #
+        # I just created a file, but I don't own it.  Most likely I'm
+        # root, and the target NFS filesystem has root squashing enabled.
+        # 
+        my $message = "Bad ownership for temporary file:\n$tmp_file\n";
+        if ($< == 0) {
+            $message .= "(likely NFS problem)\n";
+        }
+        die $message;
+    }
+    chmod 0444, $tmp_file or die "chmod $tmp_file: $!\n";
+    rename $tmp_file, $request_file or die "rename $tmp_file: $!\n";
 }
 
 unless ($Options->{force} and $Options->{quiet}) {
