@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.2 2007-02-08 17:36:26-08 kst Exp $
+# $Id: GX.pm.in,v 1.3 2007-02-14 02:19:30-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -486,7 +486,7 @@ sub Is_Legal_Username($) {
 # ----------------------------------------------------------------------
 
 #
-# A helper function for Init_PW_Info, not externaly visible.
+# A helper function for Init_PW_Info, not externally visible.
 #
 sub Translate_PW(@) {
     my @pw = @_;
