@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.3 2007-02-14 02:19:30-08 kst Exp $
+# $Id: GX.pm.in,v 1.4 2007-02-16 00:21:04-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -136,6 +136,7 @@ sub Delete_Temp_Dir($);
 sub OpenSSL_Version();
 sub Certificate_Info($$;$);
 
+sub Stat($;$);
 sub Get_mtime($);
 sub Is_Legal_Username($);
 sub Get_PW_Name($);
@@ -450,6 +451,92 @@ sub Certificate_Info($$;$) {
 # ----------------------------------------------------------------------
 
 #
+# A wrapper for the built-in stat() or lstat() function.  As with
+# stat(), the argument may be either a file name or an open file handle.
+#
+# The stat() function is invoked by default; an optional first
+# argument of '-l' indicates that lstat() should be used instead.
+#
+# It returns a reference to a hash with appropriate field names (or
+# undef on failure).
+#
+# In addition to the information returned by stat or lstat, it sets
+# the following fields:
+#
+#     _file_type
+#         Either 'plain', 'directory, 'symlink', etc., or 'other',
+#         depending on the result of "-f _", "-d _", "-l _", etc.
+#         With '-l', it doesn't check for symlinks.
+#     _readable
+#         0 or 1 (-r _)
+#     _writable
+#         0 or 1 (-w _)
+#     _executable
+#         0 or   (-x _)
+#
+# The names of these additional fields all start with an underscore.
+#
+sub Stat($;$) {
+    my $use_lstat = 0;
+    my $arg;
+    if (scalar @_ == 1) {
+        $arg = $_[0];
+    }
+    elsif (scalar @_ == 2 and $_[0] eq '-l') {
+        $use_lstat = 1;
+        $arg = $_[1];
+    }
+    else {
+        die "GX::Stat: Usage error\n";
+    }
+
+    my @stat = ( $use_lstat ? lstat $arg : stat $arg );
+    my @fields = qw( dev ino mode nlink uid gid rdev size 
+                     atime mtime ctime blksize blocks );
+    return undef if scalar @stat < scalar @fields;
+
+    my $result;
+    for (my $i = 0; $i <= $#fields; $i ++) {
+        $result->{$fields[$i]} = $stat[$i];
+    }
+
+    #
+    # Now we can use the special filehandle _ to obtain more information.
+    #
+    if (-f _) {
+        $result->{_file_type} = 'plain';
+    }
+    elsif (-d _) {
+        $result->{_file_type} = 'directory';
+    }
+    elsif (not $use_lstat and -l _) {
+        $result->{_file_type} = 'symlink';
+    }
+    elsif (-p _) {
+        $result->{_file_type} = 'pipe';
+    }
+    elsif (-S _) {
+        $result->{_file_type} = 'socket';
+    }
+    elsif (-b _) {
+        $result->{_file_type} = 'block special';
+    }
+    elsif (-c _) {
+        $result->{_file_type} = 'character special';
+    }
+    else {
+        $result->{_file_type} = 'other';
+    }
+    $result->{_readable}   = ( -r _ ? 1 : 0 );
+    $result->{_writable}   = ( -w _ ? 1 : 0 );
+    $result->{_executable} = ( -x _ ? 1 : 0 );
+
+    return $result;
+} # Stat
+
+# ----------------------------------------------------------------------
+
+#
 # If the named file exists, returns its mtime.
 # If not, returns undef.
 #
@@ -610,9 +697,9 @@ sub Dir_Error($) {
     my($dir) = @_;
     return "$dir does not exist"     if not -e $dir;
     return "$dir is not a directory" if not -d $dir;
-    my @stat = stat $dir;
-    return "Cannot stat $dir" if not @stat;
-    my $mode = $stat[2] & 07777;
+    my $stat = GX::Stat $dir;
+    return "Cannot stat $dir" if not $stat;
+    my $mode = $stat->{mode} & 07777;
     if ($mode != 01733) {
         return "Bad permissions on $dir, should be 1733";
     }
@@ -1072,8 +1159,15 @@ sub Increment_Timestamp($) {
 #
 #           Comments are ignored by default.
 #
-# The last argument is the name of the file from which to read the
-# record or records.  '-' denotes stdin.
+#   '-filename=...'
+#           Specify a file name, to be used only error messages.  This is
+#           useful when the last argument is an opened file handle rather
+#           than a file name.  Ignored if the file argument is a file
+#           name rather than a file handle.
+#
+# The last argument is either the name of the file from which to read
+# the record or records, or an opened  filehandle.  '-' denotes stdin;
+# otherwise, the file name may not start with a '-' character.
 #
 # Leading and trailing whitespace are ignored.
 #
@@ -1092,7 +1186,8 @@ sub Increment_Timestamp($) {
 # of hash references.
 #
 sub Read_Records(@) {
-    my $filename;
+    my $file_arg;
+    my $filename = 'input file';
     my $multiple = 1;
     my $keep_comments = 0;
     for (my $i = 0; $i <= $#_; $i ++) {
@@ -1105,12 +1200,15 @@ sub Read_Records(@) {
         elsif ($_[$i] eq '-keep-comments') {
             $keep_comments = 1;
         }
+        elsif ($_[$i] =~ /^-filename=(.*)$/) {
+            $filename = $1;
+        }
         elsif ($_[$i] =~ /^-./) {
             die "GX::Read_Records: Unrecognized option \"$_[$i]\"\n";
         }
         else {
             if ($i == $#_) {
-                $filename = $_[$i];
+                $file_arg = $_[$i];
             }
             else {
                 die "GX::Read_Records: Usage error\n";
@@ -1132,12 +1230,20 @@ sub Read_Records(@) {
     #
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
-    my $File = undef;
-    if ($filename eq '-') {
-        open $File, '<-' or die "stdin: $!\n";
+    my $FILE = undef;
+    if (defined ref $file_arg) {
+        #
+        # $file_arg is a reference; assume it's an opened file handle.
+        #
+        $FILE = $file_arg;
+    }
+    elsif ($filename eq '-') {
+        open $FILE, '<-' or die "stdin: $!\n";
+        $filename = 'stdin';
     }
     else {
-        open $File, '<', $filename or die "${filename}: $!\n";
+        open $FILE, '<', $file_arg or die "${file_arg}: $!\n";
+        $filename = $file_arg;
     }
     my @result = ();
     my $ref = ( $multiple ? undef : {} );
@@ -1149,7 +1255,7 @@ sub Read_Records(@) {
     #
     my $context = $multiple ? 'none' : 'record';
     LINE:
-    while (<$File>) {
+    while (<$FILE>) {
         chomp;
         s/^\s+//;
         s/\s+$//;
@@ -1231,7 +1337,7 @@ sub Read_Records(@) {
             }
         }
     }
-    close $File;
+    close $FILE;
     if ($keep_comments and $context eq 'comment') {
         push @result, $ref;
         $context = 'none';
@@ -2787,8 +2893,8 @@ sub Get_Lock($) {
     }
     else {
         my $link_error = $!;
-        my @stat = stat $unique_lock_file;
-        if (@stat and $stat[3] == 2) {
+        my $stat = GX::Stat $unique_lock_file;
+        if (defined $stat and $stat->{nlink} == 2) {
             #
             # Got lock, but link failed.  This can happen due to
             # NFS latencies; I'm not 100% sure of the details.
@@ -2921,9 +3027,9 @@ sub Get_TGCDB_Config($) {
     my($config_file) = @_;
     GX::Debug "GX::Get_TGCDB_Config $config_file\n";
 
-    my @stat = stat $config_file;
-    die "$config_file: $!\n" if not @stat;
-    my $mode = $stat[2] & 0777;
+    my $stat = GX::Stat $config_file;
+    die "$config_file: $!\n" if not defined $stat;
+    my $mode = $stat->{mode} & 0777;
     if ($mode ne 0400 and $mode ne 0600) {
         die "Bad mode for $config_file\n" .
             "Mode must be 400 (r--------) or 600 (rw-------)\n";
