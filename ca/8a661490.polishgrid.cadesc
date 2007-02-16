@@ -1,17 +1,33 @@
-# $Id: 8a661490.polishgrid.cadesc,v 1.9 2006-01-13 17:07:26-08 kst Exp $
+# $Id: 8a661490.polishgrid.cadesc,v 1.10 2007-02-15 20:51:47-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8a661490.polishgrid.cadesc,v $
 
 CA_NAME             Polish Grid CA
 HOMEPAGE            http://www.man.poznan.pl/plgrid-ca
-CONTACT             plgrid-ca@man.poznan.pl
+CONTACT             plgrid-ca@man.poznan.pl, pawelw@man.poznan.pl
 HASH                8a661490
 SUBJECT             /C=PL/O=GRID/CN=Polish Grid CA
 MAY_SIGN            /C=PL/O=GRID/*
-CERTIFICATE_MD5     AB:81:63:66:38:B2:81:B9:F8:13:11:9C:42:E6:F3:A4
-CERTIFICATE_SHA1    E4:18:28:73:A2:8B:03:ED:A8:A4:23:75:B2:61:D2:AB:05:1B:DB:9F
+CERTIFICATE_MD5     02:91:A3:0C:61:6A:C8:2D:BC:94:22:4B:A4:17:6E:1F
+CERTIFICATE_SHA1    2A:CB:CF:F5:7A:BC:83:28:4A:6C:3B:78:FA:32:53:0A:65:42:EC:EE
 CERTIFICATE_URL     http://www.man.poznan.pl/plgrid-ca/8a661490.0
-SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/8a661490.signing_policy
+SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/8a661490.signing_policy
 CRL_URL             http://www.man.poznan.pl/plgrid-ca/crl.pem
 CERT_EXPIRES        Tue 2007-08-28 10:03:11 UTC
 
-# MD5 and SHA1 fingerprints from 8a661490.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from 8a661490.0 downloaded Thu 2007-02-15
+
+# The MD5 and SHA1 fingerprints have also been verified against
+# 8a661490.0, extracted from
+# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.12.tar.gz>,
+# and the SHA1 fingerprint has been verified against 8a661490.info.
+
+# The MAY_SIGN attribute is derived from the specified SIGNING_POLICY_URL
+# (note that this is at a different site), from the signing policy shown
+# on the CA's main web page, and from the 8a661490.signing_policy file
+# included in the IGTF tarball; all are consistent.
+
+# An older version of the certificate for this CA, with the same subject
+# and hash, had the following attributes:
+# CERTIFICATE_MD5     AB:81:63:66:38:B2:81:B9:F8:13:11:9C:42:E6:F3:A4
+# CERTIFICATE_SHA1    E4:18:28:73:A2:8B:03:ED:A8:A4:23:75:B2:61:D2:AB:05:1B:DB:9F
+# CERT_EXPIRES        Tue 2007-08-28 10:03:11 UTC
