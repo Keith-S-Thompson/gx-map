@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.104 2007-02-08 17:32:59-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.105 2007-02-16 00:23:08-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -54,6 +54,7 @@ use warnings;
 use File::Basename ();
 use File::Copy ();
 use Getopt::Long ();
+use Fcntl (qw(O_RDONLY O_NONBLOCK));
 
 my $Install_Dir;
 BEGIN {
@@ -425,34 +426,72 @@ sub Get_Request_Info($) {
     my($filename) = @_;
     my $request_file = File::Basename::basename $filename;
     my $processed = GX::Long_Time_Image GX::Get_Time_Of_Day;
+    my $FILEHANDLE;
     my $result;
 
     Debug "Get_Request_Info $filename\n";
 
-    my $error_message = undef;
+    my @errors = ();
 
     if ($filename !~ /\.request$/) {
-        $error_message = 'Bad file name';
-    }
-    elsif (-s $filename > 2048) {
-        $error_message = 'Request file is too large';
-    }
-    elsif (not -f $filename) {
-        $error_message = 'Not a regular file';
-    }
-    elsif (not -r $filename) {
-        $error_message = 'File is not readable';
-    }
-
-    if (defined $error_message) {
         return { REQUEST_FILE => $request_file,
                  PROCESSED    => $processed,
-                 ERRORS       => [ $error_message ] };
+                 ERRORS       => [ 'Bad file name' ] };
+    }
+
+    #
+    # Open in non-blocking mode.  If an attacker can cause an ordinary
+    # open() to block, it could provide more time to take advantage of
+    # a race condition, or just implement a DoS attack.
+    #
+    sysopen $FILEHANDLE, $filename, O_RDONLY|O_NONBLOCK
+        or push @errors, "sysopen $filename: $!";
+    my $stat  = GX::Stat $FILEHANDLE;
+    my $lstat = GX::Stat '-l', $filename;
+    my $stat_dev_ino  = "$stat->{dev}/$stat->{ino}";
+    my $lstat_dev_ino = "$lstat->{dev}/$lstat->{ino}";
+
+    #
+    # Verify that all fields determined by stat and lstat match exactly.
+    # For now, look only at fields derived directly from the result
+    # returned by stat or lstat; others have names starting with '_'.
+    #
+    my @mismatches = ();
+    foreach my $key (sort keys %$stat) {
+        next if $key =~ /^_/;
+        if ($stat->{$key} ne $lstat->{$key}) {
+            push @mismatches, $key;
+        }
+    }
+    if (@mismatches) {
+        my $s = ( scalar @mismatches == 1 ? '' : 's' );
+        push @errors, "Mismatched stat field$s: @mismatches";
+    }
+
+    if ($stat->{_file_type} ne 'plain') {
+        push @errors, "Not a plain file (file type is $stat->{_file_type}";
+    }
+    if ($stat->{links} != 1) {
+        push @errors, "Bad link count: $stat->{links}";
+    }
+    if ($stat->{size} > 2048) {
+        push @errors, "Request file is too large: $stat->{size} bytes";
+    }
+    if (not $stat->{_readable}) {
+        push @errors, 'File is not readable';
+    }
+
+    if (@errors) {
+        return { REQUEST_FILE => $request_file,
+                 PROCESSED    => $processed,
+                 ERRORS       => \@errors };
     }
 
     eval {
-        $result = GX::Read_Records '-single', $filename;
+        $result = GX::Read_Records
+                      '-single', "-filename=$request_file", $FILEHANDLE;
     };
+    close $FILEHANDLE;
     if ($@) {
         my $message = $@;
         chomp $message;
@@ -461,8 +500,10 @@ sub Get_Request_Info($) {
                  ERRORS       => [ $message ] };
     }
 
-    foreach my $key (sort keys %$result) {
-        Debug "    $key => $result->{$key}\n";
+    if ($User_Opt->{debugging}) {
+        foreach my $key (sort keys %$result) {
+            Debug "    $key => $result->{$key}\n";
+        }
     }
 
     my @invalid = ();
