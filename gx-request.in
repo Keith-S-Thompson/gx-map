@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.70 2007-02-14 02:19:31-08 kst Exp $
+# $Id: gx-request.in,v 1.71 2007-02-16 00:16:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -68,7 +68,6 @@ sub Long_Usage();
 sub Strip($);
 sub Get_Options_Interactively();
 sub Get_Options_From_Command_Line();
-sub Request_Update();
 sub Get_DN_From_Certificate($);
 sub Proxy_File_Name();
 sub User_Cert_File_Name();
@@ -105,7 +104,7 @@ my $default_cert_file =
 # from command-line options or interactively.
 #
 # Fields are:
-#    operation (one of add, remove, remove-dn, remove-user, update)
+#    operation (one of add, remove, remove-dn, remove-user)
 #    username
 #    dn
 #    email (optional)
@@ -123,7 +122,6 @@ my @Opts = ( $User_Opt,
                  quick-add quick-remove
                  add
                  remove remove-dn remove-user
-                 update
                  quiet force no-admin
                  dn=s certificate-file=s default-dn
                  username=s
@@ -160,7 +158,7 @@ if (defined $User_Opt->{'quick-add'} or
     my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add' : 'quick-remove';
     my $conflict = 0;
     foreach my $other_opt ( qw( interactive add remove remove-dn
-                                remove-user update default-dn
+                                remove-user default-dn
                                 certificate-file ) )
     {
         if (defined $User_Opt->{$other_opt}) {
@@ -234,11 +232,6 @@ Die_Quietly "No directory $Requests_Dir\n" if not -d $Requests_Dir;
 
 Die_Quietly "Directory $Requests_Dir is not writable\n"
     if not -w $Requests_Dir;
-
-if ($Options->{operation} eq 'update') {
-    Request_Update();
-    exit 0;
-}
 
 if (( $Options->{operation} eq 'add' or
       $Options->{operation} eq 'remove' or
@@ -545,30 +538,6 @@ sub Gen_Request_File_Name($) {
 # ----------------------------------------------------------------------
 
 #
-# Request an update of the grid-mapfiles.
-# Append a line of information to the requests/.update file.
-# gx-gen-mapfile will check the timestamp of this file; if it's
-# later than any of its output files, it will re-generate them.
-#
-sub Request_Update() {
-    my $request_file = "$Requests_Dir/.update";
-    my $PW = GX::Get_PW_UID $<;
-    my $hostname = GX::Get_Hostname();
-    my $timestamp = GX::Long_Time_Image $Now;
-    my $info = "Update requested by $PW->{name} on $hostname at $timestamp\n";
-
-    open my $Request, '>>', $request_file or die "$request_file: $!\n";
-    print $Request $info;
-    close $Request;
-    if (not $Options->{quiet}) {
-        print "Request processed.\n";
-        print "The grid-mapfile should be updated within a few minutes.\n";
-    }
-} # Request_Update
-
-# ----------------------------------------------------------------------
-
-#
 # For use with here documents (<<"EOF")
 #
 sub Strip($) {
@@ -632,7 +601,6 @@ EOF
         > 
         > (a) Add a grid-mapfile entry
         > (r) Remove a grid-mapfile entry
-        > (u) Request an update of the grid-mapfiles
         > (x) Exit
 EOF
         print "What do you want to do? [arux] ";
@@ -642,9 +610,6 @@ EOF
         }
         elsif ($response =~ /^r/) {
             $Options->{operation} = 'remove';
-        }
-        elsif ($response =~ /^u/) {
-            $Options->{operation} = 'update';
         }
         elsif ($response =~ /^x/) {
             exit 0;
@@ -738,33 +703,6 @@ EOF
                 last TRY;
             }
             elsif ($response =~ /^x/) {
-                exit 0;
-            }
-            else {
-                print ">>> Unrecognized response\n";
-            }
-        }
-    }
-
-    #
-    # For update, no further information is needed, but ask the
-    # user whether that's really what he wants to do.
-    #
-    if ($Options->{operation} eq 'update') {
-        print Strip <<"EOF";
-        > 
-        > This will request an update of all grid-mapfiles the next
-        > time gx-check-requests is run.  Normally updates are handled
-        > automatically, so this is not usually necessary.
-        > 
-EOF
-        while (1) {
-            print "Proceed? [yn] ";
-            $response = lc scalar <STDIN>;
-            if ($response =~ /^y/) {
-                return $Options;
-            }
-            elsif ($response =~ /^n/) {
                 exit 0;
             }
             else {
@@ -954,8 +892,7 @@ sub Get_Options_From_Command_Line() {
     my $Options = {};
 
     my @operations = ();
-    foreach my $op (qw(add remove remove-dn remove-user update))
-    {
+    foreach my $op (qw(add remove remove-dn remove-user)) {
         push @operations, $op if $User_Opt->{$op};
     }
 
@@ -966,10 +903,7 @@ sub Get_Options_From_Command_Line() {
         $Options->{operation} = $operations[0];
     }
     else {
-        Usage "Specify only one of:\n",
-              "    -add,\n",
-              "    -remove, -remove-dn, -remove-user,\n",
-              "    -update\n";
+        Usage "Specify only one of: -add, -remove, -remove-dn, -remove-user\n";
     }
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
@@ -1008,10 +942,6 @@ sub Get_Options_From_Command_Line() {
     }
     else {
         $Options->{directory} = $Default_Data_Dir;
-    }
-
-    if ($OP eq 'update') {
-        return $Options;
     }
 
     if (defined $User_Opt->{source}) {
@@ -1204,12 +1134,8 @@ Option names may be abbreviated.
                               distinguished name.  For use only by gx-map
                               administrators.
     -remove-user            : Remove all mappings for the specified user.
-    -update                 : Request an update of all grid-mapfiles.
-                              This normally isn't necessary, but it can be
-                              useful if you already have a certificate and
-                              get a new account on a machine.
 Note: Exactly one of -interactive, -quick-add, -quick-remove,
-      -add, -remove, -remove-dn, -remove-user, and -update
+      -add, -remove, -remove-dn, or -remove-user
       (or -help, -usage, or -long-usage) must be specified.
 ------------------------------------------------------------------------
     -quiet                  : Work silently.
