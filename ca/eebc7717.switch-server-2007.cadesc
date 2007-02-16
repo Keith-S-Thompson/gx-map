@@ -1,0 +1,50 @@
+# $Id: eebc7717.switch-server-2007.cadesc,v 1.1 2007-02-15 20:03:58-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/eebc7717.switch-server-2007.cadesc,v $
+
+CA_NAME             SWITCH-Server-2007
+HOMEPAGE            http://swisssign.net/
+CONTACT             http://swisssign.net/support/index (web form)
+HASH                eebc7717
+SIGNED_BY           /CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+SUBJECT             /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Server CA
+MAY_SIGN            /C=CH/O=ETH Swiss Federal Institute of Technology Zurich/*
+MAY_SIGN            /C=CH/O=Fachhochschule Aargau Nordwestschweiz/*
+MAY_SIGN            /C=CH/O=Paul-Scherrer-Institut (PSI)/*
+MAY_SIGN            /C=CH/O=Universita della Svizzera Italiana/*
+MAY_SIGN            /C=CH/O=Universitaet Basel/*
+MAY_SIGN            /C=CH/O=Universitaet Bern/*
+MAY_SIGN            /C=CH/O=Universitaet Luzern/*
+MAY_SIGN            /C=CH/O=Universitaet St. Gallen/*
+MAY_SIGN            /C=CH/O=Universitaet Zuerich/*
+MAY_SIGN            /C=CH/O=Universite de Fribourg - Universitaet Freiburg/*
+MAY_SIGN            /C=CH/O=Universite de Geneve/*
+MAY_SIGN            /C=CH/O=Universite de Lausanne/*
+MAY_SIGN            /C=CH/O=Universite de Neuchatel/*
+MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/*
+MAY_SIGN            /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/*
+MAY_SIGN            /C=CH/O=Berner Fachhochschule - Haute ecole specialisee bernoise/*
+MAY_SIGN            /C=CH/O=FHS St. Gallen Hochschule fuer Angewandte Wissenschaften/*
+MAY_SIGN            /C=CH/O=Fachhochschule Solothurn Nordwestschweiz/*
+MAY_SIGN            /C=CH/O=Fachhochschule Zentralschweiz/*
+MAY_SIGN            /C=CH/O=Fachhochschule beider Basel/*
+MAY_SIGN            /C=CH/O=Paedagogische Hochschule Thurgau/*
+MAY_SIGN            /C=CH/O=Paedagogische Hochschule Zentralschweiz/*
+MAY_SIGN            /C=CH/O=Scuola universitaria professionale della Svizzera italiana SUPSI/*
+MAY_SIGN            /C=CH/O=Stiftung Hochschule fuer Technik und Wirtschaft (HTW) Chur/*
+MAY_SIGN            /C=CH/O=Universitaetsspital Zuerich/*
+CERTIFICATE_MD5     26:FF:87:08:32:28:C3:FF:51:2B:39:2B:5C:89:D2:C0
+CERTIFICATE_SHA1    99:EF:7A:3B:E3:93:AA:DD:65:35:4C:79:0D:23:12:7B:22:6E:7C:E9
+CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=1AFDCB5395B081DD3A38849F63E87C0A42E0E6FE
+SIGNING_POLICY_URL  ?
+CRL_URL             http://crl.swisssign.net/1AFDCB5395B081DD3A38849F63E87C0A42E0E6FE
+CRL_FORM            DER
+CERT_EXPIRES        Fri 2012-02-03 13:23:05 UTC
+
+# MD5 and SHA1 fingerprints from eebc7717.0, downloaded Thu 2007-02-15
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from eebc7717.signing_policy, extracted from
+# http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.12.tar.gz
+# The MD5 and SHA1 fingerprints have also been verified against eebc7717.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against eebc7717.info.
