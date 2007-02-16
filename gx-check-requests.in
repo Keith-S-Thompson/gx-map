@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.106 2007-02-16 00:26:12-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.107 2007-02-16 00:32:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -472,7 +472,7 @@ sub Get_Request_Info($) {
         push @errors, "Not a plain file (file type is $stat->{_file_type}";
     }
     if ($stat->{nlink} != 1) {
-        push @errors, "Bad link count: $stat->{links}";
+        push @errors, "Bad link count: $stat->{nlink}";
     }
     if ($stat->{size} > 2048) {
         push @errors, "Request file is too large: $stat->{size} bytes";
