@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.12 2006-09-26 22:03:00-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.13 2007-02-15 21:26:12-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -21,3 +21,6 @@ CERT_EXPIRES        Mon 2008-12-01 23:29:21 UTC
 # MD5 and SHA1 fingerprints from d0c2a341.0 downloaded Tue 2006-06-06
 # Re-verified Tue 2006-09-26
 # Checked against https://www.tacar.org/md5.html Tue 2006-09-26
+
+# The IGTF 1.12 distribution has an older version of this certificate;
+# I've reported the error.
