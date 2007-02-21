@@ -1,4 +1,4 @@
-# $Id: bfcd1f28.gridshib-ca.cadesc,v 1.1 2007-02-20 20:05:18-08 kst Exp $
+# $Id: bfcd1f28.gridshib-ca.cadesc,v 1.2 2007-02-21 11:04:33-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bfcd1f28.gridshib-ca.cadesc,v $
 
 CA_NAME             GridShib CA
@@ -9,16 +9,10 @@ SUBJECT             /DC=edu/DC=uiuc/DC=ncsa/DC=computer/O=Certificate Authority/
 MAY_SIGN            /DC=edu/DC=uiuc/DC=ncsa/DC=computer/O=Shibboleth User/*
 CERTIFICATE_MD5     AD:F8:86:DB:76:BC:6C:1F:F2:B9:4C:10:4B:8C:24:CD
 CERTIFICATE_SHA1    1E:D1:9A:5C:53:0D:8C:8C:83:F2:19:C2:12:3B:BE:9E:27:58:FA:53
-CERTIFICATE_URL     http://www.globus.org/mail_archive/gridshib-user/2007/02/binIs983WACdr.bin
-SIGNING_POLICY_URL  http://www.globus.org/mail_archive/gridshib-user/2007/02/binThbvLKZV42.bin
+CERTIFICATE_URL     http://gridshib.globus.org/downloads/gridshib-ca-cert/bfcd1f28.0
+SIGNING_POLICY_URL  http://gridshib.globus.org/downloads/gridshib-ca-cert/bfcd1f28.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
 CERT_EXPIRES        3650d 00h 00m 00s, 0.03% used
 
-# MD5 and SHA1 fingerprints from bfcd1f28.0, downloaded Tue 2007-02-20
-
-# Note that the URLs for the certificate and signing_policy actually refer
-# to attachments in an e-mail message sent to the gridshib-user@globus.org
-# mailing list.  The GridShib CA web page currently provides these files
-# only as part of a tarball.  I'll correct the URLs as soon as the files
-# become available on their own.
+# MD5 and SHA1 fingerprints from bfcd1f28.0, downloaded Wed 2007-02-21
