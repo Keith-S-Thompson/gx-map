@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.5 2007-02-16 00:23:33-08 kst Exp $
+# $Id: GX.pm.in,v 1.6 2007-02-20 21:05:16-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -315,9 +315,25 @@ sub Untaint(\$) {
 
 #
 # Creates a temporary directory and returns its name.
+# Confirm that the temporary directory is created with permissions 700,
+# and that the parent directory (typically /tmp or /usr/tmp) has the
+# sticky bit set.  If either of these checks fails, it's a fatal error.
 #
 sub Make_Temp_Dir() {
-    return File::Temp::tempdir();
+    my $temp_dir = File::Temp::tempdir();
+
+    my $stat = GX::Stat $temp_dir;
+    die "Temp_Dir $temp_dir is not a directory\n"
+        if $stat->{_file_type} ne 'directory';
+    die sprintf "Bad permissions 0%o on Temp_Dir $temp_dir\n"
+        if ($stat->{mode} & 0777) != 0700;
+
+    my $parent = File::Basename::dirname $temp_dir;
+    my $parent_stat = GX::Stat $parent;
+    die "Temp_Dir $temp_dir Parent directory $parent does not have stick bit\n"
+        if not $parent_stat->{_sticky};
+
+    return $temp_dir;
 } # Make_Temp_Dir
 
 # ----------------------------------------------------------------------
@@ -472,7 +488,13 @@ sub Certificate_Info($$;$) {
 #     _writable
 #         0 or 1 (-w _)
 #     _executable
-#         0 or   (-x _)
+#         0 or 1 (-x _)
+#     _setuid
+#         0 or 1 (-u _)
+#     _setgid
+#         0 or 1 (-g _)
+#     _sticky
+#         0 or 1 (-k _)
 #
 # The names of these additional fields all start with an underscore.
 #
@@ -530,6 +552,9 @@ sub Stat($;$) {
     $result->{_readable}   = ( -r _ ? 1 : 0 );
     $result->{_writable}   = ( -w _ ? 1 : 0 );
     $result->{_executable} = ( -x _ ? 1 : 0 );
+    $result->{_setuid}     = ( -u _ ? 1 : 0 );
+    $result->{_setgid}     = ( -g _ ? 1 : 0 );
+    $result->{_sticky}     = ( -k _ ? 1 : 0 );
 
     return $result;
 } # Stat
