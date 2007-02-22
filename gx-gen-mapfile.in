@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-gen-mapfile.in,v 1.97 2007-02-21 18:46:11-08 kst Exp $
+# $Id: gx-gen-mapfile.in,v 1.98 2007-02-21 19:50:20-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-gen-mapfile.in,v $
 
 ########################################################################
@@ -229,14 +229,18 @@ foreach my $cache_file (@cache_files) {
     GX::Release_Cache_File $cache_file;
 }
 
-my $intermediate_file
-    = $User_Opt->{rcs} ? "$Output_File.rcs" : "${Output_File}-tmp-$$";
-
-my $tmp_file = "/tmp/gx-gen-mapfile-" . time . "-$$";
-GX::Register_Handler_Function sub { unlink $intermediate_file };
+my $intermediate_file = undef;
+if (defined $Output_File) {
+    if ($User_Opt->{rcs}) {
+        $intermediate_file = "$Output_File.rcs";
+    }
+    else {
+        $intermediate_file = "$Output_File-tmp-$$";
+    }
+    GX::Register_Handler_Function sub { unlink $intermediate_file };
+}
 
 my $Out = undef;
-
 #
 # If we're creating output files, write to an intermediate file and copy
 # it to the output file later.  Otherwise just write directly to stdout.
