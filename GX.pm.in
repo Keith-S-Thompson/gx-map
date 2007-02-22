@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.8 2007-02-21 18:43:53-08 kst Exp $
+# $Id: GX.pm.in,v 1.9 2007-02-21 18:55:38-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -732,7 +732,9 @@ sub Dir_Error($) {
     my $stat = GX::Stat $dir;
     return "Cannot stat $dir" if not defined $stat;
     return "$dir is not a directory" if $stat->{_file_type} ne 'directory';
-    return "Bad permissions on $dir, should be 733" if $stat->{mode} != 0733;
+    if (($stat->{mode} & 0777) != 0733) {
+        return "Bad permissions on $dir, should be 733";
+    }
     if (not $stat->{_sticky}) {
         return "Sticky bit not set on $dir";
     }
