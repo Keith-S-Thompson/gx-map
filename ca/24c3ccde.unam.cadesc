@@ -1,0 +1,23 @@
+# $Id: 24c3ccde.unam.cadesc,v 1.1 2007-02-21 17:09:13-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/24c3ccde.unam.cadesc,v $
+
+CA_NAME             UNAM
+HOMEPAGE            http://www.unamgrid.unam.mx/grid/
+CONTACT             cguel@seguridad.unam.mx
+HASH                24c3ccde
+SUBJECT             /C=MX/O=UNAMgrid/OU=UNAM/CN=CA
+MAY_SIGN            ?
+CERTIFICATE_MD5     96:8B:F0:4B:C4:F9:52:5B:1A:04:26:18:85:4F:2B:EF
+CERTIFICATE_SHA1    89:58:DC:F7:6D:2A:3C:23:8A:44:BD:55:8B:49:9B:AD:CA:E6:FF:82
+CERTIFICATE_URL     https://www.unamgrid.unam.mx/pub/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             https://www.unamgrid.unam.mx/pub/crl/cacrl.pem
+CERT_EXPIRES        Sat 2016-11-19 18:25:31 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from cacert.pem (24c3ccde.0) downloaded Wed 2007-02-21
+
+# The CRL is currently available as of Wed 2007-02-21.
+
+# I've been unable to find a signing_policy file.  This CA is marked as DISABLEd
+# until that's resolved.
