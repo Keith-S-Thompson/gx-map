@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.6 2007-02-20 21:05:16-08 kst Exp $
+# $Id: GX.pm.in,v 1.7 2007-02-21 18:42:26-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -110,6 +110,7 @@ BEGIN {
     use File::Temp ();
     use Time::Local ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
+    use POSIX ();
     eval 'use Time::HiRes ()';
     $Have_Time_HiRes_Module = ( $@ eq '' );
     eval 'require Net::Domain';
@@ -330,7 +331,7 @@ sub Make_Temp_Dir() {
 
     my $parent = File::Basename::dirname $temp_dir;
     my $parent_stat = GX::Stat $parent;
-    die "Temp_Dir $temp_dir Parent directory $parent does not have stick bit\n"
+    die "Temp_Dir $temp_dir Parent directory $parent does not have sticky bit\n"
         if not $parent_stat->{_sticky};
 
     return $temp_dir;
@@ -708,37 +709,37 @@ sub Get_Hostname() {
 # "new-requests" directory.
 # If the directory is ok, returns undef (denoting no error).
 # Otherwise, returns a message describing the problem.
-# Directory must have permissions 1733, non-root users must be able to
-# create files, and non-root users must *not* be able to use chown to
-# change the ownership of a file.
+# Directory must have permissions 733, the sticky bit must be set, and
+# non-root users must *not* be able to use chown to change the ownership
+# of a file.
 #
-# A previous version of this function was designed to work when running
-# as root (it attempted to temporarily drop root privileges before
-# doing the chown).  The code was incorrect; see bug-0052.  Since this
-# function is called only from gx-ca-update, which cannot be run by
-# root (see bug-0053), the special-case code is no longer neccessary.
+# Earlier versions of this function tested whether non-root chown was
+# allowed by creating and attempting to chown a file in the target
+# directory.  There was special-case code to be used when running as
+# root (it attempted to temporarily drop root privileges before doing
+# the chown).  That code was incorrect; see bug-0052, which was resolved
+# by not allowing gx-check-requests to run as root.
+#
+# The current version uses the POSIX::pathconf function to query directly
+# whether a given directory allows non-root chown.  This query, unlike
+# attempting to use chown(), works equally well from root or non-root
+# accounts.  It also avoids a problem on Cygwin (under Windows),
+# where non-root administrative accounts can perform chown(), but there
+# may not be an account named "root" or one with UID 0.
 #
 sub Dir_Error($) {
     my($dir) = @_;
-    return "$dir does not exist"     if not -e $dir;
-    return "$dir is not a directory" if not -d $dir;
     my $stat = GX::Stat $dir;
-    return "Cannot stat $dir" if not $stat;
-    my $mode = $stat->{mode} & 07777;
-    if ($mode != 01733) {
-        return "Bad permissions on $dir, should be 1733";
+    return "Cannot stat $dir" if not defined $stat;
+    return "$dir is not a directory" if $stat->{_file_type} ne 'directory';
+    return "Bad permissions on $dir, should be 733" if $stat->{mode} != 0733;
+    if (not $stat->{_sticky}) {
+        return "Sticky bit not set on $dir";
     }
-
-    my $temp_file_name = "$dir/tmp-" . time . "-$$";
-    my $result = undef;
-    GX::Untaint $temp_file_name;
-    open my $Temp, '>', $temp_file_name or return "Cannot create file in $dir";
-    close $Temp;
-    if (chown(0, 0, $temp_file_name) == 1) {
-        $result = "$dir allows non-root chown";
+    if (not POSIX::pathconf($dir, &POSIX::_PC_CHOWN_RESTRICTED)) {
+        return "$dir allows non-root chown";
     }
-    unlink $temp_file_name;
-    return $result;
+    return undef;
 } # Dir_Error
 
 # ----------------------------------------------------------------------
