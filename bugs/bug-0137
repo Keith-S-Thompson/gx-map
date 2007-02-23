@@ -1,0 +1,63 @@
+# $Id: bug-0137,v 1.1 2007-02-22 17:25:06-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0137,v $
+
+gx-map bug 0137
+Date: Thu 2007-02-22
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Stale cache files
+
+An error occurred in gx-map 0.5.3.2 gx-ca-update, in Cache_File,
+attempting to create a hard link with what should have been a unique
+name.  The e-mail notification follows:
+================================
+From gxmap@sdsc.edu  Wed Feb 21 08:40:02 2007
+Return-Path: <gxmap@sdsc.edu>
+Date: Wed, 21 Feb 2007 08:40:02 -0800 (PST)
+From: Gx-map Administrator <gxmap@sdsc.edu>
+Message-Id: <200702211640.l1LGe266003147@lctb1.sdsc.edu>
+To: gxmap@sdsc.edu
+Subject: Output from "cron" command
+Content-Type: text
+
+Your "cron" job on lctb1
+/usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job
+
+produced the following output:
+
+/usr/local/apps/gx-map-0.5.3.2/gx-map-data/cache/http=3A=2F=2Fcertificate.nikhef.nl=2Fmedium=2Fcacrl.pem-lctb1.sdsc.edu-3120: File exists
+Traceback:
+    /usr/local/apps/gx-map-0.5.3.2/lib/Gridmap_Utils.pm:1408 in Gridmap_Utils::Make_Hard_Link
+    /usr/local/apps/gx-map-0.5.3.2/lib/Gridmap_Utils.pm:1633 in Gridmap_Utils::Cache_File
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-ca-update:1003 in main::Update_And_Install_CRL
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-ca-update:381
+gx-cron-job: job CA update (lctb1) failed: exit 1
+Traceback:
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job:258 in main::Run_Jobs
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job:123
+================================
+
+Examination of the cache directory shows 68 stale cache files as
+of Thu 2007-02-22.  One was created on rojo.sdsc.edu on 2006-12-15.
+The others were all created on lctb1.sdsc.edu on 2007-02-13 through
+2007-02-15.  The names are made unique by appending the hostname and
+PID; the error occurred when gx-ca-update ran with the same PID.
+All the stale files were copies of one of three different CRLs:
+    http=3A=2F=2Fca.ncsa.uiuc.edu=2F4a6cd8b1.r0
+    http=3A=2F=2Fcertificate.nikhef.nl=2Fmedium=2Fcacrl.pem
+    http=3A=2F=2Fwww.sdsc.edu=2FCA=2F3deda549.r0
+
+This must have been caused by gx-ca-update calling Cache_File without
+calling Release_Cache_File.  This can happen if the gx-ca-update
+process is killed without having a chance to perform cleanup.
+
+The error occurs on a call to the built-in "link" function in
+Make_Hard_Link.  One solution would be to unlink the target file before
+invoking "link"; this would avoid the error, but wouldn't prevent the
+accumulation of stale files.  In addition, it probably makes sense to
+use Register_Handler_Function to arrange for Die_Handler to release any
+active cache files -- but since I received no e-mail for the original
+error that created the stale cache files, it seems that gx-ca-update
+was killed without having a chance to invoke the Die_Handler.
