@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: patch-gx-map-0.5.3.2,v 1.1.2.2 2007-03-02 01:58:14-08 kst Exp $
+# $Id: patch-gx-map-0.5.3.2,v 1.1.2.3 2007-03-02 02:07:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/patch-gx-map-0.5.3.2,v $
 
 ########################################################################
@@ -170,7 +170,7 @@ foreach my $ref (@updated_files) {
     if (defined $ref->{source}) {
         $new_file = "$ref->{source}/$new_file";
     }
-    LOG "Copying $new_file to\n$target_file\n";
+    LOG "Copying $new_file\n";
     rename "$target_file", "$target_file.orig"
         or die "rename $target_file: $!\n";
     Execute 'cp', '-p', $new_file, $target_file;
