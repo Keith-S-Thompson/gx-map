@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.30.2.3 2007-03-02 01:58:50-08 kst Exp $
+# $Id: make-release,v 1.30.2.4 2007-03-02 01:59:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -51,7 +51,7 @@ if [ -f release/gx-map-$version.tar.gz ] ; then
     exit 1
 fi
 
-if [ $cadesc_tarball == "" ] ; then
+if [ "$cadesc_tarball" == "" ] ; then
     cadesc_tarball=`pwd`/release/gx-map-cadesc-$today.tar.gz
     if [ -f $cadesc_tarball ] ; then
         echo ">>> Using existing $cadesc_tarball"
