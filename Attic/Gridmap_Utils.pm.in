@@ -1,4 +1,4 @@
-# $Id: Gridmap_Utils.pm.in,v 1.312 2007-02-08 17:35:03-08 kst dead $
+# $Id: Gridmap_Utils.pm.in,v 1.279.2.1 2007-03-02 01:26:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/Gridmap_Utils.pm.in,v $
 
 ########################################################################
@@ -86,7 +86,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.3.2.012';
+    $VERSION = '0.5.3.3';
 
     $Debugging = undef; 
     %Config = ( PERL                     => '%PERL%',
@@ -97,16 +97,11 @@ BEGIN {
                 REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
                 GX_MAP_OWNER             => '%GX_MAP_OWNER%',
                 ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
-                ADMIN_EMAIL              => '%ADMIN_EMAIL%',
-                REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
-                CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
-                GX_PROPAGATE             => '%GX_PROPAGATE%',
-                EXTRAS                   => '%EXTRAS%' );
+                ADMIN_EMAIL              => '%ADMIN_EMAIL%' );
     use File::Basename ();
-    use File::Path ();
-    use File::Temp ();
     use Time::Local ();
     use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
+    use POSIX ();
     eval 'use Time::HiRes ()';
     $Have_Time_HiRes_Module = ( $@ eq '' );
     eval 'require Net::Domain';
@@ -127,12 +122,7 @@ sub Check_Data_Dir();
 # sub Check_Tainting($$);
 sub Untaint(\$);
 
-sub Make_Temp_Dir();
-sub Delete_Temp_Dir($);
-
-sub OpenSSL_Version();
-sub Certificate_Info($$;$);
-
+sub Stat($;$);
 sub Get_mtime($);
 sub Is_Legal_Username($);
 sub Get_PW_Name($);
@@ -156,9 +146,6 @@ sub Get_DNs_From_List_File($);
 
 sub Write_Records($$@);
 sub Read_Records(@);
-
-sub Write_Multifile($@);
-sub Read_Multifile($);
 
 sub Sort_By_Timestamp(@);
 
@@ -193,7 +180,6 @@ sub Release_Lock($);
 
 sub Install_Die_Handler();
 sub Install_Warn_Handler();
-sub Uninstall_Handlers();
 sub Register_Handler_Function($);
 
 #
@@ -310,139 +296,97 @@ sub Untaint(\$) {
 # ----------------------------------------------------------------------
 
 #
-# Creates a temporary directory and returns its name.
+# A wrapper for the built-in stat() or lstat() function.  As with
+# stat(), the argument may be either a file name or an open file handle.
 #
-sub Make_Temp_Dir() {
-    return File::Temp::tempdir();
-} # Make_Temp_Dir
-
-# ----------------------------------------------------------------------
-
+# The stat() function is invoked by default; an optional first
+# argument of '-l' indicates that lstat() should be used instead.
 #
-# Removes a temporary directory and its contents.
+# It returns a reference to a hash with appropriate field names (or
+# undef on failure).
 #
-sub Delete_Temp_Dir($) {
-    File::Path::rmtree($_[0]);
-} # Delete_Temp_Dir
-
-# ----------------------------------------------------------------------
-
+# In addition to the information returned by stat or lstat, it sets
+# the following fields:
 #
-# Invokes "openssl version" and computes a numeric version number.
-# The result is similar to the value of the OPENSSL_VERSION_NUMBER macro
-# defined in <openssl/opensslv.h>, but the patch and status fields are
-# ignored (since we don't currently make use of that information).
+#     _file_type
+#         Either 'plain', 'directory, 'symlink', etc., or 'other',
+#         depending on the result of "-f _", "-d _", "-l _", etc.
+#         With '-l', it doesn't check for symlinks.
+#     _readable
+#         0 or 1 (-r _)
+#     _writable
+#         0 or 1 (-w _)
+#     _executable
+#         0 or 1 (-x _)
+#     _setuid
+#         0 or 1 (-u _)
+#     _setgid
+#         0 or 1 (-g _)
+#     _sticky
+#         0 or 1 (-k _)
 #
-sub OpenSSL_Version() {
-    my($command) = @_;
-    my $version_string;
-    Use_Commands 'openssl';
-    open my $Pipe, '-|', 'openssl', 'version';
-    while (<$Pipe>) {
-        if (/^OpenSSL\s+(\S+)/) {
-            $version_string = $1;
-        }
+# The names of these additional fields all start with an underscore.
+#
+sub Stat($;$) {
+    my $use_lstat = 0;
+    my $arg;
+    if (scalar @_ == 1) {
+        $arg = $_[0];
     }
-    close $Pipe;
-    if (defined $version_string and
-        $version_string =~ /^(\d+)\.(\d+)\.(\d+)/)
-    {
-        my($major, $minor, $fix) = ($1, $2, $3);
-        foreach my $v ($major, $minor, $fix) {
-            return undef if $v < 0 or $v > 99;
-        }
-        return ($major<<28) + ($minor<<20) + ($fix<<12);
+    elsif (scalar @_ == 2 and $_[0] eq '-l') {
+        $use_lstat = 1;
+        $arg = $_[1];
     }
-    return undef;
-} # OpenSSL_Version
+    else {
+        die "Gridmap_Utils::Stat: Usage error\n";
+    }
 
-# ----------------------------------------------------------------------
+    my @stat = ( $use_lstat ? lstat $arg : stat $arg );
+    my @fields = qw( dev ino mode nlink uid gid rdev size 
+                     atime mtime ctime blksize blocks );
+    return undef if scalar @stat < scalar @fields;
 
-#
-# Given the name of a certificate file, returns a reference to information
-# about the certificate:
-#     hash
-#     issuer
-#     subject
-#     md5sum
-#     sha1sum
-#     startdate (raw timestamp)
-#     enddate   (raw timestamp)
-#
-# The second argument specifies the form of the certificate, either 'PEM',
-# 'DER', or 'NET'.
-#
-# The optional third argument, if set to 'nomd5', causes the md5sum
-# to be omitted (any other argument value is a fatal error).
-#
-# Returns undef if any of these fields cannot be determined.
-#
-sub Certificate_Info($$;$) {
-    my($cert_file, $cert_form, $third_arg) = @_;
-    return undef if not -r $cert_file;
-    my $need_md5 = 1;
-    if (defined $third_arg) {
-        if ($third_arg eq 'nomd5') {
-            $need_md5 = 0;
-        }
-        else {
-            die "Bad 3rd argument to Certificate_Info() $third_arg\n";
-        }
+    my $result;
+    for (my $i = 0; $i <= $#fields; $i ++) {
+        $result->{$fields[$i]} = $stat[$i];
     }
-    Use_Commands 'openssl';
-    my $result = {};
-    open my $Pipe1, '-|',
-         "openssl x509 -in '$cert_file' -inform $cert_form -noout -hash " .
-         "-issuer -subject -sha1 -fingerprint -startdate -enddate 2>/dev/null";
-    while (<$Pipe1>) {
-        chomp;
-        if (/^[\da-f]{8}$/) {
-            $result->{hash} = $_;
-        }
-        elsif (/^issuer=\s*(.*)$/) {
-            $result->{issuer} = Gridmap_Utils::GT4_Subject $1;
-        }
-        elsif (/^subject=\s*(.*)$/) {
-            $result->{subject} = Gridmap_Utils::GT4_Subject $1;
-        }
-        elsif (/^sha1.*=\s*(.*)$/i) {
-            $result->{sha1sum} = $1;
-        }
-        elsif (/^notBefore=\s*(.*)$/) {
-            $result->{startdate} = Gridmap_Utils::Time_Value $1;
-        }
-        elsif (/^notAfter=\s*(.*)$/) {
-            $result->{enddate} = Gridmap_Utils::Time_Value $1;
-        }
-    }
-    close $Pipe1;
 
     #
-    # openssl won't display both md5 and sha1 fingerprints in a single
-    # command (unless it reads commands from stdin).
+    # Now we can use the special filehandle _ to obtain more information.
     #
-    if ($need_md5) {
-        open my $Pipe2, '-|',
-             "openssl x509 -in '$cert_file' -inform $cert_form " .
-             "-noout -md5 -fingerprint 2>/dev/null";
-        while (<$Pipe2>) {
-            if (/^md5.*=\s*(.*)$/i) {
-                $result->{md5sum} = $1;
-            }
-        }
-        close $Pipe2;
+    if (-f _) {
+        $result->{_file_type} = 'plain';
     }
-
-    foreach my $key (qw(hash issuer subject
-                        sha1sum
-                        startdate enddate))
-    {
-        return undef if not defined $result->{$key};
+    elsif (-d _) {
+        $result->{_file_type} = 'directory';
     }
-    return undef if $need_md5 and not defined $result->{md5sum};
+    elsif (not $use_lstat and -l _) {
+        $result->{_file_type} = 'symlink';
+    }
+    elsif (-p _) {
+        $result->{_file_type} = 'pipe';
+    }
+    elsif (-S _) {
+        $result->{_file_type} = 'socket';
+    }
+    elsif (-b _) {
+        $result->{_file_type} = 'block special';
+    }
+    elsif (-c _) {
+        $result->{_file_type} = 'character special';
+    }
+    else {
+        $result->{_file_type} = 'other';
+    }
+    $result->{_readable}   = ( -r _ ? 1 : 0 );
+    $result->{_writable}   = ( -w _ ? 1 : 0 );
+    $result->{_executable} = ( -x _ ? 1 : 0 );
+    $result->{_setuid}     = ( -u _ ? 1 : 0 );
+    $result->{_setgid}     = ( -g _ ? 1 : 0 );
+    $result->{_sticky}     = ( -k _ ? 1 : 0 );
 
     return $result;
-} # Certificate_Info
+} # Stat
 
 # ----------------------------------------------------------------------
 
@@ -483,7 +427,7 @@ sub Is_Legal_Username($) {
 # ----------------------------------------------------------------------
 
 #
-# A helper function for Init_PW_Info, not externaly visible.
+# A helper function for Init_PW_Info, not externally visible.
 #
 sub Translate_PW(@) {
     my @pw = @_;
@@ -593,37 +537,39 @@ sub Get_Hostname() {
 # "new-requests" directory.
 # If the directory is ok, returns undef (denoting no error).
 # Otherwise, returns a message describing the problem.
-# Directory must have permissions 1733, non-root users must be able to
-# create files, and non-root users must *not* be able to use chown to
-# change the ownership of a file.
+# Directory must have permissions 733, the sticky bit must be set, and
+# non-root users must *not* be able to use chown to change the ownership
+# of a file.
 #
-# A previous version of this function was designed to work when running
-# as root (it attempted to temporarily drop root privileges before
-# doing the chown).  The code was incorrect; see bug-0052.  Since this
-# function is called only from gx-ca-update, which cannot be run by
-# root (see bug-0053), the special-case code is no longer neccessary.
+# Earlier versions of this function tested whether non-root chown was
+# allowed by creating and attempting to chown a file in the target
+# directory.  There was special-case code to be used when running as
+# root (it attempted to temporarily drop root privileges before doing
+# the chown).  That code was incorrect; see bug-0052, which was resolved
+# by not allowing gx-check-requests to run as root.
+#
+# The current version uses the POSIX::pathconf function to query directly
+# whether a given directory allows non-root chown.  This query, unlike
+# attempting to use chown(), works equally well from root or non-root
+# accounts.  It also avoids a problem on Cygwin (under Windows),
+# where non-root administrative accounts can perform chown(), but there
+# may not be an account named "root" or one with UID 0.
 #
 sub Dir_Error($) {
     my($dir) = @_;
-    return "$dir does not exist"     if not -e $dir;
-    return "$dir is not a directory" if not -d $dir;
-    my @stat = stat $dir;
-    return "Cannot stat $dir" if not @stat;
-    my $mode = $stat[2] & 07777;
-    if ($mode != 01733) {
-        return "Bad permissions on $dir, should be 1733";
+    my $stat = Gridmap_Utils::Stat $dir;
+    return "Cannot stat $dir" if not defined $stat;
+    return "$dir is not a directory" if $stat->{_file_type} ne 'directory';
+    if (($stat->{mode} & 0777) != 0733) {
+        return "Bad permissions on $dir, should be 733";
     }
-
-    my $temp_file_name = "$dir/tmp-" . time . "-$$";
-    my $result = undef;
-    Untaint $temp_file_name;
-    open my $Temp, '>', $temp_file_name or return "Cannot create file in $dir";
-    close $Temp;
-    if (chown(0, 0, $temp_file_name) == 1) {
-        $result = "$dir allows non-root chown";
+    if (not $stat->{_sticky}) {
+        return "Sticky bit not set on $dir";
     }
-    unlink $temp_file_name;
-    return $result;
+    if (not POSIX::pathconf($dir, &POSIX::_PC_CHOWN_RESTRICTED)) {
+        return "$dir allows non-root chown";
+    }
+    return undef;
 } # Dir_Error
 
 # ----------------------------------------------------------------------
@@ -1069,8 +1015,15 @@ sub Increment_Timestamp($) {
 #
 #           Comments are ignored by default.
 #
-# The last argument is the name of the file from which to read the
-# record or records.  '-' denotes stdin.
+#   '-filename=...'
+#           Specify a file name, to be used only error messages.  This is
+#           useful when the last argument is an opened file handle rather
+#           than a file name.  Ignored if the file argument is a file
+#           name rather than a file handle.
+#
+# The last argument is either the name of the file from which to read
+# the record or records, or an opened  filehandle.  '-' denotes stdin;
+# otherwise, the file name may not start with a '-' character.
 #
 # Leading and trailing whitespace are ignored.
 #
@@ -1089,7 +1042,8 @@ sub Increment_Timestamp($) {
 # of hash references.
 #
 sub Read_Records(@) {
-    my $filename;
+    my $file_arg;
+    my $filename = 'input file';
     my $multiple = 1;
     my $keep_comments = 0;
     for (my $i = 0; $i <= $#_; $i ++) {
@@ -1102,20 +1056,25 @@ sub Read_Records(@) {
         elsif ($_[$i] eq '-keep-comments') {
             $keep_comments = 1;
         }
+        elsif ($_[$i] =~ /^-filename=(.*)$/) {
+            $filename = $1;
+        }
         elsif ($_[$i] =~ /^-./) {
-            die "Read_Records: Unrecognized option \"$_[$i]\"\n";
+            die "Gridmap_Utils::Read_Records: " .
+                "Unrecognized option \"$_[$i]\"\n";
         }
         else {
             if ($i == $#_) {
-                $filename = $_[$i];
+                $file_arg = $_[$i];
             }
             else {
-                die "Read_Records: Usage error\n";
+                die "Gridmap_Utils::Read_Records: Usage error\n";
             }
         }
     }
     if ($keep_comments and not $multiple) {
-        die "Read_Records: Usage error, -keep-comments vs. -single\n";
+        die "Gridmap_Utils::Read_Records: " .
+            "Usage error, -keep-comments vs. -single\n";
     }
 
     #
@@ -1129,12 +1088,20 @@ sub Read_Records(@) {
     #
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
-    my $File = undef;
-    if ($filename eq '-') {
-        open $File, '<-' or die "stdin: $!\n";
+    my $FILE = undef;
+    if (ref $file_arg ne '') {
+        #
+        # $file_arg is a reference; assume it's an opened file handle.
+        #
+        $FILE = $file_arg;
+    }
+    elsif ($filename eq '-') {
+        open $FILE, '<-' or die "stdin: $!\n";
+        $filename = 'stdin';
     }
     else {
-        open $File, '<', $filename or die "${filename}: $!\n";
+        open $FILE, '<', $file_arg or die "${file_arg}: $!\n";
+        $filename = $file_arg;
     }
     my @result = ();
     my $ref = ( $multiple ? undef : {} );
@@ -1146,7 +1113,7 @@ sub Read_Records(@) {
     #
     my $context = $multiple ? 'none' : 'record';
     LINE:
-    while (<$File>) {
+    while (<$FILE>) {
         chomp;
         s/^\s+//;
         s/\s+$//;
@@ -1162,7 +1129,8 @@ sub Read_Records(@) {
                     my $previous = $result[$#result];
                     if (defined $previous->{timestamp}) {
                         $ref->{timestamp}
-                            = Increment_Timestamp $previous->{timestamp};
+                            = Gridmap_Utils::Increment_Timestamp
+                                  $previous->{timestamp};
                     }
                 }
                 if (not defined $ref->{timestamp}) {
@@ -1228,7 +1196,7 @@ sub Read_Records(@) {
             }
         }
     }
-    close $File;
+    close $FILE;
     if ($keep_comments and $context eq 'comment') {
         push @result, $ref;
         $context = 'none';
@@ -1240,115 +1208,6 @@ sub Read_Records(@) {
         return $ref;
     }
 } # Read_Records
-
-# ----------------------------------------------------------------------
-
-#
-# Write a multifile.
-# The first argument is the name of the output file.
-# Other arguments are names of files to be incorporated as subfiles.
-#
-sub Write_Multifile($@) {
-    my ($output_file, @file_list) = @_;
-    open my $OUT, '>', $output_file or die "$output_file: $!\n";
-
-    print $OUT "BEGIN multifile {\n\n" or die "$output_file: $!\n";;
-
-    foreach my $file (@file_list) {
-        my $basename = File::Basename::basename $file;
-        print $OUT "BEGIN subfile \"$basename\" {\n"
-            or die "$output_file: $!\n";
-        open my $FILE, '<', $file or die "${file}: $!\n";
-        while (<$FILE>) {
-            print $OUT $_ or die "$output_file: $!\n";;
-        }
-        close $FILE;
-        print $OUT "} END subfile \"$basename\"\n\n"
-            or die "$output_file: $!\n";;
-    }
-
-    print $OUT "} END multifile\n" or die "$output_file: $!\n";
-} # Write_Multifile
-
-# ----------------------------------------------------------------------
-
-#
-# Helper function for Read_Multifile
-#
-sub Read_Subfile($$) {
-    my($filename, $File) = @_;
-    my $in_subfile = 0;
-    my $subfile_name = undef;
-    my $content = '';
-    while (<$File>) {
-        if (not $in_subfile) {
-            if (/^\s*$/) {
-                next;
-            }
-            elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {
-                $subfile_name = $1;
-                $in_subfile = 1;
-            }
-            elsif (/^\s*}\s+END\s+multifile\s*$/) {
-                return { EOF => 1 };
-            }
-            else {
-                die "Error at line $. of $filename\n";
-            }
-        }
-        else {
-            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
-                if ($1 ne $subfile_name) {
-                    die "Name mismatch at line $. of $filename\n";
-                }
-                return { name => $subfile_name, content => $content };
-            }
-            else {
-                $content .= $_;
-            }
-        }
-    }
-    die "Incomplete subfile at EOF, line $. of $filename\n";
-} # Read_Subfile
-
-# ----------------------------------------------------------------------
-
-#
-# Reads a "multifile".
-# Die if an error occurs.
-# 
-sub Read_Multifile($) {
-    my($filename) = @_;
-    my @result = ();
-    my $in_multifile = 0;
-    open my $File, '<', $filename or die "${filename}: $!\n";
-    while (<$File>) {
-        if (not $in_multifile) {
-            if (/^\s*$/) {
-                next;
-            }
-            elsif (/^\s*BEGIN\s+multifile\s+{\s*$/) {
-                $in_multifile = 1;
-            }
-            else {
-                die "Error at line $. of $filename\n";
-            }
-        }
-        else {
-            while (1) {
-                my $subfile = Read_Subfile $filename, $File;
-                if ($subfile->{EOF}) {
-                    close $File;
-                    return @result;
-                }
-                else {
-                    push @result, $subfile;
-                }
-            }
-        }
-    }
-    die "Syntax error at line $. of $filename\n";
-} # Read_Multifile
 
 # ----------------------------------------------------------------------
 
@@ -1546,11 +1405,6 @@ sub Gen_Mappings(@) {
             next REQUEST;
         }
 
-        if (not defined $request->{SOURCE}) {
-            Debug "Reject, no SOURCE\n";
-            next REQUEST;
-        }
-
         if (defined $request->{username}) {
             my $pw = Gridmap_Utils::Get_PW_Name $request->{username};
             if (not defined $pw and not $All) {
@@ -1566,9 +1420,9 @@ sub Gen_Mappings(@) {
                 next REQUEST;
             }
             if ($request->{OWNER_NAME} ne $request->{username} and
-                $request->{SOURCE} eq 'user')
+                not Gridmap_Utils::Is_Admin_Account($request->{OWNER_NAME}))
             {
-                Debug "Reject, user request for other than self\n";
+                Debug "Reject, $request->{OWNER_NAME} is not an admin\n";
                 next REQUEST;
             }
         }
@@ -2650,9 +2504,8 @@ EOF
 # ----------------------------------------------------------------------
 
 #
-# Given the name of a cadesc file, returns a reference to a hash
-# containing information about the CA.  CERTIFICATE_FORM and CRL_FORM
-# are set to 'PEM' if they're not specified in the file.
+# Given the name of a cadesc file, returns a reference to a hash containing
+# information about the CA.
 #
 # If there's an error, return an error message as reference to an array
 # of strings.
@@ -2669,9 +2522,6 @@ sub Get_CA_Ref($) {
     $short_name =~ s/^[^.]*\.//;
     $ref->{_SHORT_CA_NAME} = $short_name;
 
-    $ref->{CERTIFICATE_FORM} = 'PEM' if not defined $ref->{CERTIFICATE_FORM};
-    $ref->{CRL_FORM}         = 'PEM' if not defined $ref->{CRL_FORM};
-
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} eq 'yes') {
         return $ref;
     }
@@ -2679,10 +2529,8 @@ sub Get_CA_Ref($) {
     my %valid = map { $_ => 1 } qw( CA_NAME HOMEPAGE CONTACT HASH
                                     SIGNED_BY SUBJECT MAY_SIGN
                                     CERTIFICATE_MD5 CERTIFICATE_SHA1
-                                    CERTIFICATE_URL CERTIFICATE_FORM
-                                    SIGNING_POLICY_URL
-                                    CRL_URL CRL_FORM
-                                    ALLOW_MISSING_CRL
+                                    CERTIFICATE_URL SIGNING_POLICY_URL
+                                    CRL_URL ALLOW_MISSING_CRL
                                     CERT_EXPIRES DISABLE
                                     _FILENAME _FILE_BASENAME _SHORT_CA_NAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
@@ -2723,21 +2571,8 @@ sub Get_CA_Ref($) {
     if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
         push @errors, "Invalid HASH";
     }
-    {
-        my %valid = ( PEM => 1, DER => 1, NET => 1 );
-        if (not $valid{$ref->{CERTIFICATE_FORM}}) {
-            push @errors,
-                 qq(Value for CERTIFICATE_FORM must be "PEM", "DER", or "NET");
-        }
-    }
-    {
-        my %valid = ( PEM => 1, DER => 1 );
-        if (not $valid{$ref->{CRL_FORM}}) {
-            push @errors, qq(Value for CRL_FORM must be "PEM" or "DER");
-        }
-    }
     if (defined $ref->{DISABLE} and lc $ref->{DISABLE} ne 'no') {
-        push @errors, qq(Value for DISABLE must be "yes" or "no");
+        push @errors, "Value for DISABLE must be \"yes\" or \"no\"";
     }
 
     if (@errors) {
@@ -2785,8 +2620,8 @@ sub Get_Lock($) {
     }
     else {
         my $link_error = $!;
-        my @stat = stat $unique_lock_file;
-        if (@stat and $stat[3] == 2) {
+        my $stat = Gridmap_Utils::Stat $unique_lock_file;
+        if (defined $stat and $stat->{nlink} == 2) {
             #
             # Got lock, but link failed.  This can happen due to
             # NFS latencies; I'm not 100% sure of the details.
@@ -2894,13 +2729,6 @@ sub Install_Warn_Handler() {
 
 # ----------------------------------------------------------------------
 
-sub Uninstall_Handlers() {
-    delete $SIG{__DIE__};
-    delete $SIG{__WARN__};
-} # Uninstall_Handlers
-
-# ----------------------------------------------------------------------
-
 sub Register_Handler_Function($) {
     $Gridmap_Utils::Registered_Handler_Function = $_[0];
 } # Register_Handler_Function
@@ -2919,9 +2747,9 @@ sub Get_TGCDB_Config($) {
     my($config_file) = @_;
     Debug "Get_TGCDB_Config $config_file\n";
 
-    my @stat = stat $config_file;
-    die "$config_file: $!\n" if not @stat;
-    my $mode = $stat[2] & 0777;
+    my $stat = Gridmap_Utils::Stat $config_file;
+    die "$config_file: $!\n" if not defined $stat;
+    my $mode = $stat->{mode} & 0777;
     if ($mode ne 0400 and $mode ne 0600) {
         die "Bad mode for $config_file\n" .
             "Mode must be 400 (r--------) or 600 (rw-------)\n";
