@@ -1,6 +1,357 @@
 #!/usr/bin/perl
 
-# $Id: patch-gx-map-0.5.3.2,v 1.1 2007-03-02 01:14:30-08 kst Exp $
+# $Id: patch-gx-map-0.5.3.2,v 1.1.2.1 2007-03-02 01:20:48-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/patch-gx-map-0.5.3.2,v $
 
-die "Not available in this version\n";
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2007 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+use warnings;
+
+use File::Basename ();
+use Getopt::Long ();
+
+sub Status_Message($);
+sub Execute(@);
+sub Edit_Config_File($);
+sub Edit_Gridmap_Utils();
+sub Die_Handler($);
+sub LOG(@);
+sub Usage(@);
+
+my $Program_Name = File::Basename::basename $0;
+
+my @updated_files = (
+    { name => 'gx-request',        target => 'bin'  },
+    { name => 'gx-check-requests', target => 'sbin' },
+    { name => 'gx-gen-mapfile',    target => 'sbin' },
+    { name => 'Gridmap_Utils.pm',  target => 'lib'  },
+    { name => 'Relnotes',          target => 'etc/gx-map' },
+    { name => 'gx-gen-mapfile.8',  target => 'man/man8',  source => 'doc' },
+    { name => 'gx-request.1',      target => 'man/man1',  source => 'doc' }
+);
+
+my $User_Opt = {};
+my @Opts = ( $User_Opt, qw(help config-file=s) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if scalar @ARGV != 1;
+
+my $Install_Dir = $ARGV[0];
+Usage "$Install_Dir is not a directory\n" if not -d $Install_Dir;
+Usage "Can't write to $Install_Dir\n" if not -w $Install_Dir;
+
+if (not -e 'configure-gx-map' or not -e $Program_Name) {
+    die "This must be run from the gx-map source directory\n";
+}
+
+my @missing = ();
+foreach my $ref (@updated_files) {
+    my $filename = "$ref->{target}/$ref->{name}";
+    if (not -e "$Install_Dir/$filename") {
+        push @missing, $filename;
+    }
+}
+
+if (@missing) {
+    my $s = (scalar @missing == 1 ? '' : 's');
+    my $message = "Missing target file${s}:\n";
+    foreach my $missing (@missing) {
+        $message .= "    $missing\n";
+    }
+    #
+    # If several files are missing, it's probably not a
+    # valid gx-map installation directory.
+    #
+    if (scalar @missing >= 3) {
+        $message .= "Is $Install_Dir a gx-map installation?\n";
+    }
+    die $message;
+}
+
+my $version_string = undef;
+open my $PIPE, '-|', "$Install_Dir/bin/gx-request", '--version';
+while (<$PIPE>) {
+    chomp;
+    $version_string = $_ if not defined $version_string;
+}
+close $PIPE;
+if ($version_string ne 'gx-request (gx-map) 0.5.3.2') {
+    my $version = $version_string;
+    $version =~ s/.* //;
+    die "Bad gx-map version, expected 0.5.3.2, got $version\n";
+}
+
+my $etc_dir = "$Install_Dir/etc/gx-map";
+
+my $config_file = undef;
+if (defined $User_Opt->{'config-file'}) {
+    $config_file = "$etc_dir/$User_Opt->{'config-file'}";
+    if (not -e $config_file) {
+        die "No file $config_file\n";
+    }
+}
+else {
+    opendir my $ETC, $etc_dir or die "$etc_dir: $!\n";
+    my @files = sort readdir $ETC;
+    closedir $ETC or die "$etc_dir: $!\n";
+    my @config_files = grep {/\.conf$/ and $_ ne 'gx-cron-job.conf' } @files;
+    if (scalar @config_files == 1) {
+        $config_file = "$etc_dir/$config_files[0]";
+    }
+    else {
+        die "Can't find config file; use \"-config-file\" option\n";
+    }
+}
+
+my $log_file = "$etc_dir/patch.log";
+die "$log_file already exists\n" if -e $log_file;
+open my $LOG, '>', $log_file or die "$log_file: $!\n";
+print "Logging to $log_file\n";
+
+$SIG{__DIE__} = \&Die_Handler;
+
+my $new_config_file = Edit_Config_File $config_file;
+
+Execute './configure-gx-map', '-patch', $new_config_file;
+
+Edit_Gridmap_Utils;
+
+foreach my $ref (@updated_files) {
+    my $target_file = "$Install_Dir/$ref->{target}/$ref->{name}";
+    my $new_file = $ref->{name};
+    if (defined $ref->{source}) {
+        $new_file = "$ref->{source}/$new_file";
+    }
+    LOG "Copying $new_file to\n$target_file\n";
+    rename "$target_file", "$target_file.orig"
+        or die "rename $target_file: $!\n";
+    Execute 'cp', '-p', $new_file, $target_file;
+}
+
+Execute 'make', 'clean';
+
+my $dot_update = "$Install_Dir/gx-map-data/new-requests/.update";
+LOG "Deleting $dot_update\n";
+unlink $dot_update or die "$dot_update: $!\n";
+
+LOG "Done, patch was successful\n";
+close $LOG;
+
+########################################################################
+
+#
+# Given an integer value returned by system(), return a legible
+# interpretation as a string.
+#
+sub Status_Message($) {
+    my($status) = @_;
+    if ($status >= 0 and $status <= 0xFFFF) {
+        my $hi_8 = ($status & 0xff00) >> 8;
+        my $lo_8 =  $status & 0x00ff;
+
+        my $WSTOPFLG = 0x007f;
+        my $WCOREFLG = 0x0080;
+        if ($lo_8 == $WSTOPFLG) {
+            return "Stopped, signal $hi_8";
+        }
+        elsif ($lo_8 == 0) {
+            return "exit $hi_8";
+        }
+        elsif ($hi_8 == 0) {
+            my $signal = $lo_8;
+            my $core = 0;
+            if ($signal & $WCOREFLG) {
+                $signal &= ~$WCOREFLG;
+                $core = 1;
+            }
+            my $result = "Killed by signal $signal";
+            if ($core) {
+                $result .= ", core dumped";
+            }
+            return $result;
+        }
+    }
+    return sprintf "Unknown error, system() returned %d (0x%x)",
+                   $status, $status;
+} # Status_Message
+
+# ----------------------------------------------------------------------
+
+sub Execute(@) {
+    LOG "% @_\n";
+
+    #
+    # Redirect both stdout and stderr to the log.
+    #
+    my $SAVE_STDOUT;
+    my $SAVE_STDERR;
+    open SAVE_STDOUT, '>&STDOUT';
+    open SAVE_STDERR, '>&STDERR';
+    print SAVE_STDOUT if 0; # make perl -cw happy
+    print SAVE_STDERR if 0;
+    my $log_fileno = fileno $LOG;
+    open STDOUT, ">&$log_fileno";
+    open STDERR, ">&$log_fileno";
+
+    my $error_message = undef;
+    my $status = system @_;
+    if ($status != 0) {
+        my $status_message = Status_Message $status;
+        $error_message = "Command $_[0] failed, $status_message\n";
+    }
+
+    #
+    # Restore stdout and stderr.
+    #
+    open STDOUT, '>&SAVE_STDOUT';
+    open STDERR, '>&SAVE_STDERR';
+
+    if (defined $error_message) {
+        LOG $error_message;
+        close $LOG;
+        die $error_message;
+    }
+} # Execute
+
+# ----------------------------------------------------------------------
+
+sub Edit_Config_File($) {
+    my($infile) = @_;
+    my $infile_basename = File::Basename::basename $infile;
+    my $outfile = "$infile_basename-patched";
+    LOG "Editing $infile_basename\n";
+
+    my $Data_Dir = readlink "$Install_Dir/gx-map-data";
+    die "Can't determine data directory\n" if not defined $Data_Dir;
+
+    open my $IN, '<', $infile or die "${infile}: $!\n";
+    open my $OUT, '>', $outfile or die "${outfile}: $!\n";
+    while (<$IN>) {
+        if (/^\s*INSTALL_DIR\b/) {
+            $_ = "INSTALL_DIR     $Install_Dir\n";
+        }
+        elsif (/^\s*DATA_DIR\b/) {
+            $_ = "DATA_DIR        $Data_Dir\n";
+        }
+        print $OUT $_ or die "Writing to ${outfile}: $!\n";
+    }
+    close $IN or die "${infile}: $!\n";
+    close $OUT or die "${outfile}: $!\n";
+    return $outfile;
+} # Edit_Config_File
+
+# ----------------------------------------------------------------------
+
+sub Edit_Gridmap_Utils() {
+    LOG "Editing Gridmap_Utils.pm\n";
+    my $infile  = 'Gridmap_Utils.pm';
+    my $outfile = "$infile.new";
+    my $new_version = '0.5.3.2p1';
+    my $updated_lines = 0;
+    open my $IN, '<', $infile or die "${infile}: $!\n";
+    open my $OUT, '>', $outfile or die "${outfile}: $!\n";
+    while (<$IN>) {
+        if (/^(\s*\$VERSION\s*=\s*')([^']*)('.*)$/) {
+            LOG "Changing \$VERSION from $2 to $new_version\n";
+            print $OUT "$1$new_version$3\n"
+                or die "Writing to ${outfile}: $!\n";
+            $updated_lines ++;
+        }
+        else {
+            print $OUT $_ or die "Writing to ${outfile}: $!\n";
+        }
+    }
+    close $IN  or die "Closing ${infile}: $!\n";
+    close $OUT or die "Closing ${outfile}: $!\n";
+
+    my $error = undef;
+    if ($updated_lines == 0) {
+        $error = "Can't find \$VERSION setting in $infile\n";
+    }
+    elsif ($updated_lines > 1) {
+        $error = "Found \$VERSION settings in $infile\n";
+    }
+    if (defined $error) {
+        unlink $outfile;
+        die $error;
+    }
+    rename $outfile, $infile or die "Renaming ${outfile}: $!\n";
+} # Edit_Gridmap_Utils
+
+# ----------------------------------------------------------------------
+
+sub Die_Handler($) {
+    if (defined fileno $LOG) {
+        print $LOG $_[0];
+        close $LOG or warn "Closing $log_file: $!\n";
+    }
+    warn "$Program_Name failed, see $log_file\n";
+} # Die_Handler
+
+# ----------------------------------------------------------------------
+
+sub LOG(@) {
+    print @_;
+    print $LOG @_;
+} # LOG
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options] directory
+Upgrade an existing gx-map 0.5.3.2 installation to 0.5.3.2p1 (equivalent
+to 0.5.3.3).  The argument is the full pathname of an existing gx-map
+installatioy directory.
+    -help         : Display this message and exit
+    -config-file  : Name of installed config file in etc/gx-map directory
+                    By default, look for a file whose name ends in ".conf".
+             
+EOF
+    exit 1;
+} # Usage
