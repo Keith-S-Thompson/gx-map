@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: patch-gx-map-0.5.3.2,v 1.1.2.1 2007-03-02 01:20:48-08 kst Exp $
+# $Id: patch-gx-map-0.5.3.2,v 1.1.2.2 2007-03-02 01:58:14-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/patch-gx-map-0.5.3.2,v $
 
 ########################################################################
@@ -65,13 +65,17 @@ sub Usage(@);
 my $Program_Name = File::Basename::basename $0;
 
 my @updated_files = (
-    { name => 'gx-request',        target => 'bin'  },
-    { name => 'gx-check-requests', target => 'sbin' },
-    { name => 'gx-gen-mapfile',    target => 'sbin' },
-    { name => 'Gridmap_Utils.pm',  target => 'lib'  },
-    { name => 'Relnotes',          target => 'etc/gx-map' },
-    { name => 'gx-gen-mapfile.8',  target => 'man/man8',  source => 'doc' },
-    { name => 'gx-request.1',      target => 'man/man1',  source => 'doc' }
+    { name => 'gx-request',           target => 'bin'  },
+    { name => 'gx-check-requests',    target => 'sbin' },
+    { name => 'gx-gen-mapfile',       target => 'sbin' },
+    { name => 'Gridmap_Utils.pm',     target => 'lib'  },
+    { name => 'Relnotes',             target => 'etc/gx-map' },
+    { name => 'README',               target => 'etc/gx-map' },
+    { name => 'README.Upgrade',       target => 'etc/gx-map' },
+    { name => 'gx-request.1.pod',     target => 'doc',      source => 'doc' },
+    { name => 'gx-gen-mapfile.8.pod', target => 'doc',      source => 'doc' },
+    { name => 'gx-request.1',         target => 'man/man1', source => 'doc' },
+    { name => 'gx-gen-mapfile.8',     target => 'man/man8', source => 'doc' }
 );
 
 my $User_Opt = {};
