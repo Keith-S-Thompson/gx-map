@@ -1,4 +1,4 @@
-# $Id: README.Upgrade,v 1.11 2006-12-09 02:54:11-08 kst Exp $
+# $Id: README.Upgrade,v 1.11.2.1 2007-03-02 01:27:35-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/README.Upgrade,v $
 
 As of release 0.4.5, the client command for the gx-map system has been
@@ -48,6 +48,14 @@ command to generate a grid-mapfile that contains all the entries.
 There are also some TeraGrid-specific considerations; see
 README.TeraGrid for details.
 
+Upgrading 0.5.3.2 to 0.5.3.3 / 0.5.3.2p1
+========================================
+
+The 0.5.3.3 release contains some security fixes for 0.5.3.2.  This is
+a strongly recommended upgrade.  You can install 0.5.3.3 from scratch
+as for any other release, or you can apply it as a patch to an existing
+0.5.3.2 installation, using the provided "patch-gx-map-0.5.3.2" script.
+
 If you have any questions, please feel free to contact me.
 
-                -- Keith Thompson <kst@sdsc.edu> Sat 2006-12-09
+                -- Keith Thompson <kst@sdsc.edu> Thu 2007-03-01
