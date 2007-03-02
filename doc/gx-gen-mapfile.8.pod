@@ -1,4 +1,4 @@
-# $Id: gx-gen-mapfile.8.pod,v 1.10 2007-01-01 13:01:35-08 kst Exp $
+# $Id: gx-gen-mapfile.8.pod,v 1.9.2.1 2007-03-02 01:27:49-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-gen-mapfile.8.pod,v $
 
 =for comment
@@ -55,7 +55,7 @@ gx-gen-mapfile - Generate a F<grid-mapfile>
 
 S<gx-gen-mapfile -help>
 
-S<gx-gen-mapfile [options] [grid-mapfile ...]>
+S<gx-gen-mapfile [options] [grid-mapfile]>
 
 =head1 DESCRIPTION
 
@@ -112,9 +112,9 @@ for certain DNs.
 GT2 used an older version of OpenSSL, which used different text
 representations of certain fields in DNs.  The affected fields are:
 
-    /USERID=... --> /UID=...
+    GT2: /USERID=... --> GT4: /UID=...
 
-    /emailAddress=... --> /Email=...
+    GT2: /Email=... --> GT4: /emailAddress=... 
 
 The B<-gt2-compatible> option causes duplicate entries to be generated
 for DNs containing these fields.
@@ -194,6 +194,13 @@ newer than any of its input files (F</etc/passwd>, F<requests.log>).
 (B<gx-gen-mapfile> also checks the last modification time of a
 F<.update> file in the F<new-requests> directory; the command
 C<gx-request update> will force an update to this file.)
+
+=item B<-prerequisite file>
+
+Causes the specified file to be treated as a prerequisite in
+determining whether the grid-mapfile needs to be regenerated.  The file
+is not processed other than to check its timestamp.  This option may
+be given multiple times
 
 =back
 
