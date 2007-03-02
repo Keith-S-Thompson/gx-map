@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.71 2007-02-16 00:16:16-08 kst Exp $
+# $Id: gx-request.in,v 1.64.2.1 2007-03-02 01:27:43-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -59,7 +59,7 @@ BEGIN {
     $Install_Dir = '%INSTALL_DIR%';
     unshift @INC, "$Install_Dir/lib";
 }
-use GX ();
+use Gridmap_Utils ();
 
 my $Default_Data_Dir = "$Install_Dir/gx-map-data";
 
@@ -79,7 +79,7 @@ sub Debugf(@);
 
 my $Program_Name = File::Basename::basename $0;
 my $hostname;
-my $Now               = GX::Get_Time_Of_Day;
+my $Now               = Gridmap_Utils::Get_Time_Of_Day;
 my $proxy_file        = Proxy_File_Name;
 my $user_cert_file    = User_Cert_File_Name;
 my $default_cert_file =
@@ -136,11 +136,11 @@ Usage if @ARGV;
 Long_Usage if $User_Opt->{'long-help'};
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $GX::VERSION\n";
+    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
     exit 0;
 }
 
-$GX::Debugging = 1 if $User_Opt->{debugging};
+$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
 
 #
 # The -quick-add option is mapped to -add -default-dn
@@ -180,10 +180,10 @@ if (defined $User_Opt->{'quick-add'} or
     }
 }
 
-GX::Check_Data_Dir;
+Gridmap_Utils::Check_Data_Dir;
 
-GX::Install_Die_Handler;
-GX::Install_Warn_Handler;
+Gridmap_Utils::Install_Die_Handler;
+Gridmap_Utils::Install_Warn_Handler;
 
 #
 # First, gather and verify some basic information about the user.
@@ -196,7 +196,7 @@ if ($< != $>) {
 # $PW is a reference to the password information (name, uid, etc)
 # of the user running this command.
 #
-my $PW = GX::Get_PW_UID $<;
+my $PW = Gridmap_Utils::Get_PW_UID $<;
 
 if ($PW->{uid} != $<) {
     die "Internal error, uid from passwd ($PW->{uid}) != real uid ($<)\n";
@@ -208,7 +208,7 @@ if ($PW->{uid} != $<) {
 # option.
 #
 my $Is_Admin = (not $User_Opt->{'no-admin'} and
-                GX::Is_Admin_Account $PW->{name});
+                Gridmap_Utils::Is_Admin_Account $PW->{name});
 my $Options  = {};
 
 if ($User_Opt->{interactive}) {
@@ -255,18 +255,12 @@ if ( $Options->{operation} eq 'add' or
     }
 }
 
-if ($Options->{operation} eq 'add' and
-    not defined $Options->{signature})
-{
-    $Options->{signature} = 'none';
-}
-
 if (defined $Options->{dn}) {
     my @errors = ();
     my @args = ();
     push @args, '-check-syntax' if not defined $Options->{'force-dn'};
     push @args, $Options->{dn};
-    my $dn_error = GX::DN_Error @args;
+    my $dn_error = Gridmap_Utils::DN_Error @args;
     if (defined $dn_error) {
         push @errors, "Invalid DN \"$Options->{dn}\"\n";
         push @errors, "$dn_error\n";
@@ -305,7 +299,7 @@ if ($Options->{operation} ne 'remove-dn') {
         # it may be for an account that doesn't exist on this machine;
         # it may not be possible to determine the uid.
         #
-        $requested_pw = GX::Get_PW_Name $Options->{username};
+        $requested_pw = Gridmap_Utils::Get_PW_Name $Options->{username};
         if (defined $requested_pw and
             $requested_pw->{name} ne $Options->{username})
         {
@@ -321,7 +315,7 @@ if ($Options->{operation} ne 'remove-dn') {
 # Translate to the newer GT3/GT4 form.
 #
 if (defined $Options->{dn} and not $Options->{'literal-dn'}) {
-    $Options->{dn} = GX::Normalize_DN $Options->{dn};
+    $Options->{dn} = Gridmap_Utils::Normalize_DN $Options->{dn};
 }
 
 if (not $Options->{quiet}) {
@@ -379,9 +373,9 @@ if (not $Options->{force}) {
     }
 }
 
-$hostname = GX::Get_Hostname();
+$hostname = Gridmap_Utils::Get_Hostname();
 
-my $Timestamp = GX::Long_Time_Image $Now;
+my $Timestamp = Gridmap_Utils::Long_Time_Image $Now;
 my $requested_uid = undef;
 if (defined $requested_pw) {
     $requested_uid = $requested_pw->{uid};
@@ -410,11 +404,10 @@ if ($User_Opt->{'no-admin'} and not defined $request->{source}) {
 elsif (defined $Options->{source}) {
     $request->{source} = $Options->{source};
 }
-$request->{username}  = $Options->{username}  if defined $Options->{username};
-$request->{user_uid}  = $requested_uid        if defined $requested_uid;
-$request->{email}     = $Options->{email}     if defined $Options->{email};
-$request->{comment}   = $Options->{comment}   if defined $Options->{comment};
-$request->{signature} = $Options->{signature} if defined $Options->{signature};
+$request->{username} = $Options->{username} if defined $Options->{username};
+$request->{user_uid} = $requested_uid       if defined $requested_uid;
+$request->{email}    = $Options->{email}    if defined $Options->{email};
+$request->{comment}  = $Options->{comment}  if defined $Options->{comment};
 
 my @requests = ( $request );
 
@@ -430,7 +423,7 @@ foreach my $request (@requests) {
     #
     my $request_file = Gen_Request_File_Name $request->{timestamp};
     my $tmp_file = "$request_file.tmp";
-    GX::Write_Records '-single', $tmp_file, $request;
+    Gridmap_Utils::Write_Records '-single', $tmp_file, $request;
     if (not -o $tmp_file) {
         #
         # I just created a file, but I don't own it.  Most likely I'm
@@ -468,7 +461,7 @@ sub Get_DN_From_Certificate($) {
     return "No file $file"     if not -e $file;
     return "Cannot read $file" if not -r $file;
 
-    GX::Use_Commands 'openssl';
+    Gridmap_Utils::Use_Commands 'openssl';
 
     #
     # We deliberately don't bother checking for errors.  If we get the
@@ -742,7 +735,7 @@ EOF
                     $Options->{username} = $PW->{name};
                 }
                 else {
-                    if (GX::Is_Legal_Username $response) {
+                    if (Gridmap_Utils::Is_Legal_Username $response) {
                         $Options->{username} = $response;
                     }
                     else {
@@ -808,7 +801,7 @@ EOF
                     chomp($dn = scalar <STDIN>);
                     $dn =~ s/^"//;
                     $dn =~ s/"$//;
-                    $dn = GX::Normalize_DN $dn;
+                    $dn = Gridmap_Utils::Normalize_DN $dn;
                 }
                 elsif ($response =~ /^x/) {
                     exit 0;
@@ -820,7 +813,7 @@ EOF
                 if (defined $cert_file) {
                     $dn = Get_DN_From_Certificate $cert_file;
                     if ($dn =~ /^\//) {
-                        $dn = GX::Normalize_DN $dn;
+                        $dn = Gridmap_Utils::Normalize_DN $dn;
                         print "DN is \"$dn\"\n";
                     }
                     else {
@@ -835,16 +828,6 @@ EOF
             }
 
             $Options->{dn} = $dn;
-        }
-        if (not $Is_Admin and
-            defined $GX::Config{REQUIRE_SIGNATURES} and
-            $GX::Config{REQUIRE_SIGNATURES} eq 'yes')
-        {
-            print ">>> Not yet implemented <<<\n";
-            print "Enter verification for \"$Options->{dn}\"\n";
-            my $response;
-            chomp($response = scalar <STDIN>);
-            $Options->{signature} = $response;
         }
 
         #
@@ -968,7 +951,7 @@ sub Get_Options_From_Command_Line() {
         if (not $Is_Admin and $User_Opt->{username} ne $PW->{name}) {
             Usage "You may not specify a user name other than your own\n";
         }
-        elsif (not GX::Is_Legal_Username $User_Opt->{username}) {
+        elsif (not Gridmap_Utils::Is_Legal_Username $User_Opt->{username}) {
             Usage "\"$User_Opt->{username}\" is not a legal user name\n";
         }
         else {
@@ -1020,18 +1003,6 @@ sub Get_Options_From_Command_Line() {
                 Usage "$dn\n";
             }
         }
-    }
-
-    if (not $Is_Admin and
-        $OP eq 'add' and
-        defined $GX::Config{REQUIRE_SIGNATURES} and
-        $GX::Config{REQUIRE_SIGNATURES} eq 'yes')
-    {
-        print ">>> Not yet implemented <<<\n";
-        print "Enter verification for \"$Options->{dn}\"\n";
-        my $response;
-        chomp($response = scalar <STDIN>);
-        $Options->{signature} = $response;
     }
 
     if (defined $User_Opt->{email}) {
