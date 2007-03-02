@@ -1,7 +1,42 @@
-# $Id: Relnotes,v 1.35 2006-12-09 02:54:11-08 kst Exp $
+# $Id: Relnotes,v 1.35.2.1 2007-03-02 01:26:51-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Relnotes,v $
 
 Release notes for gx-map
+
+Release 0.5.3.3 / 0.5.3.2p1, Fri 2007-03-02
+
+    This is a bug fix release.  You can either install the 0.5.3.3
+    release from scratch using the usual method, or run the
+    "patch-gx-map-0.5.3.2" script to update an existing 0.5.3.2
+    installation, setting the version string to "0.5.3.2p1".
+
+    A patched 0.5.3.2p1 installation and a from-scratch 0.5.3.3
+    installation are functionally identical.
+
+    The "-update" option to the gx-request command has been removed.
+    Users no longer have a way to request a forced update of the
+    grid-mapfile.  (An administrator can do so by, for example,
+    touching the requests.log file.)
+
+    If an administrator runs gx-request with the "-no-admin" option,
+    the "source" attribute is set to "user".
+
+    gx-check-requests requires the new-requests directory to disallow
+    non-root chown.  The method used to check this has been modified
+    to be more reliable.
+
+    The code used to read user-submitted request files has been
+    modified to improve security.
+
+    gx-gen-mapfile no longer has the option to generate multiple copies
+    of the grid-mapfile.  The generated grid-mapfile is written in
+    a more secure manner.  It still allows the grid-mapfile to be
+    written to stdout.
+
+    gx-gen-mapfile has a new option, "-prerequisite", that specifies
+    files whose timestamps can be checked to determine whether to
+    re-generate the grid-mapfile.  For most sites, it probably won't
+    be necessary to use this option.
 
 Release 0.5.3.2, Sat 2006-12-09
 
