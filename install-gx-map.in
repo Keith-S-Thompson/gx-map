@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.91 2007-02-16 00:13:09-08 kst Exp $
+# $Id: install-gx-map.in,v 1.87.2.1 2007-03-02 01:27:45-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -87,7 +87,7 @@ BIN_FILES="gx-map gx-request"
 SBIN_FILES="gx-admins gx-ca-update gx-check-index gx-check-requests gx-cleanup-logs gx-convert-log gx-cron-job gx-gen-mapfile gx-ingest gx-install-cadesc gx-remove-locks gx-util-test gx-watch-locks"
 OPTIONAL_SBIN_FILES="gx-db-check-requests gx-db-dump gx-db-request gx-propagate"
 RESTRICTED_SBIN_FILES="gx-ca-update gx-check-index gx-check-requests gx-cron-job gx-db-check-requests gx-db-dump gx-db-request gx-propagate gx-remove-locks"
-LIB_FILES="GX.pm"
+LIB_FILES="Gridmap_Utils.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes auto.txt"
 
 for dir in $INSTALL_DIR \
@@ -212,7 +212,7 @@ if [ ! -f "$cadesc_tarball" ] ; then
     echo "Can't find cadesc tarball" 1>&2
     exit 1
 fi
-verbosely $SBIN_DIR/gx-install-cadesc -primary $cadesc_tarball
+verbosely $SBIN_DIR/gx-install-cadesc $cadesc_tarball
 
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
     cat <<EOF
