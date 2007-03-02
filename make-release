@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.30.2.1 2007-03-02 01:27:46-08 kst Exp $
+# $Id: make-release,v 1.30.2.2 2007-03-02 01:34:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -18,8 +18,8 @@ today=`date +%Y-%m-%d`
 cadesc_flag=0
 got_version=0
 for arg in "$@" ; do
-    if [ "$arg" = "-h" -o "$arg" -eq "-help" ] ; then
-        usage()
+    if [ "$arg" = "-h" -o "$arg" = "-help" ] ; then
+        usage
     elif [ $cadesc_flag -eq 1 ] ; then
         cadesc_tarball="$arg"
         $cadesc_flag=0
@@ -36,7 +36,7 @@ fi
 
 if [ "$version" = "" ] ; then
     echo "Error getting version" 1>&2
-    usage()
+    usage
 fi
 
 if [ -f release/gx-map-$version.tar.gz ] ; then
@@ -44,11 +44,13 @@ if [ -f release/gx-map-$version.tar.gz ] ; then
     exit 1
 fi
 
-cadesc_tarball=gx-map-cadesc-$today.tar.gz
-if [ -f release/$cadesc_tarball ] ; then
-    echo ">>> Using existing $cadesc_tarball"
-else
-    try ./make-cadesc-release
+if [ $cadesc_tarball == "" ] ; then
+    cadesc_tarball=gx-map-cadesc-$today.tar.gz
+    if [ -f release/$cadesc_tarball ] ; then
+        echo ">>> Using existing $cadesc_tarball"
+    else
+        try ./make-cadesc-release
+    fi
 fi
 
 in_files=`ls *.in | grep -v gx-map.conf.in`
