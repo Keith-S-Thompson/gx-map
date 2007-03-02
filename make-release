@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.30.2.2 2007-03-02 01:34:00-08 kst Exp $
+# $Id: make-release,v 1.30.2.3 2007-03-02 01:58:50-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -22,7 +22,14 @@ for arg in "$@" ; do
         usage
     elif [ $cadesc_flag -eq 1 ] ; then
         cadesc_tarball="$arg"
-        $cadesc_flag=0
+        case $cadesc_tarball in
+            /*)
+                ;;
+            *)
+                cadesc_tarball=`pwd`/$cadesc_tarball
+                ;;
+        esac
+        cadesc_flag=0
     elif [ $arg = "-cadesc" ] ; then
         cadesc_flag=1
     else
@@ -45,8 +52,8 @@ if [ -f release/gx-map-$version.tar.gz ] ; then
 fi
 
 if [ $cadesc_tarball == "" ] ; then
-    cadesc_tarball=gx-map-cadesc-$today.tar.gz
-    if [ -f release/$cadesc_tarball ] ; then
+    cadesc_tarball=`pwd`/release/gx-map-cadesc-$today.tar.gz
+    if [ -f $cadesc_tarball ] ; then
         echo ">>> Using existing $cadesc_tarball"
     else
         try ./make-cadesc-release
@@ -72,7 +79,7 @@ for file in $other_files ; do
     try cp -p ../../$file .
 done
 
-try cp -p ../$cadesc_tarball .
+try cp -p $cadesc_tarball .
 
 try mkdir bugs
 try cd bugs
