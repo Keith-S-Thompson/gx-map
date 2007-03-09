@@ -1,0 +1,22 @@
+# $Id: bug-0138,v 1.1 2007-03-08 16:42:35-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0138,v $
+
+gx-map bug 0138
+Date: Thu 2007-03-08
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Automate requests.log conversion
+
+When upgrading from an older to a newer version of gx-map, the current
+procedure is to install the new version from scratch, then manually
+run gx-convert-log and possibly gx-cleanup-logs, and manually install
+the resulting converted requests.log file.
+
+Provide an option to configure-gx-map to specify an existing gx-map
+installation.  This will cause "make install" to convert and clean
+up the requests.log file from the older release, and install it in
+the new data directory.  Additional options may be used to control
+the behavior of the gx-cleanup-logs command (gx-convert-log no longer
+has any relevant options that need to be controlled).
