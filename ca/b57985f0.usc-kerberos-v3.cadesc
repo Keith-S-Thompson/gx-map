@@ -1,4 +1,4 @@
-# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.3 2006-07-07 17:37:27-07 kst Exp $
+# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.4 2007-03-08 18:06:00-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b57985f0.usc-kerberos-v3.cadesc,v $
 
 CA_NAME             USC Kerberos Certification Authority v3
@@ -8,13 +8,13 @@ HASH                b57985f0
 SIGNED_BY           /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/CN=University of Southern California KCA v3/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/OU=Information Services Division/OU=University of Southern California KCA v3/emailAddress=nmiadmin@usc.edu/*
-CERTIFICATE_MD5     39:CA:B3:3C:9E:ED:20:4C:E8:D2:67:CD:8D:DF:E2:FF
-CERTIFICATE_SHA1    52:21:FE:B2:66:49:97:40:8E:1C:E9:F2:34:DE:CE:2C:17:41:94:09
+CERTIFICATE_MD5     79:65:0A:D2:15:2D:3B:AA:13:34:9F:40:43:6C:FF:50
+CERTIFICATE_SHA1    9B:C1:1B:99:91:FA:E0:9A:5E:4F:76:73:AC:55:30:95:75:BF:38:0A
 CERTIFICATE_URL     http://www.usc.edu/its/services/authx/CA/USCKCA.crt
 SIGNING_POLICY_URL  http://www.usc.edu/its/services/authx/CA/USCKCA.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
-CERT_EXPIRES        Fri 2007-03-02 20:18:02 UTC
+CERT_EXPIRES        Fri 2008-03-07 23:51:29 UTC
 
 # There is no CRL for this CA.  Since it only issues short-term
 # credentials, a CRL is considered unnecessary.
@@ -22,9 +22,20 @@ CERT_EXPIRES        Fri 2007-03-02 20:18:02 UTC
 # This CA replaces an earlier CA; see fa9c3452.usc-kerberos-v2.cadesc.
 
 # MD5 and SHA1 fingerprints from certificate downloaded Thu 2006-03-02
-# Reverified Fri 2006-07-07, after URLs were updated.
+# Reverified Fri 2006-07-07, after URLs were updated.  (This refers to
+# the old fingerprints, which are now obsolete; see below).
 
 # The URLs were updated Fri 2006-07-07, changing "/isd/" to "/its/"
 # due to an organizational name change.  It's not yet clear how long
 # the old URLs (which are included in the gx-map 0.5.2 release) will
 # continue to be valid.
+
+# And the saga continues.  The CA certificate expired Fri 2007-03-02.
+# It was renewed Thu 2007-03-08.  The CERTIFICATE_MD5, CERTIFICATE_SHA1,
+# and CERT_EXPIRES attributes have been updated accordingly.  The new
+# certificate has the same hash and subject as the old one (unlike
+# the last time around, when the certificate was replaced rather than
+# being renewed).
+
+# MD5 and SHA1 fingerprints from USCKCA.crt (b57985f0.0) downloaded 
+# Thu 2007-03-08
