@@ -1,0 +1,21 @@
+# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.1 2007-03-08 16:53:38-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/9b95bbf2.ncsa-cacl.cadesc,v $
+
+CA_NAME             NCSA CACL CA
+HOMEPAGE            http://security.ncsa.uiuc.edu/CA/
+CONTACT             security@ncsa.uiuc.edu
+HASH                9b95bbf2
+SUBJECT             /C=US/O=National Center for Supercomputing Applications/OU=Certificate Authorities/CN=CACL
+MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/*
+CERTIFICATE_MD5     7D:A7:55:27:77:96:F6:08:D4:17:9C:96:98:3D:C0:D8
+CERTIFICATE_SHA1    37:50:53:AC:9F:E2:4F:58:24:6C:F7:DC:80:69:41:53:6D:7B:95:FF
+CERTIFICATE_URL     http://catest.ncsa.uiuc.edu/9b95bbf2.0
+SIGNING_POLICY_URL  http://catest.ncsa.uiuc.edu/9b95bbf2.signing_policy
+CRL_URL             http://catest.ncsa.uiuc.edu/9b95bbf2.r0
+CERT_EXPIRES        Sat 2012-03-03 22:55:55 UTC
+
+# MD5 and SHA1 fingerprints from 9b95bbf2.0 downloaded Thu 2007-03-08
+
+# This CA has not gone into production.  When it does, the files currently
+# served from <http://catest.ncsa.uiuc.edu/> will instead be served
+# from <http://ca.ncsa.uiuc.edu/>.
