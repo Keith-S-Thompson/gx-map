@@ -1,9 +1,9 @@
-# $Id: 4a6cd8b1.ncsa.cadesc,v 1.12 2006-01-13 17:07:24-08 kst Exp $
+# $Id: 4a6cd8b1.ncsa.cadesc,v 1.13 2007-03-08 16:49:11-08 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4a6cd8b1.ncsa.cadesc,v $
 
 CA_NAME             NCSA CA
-HOMEPAGE            ?
-CONTACT             ?
+HOMEPAGE            http://security.ncsa.uiuc.edu/CA/
+CONTACT             security@ncsa.uiuc.edu
 HASH                4a6cd8b1
 SUBJECT             /C=US/O=National Center for Supercomputing Applications/CN=Certification Authority
 MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/*
@@ -15,3 +15,4 @@ CRL_URL             http://ca.ncsa.uiuc.edu/4a6cd8b1.r0
 CERT_EXPIRES        Thu 2009-06-18 14:40:29 UTC
 
 # MD5 and SHA1 fingerprints from 4a6cd8b1.0 downloaded 2005-03-29
+# Re-verified Thu 2007-03-08
