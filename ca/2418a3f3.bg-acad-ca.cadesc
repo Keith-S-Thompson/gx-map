@@ -1,0 +1,29 @@
+# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.1 2007-03-09 20:09:03-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/2418a3f3.bg-acad-ca.cadesc,v $
+
+CA_NAME             BG ACAD CA
+HOMEPAGE            http://www.ca.acad.bg/
+CONTACT             operations@ca.acad.bg
+HASH                2418a3f3
+SUBJECT             /DC=bg/DC=acad/CN=BG.ACAD CA
+MAY_SIGN            /DC=bg/DC=acad/CN=BG.ACAD CA
+MAY_SIGN            /DC=bg/DC=acad/O=people/*
+MAY_SIGN            /DC=bg/DC=acad/O=hosts/*
+MAY_SIGN            /DC=bg/DC=acad/O=services/*
+CERTIFICATE_MD5     96:40:C8:65:BF:3C:53:15:3B:71:30:96:42:2C:3E:0C
+CERTIFICATE_SHA1    7F:1B:4D:3F:50:1D:BC:30:2B:7A:2A:46:FF:B8:8E:92:5D:55:34:05
+CERTIFICATE_URL     http://www.ca.acad.bg/ca_cert/bg_acad_ca-cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.ca.acad.bg/crl/bg_acad_ca-crl.pem
+CERT_EXPIRES        Sat 2017-02-11 19:00:31 UTC
+
+# MD5 and SHA1 fingerprints from bg_acad_ca-cacert.pem (2418a3f3.0),
+# downloaded Fri 2007-03-09
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 2418a3f3.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# (URL to be updated when the 1.13 tarball is finalized.)
+# The MD5 and SHA1 fingerprints have also been verified against 2418a3f3.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against 2418a3f3.info.
