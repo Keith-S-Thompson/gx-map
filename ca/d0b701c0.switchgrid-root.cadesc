@@ -1,0 +1,28 @@
+# $Id: d0b701c0.switchgrid-root.cadesc,v 1.1 2007-03-09 20:19:27-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/d0b701c0.switchgrid-root.cadesc,v $
+
+CA_NAME             SWITCHgrid Root
+HOMEPAGE            http://www.switch.ch/pki/grid
+CONTACT             pki@switch.ch
+HASH                d0b701c0
+SUBJECT             /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCHgrid Root CA
+MAY_SIGN            /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCHslcs CA
+CERTIFICATE_MD5     9A:D3:C6:39:83:60:7C:E5:4B:53:94:C9:A5:7E:0C:A7
+CERTIFICATE_SHA1    E5:F6:51:AA:FD:DC:7A:A8:89:48:AB:06:1C:F7:52:4E:2D:4A:79:DD
+CERTIFICATE_URL     http://ca.grid.switch.ch/SWITCHgridRootCA.crt.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://crl.grid.switch.ch/SWITCHgridRootCA.crl
+CRL_FORM            DER
+CERT_EXPIRES        Tue 2027-02-09 16:00:00 UTC
+
+# MD5 and SHA1 fingerprints from SWITCHgridRootCA.crt.pem (d0b701c0.0),
+# downloaded Fri 2007-03-09
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from d0b701c0.signing_policy, extracted from
+# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bund
+le-1.13.tar.gz>
+# (URL to be updated when the 1.13 tarball is finalized.)
+# The MD5 and SHA1 fingerprints have also been verified against d0b701c0.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against d0b701c0.info.
