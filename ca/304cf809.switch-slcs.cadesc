@@ -1,0 +1,28 @@
+# $Id: 304cf809.switch-slcs.cadesc,v 1.1 2007-03-09 20:08:54-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/304cf809.switch-slcs.cadesc,v $
+
+CA_NAME             SWITCHscls CA
+HOMEPAGE            http://www.switch.ch/pki/grid
+CONTACT             pki@switch.ch
+HASH                304cf809
+SIGNED_BY           /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCHgrid Root CA
+SUBJECT             /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCHslcs CA
+MAY_SIGN            /DC=ch/DC=switch/DC=slcs/*
+CERTIFICATE_MD5     8F:95:F5:E1:98:FD:B3:FE:DB:D8:5A:9B:00:BC:AB:78
+CERTIFICATE_SHA1    B4:6E:BC:7F:7C:28:D2:2E:89:DC:E7:CA:00:B7:7D:DE:13:9F:B7:52
+CERTIFICATE_URL     http://ca.grid.switch.ch/SWITCHslcsCA.crt.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             ?
+ALLOW_MISSING_CRL   yes
+CERT_EXPIRES        Thu 2012-02-09 16:00:00 UTC
+
+# MD5 and SHA1 fingerprints from SWITCHslcsCA.crt.pem (304cf809.0),
+# downloaded Fri 2007-03-09
+
+# I haven't found an online signing_policy file.  The MAY_SIGN
+# attributes are derived from 304cf809.signing_policy, extracted from
+# <https://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# (URL to be updated when the 1.13 tarball is finalized.)
+# The MD5 and SHA1 fingerprints have also been verified against 304cf809.0
+# in that same tarball, and the SHA1 fingerprint has been verified
+# against 304cf809.info.
