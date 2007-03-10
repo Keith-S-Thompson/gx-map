@@ -1,0 +1,31 @@
+# $Id: 7ffb3ace.terena-scs.cadesc,v 1.1 2007-03-09 20:14:19-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/7ffb3ace.terena-scs.cadesc,v $
+
+CA_NAME             TERENA SCS
+HOMEPAGE            http://www.terena.org/activities/scs/
+CONTACT             ?
+HASH                7ffb3ace
+SIGNED_BY           /C=US/O=GTE Corporation/OU=GTE CyberTrust Solutions, Inc./CN=GTE CyberTrust Global Root
+SUBJECT             /C=BE/O=Cybertrust/OU=Educational CA/CN=Cybertrust Educational CA
+MAY_SIGN            /C=BE/O=Cybertrust/OU=Educational CA/CN=Cybertrust Educational CA
+MAY_SIGN            /DC=org/DC=terena/DC=scs/*
+CERTIFICATE_MD5     D6:E7:7D:94:51:8C:3E:7C:62:BD:FE:77:E4:CB:B0:0F
+CERTIFICATE_SHA1    60:98:36:54:D7:EC:61:1D:76:C2:CD:55:57:CA:47:AD:39:30:C9:CA
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             http://crl.globalsign.net/educational.crl
+CRL_FORM            DER
+CERT_EXPIRES        Thu 2013-03-14 23:59:00 UTC
+DISABLE             yes
+
+# I haven't found an online signing_policy file *or* an online copy of
+# the certificate.  A copy of the certificate is in included in the
+# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# tarball; the MD5 and SHA1 fingerprints are computed from that, and the
+# SHA1 fingerprint has been verified against 4d654d1d.info.
+# (URL to be updated when the 1.13 tarball is finalized.)
+
+# The 7ffb3ace.info file includes the line
+# "status = worthless".
+
+# This CA is marked as disabled.
