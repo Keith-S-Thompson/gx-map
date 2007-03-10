@@ -1,0 +1,28 @@
+# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.1 2007-03-09 20:08:34-08 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/4d654d1d.gte-cybertrust-global-root.cadesc,v $
+
+CA_NAME             GTE CyberTrust Global Root
+HOMEPAGE            http://www.terena.org/activities/scs/
+CONTACT             ?
+HASH                4d654d1d
+SUBJECT             /C=US/O=GTE Corporation/OU=GTE CyberTrust Solutions, Inc./CN=GTE CyberTrust Global Root
+MAY_SIGN            /C=BE/O=Cybertrust/OU=Educational CA/CN=Cybertrust Educational CA
+CERTIFICATE_MD5     CA:3D:D3:68:F1:03:5C:D0:32:FA:B8:2B:59:E8:5A:DB
+CERTIFICATE_SHA1    97:81:79:50:D8:1C:96:70:CC:34:D8:09:CF:79:44:31:36:7E:F4:74
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.public-trust.com/cgi-bin/CRL/2018/cdp.crl
+CERT_EXPIRES        Mon 2018-08-13 23:59:00 UTC
+DISABLE             yes
+
+# I haven't found an online signing_policy file *or* an online copy of
+# the certificate.  A copy of the certificate is in included in the
+# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# tarball; the MD5 and SHA1 fingerprints are computed from that, and the
+# SHA1 fingerprint has been verified against 4d654d1d.info.
+# (URL to be updated when the 1.13 tarball is finalized.)
+
+# The 4d654d1d.info file includes the line
+# "status = worthless".
+
+# This CA is marked as disabled.
