@@ -1,4 +1,4 @@
-# $Id: 8a661490.polishgrid.cadesc,v 1.10 2007-02-15 20:51:47-08 kst Exp $
+# $Id: 8a661490.polishgrid.cadesc,v 1.11 2007-03-12 16:48:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8a661490.polishgrid.cadesc,v $
 
 CA_NAME             Polish Grid CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    2A:CB:CF:F5:7A:BC:83:28:4A:6C:3B:78:FA:32:53:0A:65:42:EC:EE
 CERTIFICATE_URL     http://www.man.poznan.pl/plgrid-ca/8a661490.0
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/8a661490.signing_policy
 CRL_URL             http://www.man.poznan.pl/plgrid-ca/crl.pem
-CERT_EXPIRES        Tue 2007-08-28 10:03:11 UTC
+CERT_EXPIRES        Sat 2010-08-28 10:03:11 UTC
 
 # MD5 and SHA1 fingerprints from 8a661490.0 downloaded Thu 2007-02-15
 
