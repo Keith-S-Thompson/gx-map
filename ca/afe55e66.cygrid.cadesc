@@ -1,22 +1,37 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.3 2006-01-13 17:07:27-08 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.4 2007-03-12 15:57:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
 HOMEPAGE            http://grid.ucy.ac.cy/CyGridCA/
-CONTACT             cygrid-ca@ucy.ac.cy
+CONTACT             kyriacos@ucy.ac.cy
 HASH                afe55e66
 SUBJECT             /C=CY/O=CyGrid/O=HPCL/CN=CyGridCA
 MAY_SIGN            /C=CY/O=CyGrid/*
-CERTIFICATE_MD5     A6:80:8B:03:33:FB:15:A4:0D:B9:9E:AC:CA:06:F5:DC
-CERTIFICATE_SHA1    BC:35:88:D5:0E:DC:B8:7F:C6:9F:F2:F2:DE:6A:78:55:4D:6B:53:C5
+CERTIFICATE_MD5     77:34:05:4D:92:E4:FC:5C:32:76:31:B7:6B:96:0B:87
+CERTIFICATE_SHA1    31:75:10:A5:62:1D:14:F0:A9:EC:68:14:F0:33:7E:49:FD:E4:37:95
 CERTIFICATE_URL     http://grid.ucy.ac.cy/CyGridCA/afe55e66.0
 SIGNING_POLICY_URL  ?
-CRL_URL             http://grid.ucy.ac.cy/CyGridCA/CyGridCA-CRL.pem
-CERT_EXPIRES        Sat 2008-02-09 12:11:44 UTC
+CRL_URL             http://grid.ucy.ac.cy/CyGridCA/afe55e66.r0
+CERT_EXPIRES        Sat 2013-02-09 12:11:44 UTC
 
-# This supersedes the older CyGrid CA certificate; see 84c1f123.cygrid-old.cadesc.
+# This supersedes the older CyGrid CA certificate; see
+# 84c1f123.cygrid-old.cadesc.
 
 # The MAY_SIGN attribute is from 84c1f123.cygrid-old.cadesc; I can't
 # find a signing_policy file.
 
-# MD5 and SHA1 fingerprints from afe55e66.0 downloaded 2005-03-29
+# The previous version of this CA certificate was due to expire Sat
+# 2008-02-09 12:11:44 UTC.  It's been replaced with a newer version that's
+# due to expire Sat 2013-02-09 12:11:44 UTC.  The new certificate has the
+# same subject name and hash as the previous one, but the fingerprints
+# have changed.
+
+# I've been unable to connect to the web site to download the certificate
+# or CRL.  Much of the information here is extracted from
+# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# (URL to be updated when the 1.13 tarball is finalized.)
+# I'll verify this information against the CyGrid CA web site when I can.
+
+# The MD5 and SHA1 fingerprints are from the afe55e66.0 file included
+# in the IGTF tarball mentioned above, and the SHA1 fingerprint has been
+# verified against 2418a3f3.info.
