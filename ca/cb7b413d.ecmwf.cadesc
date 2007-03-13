@@ -1,4 +1,4 @@
-# $Id: cb7b413d.ecmwf.cadesc,v 1.2 2006-09-14 17:36:36-07 kst Exp $
+# $Id: cb7b413d.ecmwf.cadesc,v 1.3 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/cb7b413d.ecmwf.cadesc,v $
 
 CA_NAME             European Centre for Medium-Range Weather Forecasts CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    50:23:A7:5C:21:2D:68:DA:F2:29:7E:24:6D:92:64:5B:CD:97:53:E0
 CERTIFICATE_URL     https://w3cert.ecmwf.int/fcgi-bin/Cert.fpl?action=uloadca
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
+CERT_BEGINS         Fri 1998-11-20 11:24:11 UTC
 CERT_EXPIRES        Mon 2008-11-17 11:24:11 UTC
 DISABLE             yes
 
