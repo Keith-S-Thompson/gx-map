@@ -1,4 +1,4 @@
-# $Id: a692434d.taiwan-ascg.cadesc,v 1.9 2006-01-13 17:07:26-08 kst Exp $
+# $Id: a692434d.taiwan-ascg.cadesc,v 1.10 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a692434d.taiwan-ascg.cadesc,v $
 
 CA_NAME             Academia Sinica Grid Computing Certification Authority
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    46:29:F6:21:28:79:18:4D:C0:F8:BE:9D:E1:45:9C:C6:CD:D3:B2:F9
 CERTIFICATE_URL     http://ca.grid.sinica.edu.tw/ASGCCA.pem
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/a692434d.signing_policy
 CRL_URL             http://ca.grid.sinica.edu.tw/CRL/ASGCCA-crl.pem
+CERT_BEGINS         Wed 2003-06-18 08:31:54 UTC
 CERT_EXPIRES        Mon 2008-06-16 08:31:54 UTC
 
 # MD5 and SHA1 fingerprints from ASGCCA.pem (a692434d.0) downloaded 2005-03-29
