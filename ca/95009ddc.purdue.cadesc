@@ -1,4 +1,4 @@
-# $Id: 95009ddc.purdue.cadesc,v 1.9 2006-01-13 17:07:26-08 kst Exp $
+# $Id: 95009ddc.purdue.cadesc,v 1.10 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/95009ddc.purdue.cadesc,v $
 
 CA_NAME             Purdue CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    F0:FB:04:5D:45:89:60:F4:97:8E:A8:40:02:B6:22:5B:2E:22:BA:97
 CERTIFICATE_URL     http://tg-ca.purdue.teragrid.org:8080/95009ddc.0
 SIGNING_POLICY_URL  http://tg-ca.purdue.teragrid.org:8080/95009ddc.signing_policy
 CRL_URL             http://tg-ca.purdue.teragrid.org:8080/95009ddc.r0
+CERT_BEGINS         Fri 2004-08-27 19:54:25 UTC
 CERT_EXPIRES        Mon 2014-08-25 20:04:25 UTC
 
 # MD5 and SHA1 fingerprints from 95009ddc.0 downloaded 2005-03-29
