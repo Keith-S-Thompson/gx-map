@@ -1,4 +1,4 @@
-# $Id: a7792cdb.npaci-old.cadesc,v 1.17 2006-01-13 17:07:26-08 kst Exp $
+# $Id: a7792cdb.npaci-old.cadesc,v 1.18 2007-03-12 17:16:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a7792cdb.npaci-old.cadesc,v $
 
 CA_NAME             NPACI (old)
@@ -18,7 +18,8 @@ DISABLE             yes
 
 # The certificate doesn't expire until 2038-09-14, but the CA is retired.
 # (Note that the expiration date is several months after the maximum
-# 32-bit signed Unix time_t value.)
+# 32-bit signed Unix time_t value, which may cause problems with some
+# software.)
 #
 # The certificate and signing_policy files are not distributed on the
 # SDSC or NPACI web site; I've copied them to my own web pages.
