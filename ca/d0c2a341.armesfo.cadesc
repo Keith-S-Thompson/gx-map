@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.13 2007-02-15 21:26:12-08 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.14 2007-03-12 17:17:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -24,3 +24,7 @@ CERT_EXPIRES        Mon 2008-12-01 23:29:21 UTC
 
 # The IGTF 1.12 distribution has an older version of this certificate;
 # I've reported the error.
+
+# Verified against 
+# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# (URL to be updated when the 1.13 tarball is finalized.)
