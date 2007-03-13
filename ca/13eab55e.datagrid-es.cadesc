@@ -1,4 +1,4 @@
-# $Id: 13eab55e.datagrid-es.cadesc,v 1.6 2006-01-13 17:07:21-08 kst Exp $
+# $Id: 13eab55e.datagrid-es.cadesc,v 1.7 2007-03-12 17:52:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/13eab55e.datagrid-es.cadesc,v $
 
 CA_NAME             Datagrid-ES CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    E2:A5:AA:5C:F2:0F:FD:36:DB:F8:2A:D2:ED:99:6F:94:A6:75:02:41
 CERTIFICATE_URL     http://grid.ifca.unican.es/ca/datagrid-es/13eab55e.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://grid.ifca.unican.es/ca/datagrid-es/13eab55e.r0
+CERT_BEGINS         Wed 2004-10-20 16:04:52 UTC
 CERT_EXPIRES        Sat 2007-10-20 16:04:52 UTC
 
 # Supersedes the expired certificate 90e2484f.0
