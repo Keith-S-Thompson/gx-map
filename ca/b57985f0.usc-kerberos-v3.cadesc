@@ -1,4 +1,4 @@
-# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.4 2007-03-08 18:06:00-08 kst Exp $
+# $Id: b57985f0.usc-kerberos-v3.cadesc,v 1.5 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b57985f0.usc-kerberos-v3.cadesc,v $
 
 CA_NAME             USC Kerberos Certification Authority v3
@@ -14,6 +14,7 @@ CERTIFICATE_URL     http://www.usc.edu/its/services/authx/CA/USCKCA.crt
 SIGNING_POLICY_URL  http://www.usc.edu/its/services/authx/CA/USCKCA.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
+CERT_BEGINS         Thu 2007-03-08 23:51:29 UTC
 CERT_EXPIRES        Fri 2008-03-07 23:51:29 UTC
 
 # There is no CRL for this CA.  Since it only issues short-term
