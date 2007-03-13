@@ -1,4 +1,4 @@
-# $Id: 4a6cd8b1.ncsa.cadesc,v 1.13 2007-03-08 16:49:11-08 kst Exp $
+# $Id: 4a6cd8b1.ncsa.cadesc,v 1.14 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4a6cd8b1.ncsa.cadesc,v $
 
 CA_NAME             NCSA CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    61:10:49:77:86:CD:C4:8A:73:D7:A6:4B:F8:0F:31:8E:E4:D4:46:55
 CERTIFICATE_URL     http://ca.ncsa.uiuc.edu/4a6cd8b1.0
 SIGNING_POLICY_URL  http://ca.ncsa.uiuc.edu/4a6cd8b1.signing_policy
 CRL_URL             http://ca.ncsa.uiuc.edu/4a6cd8b1.r0
+CERT_BEGINS         Fri 2003-06-20 14:40:29 UTC
 CERT_EXPIRES        Thu 2009-06-18 14:40:29 UTC
 
 # MD5 and SHA1 fingerprints from 4a6cd8b1.0 downloaded 2005-03-29
