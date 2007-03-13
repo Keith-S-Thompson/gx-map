@@ -1,4 +1,4 @@
-# $Id: ff94d436.srce.cadesc,v 1.1 2006-10-03 21:32:52-07 kst Exp $
+# $Id: ff94d436.srce.cadesc,v 1.2 2007-03-12 17:52:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ff94d436.srce.cadesc,v $
 
 CA_NAME             SRCE CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    A0:39:C3:FD:D6:A3:5F:C5:94:5C:5B:87:89:0D:4C:32:8F:11:C7:E0
 CERTIFICATE_URL     http://ra.srce.hr/globus/ff94d436.0
 SIGNING_POLICY_URL  http://ra.srce.hr/globus/ff94d436.signing_policy
 CRL_URL             http://ra.srce.hr/cacrl.pem
+CERT_BEGINS         Thu 2006-06-15 17:39:20 UTC
 CERT_EXPIRES        Wed 2011-06-15 17:39:20 UTC
 
 # MD5 and SHA1 fingerprints from ff94d436.0 downloaded Tue 2006-10-03
