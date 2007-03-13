@@ -1,4 +1,4 @@
-# $Id: b2cb8d2c.nasa-old.cadesc,v 1.6 2006-01-13 17:07:27-08 kst Exp $
+# $Id: b2cb8d2c.nasa-old.cadesc,v 1.7 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b2cb8d2c.nasa-old.cadesc,v $
 
 CA_NAME             NASA CA (old)
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    D0:C9:51:FA:F0:B4:83:BD:D5:89:AB:04:03:E0:CE:D6:05:4B:C7:71
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/b2cb8d2c.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/b2cb8d2c.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Tue 2000-08-22 07:00:00 UTC
 CERT_EXPIRES        Thu 2002-08-22 07:00:00 UTC
 DISABLE             yes
 
