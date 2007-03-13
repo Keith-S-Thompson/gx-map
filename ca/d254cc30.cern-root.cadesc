@@ -1,4 +1,4 @@
-# $Id: d254cc30.cern-root.cadesc,v 1.3 2007-01-30 04:31:00-08 kst Exp $
+# $Id: d254cc30.cern-root.cadesc,v 1.4 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d254cc30.cern-root.cadesc,v $
 
 CA_NAME             CERT Root CA
@@ -14,6 +14,7 @@ CERTIFICATE_FORM    DER
 SIGNING_POLICY_URL  ?
 CRL_URL             http://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crl
 CRL_FORM            DER
+CERT_BEGINS         Tue 2006-10-03 08:55:17 UTC
 CERT_EXPIRES        Sat 2026-10-03 09:00:49 UTC
 
 # MD5 and SHA1 fingerprints from DER-format certificate downloaded
