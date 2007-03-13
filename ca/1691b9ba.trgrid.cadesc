@@ -1,4 +1,4 @@
-# $Id: 1691b9ba.trgrid.cadesc,v 1.1 2007-01-26 17:00:04-08 kst Exp $
+# $Id: 1691b9ba.trgrid.cadesc,v 1.2 2007-03-12 17:52:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1691b9ba.trgrid.cadesc,v $
 
 CA_NAME             TRGrid
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    FB:CE:94:CA:22:4B:B0:F5:98:D1:83:79:2F:6B:50:36:BD:9D:51:2D
 CERTIFICATE_URL     http://www.grid.org.tr/ca/ca_cert/1691b9ba.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.grid.org.tr/ca/crl/crl.pem
+CERT_BEGINS         Fri 2005-10-07 13:43:32 UTC
 CERT_EXPIRES        Wed 2010-10-06 13:43:32 UTC
 
 # MD5 and SHA1 fingerprints from 1691b9ba.0 downloaded Fri 2007-01-26
