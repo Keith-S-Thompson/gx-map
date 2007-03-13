@@ -1,4 +1,4 @@
-# $Id: d2a353a5.pkgrid.cadesc,v 1.10 2006-01-13 17:07:28-08 kst Exp $
+# $Id: d2a353a5.pkgrid.cadesc,v 1.11 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d2a353a5.pkgrid.cadesc,v $
 
 CA_NAME             PK-Grid-CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    68:0D:FA:77:62:83:D0:C6:70:3F:2A:C2:E7:20:44:ED:23:30:6F:F5
 CERTIFICATE_URL     http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/ncpcertpem.txt
 SIGNING_POLICY_URL  http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/d2a353a5.signing_policy.txt
 CRL_URL             http://www.ncp.edu.pk/pk-grid-ca/CRL/ncp.crl
+CERT_BEGINS         Tue 2003-12-09 10:18:25 UTC
 CERT_EXPIRES        Tue 2008-12-09 10:18:25 UTC
 
 # 2004-10-07:
