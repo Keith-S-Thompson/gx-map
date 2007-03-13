@@ -1,4 +1,4 @@
-# $Id: 473c3beb.nees.cadesc,v 1.3 2006-01-13 17:07:24-08 kst Exp $
+# $Id: 473c3beb.nees.cadesc,v 1.4 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/473c3beb.nees.cadesc,v $
 
 CA_NAME             NEES CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    33:E3:05:EB:68:D5:ED:34:7F:E5:EB:98:7A:EA:D5:99:BD:FA:B0:70
 CERTIFICATE_URL     ?
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
+CERT_BEGINS         ?
 CERT_EXPIRES        Thu 2010-03-04 07:29:08 UTC
 DISABLE             yes
 
