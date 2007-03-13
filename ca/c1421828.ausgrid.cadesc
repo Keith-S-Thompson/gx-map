@@ -1,4 +1,4 @@
-# $Id: c1421828.ausgrid.cadesc,v 1.7 2006-01-13 17:07:27-08 kst Exp $
+# $Id: c1421828.ausgrid.cadesc,v 1.8 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c1421828.ausgrid.cadesc,v $
 
 CA_NAME             AusGrid CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    86:C1:D6:65:82:5A:BA:CD:31:92:B8:DE:AC:F4:23:CF:56:54:15:89
 CERTIFICATE_URL     http://epp.ph.unimelb.edu.au/epp/grid/badgdemo/CAfiles/c1421828.0
 SIGNING_POLICY_URL  http://epp.ph.unimelb.edu.au/epp/grid/badgdemo/CAfiles/c1421828.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Wed 2003-10-29 12:08:04 UTC
 CERT_EXPIRES        Mon 2008-10-27 12:08:04 UTC
 
 # Contacts are listed on the web page.
