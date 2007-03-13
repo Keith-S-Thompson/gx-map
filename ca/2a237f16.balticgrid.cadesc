@@ -1,4 +1,4 @@
-# $Id: 2a237f16.balticgrid.cadesc,v 1.1 2006-09-26 21:45:22-07 kst Exp $
+# $Id: 2a237f16.balticgrid.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2a237f16.balticgrid.cadesc,v $
 
 CA_NAME             Baltic Grid Certification Authority
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    B2:34:AA:9C:B6:45:1D:59:B9:18:15:94:20:29:10:CC:D5:D1:FD:A5
 CERTIFICATE_URL     http://ca.balticgrid.org/2a237f16.0
 SIGNING_POLICY_URL  http://ca.balticgrid.org/2a237f16.signing_policy
 CRL_URL             http://ca.balticgrid.org/2a237f16.r0
+CERT_BEGINS         Wed 2005-09-21 10:19:33 UTC
 CERT_EXPIRES        Mon 2015-09-21 10:19:33 UTC
 
 # MD5 and SHA1 fingerprints from 2a237f16.0 downloaded Tue 2006-09-26
