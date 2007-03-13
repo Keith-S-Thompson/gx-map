@@ -1,4 +1,4 @@
-# $Id: 1149214e.dfn-verein-g01.cadesc,v 1.1 2006-11-30 19:27:33-08 kst Exp $
+# $Id: 1149214e.dfn-verein-g01.cadesc,v 1.2 2007-03-12 17:52:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/1149214e.dfn-verein-g01.cadesc,v $
 
 CA_NAME             DFN-Verein PCA Grid - G01
@@ -14,6 +14,7 @@ CERTIFICATE_SHA1    1C:BB:D4:BA:97:7B:3A:B9:FF:CD:4A:97:77:50:87:9C:6A:2E:8E:38
 CERTIFICATE_URL     http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/data/certs/root-ca-cert.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/1149214e.signing_policy
 CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/grid/g1/data/crls/root-ca-crl.pem
+CERT_BEGINS         Thu 2005-07-07 13:35:15 UTC
 CERT_EXPIRES        Sat 2013-09-07 13:35:15 UTC
 
 # The SIGNING_POLICY_URL is from a separate site.  That site is down as
