@@ -1,4 +1,4 @@
-# $Id: 1e12d831.apac.cadesc,v 1.1 2006-11-30 14:35:44-08 kst Exp $
+# $Id: 1e12d831.apac.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1e12d831.apac.cadesc,v $
 
 CA_NAME             APACGrid, Monash University
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    49:E8:64:80:7D:C4:6C:E8:5C:29:BA:F4:A1:4A:A0:5B:90:DA:FE:A0
 CERTIFICATE_URL     https://ca.apac.edu.au/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  https://ca.apac.edu.au/pub/signing_policy/1e12d831.signing_policy
 CRL_URL             https://ca.apac.edu.au/pub/crl/cacrl.pem
+CERT_BEGINS         Mon 2006-01-09 02:53:28 UTC
 CERT_EXPIRES        Thu 2016-01-07 02:53:28 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (1e12d831.0) downloaded
