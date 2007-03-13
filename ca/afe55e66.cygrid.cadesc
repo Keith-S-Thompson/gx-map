@@ -1,4 +1,4 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.4 2007-03-12 15:57:51-07 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.5 2007-03-12 17:17:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -17,9 +17,6 @@ CERT_EXPIRES        Sat 2013-02-09 12:11:44 UTC
 # This supersedes the older CyGrid CA certificate; see
 # 84c1f123.cygrid-old.cadesc.
 
-# The MAY_SIGN attribute is from 84c1f123.cygrid-old.cadesc; I can't
-# find a signing_policy file.
-
 # The previous version of this CA certificate was due to expire Sat
 # 2008-02-09 12:11:44 UTC.  It's been replaced with a newer version that's
 # due to expire Sat 2013-02-09 12:11:44 UTC.  The new certificate has the
@@ -34,4 +31,5 @@ CERT_EXPIRES        Sat 2013-02-09 12:11:44 UTC
 
 # The MD5 and SHA1 fingerprints are from the afe55e66.0 file included
 # in the IGTF tarball mentioned above, and the SHA1 fingerprint has been
-# verified against 2418a3f3.info.
+# verified against 2418a3f3.info.  The MAY_SIGN attribute is from
+# the afe55e66.signing_policy file in the IGTF tarball.
