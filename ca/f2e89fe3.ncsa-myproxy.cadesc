@@ -1,4 +1,4 @@
-# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.1 2007-03-08 16:59:32-08 kst Exp $
+# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.2 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f2e89fe3.ncsa-myproxy.cadesc,v $
 
 CA_NAME             NCSA MyProxy CA
@@ -13,6 +13,7 @@ CERTIFICATE_URL     http://catest.ncsa.uiuc.edu/f2e89fe3.0
 SIGNING_POLICY_URL  http://catest.ncsa.uiuc.edu/f2e89fe3.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
+CERT_BEGINS         Wed 2007-03-07 16:49:51 UTC
 CERT_EXPIRES        Mon 2012-03-05 16:49:51 UTC
 
 # MD5 and SHA1 fingerprints from f2e89fe3.0 downloaded Thu 2007-03-08
