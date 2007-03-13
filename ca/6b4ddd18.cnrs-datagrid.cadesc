@@ -1,4 +1,4 @@
-# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.13 2007-01-30 21:40:25-08 kst Exp $
+# $Id: 6b4ddd18.cnrs-datagrid.cadesc,v 1.14 2007-03-12 17:52:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6b4ddd18.cnrs-datagrid.cadesc,v $
 
 CA_NAME             CNRS-DataGrid
@@ -15,6 +15,7 @@ CERTIFICATE_SHA1    B9:70:D8:2C:CF:AA:DD:FC:75:07:3A:FC:8C:24:75:74:63:C3:3B:84
 CERTIFICATE_URL     http://crls.services.cnrs.fr/Datagrid-fr/getpem.crt
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/6b4ddd18.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/Datagrid-fr/getpem.crl
+CERT_BEGINS         Fri 2001-04-27 05:51:06 UTC
 CERT_EXPIRES        Mon 2011-04-25 05:51:06 UTC
 
 # The signing_policy file is from a different site, not from the CA's
