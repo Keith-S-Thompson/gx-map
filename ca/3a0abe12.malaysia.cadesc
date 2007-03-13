@@ -1,4 +1,4 @@
-# $Id: 3a0abe12.malaysia.cadesc,v 1.5 2006-01-13 17:07:23-08 kst Exp $
+# $Id: 3a0abe12.malaysia.cadesc,v 1.6 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3a0abe12.malaysia.cadesc,v $
 
 CA_NAME             Malaysia
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    F9:DB:FE:85:8D:B0:67:AB:19:68:1E:97:B1:DB:79:72:AE:76:FD:D0
 CERTIFICATE_URL     https://www.apgrid.org/CA/3a0abe12.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/3a0abe12.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Tue 2003-05-20 03:49:15 UTC
 CERT_EXPIRES        Thu 2006-03-09 03:49:15 UTC
 DISABLE             yes
 
