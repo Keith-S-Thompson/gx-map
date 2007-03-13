@@ -1,4 +1,4 @@
-# $Id: 5aba75cb.ncsa-old.cadesc,v 1.14 2006-03-16 13:28:21-08 kst Exp $
+# $Id: 5aba75cb.ncsa-old.cadesc,v 1.15 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5aba75cb.ncsa-old.cadesc,v $
 
 CA_NAME             NCSA CA (old)
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    55:D6:D2:EC:12:AD:E9:94:CE:CC:4B:A0:A7:93:51:4C:69:1F:06:B3
 CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/5aba75cb.0
 SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/5aba75cb.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Wed 2000-03-08 06:00:00 UTC
 CERT_EXPIRES        Wed 2006-03-22 06:00:00 UTC
 DISABLE             yes
 
