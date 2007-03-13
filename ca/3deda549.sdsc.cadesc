@@ -1,4 +1,4 @@
-# $Id: 3deda549.sdsc.cadesc,v 1.15 2006-03-17 20:40:10-08 kst Exp $
+# $Id: 3deda549.sdsc.cadesc,v 1.16 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3deda549.sdsc.cadesc,v $
 
 CA_NAME             SDSC CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    D9:90:69:8B:BE:C7:85:65:8A:EE:2D:3C:9E:F2:E2:6A:CE:C1:7D:F4
 CERTIFICATE_URL     http://www.sdsc.edu/CA/3deda549.0
 SIGNING_POLICY_URL  http://www.sdsc.edu/CA/3deda549.signing_policy
 CRL_URL             http://www.sdsc.edu/CA/3deda549.r0
+CERT_BEGINS         Thu 2004-09-09 02:42:29 UTC
 CERT_EXPIRES        Tue 2014-09-09 02:42:29 UTC
 
 # MD5 and SHA1 fingerprints from 3deda549.0 downloaded 2005-03-29
