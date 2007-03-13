@@ -1,4 +1,4 @@
-# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.12 2006-10-09 22:08:39-07 kst Exp $
+# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.13 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1e43b9cc.grid-ireland.cadesc,v $
 
 CA_NAME             Grid-Ireland Certification Authority
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    EA:FE:4E:0C:59:9F:63:69:87:A1:4C:4D:4E:1F:A7:1A:6A:C6:CF:D3
 CERTIFICATE_URL     https://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/1e43b9cc.signing_policy
 CRL_URL             https://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.r0
+CERT_BEGINS         Sun 2002-07-28 17:10:40 UTC
 CERT_EXPIRES        Fri 2012-07-27 17:10:40 UTC
 
 # This certificate replaces an earlier certificate with the following attributes:
