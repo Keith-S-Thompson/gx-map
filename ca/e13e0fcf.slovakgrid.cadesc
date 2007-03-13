@@ -1,4 +1,4 @@
-# $Id: e13e0fcf.slovakgrid.cadesc,v 1.10 2007-02-15 22:03:01-08 kst Exp $
+# $Id: e13e0fcf.slovakgrid.cadesc,v 1.11 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e13e0fcf.slovakgrid.cadesc,v $
 
 CA_NAME             SlovakGrid CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    1F:93:C4:B6:AE:18:56:87:A1:A9:64:CC:04:CA:56:9F:10:CB:F5:58
 CERTIFICATE_URL     http://ups.savba.sk/ca/e13e0fcf.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/e13e0fcf.signing_policy
 CRL_URL             http://ups.savba.sk/ca/slovakgrid.crl
+CERT_BEGINS         Tue 2002-12-17 11:18:35 UTC
 CERT_EXPIRES        Mon 2012-12-17 11:18:35 UTC
 
 # MD5 and SHA1 fingerprints from e13e0fcf.0 downloaded Thu 2007-02-15
