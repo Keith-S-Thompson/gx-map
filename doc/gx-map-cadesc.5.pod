@@ -1,4 +1,4 @@
-# $Id: gx-map-cadesc.5.pod,v 1.6 2007-01-01 13:01:35-08 kst Exp $
+# $Id: gx-map-cadesc.5.pod,v 1.7 2007-03-12 17:54:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-map-cadesc.5.pod,v $
 
 =for comment
@@ -189,6 +189,12 @@ missing, or expired CRL is not a fatal error.
 Recognizing a CA that doesn't provide a CRL is normally not
 recommended.  The PSC and USC Kerberos CAs are exceptions to this,
 since they don't issue long-term certificates.
+
+=item CERT_BEGINS (doc)
+
+This is the start date for the certificate.
+It can be determined by 
+    S<C<openssl x509 -in B<FILENAME> -noout -startdate>>
 
 =item CERT_EXPIRES (doc)
 
