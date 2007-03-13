@@ -1,4 +1,4 @@
-# $Id: 83dacf34.kek-simpleca.cadesc,v 1.6 2006-01-13 17:07:25-08 kst Exp $
+# $Id: 83dacf34.kek-simpleca.cadesc,v 1.7 2007-03-12 17:52:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/83dacf34.kek-simpleca.cadesc,v $
 
 CA_NAME             rcrd.jp.hep.net Simple CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    D5:33:C9:90:5F:5F:BD:D5:3F:4B:41:D8:85:AC:D0:12:D0:8F:C9:9E
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/83dacf34.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/83dacf34.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Tue 2003-07-15 06:33:33 UTC
 CERT_EXPIRES        Sun 2008-07-13 06:33:33 UTC
 
 # There is no CRL.  If this is acceptable, use the
