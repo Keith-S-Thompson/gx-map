@@ -1,4 +1,4 @@
-# $Id: a7792cdb.npaci-old.cadesc,v 1.18 2007-03-12 17:16:55-07 kst Exp $
+# $Id: a7792cdb.npaci-old.cadesc,v 1.19 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a7792cdb.npaci-old.cadesc,v $
 
 CA_NAME             NPACI (old)
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    A4:38:1D:E8:64:7C:F4:E5:82:13:88:17:0E:C6:FB:6D:29:D8:E9:FB
 CERTIFICATE_URL     http://users.sdsc.edu/~kst/CA/a7792cdb.0
 SIGNING_POLICY_URL  http://users.sdsc.edu/~kst/CA/a7792cdb.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Tue 1999-09-14 07:00:00 UTC
 CERT_EXPIRES        Tue 2038-09-14 07:00:00 UTC
 DISABLE             yes
 
