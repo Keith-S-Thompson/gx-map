@@ -1,4 +1,4 @@
-# $Id: 8a047de1.nectec.cadesc,v 1.1 2007-02-06 22:42:43-08 kst Exp $
+# $Id: 8a047de1.nectec.cadesc,v 1.2 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8a047de1.nectec.cadesc,v $
 
 CA_NAME             NECTEC GOC CA, Thailand
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    83:0F:E9:1A:5E:4D:DC:A3:63:B4:84:5A:A9:9E:D5:A2:81:07:57:20
 CERTIFICATE_URL     http://gridca.hpcc.nectec.or.th/pub/cacert/8a047de1.0
 SIGNING_POLICY_URL  http://gridca.hpcc.nectec.or.th/pub/globus_bundle/8a047de1.signing_policy
 CRL_URL             http://gridca.hpcc.nectec.or.th/pub/crl/8a047de1.r0
+CERT_BEGINS         Fri 2007-01-05 03:24:57 UTC
 CERT_EXPIRES        Mon 2017-01-02 03:24:57 UTC
 
 # Homepage and contact information from APGrid PMA,
