@@ -1,4 +1,4 @@
-# $Id: 90e2484f.datagrid-es-old.cadesc,v 1.13 2006-01-13 17:07:26-08 kst Exp $
+# $Id: 90e2484f.datagrid-es-old.cadesc,v 1.14 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/90e2484f.datagrid-es-old.cadesc,v $
 
 CA_NAME             Datagrid-ES CA (old)
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    2B:50:7A:CA:96:0C:CB:4A:8C:33:EE:2B:5E:67:0F:7F:55:C6:53:52
 CERTIFICATE_URL     http://www.ifca.unican.es/datagrid/ca/90e2484f.0
 SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/90e2484f.signing_policy
 CRL_URL             http://www.ifca.unican.es/datagrid/ca/datagrid-es-crl.pem
+CERT_BEGINS         Tue 2001-11-13 17:57:33 UTC
 CERT_EXPIRES        Fri 2004-11-12 17:57:33 UTC
 DISABLE             yes
 
