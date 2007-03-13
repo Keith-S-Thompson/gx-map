@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.12 2007-03-09 20:24:51-08 kst Exp $
+# $Id: GX.pm.in,v 1.13 2007-03-12 17:54:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -2821,7 +2821,7 @@ sub Get_CA_Ref($) {
                                     SIGNING_POLICY_URL
                                     CRL_URL CRL_FORM
                                     ALLOW_MISSING_CRL
-                                    CERT_EXPIRES DISABLE
+                                    CERT_BEGINS CERT_EXPIRES DISABLE
                                     _FILENAME _FILE_BASENAME _SHORT_CA_NAME );
     my @required = qw( CA_NAME HASH SUBJECT MAY_SIGN
                        CERTIFICATE_MD5 CERTIFICATE_SHA1 CERTIFICATE_URL );
