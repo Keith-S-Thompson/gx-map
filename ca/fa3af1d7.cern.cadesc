@@ -1,4 +1,4 @@
-# $Id: fa3af1d7.cern.cadesc,v 1.10 2006-09-26 21:48:06-07 kst Exp $
+# $Id: fa3af1d7.cern.cadesc,v 1.11 2007-03-12 17:52:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa3af1d7.cern.cadesc,v $
 
 CA_NAME             CERN CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    7B:86:34:13:2C:4F:39:3E:27:4C:65:84:90:13:11:4D:0A:B7:E8:96
 CERTIFICATE_URL     http://service-grid-ca.web.cern.ch/service-grid-ca/crt/fa3af1d7.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/fa3af1d7.signing_policy
 CRL_URL             http://service-grid-ca.web.cern.ch/service-grid-ca/cgi-bin/getCRL?format=PEM
+CERT_BEGINS         Thu 2003-08-21 09:50:00 UTC
 CERT_EXPIRES        Tue 2008-08-19 09:50:00 UTC
 
 # http://service-grid-ca.web.cern.ch/service-grid-ca/globus/globus.tgz
