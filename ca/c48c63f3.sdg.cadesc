@@ -1,4 +1,4 @@
-# $Id: c48c63f3.sdg.cadesc,v 1.1 2007-01-26 21:23:53-08 kst Exp $
+# $Id: c48c63f3.sdg.cadesc,v 1.2 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c48c63f3.sdg.cadesc,v $
 
 CA_NAME             Scientific Data Grid CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    56:C2:85:51:67:78:6D:7D:F3:33:23:9E:89:12:21:5F:27:D5:33:47
 CERTIFICATE_URL     http://ca.sdg.grid.cn/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://ca.sdg.grid.cn/crl/cacrl.pem
+CERT_BEGINS         Mon 2006-02-27 05:36:05 UTC
 CERT_EXPIRES        Sat 2016-02-27 05:36:05 UTC
 
 # MD5 and SHA1 fingerprints from c48c63f3.0, downloaded Fri 2007-01-26
