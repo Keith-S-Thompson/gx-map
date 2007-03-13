@@ -1,4 +1,4 @@
-# $Id: eebc7717.switch-server-2007.cadesc,v 1.1 2007-02-15 20:03:58-08 kst Exp $
+# $Id: eebc7717.switch-server-2007.cadesc,v 1.2 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/eebc7717.switch-server-2007.cadesc,v $
 
 CA_NAME             SWITCH-Server-2007
@@ -38,6 +38,7 @@ CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&fo
 SIGNING_POLICY_URL  ?
 CRL_URL             http://crl.swisssign.net/1AFDCB5395B081DD3A38849F63E87C0A42E0E6FE
 CRL_FORM            DER
+CERT_BEGINS         Fri 2007-02-02 13:23:05 UTC
 CERT_EXPIRES        Fri 2012-02-03 13:23:05 UTC
 
 # MD5 and SHA1 fingerprints from eebc7717.0, downloaded Thu 2007-02-15
