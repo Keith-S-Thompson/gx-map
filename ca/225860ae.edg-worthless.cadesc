@@ -1,4 +1,4 @@
-# $Id: 225860ae.edg-worthless.cadesc,v 1.5 2006-01-13 17:07:22-08 kst Exp $
+# $Id: 225860ae.edg-worthless.cadesc,v 1.6 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/225860ae.edg-worthless.cadesc,v $
 
 CA_NAME             EDG Tutorial Worthless Certification Authority
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    22:CB:AD:D8:18:B8:9E:F0:91:54:18:1C:38:26:75:F2:9E:5E:1B:13
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Thu 2002-09-12 13:49:44 UTC
 CERT_EXPIRES        Wed 2007-09-12 13:49:44 UTC
 DISABLE             yes
 
