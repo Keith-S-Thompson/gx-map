@@ -1,4 +1,4 @@
-# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.1 2007-03-09 20:08:34-08 kst Exp $
+# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.2 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4d654d1d.gte-cybertrust-global-root.cadesc,v $
 
 CA_NAME             GTE CyberTrust Global Root
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    97:81:79:50:D8:1C:96:70:CC:34:D8:09:CF:79:44:31:36:7E:F4:74
 CERTIFICATE_URL     ?
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.public-trust.com/cgi-bin/CRL/2018/cdp.crl
+CERT_BEGINS         ?
 CERT_EXPIRES        Mon 2018-08-13 23:59:00 UTC
 DISABLE             yes
 
