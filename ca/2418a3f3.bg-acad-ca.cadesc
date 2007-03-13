@@ -1,4 +1,4 @@
-# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.1 2007-03-09 20:09:03-08 kst Exp $
+# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2418a3f3.bg-acad-ca.cadesc,v $
 
 CA_NAME             BG ACAD CA
@@ -15,6 +15,7 @@ CERTIFICATE_SHA1    7F:1B:4D:3F:50:1D:BC:30:2B:7A:2A:46:FF:B8:8E:92:5D:55:34:05
 CERTIFICATE_URL     http://www.ca.acad.bg/ca_cert/bg_acad_ca-cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.ca.acad.bg/crl/bg_acad_ca-crl.pem
+CERT_BEGINS         Mon 2007-02-12 19:00:31 UTC
 CERT_EXPIRES        Sat 2017-02-11 19:00:31 UTC
 
 # MD5 and SHA1 fingerprints from bg_acad_ca-cacert.pem (2418a3f3.0),
