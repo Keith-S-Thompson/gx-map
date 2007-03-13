@@ -1,4 +1,4 @@
-# $Id: 24c3ccde.unam.cadesc,v 1.1 2007-02-21 17:09:13-08 kst Exp $
+# $Id: 24c3ccde.unam.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/24c3ccde.unam.cadesc,v $
 
 CA_NAME             UNAM
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    89:58:DC:F7:6D:2A:3C:23:8A:44:BD:55:8B:49:9B:AD:CA:E6:FF:82
 CERTIFICATE_URL     https://www.unamgrid.unam.mx/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             https://www.unamgrid.unam.mx/pub/crl/cacrl.pem
+CERT_BEGINS         Wed 2006-11-22 18:25:31 UTC
 CERT_EXPIRES        Sat 2016-11-19 18:25:31 UTC
 DISABLE             yes
 
