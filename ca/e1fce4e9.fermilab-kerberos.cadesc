@@ -1,4 +1,4 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.13 2006-01-13 17:07:29-08 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.14 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
@@ -14,6 +14,7 @@ CERTIFICATE_SHA1    9A:98:B8:DE:82:61:9F:1D:8E:44:05:95:55:4D:52:89:0D:D8:97:BA
 CERTIFICATE_URL     http://computing.fnal.gov/security/pki/e1fce4e9.0
 SIGNING_POLICY_URL  http://computing.fnal.gov/security/pki/e1fce4e9.signing_policy
 CRL_URL             http://computing.fnal.gov/security/pki/e1fce4e9.base64
+CERT_BEGINS         Fri 2005-09-09 14:51:49 UTC
 CERT_EXPIRES        Wed 2008-10-08 14:51:49 UTC
 
 # A previous certificate for this CA expired Oct 23 20:16:45 2005 GMT
