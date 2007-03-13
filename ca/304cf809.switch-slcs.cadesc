@@ -1,4 +1,4 @@
-# $Id: 304cf809.switch-slcs.cadesc,v 1.1 2007-03-09 20:08:54-08 kst Exp $
+# $Id: 304cf809.switch-slcs.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/304cf809.switch-slcs.cadesc,v $
 
 CA_NAME             SWITCHscls CA
@@ -14,6 +14,7 @@ CERTIFICATE_URL     http://ca.grid.switch.ch/SWITCHslcsCA.crt.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
+CERT_BEGINS         Fri 2007-02-09 16:00:00 UTC
 CERT_EXPIRES        Thu 2012-02-09 16:00:00 UTC
 
 # MD5 and SHA1 fingerprints from SWITCHslcsCA.crt.pem (304cf809.0),
