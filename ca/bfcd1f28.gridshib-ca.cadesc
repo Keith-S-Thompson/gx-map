@@ -1,4 +1,4 @@
-# $Id: bfcd1f28.gridshib-ca.cadesc,v 1.4 2007-03-08 19:08:34-08 kst Exp $
+# $Id: bfcd1f28.gridshib-ca.cadesc,v 1.5 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bfcd1f28.gridshib-ca.cadesc,v $
 
 CA_NAME             GridShib CA
@@ -13,6 +13,7 @@ CERTIFICATE_URL     http://gridshib.globus.org/downloads/gridshib-ca-cert/bfcd1f
 SIGNING_POLICY_URL  http://gridshib.globus.org/downloads/gridshib-ca-cert/bfcd1f28.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
+CERT_BEGINS         Tue 2007-02-20 02:06:32 UTC
 CERT_EXPIRES        Fri 2017-02-17 02:06:32 UTC
 
 # MD5 and SHA1 fingerprints from bfcd1f28.0, downloaded Wed 2007-02-21
