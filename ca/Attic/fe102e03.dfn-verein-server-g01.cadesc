@@ -1,4 +1,4 @@
-# $Id: fe102e03.dfn-verein-server-g01.cadesc,v 1.1 2006-11-30 19:27:33-08 kst Exp $
+# $Id: fe102e03.dfn-verein-server-g01.cadesc,v 1.2 2007-03-12 17:52:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/fe102e03.dfn-verein-server-g01.cadesc,v $
 
 CA_NAME             DFN-Verein Server CA Grid - G01
@@ -14,6 +14,7 @@ CERTIFICATE_SHA1    20:36:73:B7:15:93:15:28:5A:54:70:71:A1:DC:D7:B1:39:42:C5:09
 CERTIFICATE_URL     http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/certs/ca-server-cert.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/crls/ca-server-crl.pem
+CERT_BEGINS         Thu 2005-07-07 14:56:32 UTC
 CERT_EXPIRES        Tue 2009-07-07 14:56:32 UTC
 
 # MD5 and SHA1 fingerprints from ca-server-cert.pem (fe102e03.0) downloaded
