@@ -1,4 +1,4 @@
-# $Id: 2dc3958a.rocks11.cadesc,v 1.6 2006-01-13 17:07:23-08 kst Exp $
+# $Id: 2dc3958a.rocks11.cadesc,v 1.7 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2dc3958a.rocks11.cadesc,v $
 
 CA_NAME             rocks11.sdsc.edu Simple CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    B9:F0:1E:C7:7F:56:B5:94:3D:07:71:1A:EF:A3:33:13:93:3B:84:0A
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/2dc3958a.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/2dc3958a.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Mon 2004-05-24 18:34:42 UTC
 CERT_EXPIRES        Sat 2009-05-23 18:34:42 UTC
 
 # There is no CRL.  If this is acceptable, use the
