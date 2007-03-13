@@ -1,4 +1,4 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.5 2007-03-12 17:17:10-07 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.6 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    31:75:10:A5:62:1D:14:F0:A9:EC:68:14:F0:33:7E:49:FD:E4:37:95
 CERTIFICATE_URL     http://grid.ucy.ac.cy/CyGridCA/afe55e66.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://grid.ucy.ac.cy/CyGridCA/afe55e66.r0
+CERT_BEGINS         ?
 CERT_EXPIRES        Sat 2013-02-09 12:11:44 UTC
 
 # This supersedes the older CyGrid CA certificate; see
