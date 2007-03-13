@@ -1,4 +1,4 @@
-# $Id: a317c467.aist.cadesc,v 1.3 2006-06-05 16:03:13-07 kst Exp $
+# $Id: a317c467.aist.cadesc,v 1.4 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a317c467.aist.cadesc,v $
 
 CA_NAME             AIST GRID CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    F2:17:89:A1:42:A2:79:A1:34:AD:F3:84:30:63:87:05:13:EB:7C:27
 CERTIFICATE_URL     https://www.apgrid.org/CA/AIST/Production/a317c467.0
 SIGNING_POLICY_URL  https://www.apgrid.org/CA/AIST/Production/a317c467.signing_policy
 CRL_URL             https://www.apgrid.org/CA/AIST/Production/a317c467.r0
+CERT_BEGINS         Tue 2004-10-19 10:28:35 UTC
 CERT_EXPIRES        Sun 2009-10-18 10:28:35 UTC
 
 # As of Mon 2006-06-05, the CA file a317c467.0 has been updated.
