@@ -1,4 +1,4 @@
-# $Id: 9b88e95b.psc-root.cadesc,v 1.2 2006-09-05 22:17:43-07 kst Exp $
+# $Id: 9b88e95b.psc-root.cadesc,v 1.3 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b88e95b.psc-root.cadesc,v $
 
 CA_NAME             PSC Root Certificate Authority
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    76:14:59:94:16:2B:E2:05:C9:16:3F:85:8E:7C:70:EE:B9:DD:84:50
 CERTIFICATE_URL     http://www.psc.edu/ca/cert/9b88e95b.0
 SIGNING_POLICY_URL  http://www.psc.edu/ca/cert/9b88e95b.signing_policy
 CRL_URL             http://www.psc.edu/ca/crl/9b88e95b.r0
+CERT_BEGINS         Thu 2006-08-17 16:46:13 UTC
 CERT_EXPIRES        Thu 2016-03-17 05:00:00 UTC
 
 # MD5 and SHA1 fingerprints from 9b88e95b.0 downloaded Fri 2006-08-18
