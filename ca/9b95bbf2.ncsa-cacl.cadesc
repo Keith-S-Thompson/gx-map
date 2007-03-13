@@ -1,4 +1,4 @@
-# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.1 2007-03-08 16:53:38-08 kst Exp $
+# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.2 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b95bbf2.ncsa-cacl.cadesc,v $
 
 CA_NAME             NCSA CACL CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    37:50:53:AC:9F:E2:4F:58:24:6C:F7:DC:80:69:41:53:6D:7B:95:FF
 CERTIFICATE_URL     http://catest.ncsa.uiuc.edu/9b95bbf2.0
 SIGNING_POLICY_URL  http://catest.ncsa.uiuc.edu/9b95bbf2.signing_policy
 CRL_URL             http://catest.ncsa.uiuc.edu/9b95bbf2.r0
+CERT_BEGINS         Mon 2007-03-05 22:55:55 UTC
 CERT_EXPIRES        Sat 2012-03-03 22:55:55 UTC
 
 # MD5 and SHA1 fingerprints from 9b95bbf2.0 downloaded Thu 2007-03-08
