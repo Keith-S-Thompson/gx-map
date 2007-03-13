@@ -1,4 +1,4 @@
-# $Id: 1aa81ac1.iisas.cadesc,v 1.5 2006-01-13 17:07:22-08 kst Exp $
+# $Id: 1aa81ac1.iisas.cadesc,v 1.6 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1aa81ac1.iisas.cadesc,v $
 
 CA_NAME             IISAS (old)
@@ -13,6 +13,7 @@ CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-se
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/1aa81ac1.signing_policy
 CRL_URL             ?
 DISABLE             yes
+CERT_BEGINS         Tue 2002-08-13 13:03:23 UTC
 CERT_EXPIRES        Sun 2007-08-12 13:03:23 UTC
 
 # The certificate doesn't expire until 2007-09-12, but it appears to have
