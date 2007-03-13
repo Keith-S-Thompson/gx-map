@@ -1,4 +1,4 @@
-# $Id: cc800af0.niif.cadesc,v 1.1 2006-10-03 21:32:51-07 kst Exp $
+# $Id: cc800af0.niif.cadesc,v 1.2 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/cc800af0.niif.cadesc,v $
 
 CA_NAME             NIIF CA Root CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    F7:13:B3:18:62:41:EB:DD:F3:5B:27:0B:80:5B:B0:CA:A4:6C:69:BE
 CERTIFICATE_URL     http://www.ca.niif.hu/Certificates/niif_ca_root_x509.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/cc800af0.signing_policy
 CRL_URL             http://www.ca.niif.hu/crl/niif-ca-crl.pem
+CERT_BEGINS         Mon 2005-03-07 00:00:00 UTC
 CERT_EXPIRES        Sat 2015-03-07 00:00:00 UTC
 
 # MD5 and SHA1 fingerprints from niif_ca_root_x509.pem (cc800af0.0)
