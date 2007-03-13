@@ -1,4 +1,4 @@
-# $Id: 468d15b3.see-grid.cadesc,v 1.1 2006-12-05 15:56:50-08 kst Exp $
+# $Id: 468d15b3.see-grid.cadesc,v 1.2 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/468d15b3.see-grid.cadesc,v $
 
 CA_NAME             SEE-GRID CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    67:8C:B7:71:0C:78:0D:2E:DF:06:DE:51:88:59:D5:9B:9C:EC:8D:B7
 CERTIFICATE_URL     http://www.grid.auth.gr/pki/seegrid-ca/cacert/see-grid-ca-cert.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/468d15b3.signing_policy
 CRL_URL             http://www.grid.auth.gr/pki/seegrid-ca/services/crl/seegrid-ca-crl-v2.pem
+CERT_BEGINS         Tue 2004-08-24 08:07:02 UTC
 CERT_EXPIRES        Sun 2009-08-23 08:07:02 UTC
 
 # MD5 and SHA1 fingerprints from see-grid-ca-cert.pem (468d15b3.0)
