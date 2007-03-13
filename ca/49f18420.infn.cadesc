@@ -1,4 +1,4 @@
-# $Id: 49f18420.infn.cadesc,v 1.12 2006-10-03 21:32:51-07 kst Exp $
+# $Id: 49f18420.infn.cadesc,v 1.13 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
 
 CA_NAME             INFN Certification Authority
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    AB:6D:CE:77:D3:5D:F0:A2:02:C8:87:4D:AE:AF:60:A8:D4:99:5C:D5
 CERTIFICATE_URL     https://security.fi.infn.it/CA/mgt/CAcert.pem
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/49f18420.signing_policy
 CRL_URL             http://security.fi.infn.it/CA/crl.pem
+CERT_BEGINS         Wed 2002-09-18 16:06:29 UTC
 CERT_EXPIRES        Tue 2007-09-18 16:06:29 UTC
 
 # English web page at <http://security.fi.infn.it/CA/en/>.
