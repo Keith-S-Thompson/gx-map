@@ -1,4 +1,4 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.16 2006-11-02 21:29:56-08 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.17 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
@@ -14,6 +14,7 @@ CERTIFICATE_SHA1    F2:63:97:A8:B2:D5:1F:94:CC:0F:06:5A:FE:76:5D:F3:CF:28:81:A0
 CERTIFICATE_URL     http://www.es.net/CA/ESnet-Root-CA-1/d1b603c3.0
 SIGNING_POLICY_URL  http://www.es.net/CA/ESnet-Root-CA-1/d1b603c3.signing_policy
 CRL_URL             http://www.es.net/CA/ESnet-Root-CA-1/d1b603c3.r0
+CERT_BEGINS         Tue 2002-10-08 07:00:00 UTC
 CERT_EXPIRES        Wed 2022-10-26 07:00:00 UTC
 
 # The certificate file d1b603c3.0 was updated Thu 2006-10-26
