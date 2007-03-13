@@ -1,4 +1,4 @@
-# $Id: 2f3fadf6.infn-2006.cadesc,v 1.1 2007-01-26 17:57:27-08 kst Exp $
+# $Id: 2f3fadf6.infn-2006.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2f3fadf6.infn-2006.cadesc,v $
 
 CA_NAME             INFN 2006 CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    7D:17:44:C4:C9:1F:01:A8:B3:1C:81:E1:FF:8D:D8:91:B4:E1:5C:71
 CERTIFICATE_URL     https://security.fi.infn.it/CA/mgt/INFNCA.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://security.fi.infn.it/CA/INFNCA_crl.pem
+CERT_BEGINS         Tue 2006-10-03 14:16:47 UTC
 CERT_EXPIRES        Mon 2016-10-03 14:16:47 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (2f3fadf6.0) downloaded
