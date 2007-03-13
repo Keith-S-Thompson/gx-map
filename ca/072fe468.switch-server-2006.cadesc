@@ -1,4 +1,4 @@
-# $Id: 072fe468.switch-server-2006.cadesc,v 1.5 2007-01-30 04:30:59-08 kst Exp $
+# $Id: 072fe468.switch-server-2006.cadesc,v 1.6 2007-03-12 17:52:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/072fe468.switch-server-2006.cadesc,v $
 
 CA_NAME             SWITCH Server 2006
@@ -36,6 +36,7 @@ CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&fo
 SIGNING_POLICY_URL  ?
 CRL_URL             http://swisssign.net/cgi-bin/authority/crl/4F0D10EFD99737FDB1F901DA33558E2DCDD5CA59
 CRL_FORM            DER
+CERT_BEGINS         Thu 2006-02-09 12:41:00 UTC
 CERT_EXPIRES        Thu 2008-03-13 12:41:00 UTC
 
 # MD5 and SHA1 fingerprints from 072fe468.0, downloaded Fri 2007-01-26
