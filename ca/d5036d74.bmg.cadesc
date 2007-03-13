@@ -1,4 +1,4 @@
-# $Id: d5036d74.bmg.cadesc,v 1.5 2006-01-13 17:07:28-08 kst Exp $
+# $Id: d5036d74.bmg.cadesc,v 1.6 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d5036d74.bmg.cadesc,v $
 
 CA_NAME             BMG Certificate Authority (expired)
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    F2:29:39:0D:20:BD:68:98:C1:CD:F7:B5:F1:20:60:27:9E:A7:F2:8F
 CERTIFICATE_URL     https://datafarm.apgrid.org/testbed/pragma/d5036d74.0
 SIGNING_POLICY_URL  https://datafarm.apgrid.org/testbed/pragma/d5036d74.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Tue 2002-07-30 03:36:07 UTC
 CERT_EXPIRES        Wed 2003-07-30 03:36:07 UTC
 DISABLE             yes
 
