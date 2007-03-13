@@ -1,4 +1,4 @@
-# $Id: dd4b34ea.germangrid.cadesc,v 1.10 2006-10-03 21:32:52-07 kst Exp $
+# $Id: dd4b34ea.germangrid.cadesc,v 1.11 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/dd4b34ea.germangrid.cadesc,v $
 
 CA_NAME             GermanGrid GridKa CA
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    AF:A0:D1:16:FB:E6:E9:44:9B:22:01:8A:6E:0D:AC:23:A7:DC:CD:A7
 CERTIFICATE_URL     http://grid.fzk.de/ca/dd4b34ea.0
 SIGNING_POLICY_URL  http://grid.fzk.de/ca/dd4b34ea.signing_policy
 CRL_URL             http://grid.fzk.de/ca/gridka-crl.pem
+CERT_BEGINS         Wed 2003-06-11 13:45:54 UTC
 CERT_EXPIRES        Tue 2014-06-10 13:45:54 UTC
 
 # MD5 and SHA1 fingerprints from dd4b34ea.0 downloaded Tue 2006-10-03
