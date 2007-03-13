@@ -1,4 +1,4 @@
-# $Id: 34a509c3.cnrs-projets.cadesc,v 1.11 2006-01-13 17:07:23-08 kst Exp $
+# $Id: 34a509c3.cnrs-projets.cadesc,v 1.12 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a509c3.cnrs-projets.cadesc,v $
 
 CA_NAME             CNRS-Projets
@@ -14,6 +14,7 @@ CERTIFICATE_SHA1    D2:C5:3C:9C:DB:34:5E:8E:A6:6E:56:A2:D3:4D:E1:58:82:CA:96:73
 CERTIFICATE_URL     http://crls.services.cnrs.fr/CNRS-Projets/getpem.crt
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/34a509c3.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/CNRS-Projets/getpem.crl
+CERT_BEGINS         Fri 2001-04-27 05:48:26 UTC
 CERT_EXPIRES        Mon 2011-04-25 05:48:26 UTC
 
 # MD5 and SHA1 fingerprints from getpem.crt (34a509c3.0) downloaded 2005-03-29
