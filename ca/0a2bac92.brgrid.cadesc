@@ -1,4 +1,4 @@
-# $Id: 0a2bac92.brgrid.cadesc,v 1.2 2007-01-30 21:12:19-08 kst Exp $
+# $Id: 0a2bac92.brgrid.cadesc,v 1.3 2007-03-12 17:52:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0a2bac92.brgrid.cadesc,v $
 
 CA_NAME             UFF Brazilian Grid Certification Authority
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    EB:E5:93:4D:04:8F:A0:72:A3:01:71:CB:43:57:E6:CD:FC:59:DF:BD
 CERTIFICATE_URL     https://brgridca.ic.uff.br/certs/cacert.pem
 SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/0a2bac92.signing_policy
 CRL_URL             http://brgridca.ic.uff.br/crl/cacrl.pem
+CERT_BEGINS         Tue 2006-07-11 17:46:58 UTC
 CERT_EXPIRES        Mon 2016-07-11 17:46:58 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (0a2bac92.0)
