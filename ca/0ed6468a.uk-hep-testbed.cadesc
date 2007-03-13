@@ -1,4 +1,4 @@
-# $Id: 0ed6468a.uk-hep-testbed.cadesc,v 1.10 2006-12-06 18:55:18-08 kst Exp $
+# $Id: 0ed6468a.uk-hep-testbed.cadesc,v 1.11 2007-03-12 17:52:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0ed6468a.uk-hep-testbed.cadesc,v $
 
 CA_NAME             UK HEP Testbed CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    49:2C:16:87:23:6A:E6:07:61:65:D7:DC:CC:7B:70:8C:9B:FF:66:3D
 CERTIFICATE_URL     http://www.gridpp.ac.uk/ca/software/0ed6468a.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/0ed6468a.signing_policy
 CRL_URL             http://www.gridpp.ac.uk/ca/ca-crl.pem
+CERT_BEGINS         Wed 2004-01-28 09:59:08 UTC
 CERT_EXPIRES        Sat 2014-01-25 09:59:08 UTC
 DISABLE             yes
 
