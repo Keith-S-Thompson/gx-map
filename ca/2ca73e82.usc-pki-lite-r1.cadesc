@@ -1,4 +1,4 @@
-# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.9 2006-07-07 17:37:27-07 kst Exp $
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.10 2007-03-12 17:52:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    9B:E3:5C:B9:DD:64:3A:54:F7:2C:97:C9:FB:0A:A8:9A:18:F4:4C:A5
 CERTIFICATE_URL     http://www.usc.edu/its/services/authx/CA/USC-PKI-Lite-CA.crt
 SIGNING_POLICY_URL  http://www.usc.edu/its/services/authx/CA/USC-PKI-Lite-CA.signing_policy
 CRL_URL             http://www.usc.edu/its/services/authx/CA/USC-PKI-Lite-CA.crl
+CERT_BEGINS         Wed 2004-12-22 22:06:57 UTC
 CERT_EXPIRES        Sat 2011-01-01 22:06:57 UTC
 
 # MD5 and SHA1 fingerprints from certificate downloaded Fri 2006-03-03
