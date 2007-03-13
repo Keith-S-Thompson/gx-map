@@ -1,30 +1,31 @@
-# $Id: 2c7969d0.usc-pki-lite-old.cadesc,v 1.19 2006-01-13 17:07:22-08 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite-old.cadesc,v 1.20 2007-03-12 17:07:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2c7969d0.usc-pki-lite-old.cadesc,v $
 
 CA_NAME             USC PKI Lite CA (old)
-HOMEPAGE            http://www.usc.edu/isd/services/authx/CA/
-CONTACT             Shelley Henderson <shelley@usc.edu>
+HOMEPAGE            http://www.usc.edu/its/services/authx/CA/deprecated.html
+CONTACT             authx@usc.edu
 HASH                2c7969d0
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E
 CERTIFICATE_SHA1    5F:7F:79:1D:22:6E:88:41:7E:E2:9F:73:83:1F:2E:7D:B1:8F:D9:0C
-CERTIFICATE_URL     http://www.usc.edu/isd/services/authx/CA/CAcert.pem
-SIGNING_POLICY_URL  http://www.usc.edu/isd/services/authx/CA/2c7969d0.signing_policy
+CERTIFICATE_URL     http://www.usc.edu/its/services/authx/CA/CA_122204.pem
+SIGNING_POLICY_URL  http://www.usc.edu/its/services/authx/CA/2c7969d0.signing_policy
 CRL_URL             ?
 CERT_EXPIRES        Sat 2011-01-01 21:47:56 UTC
 DISABLE             yes
 
-# As of 2004-11-04, there is no CRL.
+# There is no CRL.
 
-# The certificate replaces an older deprecated certificate
-# with the following characteristics
-# CERTIFICATE_MD5  B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E,
-# CERT_EXPIRES     Jan  9 01:45:20 2005 GMT
-# and the same subject and hash.
+# An earlier version of this certificate is still available at
+# <http://www.usc.edu/its/services/authx/CA/CA_101204.pem>
+# That certificate had the same subject name and hash, but it
+# expired Sun 2005-01-09 01:45:20 UTC, and was deprecated
+# as of Tue 2004-10-12.
 
-# This certificate is now deprecated.
+# This certificate is also deprecated as of Wed 2004-12-22.
 # It has been superseded by the certificate described in
 # 2ca73e82.usc-pki-lite-r1.cadesc .
 
-# MD5 and SHA1 fingerprints from CAcert.pem (2c7969d0.0) downloaded 2004-11-04
+# MD5 and SHA1 fingerprints from CA_122204.pem (2c7969d0.0) downloaded
+# Mon 2007-03-12
