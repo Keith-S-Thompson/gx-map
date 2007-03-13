@@ -1,4 +1,4 @@
-# $Id: d7e95bdf.grnet-root.cadesc,v 1.1 2006-10-03 21:32:51-07 kst Exp $
+# $Id: d7e95bdf.grnet-root.cadesc,v 1.2 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d7e95bdf.grnet-root.cadesc,v $
 
 CA_NAME             GRNET Root Certification Authority
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    C8:40:0E:EA:06:22:E1:B5:88:CB:7F:3F:62:BD:8F:15:8F:C2:B8:D1
 CERTIFICATE_URL     http://www.ca.grnet.gr/certs/GrnetRootCA2004.pem
 SIGNING_POLICY_URL  ?
 CRL_URL             http://crlv1.ca.grnet.gr/GrnetRootCA2004/crlv1.pem.crl
+CERT_BEGINS         Thu 2004-06-03 07:12:32 UTC
 CERT_EXPIRES        Wed 2024-05-29 07:12:32 UTC
 DISABLE             yes
 
