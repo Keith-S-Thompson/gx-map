@@ -1,4 +1,4 @@
-# $Id: bffbd7d0.grid-canada.cadesc,v 1.1 2006-10-03 21:47:31-07 kst Exp $
+# $Id: bffbd7d0.grid-canada.cadesc,v 1.2 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bffbd7d0.grid-canada.cadesc,v $
 
 CA_NAME             Grid Canada CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    6A:CD:12:D6:98:82:3D:F4:B1:DC:89:AA:49:94:C8:8D:1A:AD:8A:C6
 CERTIFICATE_URL     http://www.gridcanada.ca/ca/bffbd7d0.0
 SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/bffbd7d0.signing_policy
 CRL_URL             http://www.gridcanada.ca/ca/bffbd7d0.r0
+CERT_BEGINS         Thu 2006-01-12 21:29:07 UTC
 CERT_EXPIRES        Mon 2026-01-12 21:29:07 UTC
 
 # MD5 and SHA1 fingerprints from bffbd7d0.0 downloaded Tue 2006-10-03
