@@ -1,4 +1,4 @@
-# $Id: 42864e48.globus-ca.cadesc,v 1.10 2006-01-13 17:07:23-08 kst Exp $
+# $Id: 42864e48.globus-ca.cadesc,v 1.11 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/42864e48.globus-ca.cadesc,v $
 
 CA_NAME             Globus CA (expired)
@@ -14,6 +14,7 @@ CERTIFICATE_SHA1    CB:02:FE:71:78:A9:D4:A4:D7:AA:75:2D:C3:B6:F9:FA:9E:EF:33:41
 CERTIFICATE_URL     http://www-unix.globus.org/ftppub/gsi/globus_ca/42864e48.0
 SIGNING_POLICY_URL  http://www-unix.globus.org/ftppub/gsi/globus_ca/42864e48.signing_policy
 CRL_URL             ?
+CERT_BEGINS         Fri 1998-01-23 19:20:24 UTC
 CERT_EXPIRES        Fri 2004-01-23 19:20:24 UTC
 DISABLE             yes
 
