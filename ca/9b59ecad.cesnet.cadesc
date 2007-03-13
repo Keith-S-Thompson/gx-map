@@ -1,4 +1,4 @@
-# $Id: 9b59ecad.cesnet.cadesc,v 1.2 2006-09-26 22:03:00-07 kst Exp $
+# $Id: 9b59ecad.cesnet.cadesc,v 1.3 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b59ecad.cesnet.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    B6:D8:8D:9D:CD:72:DF:1B:D6:CB:2E:EF:8E:64:2F:73:21:24:23:95
 CERTIFICATE_URL     http://www.cesnet.cz/pki/certs/cesnet-ca.cz.pem.crt
 SIGNING_POLICY_URL  http://www.lsc-group.phys.uwm.edu/daswg/projects/glue/epydoc/ldg-3.5/globus/share/certificates/9b59ecad.signing_policy
 CRL_URL             http://www.cesnet.cz/pki/crl/9b59ecad.r0
+CERT_BEGINS         Fri 2005-06-17 14:50:17 UTC
 CERT_EXPIRES        Tue 2025-06-17 15:20:17 UTC
 
 # I can't guarantee the authenticity of the signing_policy, since I
