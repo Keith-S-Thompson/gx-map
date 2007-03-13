@@ -1,4 +1,4 @@
-# $Id: ba2f39ca.ihep.cadesc,v 1.1 2007-01-26 21:12:15-08 kst Exp $
+# $Id: ba2f39ca.ihep.cadesc,v 1.2 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ba2f39ca.ihep.cadesc,v $
 
 CA_NAME             IHEP Certification Authority
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    A8:44:99:DE:0E:EA:A3:68:BF:4A:29:15:BD:D7:C0:59:B6:04:FB:BB
 CERTIFICATE_URL     https://gridca.ihep.ac.cn/cacert/cacert.pem
 SIGNING_POLICY_URL  https://gridca.ihep.ac.cn/globus/ba2f39ca.signing_policy
 CRL_URL             http://gridca.ihep.ac.cn/cacrl.pem
+CERT_BEGINS         Thu 2005-05-26 11:49:14 UTC
 CERT_EXPIRES        Sun 2015-05-24 11:49:14 UTC
 
 # MD5 and SHA1 fingerprints from ba2f39ca.0, downloaded Fri 2007-01-26
