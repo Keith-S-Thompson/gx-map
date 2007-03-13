@@ -1,4 +1,4 @@
-# $Id: 34a5e0db.telescience.cadesc,v 1.9 2006-08-30 01:21:58-07 kst Exp $
+# $Id: 34a5e0db.telescience.cadesc,v 1.10 2007-03-12 17:52:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a5e0db.telescience.cadesc,v $
 
 CA_NAME             UCSD Telescience CA
@@ -12,6 +12,7 @@ CERTIFICATE_SHA1    0F:5C:06:E5:9A:9E:1C:6F:89:3C:1B:02:27:CE:D4:52:CA:A5:2B:78
 CERTIFICATE_URL     http://telescience.ucsd.edu/CA/34a5e0db.0
 SIGNING_POLICY_URL  http://telescience.ucsd.edu/CA/34a5e0db.signing_policy
 CRL_URL             http://telescience.ucsd.edu/CA/34a5e0db.r0
+CERT_BEGINS         Tue 2004-01-27 17:23:17 UTC
 CERT_EXPIRES        Sun 2014-01-26 17:23:17 UTC
 
 # MD5 and SHA1 fingerprints from 34a5e0db.0 downloaded Tue 2005-03-29,
