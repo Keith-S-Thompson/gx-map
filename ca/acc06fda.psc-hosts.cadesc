@@ -1,4 +1,4 @@
-# $Id: acc06fda.psc-hosts.cadesc,v 1.2 2006-09-05 22:17:43-07 kst Exp $
+# $Id: acc06fda.psc-hosts.cadesc,v 1.3 2007-03-12 17:52:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/acc06fda.psc-hosts.cadesc,v $
 
 CA_NAME             PSC Hosts Certificate Authority
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    6C:CD:19:F1:36:B8:49:01:C4:E4:3B:0B:56:44:9D:58:4B:89:14:88
 CERTIFICATE_URL     http://www.psc.edu/ca/cert/acc06fda.0
 SIGNING_POLICY_URL  http://www.psc.edu/ca/cert/acc06fda.signing_policy
 CRL_URL             http://www.psc.edu/ca/crl/acc06fda.r0
+CERT_BEGINS         Thu 2006-08-17 16:47:28 UTC
 CERT_EXPIRES        Thu 2016-03-17 05:00:00 UTC
 
 # MD5 and SHA1 fingerprints from acc06fda.0 downloaded Fri 2006-08-18
