@@ -1,4 +1,4 @@
-# $Id: df312a4e.infn-old.cadesc,v 1.9 2006-01-13 17:07:28-08 kst Exp $
+# $Id: df312a4e.infn-old.cadesc,v 1.10 2007-03-12 17:52:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/df312a4e.infn-old.cadesc,v $
 
 CA_NAME             INFN CA (2) (old)
@@ -13,6 +13,7 @@ CERTIFICATE_SHA1    20:B1:90:FE:5E:C6:7B:36:48:89:BD:5F:BB:C3:98:34:95:BE:54:D8
 CERTIFICATE_URL     http://www.nbi.dk/~waananen/datagrid_ca/certs/df312a4e.0
 SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/df312a4e.signing_policy
 CRL_URL             http://security.fi.infn.it/CA/crl-2003.pem
+CERT_BEGINS         Mon 2001-10-22 08:58:50 UTC
 CERT_EXPIRES        Mon 2003-09-22 08:58:50 UTC
 DISABLE             yes
 
