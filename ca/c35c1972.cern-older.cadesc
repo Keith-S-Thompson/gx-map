@@ -1,4 +1,4 @@
-# $Id: c35c1972.cern-older.cadesc,v 1.5 2006-01-13 17:07:27-08 kst Exp $
+# $Id: c35c1972.cern-older.cadesc,v 1.6 2007-03-12 17:52:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c35c1972.cern-older.cadesc,v $
 
 CA_NAME             CERN CA (older)
@@ -15,6 +15,7 @@ CERTIFICATE_SHA1    21:30:E3:3D:CF:B0:0C:04:14:FF:30:2E:7E:E6:C2:7D:2E:B4:F4:57
 CERTIFICATE_URL     http://www.usatlas.bnl.gov/~fisyak/atlas/chimera/post-install/certificates/c35c1972.0
 SIGNING_POLICY_URL  http://www.usatlas.bnl.gov/~fisyak/atlas/chimera/post-install/certificates/c35c1972.signing_policy
 CRL_URL             http://globus.home.cern.ch/globus/ca/cern.crl.pem
+CERT_BEGINS         Wed 2001-10-03 07:44:41 UTC
 CERT_EXPIRES        Thu 2002-10-03 07:44:41 UTC
 DISABLE             yes
 
