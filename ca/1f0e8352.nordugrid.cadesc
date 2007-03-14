@@ -1,20 +1,28 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.14 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.15 2007-03-13 19:23:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
-CA_NAME             EACL NorduGrid CA
-HOMEPAGE            http://www.nbi.dk/HEP/CA/
-CONTACT             ca@nbi.dk
+CA_NAME             NorduGrid Certification Authority
+HOMEPAGE            http://ca.nordugrid.org/
+CONTACT             ca@nordugrid.org
 HASH                1f0e8352
 SUBJECT             /O=Grid/O=NorduGrid/CN=NorduGrid Certification Authority
 MAY_SIGN            /O=Grid/O=NorduGrid/*
 CERTIFICATE_MD5     D7:BC:25:FD:A5:C0:73:3B:53:DF:34:56:0C:E6:E3:D4
 CERTIFICATE_SHA1    A4:B2:8E:86:66:76:7C:D8:65:FC:79:9C:0F:BE:66:EC:58:31:4E:F1
-CERTIFICATE_URL     http://hep.nbi.dk/CA/1f0e8352.0
-SIGNING_POLICY_URL  http://hep.nbi.dk/CA/1f0e8352.signing_policy
-CRL_URL             http://hep.nbi.dk/CA/1f0e8352.r0
-CERT_BEGINS         ?
+CERTIFICATE_URL     http://ca.nordugrid.org/1f0e8352.0
+SIGNING_POLICY_URL  http://ca.nordugrid.org/1f0e8352.signing_policy
+CRL_URL             http://ca.nordugrid.org/1f0e8352.r0
+CERT_BEGINS         Fri 2006-05-12 02:30:36 UTC
 CERT_EXPIRES        Sat 2007-05-12 02:30:36 UTC
 
-# The certificate files were updated 2006-05-12
+# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded Tue 2006-06-06,
+# re-checked Tue 2007-03-13
 
-# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded Tue 2006-06-06
+# An earlier version of this cadesc file showed URLs at
+# <http://hep.nbi.dk/>.
+
+# The latest IGTF distribution,
+# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# has a newer version of the CA certificate than the one available on
+# the CA's own web site.  I'll update this when the newer version is
+# made available at ca.nordugrid.org.
