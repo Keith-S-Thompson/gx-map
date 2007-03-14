@@ -1,4 +1,4 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.7 2007-03-13 12:41:24-07 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.8 2007-03-13 19:27:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -25,8 +25,7 @@ CERT_EXPIRES        Sat 2013-02-09 12:11:44 UTC
 # but the fingerprints have changed.
 
 # Much of the information here has been verified against
-# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# (URL to be updated when the 1.13 tarball is finalized.)
+# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
 
 # The MD5 and SHA1 fingerprints from afe55e66.0, downloaded Tue 2007-03-13.
 # They've also been verified against the afe55e66.0 file included
