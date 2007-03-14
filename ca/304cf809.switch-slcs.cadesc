@@ -1,4 +1,4 @@
-# $Id: 304cf809.switch-slcs.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 304cf809.switch-slcs.cadesc,v 1.3 2007-03-13 19:27:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/304cf809.switch-slcs.cadesc,v $
 
 CA_NAME             SWITCHscls CA
@@ -22,8 +22,7 @@ CERT_EXPIRES        Thu 2012-02-09 16:00:00 UTC
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 304cf809.signing_policy, extracted from
-# <https://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# (URL to be updated when the 1.13 tarball is finalized.)
-# The MD5 and SHA1 fingerprints have also been verified against 304cf809.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against 304cf809.info.
+# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# The MD5 and SHA1 fingerprints have also been verified against 304cf809.0,
+# and the SHA1 fingerprint has been verified
+# against 304cf809.info, both in the IGTF tarball.
