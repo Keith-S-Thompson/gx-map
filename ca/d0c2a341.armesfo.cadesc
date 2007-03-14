@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.15 2007-03-12 17:52:41-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.16 2007-03-13 19:27:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -23,9 +23,8 @@ CERT_EXPIRES        Mon 2008-12-01 23:29:21 UTC
 # Re-verified Tue 2006-09-26
 # Checked against https://www.tacar.org/md5.html Tue 2006-09-26
 
-# The IGTF 1.12 distribution has an older version of this certificate;
-# I've reported the error.
+# The IGTF 1.12 distribution had an older version of this certificate;
+# it was corrected in the 1.13 distribution.
 
-# Verified against 
-# <http://dist.eugridpma.info/distribution/tests/PMA-PRIVATE-PREVIEW/1.13-MAR07-01/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# (URL to be updated when the 1.13 tarball is finalized.)
+# Fingerprints verified against 
+# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
