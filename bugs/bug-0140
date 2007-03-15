@@ -1,0 +1,19 @@
+# $Id: bug-0140,v 1.1 2007-03-14 19:55:38-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
+
+gx-map bug 0140
+Date: Wed 2007-03-14
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2.020
+Status: Open
+Title: Certificate is installed if CRL has expired
+
+If a CRL has expired, gx-ca-update installs the CA certificate but
+not the CRL.  Since Globus responsds to a missing CRL by accepting
+all certificates, this creates a security hole.
+
+This bug does not occur in the 0.5.3.2 release; in that release,
+neither the CA certificate nor the CRL is installed.
+
+I suspect this bug was introduced in gx-ca-update.in revision 1.136.
