@@ -1,4 +1,4 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.16 2007-03-13 19:27:35-07 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.17 2007-03-14 17:20:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
 CA_NAME             NorduGrid Certification Authority
@@ -7,19 +7,19 @@ CONTACT             ca@nordugrid.org
 HASH                1f0e8352
 SUBJECT             /O=Grid/O=NorduGrid/CN=NorduGrid Certification Authority
 MAY_SIGN            /O=Grid/O=NorduGrid/*
-CERTIFICATE_MD5     D7:BC:25:FD:A5:C0:73:3B:53:DF:34:56:0C:E6:E3:D4
-CERTIFICATE_SHA1    A4:B2:8E:86:66:76:7C:D8:65:FC:79:9C:0F:BE:66:EC:58:31:4E:F1
+CERTIFICATE_MD5     06:BC:85:52:71:95:8C:3E:BF:42:34:0C:51:5E:F3:A5
+CERTIFICATE_SHA1    AB:BF:6E:46:01:F9:5B:36:22:B8:C2:76:C0:E3:30:3C:B4:6A:12:B5
 CERTIFICATE_URL     http://ca.nordugrid.org/1f0e8352.0
 SIGNING_POLICY_URL  http://ca.nordugrid.org/1f0e8352.signing_policy
 CRL_URL             http://ca.nordugrid.org/1f0e8352.r0
-CERT_BEGINS         Fri 2006-05-12 02:30:36 UTC
-CERT_EXPIRES        Sat 2007-05-12 02:30:36 UTC
+CERT_BEGINS         Fri 2007-03-09 13:07:43 UTC
+CERT_EXPIRES        Fri 2009-05-15 12:00:00 UTC
 
-# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded Tue 2006-06-06,
-# re-checked Tue 2007-03-13
+# MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded Wed 2007-03-14.
 
-# The latest IGTF distribution,
+# The fingerprints have also been checked against the information in
+# the latest IGTF distribution,
 # <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# has a newer version of the CA certificate than the one available on
-# the CA's own web site.  I'll update this when the newer version is
-# made available at ca.nordugrid.org.
+
+# The certificate was updated Tue 2007-03-13; the previous version had the
+# same subject and hash, but different fingerprints and expiration date.
