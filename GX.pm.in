@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.15 2007-03-14 17:57:32-07 kst Exp $
+# $Id: GX.pm.in,v 1.16 2007-03-14 17:57:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -89,7 +89,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.3.2.018';
+    $VERSION = '0.5.3.2.019';
 
     $Debugging = undef; 
     %Config = ( PERL                     => '%PERL%',
