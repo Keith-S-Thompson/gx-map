@@ -1,4 +1,4 @@
-# $Id: bug-0139,v 1.1 2007-03-14 17:48:22-07 kst Exp $
+# $Id: bug-0139,v 1.2 2007-03-14 17:56:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0139,v $
 
 gx-map bug 0139
@@ -24,3 +24,7 @@ beginning with a ':' rather than a '#' character, and ignoring it
 is actually harmless.  However, it could also cause errors in other
 *.cadesc files to be ignored, as well as errors in a user request
 file or in a DB request file.
+
+Fixed:
+GX.pm.in 1.15
+gx-map release 0.5.4.2.019
