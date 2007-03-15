@@ -1,4 +1,4 @@
-# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.20 2007-03-12 17:52:40-07 kst Exp $
+# $Id: 9d8753eb.doe-sg-old.cadesc,v 1.21 2007-03-14 21:55:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/9d8753eb.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -15,12 +15,11 @@ CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/9d8753eb.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.doegrids.org/Docs/crls/doesgcrl.crl
 CRL_FORM            DER
-CERT_BEGINS         ?
+CERT_BEGINS         Fri 2001-12-21 23:48:37 UTC
 CERT_EXPIRES        Sat 2004-01-10 23:48:37 UTC
 DISABLE             yes
 
 # The certificate expired 2004-01-10.
-# An expired DER-format CRL is available at
-# <http://www.doegrids.org/Docs/crls/doesgcrl.crl>.
 
 # MD5 and SHA1 fingerprints from 9d8753eb.0 downloaded 2005-03-29
+# The certificate is no longer available.
