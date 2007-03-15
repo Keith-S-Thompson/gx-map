@@ -1,9 +1,9 @@
-# $Id: bug-0132,v 1.1 2007-02-07 18:47:09-08 kst Exp $
+# $Id: bug-0132,v 1.2 2007-03-14 19:57:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0132,v $
 
 gx-map bug 0132
 Date: Wed 2007-02-07
-Severity: Med
+Severity: Medium
 Reported by: Abe Singer <abe@sdsc.edu>
 Version: 0.5.3.2
 Status: Open
