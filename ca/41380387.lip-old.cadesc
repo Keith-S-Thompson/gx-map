@@ -1,0 +1,18 @@
+# $Id: 41380387.lip-old.cadesc,v 1.1 2007-03-14 22:00:32-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/41380387.lip-old.cadesc,v $
+
+CA_NAME             LIP Certification Authority
+HOMEPAGE            http://www.lip.pt/ca/
+CONTACT             ca@lip.pt
+HASH                41380387
+SUBJECT             /C=PT/O=LIP/OU=LISCC/CN=LIP Certification Authority
+MAY_SIGN            /C=PT/O=LIP/*
+CERTIFICATE_MD5     A2:C3:F0:09:2D:61:43:BF:2F:F0:89:F7:3C:45:DE:BB
+CERTIFICATE_SHA1    16:F7:4B:34:BD:86:B9:A3:DE:B1:BA:FF:CC:B6:51:D5:8F:79:0D:57
+CERTIFICATE_URL     http://www.lip.pt/ca/41380387.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.lip.pt/ca/lip-crl.pem
+CERT_BEGINS         Fri 2002-03-22 20:15:40 UTC
+CERT_EXPIRES        Wed 2007-03-21 20:15:40 UTC
+
+# MD5 and SHA1 fingerprints from 41380387.0 downloaded 2005-03-29
