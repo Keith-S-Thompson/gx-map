@@ -1,4 +1,4 @@
-# $Id: 7c0f6d74.switch-personal.cadesc,v 1.7 2007-03-14 18:35:21-07 kst Exp $
+# $Id: 7c0f6d74.switch-personal.cadesc,v 1.8 2007-03-14 22:09:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7c0f6d74.switch-personal.cadesc,v $
 
 CA_NAME             SWITCH Personal
@@ -38,6 +38,7 @@ CRL_URL             http://swisssign.net/cgi-bin/authority/crl/97C65D55159F2F5A2
 CRL_FORM            DER
 CERT_BEGINS         Fri 2005-02-11 05:00:14 UTC
 CERT_EXPIRES        Thu 2007-03-15 05:00:14 UTC
+DISABLE             yes
 
 # MD5 and SHA1 fingerprints from 7c0f6d74.0 downloaded Tue 2007-01-30
 
