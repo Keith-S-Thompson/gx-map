@@ -1,4 +1,4 @@
-# $Id: bug-0080,v 1.3 2006-06-30 16:51:22-07 kst Exp $
+# $Id: bug-0080,v 1.4 2007-03-14 17:56:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0080,v $
 
 gx-map bug 0080
@@ -12,7 +12,7 @@ Title: gx-gen-mapfile chokes on incomplete requests.log
 Summary:
 The gx-check-requests command appends information to the requests.log
 file.  The intent is that, if gx-gen-mapfile reads requests.log as
-it's being written, and sees an incomplete final record, the lat
+it's being written, and sees an incomplete final record, the last
 record will be silently ignored.
 
 It turns out that if the incomplete final records ends in an incomplete
@@ -30,7 +30,7 @@ gx-gen-mapfile.in 1.81.)
 
 The line in requests.log was:
         requested_by_name  globus
-Probably on the field name was there when gx-gen-mapfile tried to
+Probably only the field name was there when gx-gen-mapfile tried to
 read it.  The problem went away when I re-ran gx-gen-mapfile.
 
 Proposed solution:
@@ -45,3 +45,5 @@ variable.
 Fixed:
 Gridmap_Utils.pm.in 1.167
 gx-map release 0.5.0e6
+
+But see also bug-0139.
