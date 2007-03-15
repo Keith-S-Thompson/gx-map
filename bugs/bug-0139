@@ -1,0 +1,26 @@
+# $Id: bug-0139,v 1.1 2007-03-14 17:48:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0139,v $
+
+gx-map bug 0139
+Date: Wed 2007-03-14
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Syntax errors in *.cadesc files not detected.
+
+The fix for bug-0080, a problem reading an incomplete requests.log
+file, was to ignore any syntax errors resulting from a log file that
+is currently being written; a trailing incomplete record is ignored.
+
+The fix should apply only to multi-record files; a syntax error in
+a file being read with "Read_Records '-single' ..." should be reported.
+
+This showed up as a failure to detect a syntax error that appears
+in revisions 1.5 and 1.6 of "7c0f6d74.switch-personal.cadesc".
+That file was not included in the 0.5.3.2 release (since the CRL is in
+DER format), so it didn't affect anything.  The error was a comment
+beginning with a ':' rather than a '#' character, and ignoring it
+is actually harmless.  However, it could also cause errors in other
+*.cadesc files to be ignored, as well as errors in a user request
+file or in a DB request file.
