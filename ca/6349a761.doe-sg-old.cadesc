@@ -1,4 +1,4 @@
-# $Id: 6349a761.doe-sg-old.cadesc,v 1.14 2007-03-12 17:52:39-07 kst Exp $
+# $Id: 6349a761.doe-sg-old.cadesc,v 1.15 2007-03-14 21:55:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6349a761.doe-sg-old.cadesc,v $
 
 CA_NAME             DOE SG Root CA (old)
@@ -13,12 +13,11 @@ CERTIFICATE_SHA1    80:97:6E:4E:75:39:5E:6E:B5:89:55:98:C2:F4:00:70:9C:37:B9:C1
 CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/6349a761.0
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.doegrids.org/OldDOEScienceGridRootCA/CRL/6349a761.r0
-CERT_BEGINS         ?
+CERT_BEGINS         Wed 2000-03-01 08:00:00 UTC
 CERT_EXPIRES        Tue 2010-01-26 08:00:00 UTC
 DISABLE             yes
 
-# 
-# Superseded by DOEGrids CA
-#
+# Superseded by DOEGrids CA; see 1c3f2ca8.doegrids.cadesc
 
 # MD5 and SHA1 fingerprints from 6349a761.0 downloaded 2005-03-29
+# As of Wed 2007-03-14, the files appear to be unavailable at the site.
