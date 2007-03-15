@@ -1,0 +1,25 @@
+# $Id: 9d8753eb.doe-sg-pki1-old.cadesc,v 1.1 2007-03-14 21:56:11-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/9d8753eb.doe-sg-pki1-old.cadesc,v $
+
+CA_NAME             DOE SG Root CA (old)
+HOMEPAGE            http://www.doegrids.org/OldDOEScienceGridRootCA/
+CONTACT             ?
+HASH                9d8753eb
+SIGNED_BY           /O=DOE Science Grid/OU=Certificate Authorities/CN=Certificate Manager
+SUBJECT             /DC=net/DC=es/OU=Certificate Authorities/OU=DOE Science Grid/CN=pki1
+MAY_SIGN            /O=doesciencegrid.org/*
+MAY_SIGN            /DC=org/DC=doesciencegrid/*
+CERTIFICATE_MD5     84:6B:77:F8:CF:1B:EB:75:BF:C7:32:2C:FA:BB:4C:B1
+CERTIFICATE_SHA1    3D:33:6F:05:53:A0:B9:C1:BC:8E:4C:59:D4:16:F1:33:8E:56:F6:A4
+CERTIFICATE_URL     http://www.doegrids.org/OldDOEScienceGridRootCA/9d8753eb.0
+SIGNING_POLICY_URL  ?
+CRL_URL             http://www.doegrids.org/Docs/crls/doesgcrl.crl
+CRL_FORM            DER
+CERT_BEGINS         Fri 2001-12-21 23:48:37 UTC
+CERT_EXPIRES        Sat 2004-01-10 23:48:37 UTC
+DISABLE             yes
+
+# The certificate expired 2004-01-10.
+
+# MD5 and SHA1 fingerprints from 9d8753eb.0 downloaded 2005-03-29
+# The certificate is no longer available.
