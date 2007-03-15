@@ -1,4 +1,5 @@
-# $Id: f8b4299c.switch-server.cadesc,v 1.4 2007-03-12 17:52:42-07 kst Exp $
+DISABLE             yes
+# $Id: f8b4299c.switch-server.cadesc,v 1.5 2007-03-14 22:09:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f8b4299c.switch-server.cadesc,v $
 
 CA_NAME             SWITCH Server CA
@@ -38,6 +39,7 @@ CRL_URL             http://swisssign.net/cgi-bin/authority/crl/C325DFE50EC6CC6DD
 CRL_FORM            DER
 CERT_BEGINS         Fri 2005-02-11 05:00:29 UTC
 CERT_EXPIRES        Thu 2007-03-15 05:00:29 UTC
+DISABLE             yes
 
 # MD5 and SHA1 fingerprints from f8b4299c.0, downloaded Fri 2007-01-26
 
