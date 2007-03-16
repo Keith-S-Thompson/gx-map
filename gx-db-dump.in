@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-dump.in,v 1.9 2007-02-08 17:33:00-08 kst Exp $
+# $Id: gx-db-dump.in,v 1.10 2007-03-15 18:36:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-dump.in,v $
 
 ########################################################################
@@ -57,10 +57,8 @@ use Getopt::Long ();
 use DBI;
 
 my $Install_Dir;
-BEGIN {
-    $Install_Dir = '%INSTALL_DIR%';
-    push @INC, "$Install_Dir/lib";
-}
+BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
+use lib "$Install_Dir/lib";
 use GX ();
 
 sub Usage(@);
