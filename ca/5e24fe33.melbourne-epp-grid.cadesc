@@ -1,4 +1,4 @@
-# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.6 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.7 2007-03-15 18:28:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e24fe33.melbourne-epp-grid.cadesc,v $
 
 CA_NAME             Melbourne EPP Grid CA
@@ -13,7 +13,7 @@ CERTIFICATE_SHA1    81:BF:37:0F:D9:4F:00:F9:1F:F6:11:98:F4:4D:4E:3B:0B:9D:65:43
 CERTIFICATE_URL     https://epp-ca.ph.unimelb.edu.au/Belle/5e24fe33.0
 SIGNING_POLICY_URL  https://epp-ca.ph.unimelb.edu.au/Belle/5e24fe33.signing_policy
 CRL_URL             https://epp-ca.ph.unimelb.edu.au/pub/crl/cacrl.pem
-CERT_BEGINS         ?
+CERT_BEGINS         Tue 2003-03-18 06:24:28 UTC
 CERT_EXPIRES        Sun 2008-03-16 06:24:28 UTC
 
 # MD5 and SHA1 fingerprints from 5e24fe33.0 downloaded 2005-03-29
