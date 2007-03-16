@@ -1,4 +1,4 @@
-# $Id: 47183fda.kisti-root.cadesc,v 1.11 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 47183fda.kisti-root.cadesc,v 1.12 2007-03-15 18:28:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
 
 CA_NAME             KISTI Grid Root CA
@@ -12,7 +12,7 @@ CERTIFICATE_SHA1    70:F3:BB:F0:1D:B8:50:7E:3A:6F:D8:DD:13:85:60:D4:EA:52:50:FD
 CERTIFICATE_URL     https://ca.gridcenter.or.kr/certificates/47183fda.0
 SIGNING_POLICY_URL  https://ca.gridcenter.or.kr/certificates/47183fda.signing_policy
 CRL_URL             https://ca.gridcenter.or.kr/CRL/47183fda.crl
-CERT_BEGINS         ?
+CERT_BEGINS         Tue 2004-06-01 02:25:41 UTC
 CERT_EXPIRES        Sun 2009-05-31 02:25:41 UTC
 
 # MD5 and SHA1 fingerprints from 47183fda.0 downloaded 2005-03-29
