@@ -1,4 +1,4 @@
-# $Id: 82da68f0.kisti.cadesc,v 1.6 2007-03-12 17:52:39-07 kst Exp $
+# $Id: 82da68f0.kisti.cadesc,v 1.7 2007-03-15 18:28:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/82da68f0.kisti.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA (expired)
@@ -13,7 +13,7 @@ CERTIFICATE_SHA1    44:D6:2C:8E:6D:50:72:EC:58:7F:60:3B:A1:74:03:A2:F3:1A:80:A4
 CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/82da68f0.0
 SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/82da68f0.signing_policy
 CRL_URL             ?
-CERT_BEGINS         ?
+CERT_BEGINS         Wed 2002-03-27 11:52:16 UTC
 CERT_EXPIRES        Thu 2003-03-27 11:52:16 UTC
 DISABLE             yes
 
