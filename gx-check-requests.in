@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.101.2.1 2007-03-02 01:27:38-08 kst Exp $
+# $Id: gx-check-requests.in,v 1.108 2007-03-15 18:36:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -57,11 +57,9 @@ use Getopt::Long ();
 use Fcntl (qw(O_RDONLY O_NONBLOCK));
 
 my $Install_Dir;
-BEGIN {
-    $Install_Dir = '%INSTALL_DIR%';
-    unshift @INC, "$Install_Dir/lib";
-}
-use Gridmap_Utils ();
+BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
+use lib "$Install_Dir/lib";
+use GX ();
 
 sub Usage(@);
 sub Get_Request_Info($);
@@ -74,7 +72,7 @@ my $Program_Name = File::Basename::basename $0;
 
 my $Now = time;
 
-my $Hostname = Gridmap_Utils::Get_Hostname;
+my $Hostname = GX::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/gx-map-data";
 
 my $User_Opt = { propagate => 1 };
@@ -92,11 +90,11 @@ Usage if $User_Opt->{help};
 Usage if @ARGV;
 
 if ($User_Opt->{version}) {
-    print "$Program_Name (gx-map) $Gridmap_Utils::VERSION\n";
+    print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
 
-Gridmap_Utils::Check_Data_Dir;
+GX::Check_Data_Dir;
 
 #
 # All admin accounts must exist on the current system.
@@ -107,18 +105,18 @@ Check_Admin_Accounts;
 #
 # This program may only be executed by the GX_MAP_OWNER.
 #
-Gridmap_Utils::Require_Owner $Program_Name;
+GX::Require_Owner $Program_Name;
 
-$Gridmap_Utils::Debugging = 1 if $User_Opt->{debugging};
+$GX::Debugging = 1 if $User_Opt->{debugging};
 
-Gridmap_Utils::Install_Die_Handler;
-Gridmap_Utils::Install_Warn_Handler;
+GX::Install_Die_Handler;
+GX::Install_Warn_Handler;
 
 # my $Data_Dir = defined $User_Opt->{directory}
 #                      ? $User_Opt->{directory}
 #                      : $Default_Data_Dir;
 my $Data_Dir = $Default_Data_Dir;
-Gridmap_Utils::Untaint $Data_Dir;
+GX::Untaint $Data_Dir;
 if ($Data_Dir !~ /^\//) {
     die "Data directory $Data_Dir is not an absolute pathname\n";
 }
@@ -128,7 +126,7 @@ my $new_request_dir  = "$Data_Dir/new-requests";
 my $good_request_dir = "$Data_Dir/good-requests";
 my $bad_request_dir  = "$Data_Dir/bad-requests";
 
-my $dir_error = Gridmap_Utils::Dir_Error $new_request_dir;
+my $dir_error = GX::Dir_Error $new_request_dir;
 die "$dir_error\n" if defined $dir_error;
 die "No directory $new_request_dir\n" if not -d $new_request_dir;
 if (not -d $good_request_dir) {
@@ -138,13 +136,13 @@ if (not -d $bad_request_dir) {
     mkdir $bad_request_dir, 0700 or die "mkdir $bad_request_dir: $!\n";
 }
 
-Gridmap_Utils::Get_Lock $Program_Name;
+GX::Get_Lock $Program_Name;
 
 my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
                    qw( dn username email comment
-                       user_uid source ) );
+                       user_uid source signature ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
@@ -155,7 +153,7 @@ my @files = sort readdir $Dir;
 closedir $Dir;
 
 foreach my $file (@files) {
-    Gridmap_Utils::Untaint $file;
+    GX::Untaint $file;
 }
 
 my @good_requests = ();
@@ -176,7 +174,7 @@ foreach my $file (@files) {
         # the future, we'll treat it as an error (Get_Request_Info will
         # see the invalid name).
         #
-        my $mtime = Gridmap_Utils::Get_mtime $file;
+        my $mtime = GX::Get_mtime $file;
         #
         # If stat fails, ignore the file.  (Most likely we saw the
         # file when gx-request created it, and the stat failed because
@@ -201,11 +199,11 @@ if (not @good_requests and not @bad_requests) {
     #
     # No requests seen.  Bail out.
     #
-    Gridmap_Utils::Release_Lock $Program_Name;
+    GX::Release_Lock $Program_Name;
     exit;
 }
 
-$ENV{PATH} = $Gridmap_Utils::Config{PATH};
+$ENV{PATH} = $GX::Config{PATH};
 
 #
 # We need to invoke gx-propagate *before* appending the good requests
@@ -242,9 +240,9 @@ if (-x $propagate) {
         }
         my $owner_is_admin =
             ( defined $request->{OWNER_NAME} and
-              Gridmap_Utils::Is_Admin_Account $request->{OWNER_NAME} );
+              GX::Is_Admin_Account $request->{OWNER_NAME} );
         if (not $owner_is_admin and defined $request->{username}) {
-            my $user_pw = Gridmap_Utils::Get_PW_Name $request->{username};
+            my $user_pw = GX::Get_PW_Name $request->{username};
             if (not defined $user_pw) {
                 $request->{PROPAGATION}
                     = "failed: $request->{username} " .
@@ -253,7 +251,7 @@ if (-x $propagate) {
                 next REQUEST;
             }
             my $requested_by_pw
-                = Gridmap_Utils::Get_PW_Name $request->{requested_by_name};
+                = GX::Get_PW_Name $request->{requested_by_name};
             if (not defined $requested_by_pw) {
                 $request->{PROPAGATION}
                     = "failed: $request->{requested_by_name} " .
@@ -302,7 +300,7 @@ if (-x $propagate) {
     }
     if (@propagation_failures) {
         my $count = scalar @propagation_failures;
-        my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+        my $recipient = $GX::Config{ADMIN_EMAIL};
         my $subject = ($count == 1 ? "gx-propagate: 1 failure"
                                    : "gx-propagate: $count failures");
         my $body = "$propagate\n" .
@@ -325,10 +323,10 @@ if (-x $propagate) {
             $body .= "\n";
         }
 
-        $body .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) " .
+        $body .= "\n$Program_Name (gx-map $GX::VERSION) " .
                  "on $Hostname\n";
 
-        Gridmap_Utils::Send_Email $Program_Name, $recipient, $subject, $body;
+        GX::Send_Email $Program_Name, $recipient, $subject, $body;
     }
 }
 
@@ -341,8 +339,8 @@ Append_To_Log $errors_log,   @bad_requests;
 Append_To_Log $requests_log, @good_requests;
 
 if (defined $User_Opt->{copy}) {
-    Gridmap_Utils::Untaint $User_Opt->{copy};
-    Gridmap_Utils::Untaint $requests_log;
+    GX::Untaint $User_Opt->{copy};
+    GX::Untaint $requests_log;
     my $target_file = $User_Opt->{copy};
     my $tmp_file = $User_Opt->{copy} . ".new";
 
@@ -376,7 +374,7 @@ if (@rename_errors) {
 #
 if (@bad_request_files) {
     my $count = scalar @bad_request_files;
-    my $recipient = $Gridmap_Utils::Config{ADMIN_EMAIL};
+    my $recipient = $GX::Config{ADMIN_EMAIL};
     my $subject = ($count == 1 ? "$Program_Name: bad request"
                                : "$Program_Name: $count bad requests");
     my $body = "$Program_Name detected ";
@@ -406,13 +404,12 @@ if (@bad_request_files) {
         }
     }
 
-    $body
-        .= "\n$Program_Name (gx-map $Gridmap_Utils::VERSION) on $Hostname\n";
+    $body .= "\n$Program_Name (gx-map $GX::VERSION) on $Hostname\n";
 
-    Gridmap_Utils::Send_Email $Program_Name, $recipient, $subject, $body;
+    GX::Send_Email $Program_Name, $recipient, $subject, $body;
 }
 
-Gridmap_Utils::Release_Lock $Program_Name;
+GX::Release_Lock $Program_Name;
 
 ########################################################################
 
@@ -426,8 +423,7 @@ Gridmap_Utils::Release_Lock $Program_Name;
 sub Get_Request_Info($) {
     my($filename) = @_;
     my $request_file = File::Basename::basename $filename;
-    my $processed = Gridmap_Utils::Long_Time_Image
-                        Gridmap_Utils::Get_Time_Of_Day;
+    my $processed = GX::Long_Time_Image GX::Get_Time_Of_Day;
     my $FILEHANDLE;
     my $result;
 
@@ -448,8 +444,8 @@ sub Get_Request_Info($) {
     #
     sysopen $FILEHANDLE, $filename, O_RDONLY|O_NONBLOCK
         or push @errors, "sysopen $filename: $!";
-    my $stat  = Gridmap_Utils::Stat $FILEHANDLE;
-    my $lstat = Gridmap_Utils::Stat '-l', $filename;
+    my $stat  = GX::Stat $FILEHANDLE;
+    my $lstat = GX::Stat '-l', $filename;
     my $stat_dev_ino  = "$stat->{dev}/$stat->{ino}";
     my $lstat_dev_ino = "$lstat->{dev}/$lstat->{ino}";
 
@@ -490,7 +486,7 @@ sub Get_Request_Info($) {
     }
 
     eval {
-        $result = Gridmap_Utils::Read_Records
+        $result = GX::Read_Records
                       '-single', "-filename=$request_file", $FILEHANDLE;
     };
     close $FILEHANDLE;
@@ -588,7 +584,7 @@ sub Get_Request_Info($) {
     # The username must be legal.
     #
     if (defined $result->{username} and
-        not Gridmap_Utils::Is_Legal_Username $result->{username})
+        not GX::Is_Legal_Username $result->{username})
     {
         push @{$result->{ERRORS}}, 'Illegal username';
     }
@@ -597,13 +593,13 @@ sub Get_Request_Info($) {
     # character; the string between the quotation marks must be valid.
     #
     if (defined $result->{dn}) {
-        my $dn_error = Gridmap_Utils::DN_Error '-quoted', $result->{dn};
+        my $dn_error = GX::DN_Error '-quoted', $result->{dn};
         if (defined $dn_error) {
             push @{$result->{ERRORS}}, $dn_error;
         }
     }
 
-    my $new_timestamp = Gridmap_Utils::Timestamp_Of $result->{timestamp};
+    my $new_timestamp = GX::Timestamp_Of $result->{timestamp};
     if (defined $new_timestamp) {
         $result->{timestamp} = $new_timestamp;
 
@@ -631,7 +627,7 @@ sub Get_Request_Info($) {
         die "stat failed: $!\n";
     }
     $result->{OWNER_UID} = $stat[4];
-    my $OWNER_pw = Gridmap_Utils::Get_PW_UID $result->{OWNER_UID};
+    my $OWNER_pw = GX::Get_PW_UID $result->{OWNER_UID};
     if (defined $OWNER_pw and defined $OWNER_pw->{name}) {
         $result->{OWNER_NAME} = $OWNER_pw->{name};
     }
@@ -640,9 +636,9 @@ sub Get_Request_Info($) {
     my $requested_by_pw;
 
     if (defined $result->{username}) {
-        $user_pw = Gridmap_Utils::Get_PW_Name $result->{username};
+        $user_pw = GX::Get_PW_Name $result->{username};
     }
-    $requested_by_pw = Gridmap_Utils::Get_PW_UID $result->{requested_by_uid};
+    $requested_by_pw = GX::Get_PW_UID $result->{requested_by_uid};
 
     #
     # Check that username matches user_uid (if the account exists).
@@ -683,7 +679,7 @@ sub Get_Request_Info($) {
             push @{$result->{ERRORS}}, "Cannot map to root";
         }
         else {
-            my $pw = Gridmap_Utils::Get_PW_Name $result->{username};
+            my $pw = GX::Get_PW_Name $result->{username};
             if (defined $pw and $pw->{uid} == 0) {
                 push @{$result->{ERRORS}}, "Cannot map to UID 0";
             }
@@ -692,7 +688,7 @@ sub Get_Request_Info($) {
 
     my $owner_is_admin =
         ( defined $result->{OWNER_NAME} and
-          Gridmap_Utils::Is_Admin_Account $result->{OWNER_NAME} );
+          GX::Is_Admin_Account $result->{OWNER_NAME} );
 
     if (not $owner_is_admin) {
         if ($OP eq 'remove-dn') {
@@ -729,7 +725,31 @@ sub Get_Request_Info($) {
         $result->{SOURCE} = ( $owner_is_admin ? 'admin' : 'user' );
     }
 
-    $result->{NAMESPACE} = $Gridmap_Utils::Config{NAMESPACE};
+    $result->{NAMESPACE} = $GX::Config{NAMESPACE};
+
+    if ($result->{SOURCE} eq 'user' and
+        $result->{operation} eq 'add' and
+        defined $GX::Config{REQUIRE_SIGNATURES} and
+        $GX::Config{REQUIRE_SIGNATURES} eq 'yes')
+    {
+        #
+        # Check signature (preliminary)
+        #
+        if (defined $result->{signature}) {
+            if ($result->{signature} ne 'verified') {
+                push @{$result->{ERRORS}},
+                     "Signature is not verified";
+            }
+        }
+        else {
+            if (defined $GX::Config{STRICT_SIGNATURES} and
+                $GX::Config{STRICT_SIGNATURES} eq 'yes')
+            {
+                push @{$result->{ERRORS}},
+                     "missing signature, strict checking requested";
+            }
+        }
+    }
 
     return $result;
 } # Get_Request_Info
@@ -759,14 +779,14 @@ sub Append_To_Log($@) {
     # records to it, then change it back to read-only.
     # Watch out for the permissions on the RCS file (bug-0003).
     #
-    my $readonly = oct $Gridmap_Utils::Config{REQUESTS_LOG_PERMISSIONS};
+    my $readonly = oct $GX::Config{REQUESTS_LOG_PERMISSIONS};
     my $writable = $readonly | 0200;
 
     if (-e $log_file) {
         chmod $writable, $log_file or die "chmod $log_file: $!\n";
     }
 
-    Gridmap_Utils::Write_Records '-multiple', $log_file, @requests;
+    GX::Write_Records '-multiple', $log_file, @requests;
 
     chmod $readonly, $log_file or die "chmod $log_file: $!\n";
 
@@ -775,7 +795,7 @@ sub Append_To_Log($@) {
     # The RCS file is normally kept locked.
     # Unlock it temporarily to check in the file.
     #
-    Gridmap_Utils::Use_Commands 'rcs', 'ci';
+    GX::Use_Commands 'rcs', 'ci';
     system "rcs -l $log_file >/dev/null 2>/dev/null";
     system "ci -u -f $log_file </dev/null >/dev/null 2>/dev/null";
 
@@ -790,13 +810,13 @@ sub Append_To_Log($@) {
 # exist on the current system.  If not, die with an error message.
 #
 sub Check_Admin_Accounts() {
-    my @admins = ( $Gridmap_Utils::Config{GX_MAP_OWNER},
-                   split /\s+/, $Gridmap_Utils::Config{ADDITIONAL_ADMINS} );
+    my @admins = ( $GX::Config{GX_MAP_OWNER},
+                   split /\s+/, $GX::Config{ADDITIONAL_ADMINS} );
     my @missing = ();
     foreach my $admin (@admins) {
         #
         # Since we're just checking whether the account exists, there's
-        # no need to use Gridmap_Utils::Get_PW_Name.
+        # no need to use GX::Get_PW_Name.
         #
         my @pw = getpwnam $admin;
         if (not @pw) {
