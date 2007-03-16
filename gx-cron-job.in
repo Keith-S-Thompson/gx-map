@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-cron-job.in,v 1.20 2007-03-14 17:50:01-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.21 2007-03-15 18:36:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -67,10 +67,8 @@ sub Status_Image($);
 $SIG{__WARN__} = sub { die @_ };
 
 my $Install_Dir;
-BEGIN {
-    $Install_Dir = '%INSTALL_DIR%';
-    unshift @INC, "$Install_Dir/lib";
-}
+BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
+use lib "$Install_Dir/lib";
 use GX ();
 
 my $Default_Config_File = "$Install_Dir/etc/gx-map/gx-cron-job.conf";
