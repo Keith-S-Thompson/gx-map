@@ -1,5 +1,4 @@
-DISABLE             yes
-# $Id: f8b4299c.switch-server.cadesc,v 1.5 2007-03-14 22:09:57-07 kst Exp $
+# $Id: f8b4299c.switch-server.cadesc,v 1.6 2007-03-15 19:20:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f8b4299c.switch-server.cadesc,v $
 
 CA_NAME             SWITCH Server CA
