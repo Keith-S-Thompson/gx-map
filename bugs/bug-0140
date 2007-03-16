@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.1 2007-03-14 19:55:38-07 kst Exp $
+# $Id: bug-0140,v 1.2 2007-03-15 19:47:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -17,3 +17,20 @@ This bug does not occur in the 0.5.3.2 release; in that release,
 neither the CA certificate nor the CRL is installed.
 
 I suspect this bug was introduced in gx-ca-update.in revision 1.136.
+
+...
+
+I've been unable to reproduce the exact bug I saw before.  A couple
+of things I have found:
+
+    If a certificate is newly installed and the CRL is then found
+    to have expired, the temporary copy of the certificate is left
+    in place.  This should be mostly harmless, but it's definitely
+    a bug, caused by use of "delete" rather than "unlink" in
+    Finalize_Certificate (actually it should do both).
+
+    If a certificate already exists, and a CRL is found to have
+    expired, the CRL is not installed but the certificate is left in
+    place.  If an older version of the CRL already exists, that's ok.
+    If there is no CRL, that's a problem.  We probably want to just
+    go ahead and install expired CRLs.
