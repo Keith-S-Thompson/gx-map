@@ -1,4 +1,4 @@
-# $Id: 85ca9edc.psc-kerberos-old.cadesc,v 1.3 2007-03-12 17:52:39-07 kst Exp $
+# $Id: 85ca9edc.psc-kerberos-old.cadesc,v 1.4 2007-03-15 18:28:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/85ca9edc.psc-kerberos-old.cadesc,v $
 
 CA_NAME             PSC Kerberos Certification Authority (old)
@@ -12,7 +12,7 @@ CERTIFICATE_MD5     39:7B:15:4D:4D:DB:53:15:D8:63:06:FB:FC:EE:A5:F5
 CERTIFICATE_SHA1    1E:A5:E6:24:3F:D3:AE:79:D2:85:6D:18:B4:AA:F2:9C:CB:FC:32:FD
 CERTIFICATE_URL     http://ocsp.psc.edu:8000/ca/85ca9edc.0
 SIGNING_POLICY_URL  http://ocsp.psc.edu:8000/ca/85ca9edc.signing_policy
-CERT_BEGINS         ?
+CERT_BEGINS         Wed 2003-10-01 16:31:07 UTC
 CERT_EXPIRES        Sun 2006-08-20 04:00:00 UTC
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
