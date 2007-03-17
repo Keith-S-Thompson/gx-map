@@ -1,4 +1,4 @@
-# $Id: 225860ae.edg-worthless.cadesc,v 1.6 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 225860ae.edg-worthless.cadesc,v 1.7 2007-03-16 20:55:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/225860ae.edg-worthless.cadesc,v $
 
 CA_NAME             EDG Tutorial Worthless Certification Authority
@@ -12,16 +12,17 @@ CERTIFICATE_MD5     65:25:2C:D6:4E:0C:D3:AF:FB:EF:A2:2F:09:1D:23:6B
 CERTIFICATE_SHA1    22:CB:AD:D8:18:B8:9E:F0:91:54:18:1C:38:26:75:F2:9E:5E:1B:13
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.signing_policy
-CRL_URL             ?
+CRL_URL             http://certificate.nikhef.nl/cgi-bin/tutorca-list?command=crl
 CERT_BEGINS         Thu 2002-09-12 13:49:44 UTC
 CERT_EXPIRES        Wed 2007-09-12 13:49:44 UTC
 DISABLE             yes
 
-# <http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/225860ae.crl_url>
-# points to 
-# <http://certificate.nikhef.nl/cgi-bin/tutorca-list?command=crl>
-# I'm currently unable to access that site.
-
 # As the name implies, this CA should be enabled only at your own risk.
+# It's also marked "status = worthless" in the IGTF 1.13 release;
+# see <http://dist.eugridpma.info/distribution/igtf/1.13/>.
 
-# MD5 and SHA1 fingerprints from 225860ae.0 downloaded 2005-03-29
+# As of Fri 2007-03-16, it appears that the CRL_URL points to something
+# that generates a new CRL (with a 30-day lifetime) each time it's called.
+# I suspect the server's clock is about 10 seconds fast, since the CRL's
+# "last update" field is consistently about 10 seconds in the future.
+# I don't think that's much of a problem in practice.
