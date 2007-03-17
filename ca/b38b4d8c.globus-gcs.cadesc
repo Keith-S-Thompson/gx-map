@@ -1,4 +1,4 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.12 2007-03-12 17:52:41-07 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.13 2007-03-16 20:55:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
@@ -17,9 +17,10 @@ CERT_BEGINS         Mon 2003-09-29 17:25:48 UTC
 CERT_EXPIRES        Thu 2013-09-26 17:25:48 UTC
 DISABLE             yes
 
-#
 # The Globus Certificate Service issues low-quality certificates, to be
 # used only for testing purposes.  See the disclaimer.
+# It's also marked "status = worthless" in the IGTF 1.13 release;
+# see <http://dist.eugridpma.info/distribution/igtf/1.13/>.
 #
 # I've marked this CA as disabled by default.  Comment out the "DISABLE"
 # line above if you want to install the files at your own risk.
@@ -27,6 +28,3 @@ DISABLE             yes
 # Questions may be posted to the discuss@globus.org mailing list.
 #
 # There is no CRL.
-#
-
-# MD5 and SHA1 fingerprints from b38b4d8c.0 downloaded 2005-03-29
