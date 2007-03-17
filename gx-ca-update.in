@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.145 2007-03-15 18:36:23-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.146 2007-03-16 18:58:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1284,6 +1284,7 @@ sub Finalize_Certificate($) {
 
     if ($ref->{_FATAL_ERROR}) {
         if (defined $ref->{_TEMP_CERT_FILE}) {
+            unlink $ref->{_TEMP_CERT_FILE};
             delete $ref->{_TEMP_CERT_FILE};
         }
     }
