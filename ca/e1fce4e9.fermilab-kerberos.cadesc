@@ -1,4 +1,4 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.14 2007-03-12 17:52:42-07 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.15 2007-03-16 20:55:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
@@ -19,4 +19,8 @@ CERT_EXPIRES        Wed 2008-10-08 14:51:49 UTC
 
 # A previous certificate for this CA expired Oct 23 20:16:45 2005 GMT
 
-# MD5 and SHA1 fingerprints from e1fce4e9.0 downloaded Mon 2005-12-26
+# MD5 and SHA1 fingerprints from e1fce4e9.0 downloaded Mon 2005-12-26,
+# re-verified Fri 2007-03-16
+
+# This CA is marked "status = experimental" in the IGTF 1.13 release;
+# see <http://dist.eugridpma.info/distribution/igtf/1.13/>.
