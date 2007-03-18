@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.12 2007-02-07 21:39:44-08 kst Exp $
+# $Id: bug-0064,v 1.13 2007-03-18 12:34:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -241,6 +241,35 @@ Wed 2007-02-07
     certificate is in the multifile, it will be ignored; if it's not,
     it will be missing.  Either way, the verification will fail,
     which is exactly what we want.
+
+    Sun 2007-03-18
+        We definitely need to ignore any self-signed certificates in a
+        proxy (so a user can't create and use a bogus CA certificate),
+        but that's not quite adequate.  We should also ignore all CA
+        certificates, self-signed or not.
+
+        Suppose an organization provides a self-signed root CA and two
+        subsidiary CAs, and you want to accept the root and *only one*
+        of the subsidiary CAs.  Then we want to prevent a user from
+        adding a grid-mapfile entry for a certificate issued by the
+        other subsidiary CA.
+
+        To do this, we need to look at the "X509v3 extensions:"
+        of the certificate.  For a CA certificate, it should look
+        something like this:
+
+        X509v3 extensions:
+            X509v3 Basic Constraints: critical
+                CA:TRUE
+
+        (See my cert-extensions command.)
+
+        *However*, there are a few CAs that don't have this extension
+        (and two of them happen to be recognized by TeraGrid), namely:
+
+        2ca73e82 # USC PKI Lite CA (usc-pki-lite-r1)
+        5f54f417 # Grid Canada CA (old) (grid-canada-old)
+        b57985f0 # USC Kerberos Certification Authority v3 (usc-kerberos-v3)
 
 Another possibility is to simplify things (at least for now) by
 accepting only user certificates, not proxies, and allowing only a
