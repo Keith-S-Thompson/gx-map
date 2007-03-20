@@ -1,0 +1,28 @@
+# $Id: 85fdf41d.lacgrid.cadesc,v 1.1 2007-03-19 17:35:36-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/85fdf41d.lacgrid.cadesc,v $
+
+CA_NAME             UFF Latin American and Caribbean Catch-all Grid CA
+HOMEPAGE            https://lacgridca.ic.uff.br/
+CONTACT             lacgridca@ic.uff.br
+HASH                85fdf41d
+SUBJECT             /DC=BR/DC=UFF/DC=IC/O=UFF LACGrid CA/CN=UFF Latin American and Caribbean Catch-all Grid CA
+MAY_SIGN            /DC=BR/DC=UFF/DC=IC/O=UFF LACGrid CA/L=Brazil/O=UFF/OU=IC/*
+CERTIFICATE_MD5     42:50:90:8E:CB:C8:20:9D:9A:4B:33:61:E1:53:9F:7E
+CERTIFICATE_SHA1    69:B1:7A:DD:61:38:CD:56:57:4B:7B:3B:97:D8:1A:72:8F:6A:A1:B8
+CERTIFICATE_URL     https://lacgridca.ic.uff.br/certs/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://lacgridca.ic.uff.br/crl/cacrl.pem
+CERT_BEGINS         Mon 2006-11-27 19:06:30 UTC
+CERT_EXPIRES        Sun 2016-11-27 19:06:30 UTC
+
+# MD5 and SHA1 fingerprints from cacert.pem (85fdf41d.0) downloaded
+# Mon 2007-03-19.
+
+# I have not found a signing_policy file.  The MAY_SIGN
+# attribute is inferred from the existing issued certificates
+# found on the site.  There are  currently only 5 valid
+# certificates, all of them with subject names matching
+# "/DC=BR/DC=UFF/DC=IC/O=UFF LACGrid CA/L=Brazil/O=UFF/OU=IC/CN=*".
+# Cutting this off before "/L=Brazil" is a guess.
+
+# I'll update this when and if I find a valid signing_policy file.
