@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.13 2007-03-18 12:34:23-07 kst Exp $
+# $Id: bug-0064,v 1.14 2007-03-20 03:21:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -270,6 +270,24 @@ Wed 2007-02-07
         2ca73e82 # USC PKI Lite CA (usc-pki-lite-r1)
         5f54f417 # Grid Canada CA (old) (grid-canada-old)
         b57985f0 # USC Kerberos Certification Authority v3 (usc-kerberos-v3)
+
+    Tue 2007-03-20
+        No, just checking the CA:TRUE attribute doesn't help.
+        A malicious user could easily create a proxy with a complete
+        chain, including a self-signed certificate *without*
+        the CA:TRUE attribute.  If gx-check-requests only ignored
+        certificates with CA:TRUE, it would accept such a bogus proxy.
+
+        Instead, just ignore any sef-signed certificate in a proxy.
+        Better, reject any proxy (or user certificate!) that contains
+        a self-signed certificate; a legitimate proxy will never
+        include a self-signed certificate.
+
+        It would also be possible to reject CA:TRUE certificates;
+        this would prevent a determined user from creating a mapping
+        for a certificate signed by an unaccepted CA that's signed
+        by an accepted root CA certificate, but it's probably not
+        worth the effort.  K.I.S.S.
 
 Another possibility is to simplify things (at least for now) by
 accepting only user certificates, not proxies, and allowing only a
