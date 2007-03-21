@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.2 2007-03-15 19:47:16-07 kst Exp $
+# $Id: bug-0140,v 1.3 2007-03-20 18:29:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -34,3 +34,39 @@ of things I have found:
     place.  If an older version of the CRL already exists, that's ok.
     If there is no CRL, that's a problem.  We probably want to just
     go ahead and install expired CRLs.
+
+...
+
+Using gx-ca-update 0.5.3.2.022, and the CNRS-DataGrid CA (6b4ddd18)
+(which currently happens to have an expired CRL):
+
+Installing into an empty directory:
+    Installs temporary certificate (6b4ddd18.0.4120).
+    Downloads CRL, sees that it's expired.
+    Deletes certificate (good!)
+
+Installing into a directory that already has the certificate:
+    Skips certificate
+    Downloads CRL, sees that it's expired.
+    Doesn't install CRL; leaves certificate in place.
+    Bad; it should install the expired CRL, thereby disabling the CA.
+
+Installing into a directory that already has the certificate *and*
+an expired CRL:
+    The existing certificate and CRL are left in place.
+    That's probably ok; the CA remains disabled.
+
+In general, if a CA requires a CRL, and I'm unable to download a
+valid one for any of several reasons:
+    The downloaded CRL has expired.
+    The downloaded CRL is corrupted (signature test fails).
+    The CRL cannot be downloaded.
+then:
+    if a CRL is already installed or cached:
+        Use it.  (If it's expired, so be it.)
+    else if the CA certificate is already installed:
+        Install the expired CRL if possible.
+        Otherwise, we still need to disable the CA;
+        attempt to rename "xxxxxxxx.0" to "xxxxxxxx.0.bak"
+    else
+        Ok.
