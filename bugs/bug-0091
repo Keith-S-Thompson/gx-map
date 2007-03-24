@@ -1,4 +1,4 @@
-# $Id: bug-0091,v 1.2 2006-06-30 16:51:23-07 kst Exp $
+# $Id: bug-0091,v 1.3 2007-03-23 21:42:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0091,v $
 
 gx-map bug 0091
@@ -24,3 +24,16 @@ a serious problem.  Since the second request has its SOURCE set to
 "TGCDB", it will not be propagated again, so there won't be more than
 two occurrences.  The result is a minor inefficiency, not a Sorcerer's
 Apprentice phenomenon.
+
+Fri 2007-03-23
+
+There may be a solution to this.  If gx-propagate is successful,
+update the tgcdb-mappings file (or a separate file?) to reflect the
+new mapping, rather than waiting for the information to come back
+from the TGCDB.
+
+This needs more thought.  There could be timing issues.  For example, I
+update tgcdb-mappings because I passed a mapping to gx-propagate, then
+I get an incoming AMIE packet that doesn't include the new mapping.
+Possibly there needs to be a delay (ugh).  It's not a huge deal;
+don't try to implement this until the kinks are worked out.
