@@ -1,9 +1,9 @@
-# $Id: bug-0141,v 1.1 2007-03-19 17:11:26-07 kst Exp $
+# $Id: bug-0141,v 1.2 2007-03-27 18:59:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0141,v $
 
 gx-map bug 0141
 Date: Mon 2007-03-19
-Severity: med
+Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
 Status: Open
