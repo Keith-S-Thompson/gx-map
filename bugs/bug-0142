@@ -1,0 +1,16 @@
+# $Id: bug-0142,v 1.1 2007-03-27 19:00:37-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0142,v $
+
+gx-map bug 0142
+Date: Tue 2007-03-27
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Clean up cadesc files for expired CAs
+
+When installing cadesc files, move files for expired CAs to an
+"expired" subdirectory (check the CERT_EXPIRES attribute against the
+current date during installation).  This isn't a big deal functionally,
+it just avoids clutter.  It also makes it impossible to install an
+expired CA certificate, which is not a bad thing.
