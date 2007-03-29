@@ -1,0 +1,26 @@
+# $Id: bug-0143,v 1.1 2007-03-29 16:35:49-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0143,v $
+
+gx-map bug 0143
+Date: Thu 2007-03-29
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Consider adding "gx-db-request -remove-user", "-remove-dn"
+
+Consider adding "-remove-user" and "-remove-dn" options to
+gx-db-request.  "-remove-user" would request removal of all mappings
+for the specified user from the tgcdb-mappings file.  "-remove-dn"
+would do likewise for a specified DN.  These could be used in
+processing AMIE packets that specify removal of all mappings for a
+specified user without specifying any DNs, or vice versa.
+
+As with any deletion from the tgcdb-mappings file, this would cause
+individual "gx-request -remove" requests to be submitted for each
+mapping.
+
+According to Michael Shapiro, no such AMIE packets currently exist
+or are expected to be introduced, so this is unlikely to be useful.
+I'm just recording this for future reference, since it would be
+straightforward to implement.
