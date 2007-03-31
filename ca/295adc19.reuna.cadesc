@@ -1,0 +1,28 @@
+# $Id: 295adc19.reuna.cadesc,v 1.1 2007-03-31 14:00:13-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/295adc19.reuna.cadesc,v $
+
+CA_NAME             REUNA CA
+HOMEPAGE            http://reuna-ca.reuna.cl/
+CONTACT             http://reuna-ca.reuna.cl/info.php
+HASH                295adc19
+SUBJECT             /C=CL/O=REUNACA/CN=REUNA Certification Authority
+MAY_SIGN            ?
+CERTIFICATE_MD5     C1:A4:4A:6F:D5:44:DE:89:8C:73:E0:96:F9:E1:B9:72
+CERTIFICATE_SHA1    BA:5D:FA:40:A2:10:F1:F3:12:D5:EA:DB:9C:B0:DA:E1:79:EF:6B:7A
+CERTIFICATE_URL     http://reuna-ca.reuna.cl/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://reuna-ca.reuna.cl/crl/crl.pem
+CERT_BEGINS         Thu 2006-11-23 16:39:39 UTC
+CERT_EXPIRES        Wed 2016-11-30 16:39:39 UTC
+DISABLE             yes
+
+# The CONTACT is a web form, not an e-mail address.
+
+# Fingerprints from cacert.pem (295adc19.0) downloaded Sat 2007-03-31.
+
+# I've been unable to find a signing_policy file.  This CA is marked as
+# disabled until that's resolved.
+
+# There are references on the reuna.cl web site to another CA with
+# hash 4fd3443 and subject "/C=CL/O=UCHILE/OU=DIM/CN=ROOT", but
+# I've been unable to find the certificate.
