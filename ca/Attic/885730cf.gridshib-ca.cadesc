@@ -1,4 +1,4 @@
-# $Id: 885730cf.gridshib-ca.cadesc,v 1.1 2007-04-04 12:30:15-07 kst Exp $
+# $Id: 885730cf.gridshib-ca.cadesc,v 1.2 2007-04-04 14:22:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/885730cf.gridshib-ca.cadesc,v $
 
 CA_NAME             GridShib CA
@@ -9,17 +9,14 @@ SUBJECT             /DC=edu/DC=uiuc/DC=ncsa/DC=gridshib-ca/O=Certificate Authori
 MAY_SIGN            /DC=edu/DC=uiuc/DC=ncsa/DC=gridshib-ca/O=Shibboleth User/*
 CERTIFICATE_MD5     61:D6:77:EF:70:77:41:C3:F9:8D:94:04:EB:BE:94:0E
 CERTIFICATE_SHA1    CB:9C:5D:DA:D8:BB:6B:1E:C1:2B:09:06:C0:96:D0:FC:78:58:A3:48
-CERTIFICATE_URL     ?
-SIGNING_POLICY_URL  ?
+CERTIFICATE_URL     http://gridshib-ca.ncsa.uiuc.edu/885730cf.0
+SIGNING_POLICY_URL  http://gridshib-ca.ncsa.uiuc.edu/885730cf.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Mon 2007-03-26 02:40:58 UTC
 CERT_EXPIRES        Thu 2017-03-23 02:40:58 UTC
-DISABLE             yes
 
-# MD5 and SHA1 fingerprints from 885730cf.0, extracted from
-# <http://gridshib-ca.ncsa.uiuc.edu/gridshib-ca-cert.tar>,
-# downloaded Wed 2007-04-04
+# MD5 and SHA1 fingerprints from 885730cf.0, downloaded Wed 2007-04-04
 
 # There are currently no URLs from which the certificate and
 # signing_policy files can be downloaded directly.
