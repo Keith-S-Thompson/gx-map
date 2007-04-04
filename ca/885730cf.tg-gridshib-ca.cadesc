@@ -1,7 +1,7 @@
-# $Id: 885730cf.tg-gridshib-ca.cadesc,v 1.1 2007-04-04 14:24:16-07 kst Exp $
+# $Id: 885730cf.tg-gridshib-ca.cadesc,v 1.2 2007-04-04 14:24:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/885730cf.tg-gridshib-ca.cadesc,v $
 
-CA_NAME             GridShib CA
+CA_NAME             TeraGrid AAA Testing GridShib-CA
 HOMEPAGE            http://gridshib-ca.ncsa.uiuc.edu/
 CONTACT             Von Welch <vwelch@ncsa.uiuc.edu>
 HASH                885730cf
