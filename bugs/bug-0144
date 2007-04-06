@@ -1,0 +1,49 @@
+# $Id: bug-0144,v 1.1 2007-04-05 18:25:09-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0144,v $
+
+gx-map bug 0144
+Date: Wed 2007-04-04
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Consider supporting deferred propagation
+
+See the e-mail discussion with Michael Shapiro, Wed 2007-04-04.
+
+A new SDSC staff member ran the gx-request command, but the TGCDB
+did not yet know about his account on any SDSC resource, apparently
+because SDSC hadn't responded to the AMIE packet requesting the
+account creation.  But he had had a Unix account for some time
+(obviously, since he was able to run gx-request).
+
+So the gx-propagate command failed, because it was unable to determine
+a resource name for the user (required for the gxmap.add_dn()
+function).  However, gx-map worked properly within SDSC, and his DN
+is in the grid-mapfile on all SDSC systems.
+
+Given the current setup, the solution will be to wait for the account
+information to be added to the TGCDB, then re-submit the mapping
+request via gx-request (either the user or an administrator can
+do this).
+
+If this kind of problem is going to be rare, that's probably good
+enough.  If it's going to be common, though, an automated solution
+would be a good thing.
+
+A vague outline of a possible solution:
+
+gx-propagate attempts to submit a request by invoking gxmap.add_dn()
+or gxmap.remove_dn().  If it succeeds, we're done.  If it fails,
+particularly because it can't determine the resource name (i.e.,
+the user doesn't have an account), and *maybe* for any other reasons
+(say, the DB server is temporarily down), it records the transaction
+somewhere, and it becomes pending.  Periodically, perhaps once a
+day, another process attempts to resubmit any pending transactions.
+In other words, we'd have yet another directory full of request files
+waiting to be processed.
+
+Another possibility is, if a resource name can't be determined,
+to submit the mapping with *each* resource matching the wildcard
+in tgcdb-db-config.  All these additions would be deferred within
+the TGCDB until the account is added.
