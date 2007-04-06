@@ -1,4 +1,4 @@
-# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.2 2007-03-12 17:52:42-07 kst Exp $
+# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.3 2007-04-06 16:22:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f2e89fe3.ncsa-myproxy.cadesc,v $
 
 CA_NAME             NCSA MyProxy CA
@@ -6,7 +6,7 @@ HOMEPAGE            http://security.ncsa.uiuc.edu/CA/
 CONTACT             security@ncsa.uiuc.edu
 HASH                f2e89fe3
 SUBJECT             /C=US/O=National Center for Supercomputing Applications/OU=Certificate Authorities/CN=MyProxy
-MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/*
+MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/CN=*
 CERTIFICATE_MD5     AC:54:CC:F5:92:6F:E6:2A:27:3E:78:D3:25:E2:12:84
 CERTIFICATE_SHA1    89:16:AB:CA:36:B5:39:AE:BC:14:87:8C:F1:66:9F:9A:75:2F:A8:FC
 CERTIFICATE_URL     http://catest.ncsa.uiuc.edu/f2e89fe3.0
@@ -21,3 +21,6 @@ CERT_EXPIRES        Mon 2012-03-05 16:49:51 UTC
 # This CA has not gone into production.  When it does, the files currently
 # served from <http://catest.ncsa.uiuc.edu/> will instead be served
 # from <http://ca.ncsa.uiuc.edu/>.
+
+# As of Thu 2007-04-05, f2e89fe3.signing_policy has been updated
+# (due to IGTF requirements, I think).  I can't tell when it was changed.
