@@ -1,0 +1,210 @@
+#!%PERL%
+
+# $Id: gx-check-cadesc.in,v 1.1 2007-04-06 16:23:56-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/gx-check-cadesc.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2007 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+use strict;
+use warnings;
+
+use File::Basename ();
+use Getopt::Long ();
+
+sub Usage(@);
+sub Debug(@);
+sub Read_cadesc_File($);
+
+#
+# Make warnings fatal.
+#
+$SIG{__WARN__} = sub { die @_ };
+
+my $Install_Dir;
+BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
+use lib "$Install_Dir/lib";
+use GX ();
+
+my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = { };
+my @Opts = ( $User_Opt,
+             qw( help
+                 version
+                 debugging! ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if scalar @ARGV == 0;
+
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $GX::VERSION\n";
+    exit 0;
+}
+
+my @curl_opts = ( '--silent',
+                  '--fail',         # Fail on server errors
+                  '--location',     # Follow "Location:" hints
+                  '--max-time', '30',
+                  '--insecure' );
+
+my $tmpdir = GX::Make_Temp_Dir();
+
+GX::Use_Commands 'curl', 'openssl';
+
+foreach my $arg (@ARGV) {
+    my $desc = Read_cadesc_File $arg;
+    my $cert = {};
+
+    print "Checking $arg\n";
+    if (defined $desc->{CERTIFICATE_URL} and
+        $desc->{CERTIFICATE_URL} ne '?')
+    {
+        my $cert_file = "$tmpdir/$desc->{HASH}.0";
+        system 'curl', @curl_opts,
+                       '--output', $cert_file,
+                       '--url', $desc->{CERTIFICATE_URL};
+        open my $OPENSSL, '-|', 'openssl', 'x509',
+                                '-in', $cert_file,
+                                '-noout',
+                                '-issuer',
+                                '-subject',
+                                '-hash',
+                                '-sha1', '-fingerprint');
+        while (<$OPENSSL>) {
+            chomp;
+            if (/^issuer=\s*(.*)$/i) {
+                $cert->{issuer} = GX::GT4_Subject $1;
+            }
+            elsif (/^subject=\s*(.*)$/i) {
+                $cert->{subject} = GX::GT4_Subject $1;
+            }
+            elsif (/^SHA1 Fingerprint=\s*(.*)$/i) {
+                $cert->{sha1} = $1;
+            }
+            elsif (/^notBefore=\s*(.*)$/i) {
+                $cert->{notbefore} = GX::Time_Value $1;
+            }
+            elsif (/^notAfter=\s*(.*)$/i) {
+                $cert->{notafter} = GX::Time_Value $1;
+            }
+            elsif (/^[0-9a-f]{8}$/) {
+                $cert->{hash} = $_;
+            }
+        }
+        close $OPENSSL;
+
+        if (not defined $desc->{SIGNED_BY} or
+            $desc->{SIGNED_BY} eq 'self')
+        {
+            # certificate should be self-signed
+            if ($cert->{issuer} ne $cert->{subject}) {
+                push @{$cert->{ERRORS}}, "Not self-signed";
+            }
+        }
+        else {
+            if ($cert->{issuer} ne $desc->{SIGNED_BY}) {
+                push @{$cert->{ERRORS}}, "Bad issuer";
+            }
+        }
+
+        if ($cert->{subject} ne $desc->{SUBJECT}) {
+            push @{$cert->{ERRORS}}, "Bad subject";
+        }
+
+        if ($cert->{hash} ne $desc->{HASH}) {
+            push @{$cert->{ERRORS}}, "Bad hash";
+        }
+    }
+    if (defined $cert->{ERRORS}) {
+        my @errors = @{$cert->{ERRORS}};
+        my $prefix = '>>> ';
+        foreach my $error (@errors) {
+            print "$prefix$error\n";
+            $prefix = '    ';
+        }
+    }
+    else {
+        print "ok\n";
+    }
+}
+
+########################################################################
+
+sub Read_cadesc_File($) {
+    my($filename) = @_;
+    my $result = {};
+    open my $FILE, '<', $filename or die "${filename}: $!\n";
+    while (<$FILE>) {
+        chomp;
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        my($var, $value) = (/^(\w+)\s+(.*)$/);
+        $result->{$var} = $value;
+    }
+    return $result;
+} # Read_cadesc_File
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options] file.cadesc ...
+Check one or more cadesc files for correctness
+    -help        Display this message and exit.
+    -version     Display version information and exit.
+    -debugging   Enable debugging messages.
+EOF
+    exit 1;
+} # Usage
