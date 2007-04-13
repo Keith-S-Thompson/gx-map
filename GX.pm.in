@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.22 2007-04-12 18:34:22-07 kst Exp $
+# $Id: GX.pm.in,v 1.23 2007-04-12 18:49:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -919,8 +919,10 @@ sub Long_Time_Image($) {
 # raw Unix timestamp (seconds since the epoch).
 # This currently handles the formats printed by OpenSSL:
 #     "Jan  1 01:23:45 2001 GMT"
-# and by curl:
+# by curl:
 #     "Mon, 01 Jan 2001 01:23:45 GMT"
+# and the format used in *.cadesc files:
+#     "Mon 2001-01-01 01:23:45 UTC"
 #
 # There is some flexibility in the input formats accepted.
 # The emphasis is on properly converting valid strings,
@@ -973,6 +975,24 @@ sub Time_Value($) {
         ($hour, $minute, $second) = ($4, $5, $6);
         $TZ = uc $7;
     }
+
+    #
+    # Check for *.cadesc format
+    #
+    elsif ($timestamp =~
+               /^[a-z][a-z][a-z] \s+    # Don't capture day of week
+                (\d\d\d\d)-(\d\d)-(\d\d) \s+
+                (\d\d):(\d\d):(\d\d) \s+
+                (\w+) $/ix )
+    {
+        $ok = 1;
+        $year = $1;
+        $month = $2 - 1;
+        $mday = $3;
+        ($hour, $minute, $second) = ($4, $5, $6);
+        $TZ = uc $7;
+    }
+
     if ($ok) {
         if ($TZ ne 'GMT' and $TZ ne 'UTC') {
             $ok = 0;
