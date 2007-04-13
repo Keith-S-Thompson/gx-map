@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.20 2007-04-06 16:24:10-07 kst Exp $
+# $Id: GX.pm.in,v 1.21 2007-04-12 17:33:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1978,7 +1978,6 @@ sub Is_URL($) {
 # '-' character.
 #     '-download'
 #         Attempt to download the file.  This is the default.
-#         'cached' or 'failed'.)
 #     '-nodownload'
 #         Do not attempt to download the file.  (status will be either
 #         'cached' or 'failed'.)
