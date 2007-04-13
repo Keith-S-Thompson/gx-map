@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.21 2007-04-12 17:33:16-07 kst Exp $
+# $Id: GX.pm.in,v 1.22 2007-04-12 18:34:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1981,6 +1981,10 @@ sub Is_URL($) {
 #     '-nodownload'
 #         Do not attempt to download the file.  (status will be either
 #         'cached' or 'failed'.)
+#     '-cache_dir=...'
+#         Specify an alternative cache directory.
+#         The default is gx-map-data/cache under the installation
+#         directory.
 # The final argument is a URL (there must be exactly one).
 #
 # Returns a hash reference with one or more of the following fields:
@@ -2034,6 +2038,7 @@ sub Is_URL($) {
 sub Cache_File(@) {
     my $url = undef;
     my $try_download = 1;
+    my $cache_dir = undef;
 
     foreach my $arg (@_) {
         if ($arg eq '-download') {
@@ -2041,6 +2046,9 @@ sub Cache_File(@) {
         }
         elsif ($arg eq '-nodownload') {
             $try_download = 0;
+        }
+        elsif ($arg =~ /^-cache_dir=(.*)$/) {
+            $cache_dir = $1;
         }
         elsif ($arg =~ /^-/) {
             die "GX::Cache_File: Usage error, unrecognized option \"$arg\"\n";
@@ -2058,7 +2066,9 @@ sub Cache_File(@) {
 
     my $is_ftp = $url =~ /^ftp:/;
 
-    my $cache_dir = "$GX::Config{INSTALL_DIR}/gx-map-data/cache";
+    if (not defined $cache_dir) {
+        $cache_dir = "$GX::Config{INSTALL_DIR}/gx-map-data/cache";
+    }
     my $filename = GX::QP_Encode $url;
 
     my $cached_file = "$cache_dir/$filename";
