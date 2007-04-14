@@ -1,10 +1,11 @@
-# $Id: b2cb8d2c.nasa-old.cadesc,v 1.7 2007-03-12 17:52:41-07 kst Exp $
+# $Id: b2cb8d2c.nasa-old.cadesc,v 1.8 2007-04-13 19:20:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b2cb8d2c.nasa-old.cadesc,v $
 
 CA_NAME             NASA CA (old)
 HOMEPAGE            ?
 CONTACT             ?
 HASH                b2cb8d2c
+SIGNED_BY           self
 SUBJECT             /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
 MAY_SIGN            /O=Grid/O=National Aeronautics and Space Administration/*
 CERTIFICATE_MD5     CC:2D:82:DB:1B:28:0B:1E:EF:9C:39:93:69:EE:69:03
