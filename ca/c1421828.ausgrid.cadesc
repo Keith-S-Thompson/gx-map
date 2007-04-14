@@ -1,10 +1,11 @@
-# $Id: c1421828.ausgrid.cadesc,v 1.8 2007-03-12 17:52:41-07 kst Exp $
+# $Id: c1421828.ausgrid.cadesc,v 1.9 2007-04-13 19:20:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c1421828.ausgrid.cadesc,v $
 
 CA_NAME             AusGrid CA
 HOMEPAGE            http://www.ausgrid.org/ca.html
 CONTACT             ?
 HASH                c1421828
+SIGNED_BY           self
 SUBJECT             /O=Australian Grid Forum/OU=AusGrid Testbed/CN=ausgrid.org
 MAY_SIGN            /O=Australian Grid Forum/OU=AusGrid Testbed/*
 CERTIFICATE_MD5     A2:C4:BF:C2:21:47:16:A4:D8:6F:E3:6C:0A:58:BC:08
