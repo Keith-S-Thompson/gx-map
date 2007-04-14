@@ -1,10 +1,11 @@
-# $Id: 2dc3958a.rocks11.cadesc,v 1.7 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 2dc3958a.rocks11.cadesc,v 1.8 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2dc3958a.rocks11.cadesc,v $
 
 CA_NAME             rocks11.sdsc.edu Simple CA
 HOMEPAGE            ?
 CONTACT             ?
 HASH                2dc3958a
+SIGNED_BY           self
 SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=rocks11.sdsc.edu/CN=Globus Simple CA
 MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=rocks11.sdsc.edu/*
 CERTIFICATE_MD5     BB:94:FE:2C:A8:50:75:41:B0:BA:CF:2B:5B:EE:F5:CC
