@@ -1,10 +1,11 @@
-# $Id: 4a6cd8b1.ncsa.cadesc,v 1.14 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 4a6cd8b1.ncsa.cadesc,v 1.15 2007-04-13 19:20:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4a6cd8b1.ncsa.cadesc,v $
 
 CA_NAME             NCSA CA
 HOMEPAGE            http://security.ncsa.uiuc.edu/CA/
 CONTACT             security@ncsa.uiuc.edu
 HASH                4a6cd8b1
+SIGNED_BY           self
 SUBJECT             /C=US/O=National Center for Supercomputing Applications/CN=Certification Authority
 MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/*
 CERTIFICATE_MD5     8E:9D:6D:F9:CD:7D:34:3E:24:17:00:CB:7F:F5:B0:A5
