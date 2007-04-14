@@ -1,10 +1,11 @@
-# $Id: 140817fc.sdg-testbed.cadesc,v 1.6 2007-03-12 17:52:36-07 kst Exp $
+# $Id: 140817fc.sdg-testbed.cadesc,v 1.7 2007-04-13 19:20:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/140817fc.sdg-testbed.cadesc,v $
 
 CA_NAME             SDC Testbed CA
 HOMEPAGE            http://www.sdg.ac.cn/
 CONTACT             ?
 HASH                140817fc
+SIGNED_BY           self
 SUBJECT             /O=Grid/O=SDG/CN=Testbed-CA
 MAY_SIGN            /O=Grid/O=SDG/*
 CERTIFICATE_MD5     F8:0C:81:8C:7C:D7:48:1A:47:C9:49:50:AF:E6:74:67
