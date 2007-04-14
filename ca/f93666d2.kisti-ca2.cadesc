@@ -1,10 +1,11 @@
-# $Id: f93666d2.kisti-ca2.cadesc,v 1.8 2007-03-15 18:28:58-07 kst Exp $
+# $Id: f93666d2.kisti-ca2.cadesc,v 1.9 2007-04-13 19:20:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f93666d2.kisti-ca2.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA2
 HOMEPAGE            ?
 CONTACT             ?
 HASH                f93666d2
+SIGNED_BY           self
 SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA2
 MAY_SIGN            /C=KR/O=Globus/*
 # MAY_SIGN            /O=Grid/O=Globus/*
