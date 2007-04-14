@@ -1,10 +1,11 @@
-# $Id: 13eab55e.datagrid-es.cadesc,v 1.7 2007-03-12 17:52:36-07 kst Exp $
+# $Id: 13eab55e.datagrid-es.cadesc,v 1.8 2007-04-13 19:20:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/13eab55e.datagrid-es.cadesc,v $
 
 CA_NAME             Datagrid-ES CA
 HOMEPAGE            http://grid.ifca.unican.es/ca/datagrid-es/
 CONTACT             Rafael Marco de Lucas <rmarco@ifca.unican.es>
 HASH                13eab55e
+SIGNED_BY           self
 SUBJECT             /C=ES/O=DATAGRID-ES/CN=DATAGRID-ES CA
 MAY_SIGN            /C=ES/O=DATAGRID-ES/*
 CERTIFICATE_MD5     7B:4F:5A:E0:06:E8:00:CD:0F:A6:3A:37:EB:7C:67:4B
