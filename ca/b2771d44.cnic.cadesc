@@ -1,10 +1,11 @@
-# $Id: b2771d44.cnic.cadesc,v 1.3 2007-03-12 17:52:40-07 kst Exp $
+# $Id: b2771d44.cnic.cadesc,v 1.4 2007-04-13 19:20:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b2771d44.cnic.cadesc,v $
 
 CA_NAME             CNIC Grid CA
 HOMEPAGE            http://ca.grid.cn/en/
 CONTACT             gridca@cnic.cn
 HASH                b2771d44
+SIGNED_BY           self
 SUBJECT             /DC=CN/DC=Grid/CN=Root Certificate Authority at CNIC
 MAY_SIGN            /DC=CN/DC=Grid/*
 CERTIFICATE_MD5     BB:DE:64:8E:C7:63:67:14:21:3C:A8:F7:CC:A9:DD:80
