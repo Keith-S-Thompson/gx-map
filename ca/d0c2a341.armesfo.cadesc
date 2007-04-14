@@ -1,10 +1,11 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.16 2007-03-13 19:27:35-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.17 2007-04-13 19:20:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
 HOMEPAGE            http://www.escience.am/ca/
 CONTACT             hartem@moon.yerphi.am
 HASH                d0c2a341
+SIGNED_BY           self
 SUBJECT             /C=AM/O=ArmeSFo/CN=ArmeSFo CA
 MAY_SIGN            /C=AM/O=ArmeSFo/*
 CERTIFICATE_MD5     35:92:AB:7B:87:63:A7:0F:0E:7E:3D:92:16:C7:61:2E
