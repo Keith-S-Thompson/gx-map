@@ -1,10 +1,11 @@
-# $Id: df312a4e.infn-old.cadesc,v 1.10 2007-03-12 17:52:42-07 kst Exp $
+# $Id: df312a4e.infn-old.cadesc,v 1.11 2007-04-13 19:20:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/df312a4e.infn-old.cadesc,v $
 
 CA_NAME             INFN CA (2) (old)
 HOMEPAGE            http://security.fi.infn.it/CA/
 CONTACT             infn-ca@fi.infn.it
 HASH                df312a4e
+SIGNED_BY           self
 SUBJECT             /C=IT/O=INFN/OU=Authority/CN=INFN CA (2)
 MAY_SIGN            /C=it/O=INFN/*
 MAY_SIGN            /C=IT/O=INFN/*
