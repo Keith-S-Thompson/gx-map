@@ -1,10 +1,11 @@
-# $Id: 84c1f123.cygrid-old.cadesc,v 1.7 2007-03-12 17:52:39-07 kst Exp $
+# $Id: 84c1f123.cygrid-old.cadesc,v 1.8 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/84c1f123.cygrid-old.cadesc,v $
 
 CA_NAME             CyGrid CA (old)
 HOMEPAGE            http://grid.ucy.ac.cy/CyGridCA/
 CONTACT             cygrid-ca@ucy.ac.cy
 HASH                84c1f123
+SIGNED_BY           self
 SUBJECT             /C=CY/O=CyGrid/CN=CyGrid CA
 MAY_SIGN            /C=CY/O=CyGrid/*
 CERTIFICATE_MD5     72:39:00:9A:27:11:61:E2:13:01:E9:F0:3D:D0:B1:18
