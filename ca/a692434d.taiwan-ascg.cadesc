@@ -1,10 +1,11 @@
-# $Id: a692434d.taiwan-ascg.cadesc,v 1.10 2007-03-12 17:52:40-07 kst Exp $
+# $Id: a692434d.taiwan-ascg.cadesc,v 1.11 2007-04-13 19:20:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a692434d.taiwan-ascg.cadesc,v $
 
 CA_NAME             Academia Sinica Grid Computing Certification Authority
 HOMEPAGE            http://ca.grid.sinica.edu.tw/
 CONTACT             asgcca@grid.sinica.edu.tw
 HASH                a692434d
+SIGNED_BY           self
 SUBJECT             /C=TW/O=AS/CN=Academia Sinica Grid Computing Certification Authority
 MAY_SIGN            /C=TW/*
 MAY_SIGN            /C=CN/O=IHEP/OU=CC/*
