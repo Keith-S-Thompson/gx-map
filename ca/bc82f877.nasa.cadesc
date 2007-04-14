@@ -1,10 +1,11 @@
-# $Id: bc82f877.nasa.cadesc,v 1.17 2007-03-12 17:52:41-07 kst Exp $
+# $Id: bc82f877.nasa.cadesc,v 1.18 2007-04-13 19:20:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
 
 CA_NAME             NASA CA
 HOMEPAGE            ?
 CONTACT             ?
 HASH                bc82f877
+SIGNED_BY           self
 SUBJECT             /O=Grid/O=National Aeronautics and Space Administration/OU=Ames Research Center/CN=Certificate Manager
 MAY_SIGN            /O=Grid/O=National Aeronautics and Space Administration/*
 CERTIFICATE_MD5     E4:FF:A8:C3:B1:0F:53:72:20:5D:07:41:CA:7F:BD:06
