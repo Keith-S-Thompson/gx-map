@@ -1,10 +1,11 @@
-# $Id: 85fdf41d.lacgrid.cadesc,v 1.1 2007-03-19 17:35:36-07 kst Exp $
+# $Id: 85fdf41d.lacgrid.cadesc,v 1.2 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/85fdf41d.lacgrid.cadesc,v $
 
 CA_NAME             UFF Latin American and Caribbean Catch-all Grid CA
 HOMEPAGE            https://lacgridca.ic.uff.br/
 CONTACT             lacgridca@ic.uff.br
 HASH                85fdf41d
+SIGNED_BY           self
 SUBJECT             /DC=BR/DC=UFF/DC=IC/O=UFF LACGrid CA/CN=UFF Latin American and Caribbean Catch-all Grid CA
 MAY_SIGN            /DC=BR/DC=UFF/DC=IC/O=UFF LACGrid CA/L=Brazil/O=UFF/OU=IC/*
 CERTIFICATE_MD5     42:50:90:8E:CB:C8:20:9D:9A:4B:33:61:E1:53:9F:7E
