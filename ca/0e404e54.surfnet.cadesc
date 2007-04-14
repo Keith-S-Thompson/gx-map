@@ -1,10 +1,11 @@
-# $Id: 0e404e54.surfnet.cadesc,v 1.4 2007-03-15 18:28:56-07 kst Exp $
+# $Id: 0e404e54.surfnet.cadesc,v 1.5 2007-04-13 19:20:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0e404e54.surfnet.cadesc,v $
 
 CA_NAME             SURFnet
 HOMEPAGE            http://pki.surfnet.nl/
 CONTACT             admin@surfnet.nl
 HASH                0e404e54
+SIGNED_BY           self
 SUBJECT             /C=NL/O=SURFnet/OU=Policy Certification Authority/emailAddress=SURFnet-PCA@surfnet.nl/CN=SURFnet-PCA-Root-CA
 MAY_SIGN            ?
 CERTIFICATE_MD5     CA:8D:97:FC:7E:DA:12:81:24:6B:F6:0D:73:4A:D1:93
