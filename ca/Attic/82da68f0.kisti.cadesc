@@ -1,10 +1,11 @@
-# $Id: 82da68f0.kisti.cadesc,v 1.7 2007-03-15 18:28:58-07 kst Exp $
+# $Id: 82da68f0.kisti.cadesc,v 1.8 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/82da68f0.kisti.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA (expired)
 HOMEPAGE            ?
 CONTACT             ?
 HASH                82da68f0
+SIGNED_BY           self
 SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA
 MAY_SIGN            /C=KR/O=Globus/*
 # MAY_SIGN            /O=Grid/O=Globus/*
