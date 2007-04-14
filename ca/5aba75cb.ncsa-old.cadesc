@@ -1,10 +1,11 @@
-# $Id: 5aba75cb.ncsa-old.cadesc,v 1.15 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 5aba75cb.ncsa-old.cadesc,v 1.16 2007-04-13 19:20:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5aba75cb.ncsa-old.cadesc,v $
 
 CA_NAME             NCSA CA (old)
 HOMEPAGE            ?
 CONTACT             ?
 HASH                5aba75cb
+SIGNED_BY           self
 SUBJECT             /C=US/O=National Computational Science Alliance/OU=Certification Authority
 MAY_SIGN            /C=US/O=National Computational Science Alliance/*
 CERTIFICATE_MD5     A2:D1:FF:83:88:C1:0F:23:FA:38:D7:77:4B:05:0B:8E
