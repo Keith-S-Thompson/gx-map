@@ -1,10 +1,11 @@
-# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.7 2007-03-15 18:28:57-07 kst Exp $
+# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.8 2007-04-13 19:20:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e24fe33.melbourne-epp-grid.cadesc,v $
 
 CA_NAME             Melbourne EPP Grid CA
 HOMEPAGE            https://epp-ca.ph.unimelb.edu.au/
 CONTACT             ra@epp-ca.ph.unimelb.edu.au
 HASH                5e24fe33
+SIGNED_BY           self
 SUBJECT             /C=AU/O=University of Melbourne/OU=Experimental Particle Physics/CN=epp-ca.ph.unimelb.edu.au/emailAddress=ra@epp-ca.ph.unimelb.edu.au
 MAY_SIGN            /O=Grid/O=Belle/*
 MAY_SIGN            /O=Grid/O=BelleTestbed/*
