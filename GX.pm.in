@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.23 2007-04-12 18:49:21-07 kst Exp $
+# $Id: GX.pm.in,v 1.24 2007-04-13 19:12:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -2827,10 +2827,14 @@ EOF
 #
 # Given the name of a cadesc file, returns a reference to a hash
 # containing information about the CA.  CERTIFICATE_FORM and CRL_FORM
-# are set to 'PEM' if they're not specified in the file.
+# are set to 'PEM' if they're not specified in the cadesc file.
 #
-# If there's an error, return an error message as reference to an array
-# of strings.
+# If SIGNED_BY is equal to SUBJECT in the cadesc file, treat it as an
+# error; for a self-signed certificate, SIGNED_BY must be set to "self"
+# or omitted.
+#
+# If there's an error, return an error message as a reference to an
+# array of strings.
 #
 sub Get_CA_Ref($) {
     my($filename) = @_;
@@ -2892,6 +2896,11 @@ sub Get_CA_Ref($) {
                 $ref->{$key} = GX::GT4_Subject $ref->{$key};
             }
         }
+    }
+    if (defined $ref->{SIGNED_BY} and
+        $ref->{SIGNED_BY} eq $ref->{SUBJECT})
+    {
+        push @errors, "SIGNED_BY should be \"self\"";
     }
     if (defined $ref->{HASH} and $ref->{HASH} !~ /^[\da-f]{8}$/) {
         push @errors, "Invalid HASH";
