@@ -1,10 +1,11 @@
-# $Id: ede78092.hellasgrid.cadesc,v 1.11 2007-03-12 17:52:42-07 kst Exp $
+# $Id: ede78092.hellasgrid.cadesc,v 1.12 2007-04-13 19:20:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ede78092.hellasgrid.cadesc,v $
 
 CA_NAME             HellasGrid CA
 HOMEPAGE            http://pki.physics.auth.gr/hellasgrid-ca/
 CONTACT             hellasgrid-ca@physics.auth.gr
 HASH                ede78092
+SIGNED_BY           self
 SUBJECT             /C=GR/O=HellasGrid/CN=HellasGrid CA
 MAY_SIGN            /C=GR/O=HellasGrid/*
 CERTIFICATE_MD5     67:B9:5A:B5:B2:50:01:20:2C:F5:AD:D1:57:88:0D:3B
