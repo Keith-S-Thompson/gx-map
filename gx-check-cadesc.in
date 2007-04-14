@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-cadesc.in,v 1.2 2007-04-12 18:34:44-07 kst Exp $
+# $Id: gx-check-cadesc.in,v 1.3 2007-04-13 19:11:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-cadesc.in,v $
 
 ########################################################################
@@ -126,9 +126,28 @@ foreach my $arg (@ARGV) {
         }
     }
 
-    my $cached_cert = GX::Cache_File
-                          "-cache_dir=$tmpdir",
-                          $desc->{CERTIFICATE_URL};
+    Debug "Calling GX::Cache_File $desc->{CERTIFICATE_URL}\n";
+    my $cached_cert;
+    {
+        local($SIG{__DIE__}) = sub { };
+        $cached_cert = eval { GX::Cache_File
+                                  "-cache_dir=$tmpdir",
+                                  $desc->{CERTIFICATE_URL} };
+    }
+    Debug "After GX::Cache_File\n";
+    if ($@) {
+        warn "$@\n";
+        next ARG;
+    }
+
+    if ($User_Opt->{debugging}) {
+        print "Cache_File returned:\n";
+        foreach my $key (sort keys %$cached_cert) {
+            print "    $key => ",
+                ( defined $cached_cert->{$key} ? $cached_cert->{$key} : 'undef' ),
+                "\n";
+        }
+    }
     if (not defined $cached_cert->{filename}) {
         print "Error: $cached_cert->{error}\n";
         next ARG;
@@ -183,6 +202,7 @@ foreach my $arg (@ARGV) {
     if ($cert->{enddate} ne GX::Time_Value $desc->{CERT_EXPIRES}) {
         push @{$cert->{ERRORS}}, "Bad expiration date";
     }
+
 
     if (defined $cert->{ERRORS}) {
         my @errors = @{$cert->{ERRORS}};
