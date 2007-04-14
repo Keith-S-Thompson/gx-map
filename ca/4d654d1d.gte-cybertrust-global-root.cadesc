@@ -1,10 +1,11 @@
-# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.3 2007-03-13 19:27:35-07 kst Exp $
+# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.4 2007-04-13 19:20:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4d654d1d.gte-cybertrust-global-root.cadesc,v $
 
 CA_NAME             GTE CyberTrust Global Root
 HOMEPAGE            http://www.terena.org/activities/scs/
 CONTACT             Guy Van Den Bergh <vandenbergh@terena.org>
 HASH                4d654d1d
+SIGNED_BY           self
 SUBJECT             /C=US/O=GTE Corporation/OU=GTE CyberTrust Solutions, Inc./CN=GTE CyberTrust Global Root
 MAY_SIGN            /C=BE/O=Cybertrust/OU=Educational CA/CN=Cybertrust Educational CA
 CERTIFICATE_MD5     CA:3D:D3:68:F1:03:5C:D0:32:FA:B8:2B:59:E8:5A:DB
