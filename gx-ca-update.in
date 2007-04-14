@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.146 2007-03-16 18:58:15-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.147 2007-04-13 19:12:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -866,23 +866,28 @@ sub Update_And_Install_Certificate($) {
                             "\"$ref->{SUBJECT}\", got " .
                             "\"$cert_info->{subject}\"";
             }
-            if (defined $ref->{SIGNED_BY} and
-                $ref->{SIGNED_BY} ne '?')
+            if (not defined $ref->{SIGNED_BY} or
+                $ref->{SIGNED_BY} eq 'self')
             {
+                if ($cert_info->{issuer} ne $cert_info->{subject}) {
+                    my $message = "Certificate is not self-signed, but ";
+                    if (defined $cert_info->{SIGNED_BY}) {
+                        $message
+                            .= "the SIGNED_BY attribute was set to \"self\"";
+                    }
+                    else {
+                        $message .= "no SIGNED_BY attribute was specified";
+                    }
+                    $message .= " in $ref->{_FILENAME}";
+                    Error $ref, undef, undef, $message;
+                }
+            }
+            else {
                 if ($cert_info->{issuer} ne $ref->{SIGNED_BY}) {
                     Error $ref, undef, undef,
                                 "Mismatched issuer, expected " .
                                 "\"$ref->{SIGNED_BY}\", got " .
                                 "\"$cert_info->{issuer}\"";
-                }
-            }
-            else {
-                if ($cert_info->{issuer} ne $cert_info->{subject}) {
-                    Error $ref, undef, undef,
-                                "Certificate is not self-signed, " .
-                                "but no SIGNED_BY attribute was " .
-                                "specified in $ref->{_FILENAME}";
-
                 }
             }
             if ($cert_info->{md5sum} ne $ref->{CERTIFICATE_MD5}) {
