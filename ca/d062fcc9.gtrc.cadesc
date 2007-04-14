@@ -1,10 +1,11 @@
-# $Id: d062fcc9.gtrc.cadesc,v 1.7 2007-03-12 17:52:41-07 kst Exp $
+# $Id: d062fcc9.gtrc.cadesc,v 1.8 2007-04-13 19:20:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d062fcc9.gtrc.cadesc,v $
 
 CA_NAME             Grid Technology Research Center CA
 HOMEPAGE            http://www.gtrc.aist.go.jp/en/
 CONTACT             ?
 HASH                d062fcc9
+SIGNED_BY           self
 SUBJECT             /O=ApGrid/O=AIST/OU=GTRC/CN=CA
 MAY_SIGN            /C=JP/O=AIST GTRC/*
 CERTIFICATE_MD5     15:9C:F0:43:8A:CA:02:35:C1:E4:CE:58:C4:CA:57:09
