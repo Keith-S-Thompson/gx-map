@@ -1,10 +1,11 @@
-# $Id: c4c1901a.shard02.cadesc,v 1.7 2007-03-12 17:52:41-07 kst Exp $
+# $Id: c4c1901a.shard02.cadesc,v 1.8 2007-04-13 19:20:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c4c1901a.shard02.cadesc,v $
 
 CA_NAME             shard02.sdsc.edu Simple CA
 HOMEPAGE            ?
 CONTACT             ?
 HASH                c4c1901a
+SIGNED_BY           self
 SUBJECT             /O=Grid/OU=San Diego Supercomputer Center/OU=shard02.sdsc.edu/CN=Globus Simple CA
 MAY_SIGN            /O=Grid/OU=San Diego Supercomputer Center/OU=shard02.sdsc.edu/*
 CERTIFICATE_MD5     D8:67:8E:59:D1:73:FC:98:CF:52:80:35:D3:21:6A:CB
