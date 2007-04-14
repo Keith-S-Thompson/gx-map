@@ -1,10 +1,11 @@
-# $Id: 3a0abe12.malaysia.cadesc,v 1.6 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 3a0abe12.malaysia.cadesc,v 1.7 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3a0abe12.malaysia.cadesc,v $
 
 CA_NAME             Malaysia
 HOMEPAGE            ?
 CONTACT             gridadm@cs.usm.my
 HASH                3a0abe12
+SIGNED_BY           self
 SUBJECT             /C=MY/ST=PG/L=GELUGOR/O=USM/OU=GCORP/CN=GRID/emailAddress=gridadm@cs.usm.my
 MAY_SIGN            ?
 CERTIFICATE_MD5     18:72:16:6F:62:FB:BC:7C:9C:77:80:0C:1A:2B:0B:2B
