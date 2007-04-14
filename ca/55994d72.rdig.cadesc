@@ -1,10 +1,11 @@
-# $Id: 55994d72.rdig.cadesc,v 1.4 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 55994d72.rdig.cadesc,v 1.5 2007-04-13 19:20:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/55994d72.rdig.cadesc,v $
 
 CA_NAME             Russian Data Intensive Grid
 HOMEPAGE            http://ca.grid.kiae.ru/RDIG
 CONTACT             rdig-ca-support@grid.kiae.ru
 HASH                55994d72
+SIGNED_BY           self
 SUBJECT             /C=RU/O=RDIG/CN=Russian Data-Intensive Grid CA
 MAY_SIGN            /C=RU/O=RDIG/CN=Russian Data-Intensive Grid CA
 MAY_SIGN            /C=RU/O=RDIG/*
