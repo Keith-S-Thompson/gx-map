@@ -1,10 +1,11 @@
-# $Id: 75304a28.dutchdemo.cadesc,v 1.4 2007-03-16 20:55:43-07 kst Exp $
+# $Id: 75304a28.dutchdemo.cadesc,v 1.5 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/75304a28.dutchdemo.cadesc,v $
 
 CA_NAME             DutchDemo worthless CA
 HOMEPAGE            http://ca.dutchgrid.nl/dutchdemo/
 CONTACT             ca@dutchgrid.nl
 HASH                75304a28
+SIGNED_BY           self
 SUBJECT             /O=DutchGrid/OU=Certificate Authorities/CN=DutchDemo worthless CA
 MAY_SIGN            /O=DutchGrid/OU=Certificate Authorities/CN=DutchDemo worthless CA
 MAY_SIGN            /O=dutchgrid/O=users/*
