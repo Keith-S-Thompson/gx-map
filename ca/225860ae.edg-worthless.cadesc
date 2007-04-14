@@ -1,10 +1,11 @@
-# $Id: 225860ae.edg-worthless.cadesc,v 1.7 2007-03-16 20:55:43-07 kst Exp $
+# $Id: 225860ae.edg-worthless.cadesc,v 1.8 2007-04-13 19:20:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/225860ae.edg-worthless.cadesc,v $
 
 CA_NAME             EDG Tutorial Worthless Certification Authority
 HOMEPAGE            ?
 CONTACT             ?
 HASH                225860ae
+SIGNED_BY           self
 SUBJECT             /O=dutchgrid/OU=Certificate Authorities/CN=EDG Tutorial Worthless Certification Authority
 MAY_SIGN            /O=dutchgrid/OU=Certificate Authorities/CN=EDG Tutorial Worthless Certification Authority
 MAY_SIGN            /O=edgtutorial/*
