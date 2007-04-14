@@ -1,10 +1,11 @@
-# $Id: d5036d74.bmg.cadesc,v 1.6 2007-03-12 17:52:42-07 kst Exp $
+# $Id: d5036d74.bmg.cadesc,v 1.7 2007-04-13 19:20:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d5036d74.bmg.cadesc,v $
 
 CA_NAME             BMG Certificate Authority (expired)
 HOMEPAGE            ?
 CONTACT             ?
 HASH                d5036d74
+SIGNED_BY           self
 SUBJECT             /C=SG/O=Grid/O=BMG/CN=BMG Cetficate Authority
 MAY_SIGN            /C=SG/O=Grid/O=BMG/*
 CERTIFICATE_MD5     82:46:7F:17:AC:C8:CC:91:B1:C0:52:A6:E2:4D:1F:D5
