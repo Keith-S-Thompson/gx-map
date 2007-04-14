@@ -1,10 +1,11 @@
-# $Id: 295adc19.reuna.cadesc,v 1.1 2007-03-31 14:00:13-07 kst Exp $
+# $Id: 295adc19.reuna.cadesc,v 1.2 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/295adc19.reuna.cadesc,v $
 
 CA_NAME             REUNA CA
 HOMEPAGE            http://reuna-ca.reuna.cl/
 CONTACT             http://reuna-ca.reuna.cl/info.php
 HASH                295adc19
+SIGNED_BY           self
 SUBJECT             /C=CL/O=REUNACA/CN=REUNA Certification Authority
 MAY_SIGN            ?
 CERTIFICATE_MD5     C1:A4:4A:6F:D5:44:DE:89:8C:73:E0:96:F9:E1:B9:72
