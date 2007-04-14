@@ -1,10 +1,11 @@
-# $Id: c35c1972.cern-older.cadesc,v 1.6 2007-03-12 17:52:41-07 kst Exp $
+# $Id: c35c1972.cern-older.cadesc,v 1.7 2007-04-13 19:20:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c35c1972.cern-older.cadesc,v $
 
 CA_NAME             CERN CA (older)
 HOMEPAGE            http://globus.home.cern.ch/globus/ca/
 CONTACT             cern-globus-ca@cern.ch
 HASH                c35c1972
+SIGNED_BY           self
 SUBJECT             /C=CH/O=CERN/CN=CERN CA
 MAY_SIGN            /C=ch/O=CERN/*
 MAY_SIGN            /C=CH/O=CERN/*
