@@ -1,10 +1,11 @@
-# $Id: 795d3882.sdg-testbed-old.cadesc,v 1.7 2007-03-15 18:28:57-07 kst Exp $
+# $Id: 795d3882.sdg-testbed-old.cadesc,v 1.8 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/795d3882.sdg-testbed-old.cadesc,v $
 
 CA_NAME             SDC Testbed CA (expired)
 HOMEPAGE            http://www.sdg.ac.cn/
 CONTACT             ?
 HASH                795d3882
+SIGNED_BY           self
 SUBJECT             /O=Grid/O=SDG/CN=Testbed CA
 MAY_SIGN            /O=Grid/O=SDG/*
 CERTIFICATE_MD5     B6:6C:1F:45:BF:50:78:9E:A7:59:CA:C1:FA:C9:3E:91
