@@ -1,10 +1,11 @@
-# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.3 2007-04-05 14:50:54-07 kst Exp $
+# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.4 2007-04-13 19:20:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b95bbf2.ncsa-cacl.cadesc,v $
 
 CA_NAME             NCSA CACL CA
 HOMEPAGE            http://security.ncsa.uiuc.edu/CA/
 CONTACT             security@ncsa.uiuc.edu
 HASH                9b95bbf2
+SIGNED_BY           self
 SUBJECT             /C=US/O=National Center for Supercomputing Applications/OU=Certificate Authorities/CN=CACL
 MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/OU=Services/CN=*
 MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/OU=People/CN=*
