@@ -1,10 +1,11 @@
-# $Id: 21bf4d92.apac-grid.cadesc,v 1.5 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 21bf4d92.apac-grid.cadesc,v 1.6 2007-04-13 19:20:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/21bf4d92.apac-grid.cadesc,v $
 
 CA_NAME             APAC-GRID CA
 HOMEPAGE            http://www.apac.edu.au/
 CONTACT             camanager@vpac.org
 HASH                21bf4d92
+SIGNED_BY           self
 SUBJECT             /C=AU/O=APAC-GRID/CN=A2G-CA
 MAY_SIGN            /C=AU/O=APAC-GRID/*
 CERTIFICATE_MD5     67:58:DF:8B:F8:FA:B5:A1:5D:8C:06:35:8D:70:04:68
