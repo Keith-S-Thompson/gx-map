@@ -1,10 +1,11 @@
-# $Id: 42864e48.globus-ca.cadesc,v 1.11 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 42864e48.globus-ca.cadesc,v 1.12 2007-04-13 19:20:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/42864e48.globus-ca.cadesc,v $
 
 CA_NAME             Globus CA (expired)
 HOMEPAGE            http://www.globus.org
 CONTACT             ?
 HASH                42864e48
+SIGNED_BY           self
 SUBJECT             /C=US/O=Globus/CN=Globus Certification Authority
 MAY_SIGN            /C=us/O=Globus/*
 MAY_SIGN            /C=US/O=Globus/*
