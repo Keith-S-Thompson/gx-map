@@ -1,10 +1,11 @@
-# $Id: fa3af1d7.cern.cadesc,v 1.11 2007-03-12 17:52:43-07 kst Exp $
+# $Id: fa3af1d7.cern.cadesc,v 1.12 2007-04-13 19:20:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa3af1d7.cern.cadesc,v $
 
 CA_NAME             CERN CA
 HOMEPAGE            http://service-grid-ca.web.cern.ch/service-grid-ca/
 CONTACT             service-grid-ca@cern.ch
 HASH                fa3af1d7
+SIGNED_BY           self
 SUBJECT             /C=CH/O=CERN/OU=GRID/CN=CERN CA
 MAY_SIGN            /C=CH/O=CERN/OU=GRID/*
 CERTIFICATE_MD5     76:B3:CF:BB:57:71:8B:80:0F:DD:D7:26:E9:18:1D:CD
