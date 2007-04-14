@@ -1,10 +1,11 @@
-# $Id: c94b2d9f.rediris.cadesc,v 1.3 2007-03-15 18:28:58-07 kst Exp $
+# $Id: c94b2d9f.rediris.cadesc,v 1.4 2007-04-13 19:20:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c94b2d9f.rediris.cadesc,v $
 
 CA_NAME             RedIRIS Policy Certification Authority
 HOMEPAGE            http://www.rediris.es/pki/index.en.html
 CONTACT             http://www.rediris.es/cgi-bin/sugerencias.en.pl?contact=pca
 HASH                c94b2d9f
+SIGNED_BY           self
 SUBJECT             /C=ES/O=RedIRIS/CN=IRIS-PCA/1.3.6.1.4.1.7547.2.1.1.1=IRIS-PCA/emailAddress=pca@rediris.es
 MAY_SIGN            ?
 CERTIFICATE_MD5     0F:4F:10:91:51:56:2E:21:94:B1:26:76:ED:F9:D1:67
