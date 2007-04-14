@@ -1,10 +1,11 @@
-# $Id: 9b59ecad.cesnet.cadesc,v 1.3 2007-03-12 17:52:40-07 kst Exp $
+# $Id: 9b59ecad.cesnet.cadesc,v 1.4 2007-04-13 19:20:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b59ecad.cesnet.cadesc,v $
 
 CA_NAME             CESNET CA
 HOMEPAGE            http://www.cesnet.cz/pki/
 CONTACT             ca@cesnet.cz
 HASH                9b59ecad
+SIGNED_BY           self
 SUBJECT             /DC=cz/DC=cesnet-ca/CN=CESNET CA
 MAY_SIGN            /DC=cz/DC=cesnet-ca/*
 CERTIFICATE_MD5     33:29:B7:54:19:BE:35:FF:4B:B1:B6:DF:11:3E:8A:DB
