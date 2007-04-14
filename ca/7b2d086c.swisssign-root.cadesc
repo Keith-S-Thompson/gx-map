@@ -1,10 +1,11 @@
-# $Id: 7b2d086c.swisssign-root.cadesc,v 1.5 2007-03-12 17:52:39-07 kst Exp $
+# $Id: 7b2d086c.swisssign-root.cadesc,v 1.6 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7b2d086c.swisssign-root.cadesc,v $
 
 CA_NAME             SwissSign Root
 HOMEPAGE            http://swisssign.net/
 CONTACT             http://swisssign.net/cgi-bin/support/mail (web form)
 HASH                7b2d086c
+SIGNED_BY           self
 SUBJECT             /C=CH/O=SwissSign/CN=SwissSign CA (RSA IK May 6 1999 18:00:58)/emailAddress=ca@SwissSign.com
 MAY_SIGN            /CN=SwissSign Bronze CA/emailAddress=bronze@swisssign.com/O=SwissSign/C=CH
 CERTIFICATE_MD5     D6:60:E4:56:2A:FA:E5:F7:10:D3:F7:1E:7E:B8:2A:46
