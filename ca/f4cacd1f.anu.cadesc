@@ -1,10 +1,11 @@
-# $Id: f4cacd1f.anu.cadesc,v 1.8 2007-03-12 17:52:42-07 kst Exp $
+# $Id: f4cacd1f.anu.cadesc,v 1.9 2007-04-13 19:20:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f4cacd1f.anu.cadesc,v $
 
 CA_NAME             Australian National University Simple CA (expired)
 HOMEPAGE            ?
 CONTACT             ?
 HASH                f4cacd1f
+SIGNED_BY           self
 SUBJECT             /O=Grid/OU=GlobusTest/OU=simpleCA-store.anu.edu.au/CN=Globus Simple CA
 MAY_SIGN            /O=Grid/OU=GlobusTest/OU=simpleCA-store.anu.edu.au/*
 CERTIFICATE_MD5     D7:27:42:35:FE:AB:3C:CD:14:97:7C:24:40:72:15:11
