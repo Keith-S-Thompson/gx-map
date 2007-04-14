@@ -1,10 +1,11 @@
-# $Id: 3d5be7bc.signet.cadesc,v 1.4 2007-03-12 17:52:38-07 kst Exp $
+# $Id: 3d5be7bc.signet.cadesc,v 1.5 2007-04-13 19:20:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3d5be7bc.signet.cadesc,v $
 
 CA_NAME             SiGNET CA
 HOMEPAGE            http://signet-ca.ijs.si/
 CONTACT             signet-ca@ijs.si
 HASH                3d5be7bc
+SIGNED_BY           self
 SUBJECT             /C=SI/O=SiGNET/CN=SiGNET CA
 MAY_SIGN            /C=SI/O=SiGNET/*
 CERTIFICATE_MD5     A1:BD:07:92:6B:EF:F5:17:CC:F7:31:08:11:51:66:54
