@@ -1,10 +1,11 @@
-# $Id: 2c7969d0.usc-pki-lite-old.cadesc,v 1.21 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 2c7969d0.usc-pki-lite-old.cadesc,v 1.22 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2c7969d0.usc-pki-lite-old.cadesc,v $
 
 CA_NAME             USC PKI Lite CA (old)
 HOMEPAGE            http://www.usc.edu/its/services/authx/CA/deprecated.html
 CONTACT             authx@usc.edu
 HASH                2c7969d0
+SIGNED_BY           self
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite Certificate Authority/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     B1:27:99:76:3A:D7:01:21:23:A6:A7:AD:66:95:35:6E
