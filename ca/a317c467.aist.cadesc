@@ -1,10 +1,11 @@
-# $Id: a317c467.aist.cadesc,v 1.4 2007-03-12 17:52:40-07 kst Exp $
+# $Id: a317c467.aist.cadesc,v 1.5 2007-04-13 19:20:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a317c467.aist.cadesc,v $
 
 CA_NAME             AIST GRID CA
 HOMEPAGE            https://www.apgrid.org/CA/AIST/Production/system.html
 CONTACT             gridca@m.aist.go.jp
 HASH                a317c467
+SIGNED_BY           self
 SUBJECT             /C=JP/O=AIST/OU=GRID/CN=Certificate Authority
 MAY_SIGN            /C=JP/O=AIST/OU=GRID/*
 CERTIFICATE_MD5     AC:04:62:C2:1F:B8:72:82:7D:4F:EB:F5:53:C7:AD:54
