@@ -1,12 +1,12 @@
-# $Id: bug-0145,v 1.1 2007-04-05 18:40:02-07 kst Exp $
+# $Id: bug-0145,v 1.2 2007-04-13 19:13:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0145,v $
 
 gx-map bug 0145
 Date: Thu 2007-04-05
-Severity: Med
+Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.5.3.2.023
 Title: More flexible handling of SIGNED_BY in cadesc files
 
 Currently, if a CA certificate is self-signed, the SIGNED_BY attribute
@@ -21,7 +21,11 @@ is done currently).
 If SIGNED_BY is set to "self", the certificate is self-signed.
 
 Otherwise, SIGNED_BY specifies the DN of the signer.  This is allowed
-to be the certificate's own DNi if it's self-signed.
+to be the certificate's own DN if it's self-signed.
+
+Correction: for a self-signed certificate, SIGNED_BY must be either
+"self" or omitted.  Allowing it to match SUBJECT could lead to
+copy-and-paste errors.
 
 This is upward compatible, but allows self-signed certificates to be
 indicated more clearly.
@@ -29,3 +33,8 @@ indicated more clearly.
 Update all existing cadesc files to use "SIGNED_BY self" for
 self-signed certificates.  (This will need to be filtered out when
 generating cadesc tarballs for older releases.)
+
+Fixed:
+gx-ca-update.in 1,147
+GX.pm.in 1.24
+gx-map release 0.5.3.2.024
