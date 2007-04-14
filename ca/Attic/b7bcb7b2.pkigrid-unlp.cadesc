@@ -1,10 +1,11 @@
-# $Id: b7bcb7b2.pkigrid-unlp.cadesc,v 1.1 2007-04-02 17:49:41-07 kst Exp $
+# $Id: b7bcb7b2.pkigrid-unlp.cadesc,v 1.2 2007-04-13 19:20:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/b7bcb7b2.pkigrid-unlp.cadesc,v $
 
 CA_NAME             PKIGrid UNLP
 HOMEPAGE            http://www.pkigrid.unlp.edu.ar/
 CONTACT             ca@pkigrid.unlp.edu.ar
 HASH                b7bcb7b2
+SIGNED_BY           self
 SUBJECT             /C=AR/O=e-Ciencia/OU=UNLP/L=CeSPI/CN=PKIGrid
 MAY_SIGN            ?
 CERTIFICATE_MD5     C3:CD:83:3B:14:E1:5D:2B:A8:97:BF:DC:1D:A8:3E:61
