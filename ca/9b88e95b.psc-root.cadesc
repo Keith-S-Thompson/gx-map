@@ -1,10 +1,11 @@
-# $Id: 9b88e95b.psc-root.cadesc,v 1.3 2007-03-12 17:52:40-07 kst Exp $
+# $Id: 9b88e95b.psc-root.cadesc,v 1.4 2007-04-13 19:20:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b88e95b.psc-root.cadesc,v $
 
 CA_NAME             PSC Root Certificate Authority
 HOMEPAGE            http://ocsp.psc.edu:8000/ca/
 CONTACT             ?
 HASH                9b88e95b
+SIGNED_BY           self
 SUBJECT             /C=US/O=Pittsburgh Supercomputing Center/CN=PSC Root CA
 MAY_SIGN            /C=US/O=Pittsburgh Supercomputing Center/*
 CERTIFICATE_MD5     A4:DC:F4:AB:62:B1:6B:8C:90:78:03:94:A6:8E:B9:5A
