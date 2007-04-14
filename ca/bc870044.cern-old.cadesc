@@ -1,10 +1,11 @@
-# $Id: bc870044.cern-old.cadesc,v 1.7 2007-03-15 18:28:58-07 kst Exp $
+# $Id: bc870044.cern-old.cadesc,v 1.8 2007-04-13 19:20:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc870044.cern-old.cadesc,v $
 
 CA_NAME             CERN CA (old)
 HOMEPAGE            http://globus.home.cern.ch/globus/ca/
 CONTACT             service-grid-ca@cern.ch
 HASH                bc870044
+SIGNED_BY           self
 SUBJECT             /C=CH/O=CERN/OU=cern.ch/CN=CERN CA
 MAY_SIGN            /C=ch/O=CERN/*
 MAY_SIGN            /C=CH/O=CERN/*
