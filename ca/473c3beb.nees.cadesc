@@ -1,10 +1,11 @@
-# $Id: 473c3beb.nees.cadesc,v 1.5 2007-03-15 18:28:57-07 kst Exp $
+# $Id: 473c3beb.nees.cadesc,v 1.6 2007-04-13 19:20:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/473c3beb.nees.cadesc,v $
 
 CA_NAME             NEES CA
 HOMEPAGE            http://www.nees.org
 CONTACT             ?
 HASH                473c3beb
+SIGNED_BY           self
 SUBJECT             /O=NEES/OU=NEESit/CN=NEES CA
 MAY_SIGN            /O=NEES/*
 CERTIFICATE_MD5     68:80:C9:4B:70:0C:41:4D:AC:58:81:3F:28:80:8A:E9
