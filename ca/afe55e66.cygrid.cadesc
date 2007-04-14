@@ -1,10 +1,11 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.8 2007-03-13 19:27:35-07 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.9 2007-04-13 19:20:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
 HOMEPAGE            http://grid.ucy.ac.cy/CyGridCA/
 CONTACT             cygrid-ca@cs.ucy.ac.cy
 HASH                afe55e66
+SIGNED_BY           self
 SUBJECT             /C=CY/O=CyGrid/O=HPCL/CN=CyGridCA
 MAY_SIGN            /C=CY/O=CyGrid/*
 CERTIFICATE_MD5     77:34:05:4D:92:E4:FC:5C:32:76:31:B7:6B:96:0B:87
