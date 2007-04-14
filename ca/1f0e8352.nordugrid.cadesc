@@ -1,10 +1,11 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.17 2007-03-14 17:20:32-07 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.18 2007-04-13 19:20:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
 CA_NAME             NorduGrid Certification Authority
 HOMEPAGE            http://ca.nordugrid.org/
 CONTACT             ca@nordugrid.org
 HASH                1f0e8352
+SIGNED_BY           self
 SUBJECT             /O=Grid/O=NorduGrid/CN=NorduGrid Certification Authority
 MAY_SIGN            /O=Grid/O=NorduGrid/*
 CERTIFICATE_MD5     06:BC:85:52:71:95:8C:3E:BF:42:34:0C:51:5E:F3:A5
