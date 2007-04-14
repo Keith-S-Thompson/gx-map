@@ -1,10 +1,11 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.17 2007-03-12 17:52:42-07 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.18 2007-04-13 19:20:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
 HOMEPAGE            http://www.es.net/CA/ESnet-Root-CA-1/
 CONTACT             trouble@es.net
 HASH                d1b603c3
+SIGNED_BY           self
 SUBJECT             /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Root CA 1
 MAY_SIGN            /DC=org/DC=DOEGrids/OU=Certificate Authorities/*
 MAY_SIGN            /DC=net/DC=ES/*
