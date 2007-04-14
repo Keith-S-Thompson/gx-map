@@ -1,10 +1,11 @@
-# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.5 2007-03-12 17:52:39-07 kst Exp $
+# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.6 2007-04-13 19:20:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8175c1cd.uk-escience-root.cadesc,v $
 
 CA_NAME             UK e-Science Root CA
 HOMEPAGE            http://www.grid-support.ac.uk/ca/
 CONTACT             support@grid-support.ac.uk
 HASH                8175c1cd
+SIGNED_BY           self
 SUBJECT             /C=UK/O=eScienceRoot/OU=Authority/L=Root/CN=CA
 MAY_SIGN            /C=UK/O=eScienceCA/OU=Authority/CN=CA
 CERTIFICATE_MD5     A7:AD:F4:F9:37:43:8D:88:B0:EA:50:F9:3F:1E:B0:91
