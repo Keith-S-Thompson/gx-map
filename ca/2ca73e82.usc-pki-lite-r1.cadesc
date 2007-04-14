@@ -1,10 +1,11 @@
-# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.10 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 2ca73e82.usc-pki-lite-r1.cadesc,v 1.11 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2ca73e82.usc-pki-lite-r1.cadesc,v $
 
 CA_NAME             USC PKI Lite CA
 HOMEPAGE            http://www.usc.edu/its/services/authx/CA/
 CONTACT             authx@usc.edu
 HASH                2ca73e82
+SIGNED_BY           self
 SUBJECT             /C=US/ST=California/L=Los Angeles/O=University of Southern California/CN=University of Southern California PKI-Lite CA, release 1/emailAddress=nmiadmin@usc.edu
 MAY_SIGN            /C=US/ST=California/L=Los Angeles/O=University of Southern California/*
 CERTIFICATE_MD5     32:2A:0F:13:54:D0:6E:4D:DC:8D:0A:CB:AD:7C:80:48
