@@ -1,10 +1,11 @@
-# $Id: 24c3ccde.unam.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 24c3ccde.unam.cadesc,v 1.3 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/24c3ccde.unam.cadesc,v $
 
 CA_NAME             UNAM
 HOMEPAGE            http://www.unamgrid.unam.mx/grid/
 CONTACT             cguel@seguridad.unam.mx
 HASH                24c3ccde
+SIGNED_BY           self
 SUBJECT             /C=MX/O=UNAMgrid/OU=UNAM/CN=CA
 MAY_SIGN            ?
 CERTIFICATE_MD5     96:8B:F0:4B:C4:F9:52:5B:1A:04:26:18:85:4F:2B:EF
