@@ -1,10 +1,11 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.13 2007-03-16 20:55:43-07 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.14 2007-04-13 19:20:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
 HOMEPAGE            http://gcs.globus.org:8080/gcs/index.html
 CONTACT             discuss@globus.org
 HASH                b38b4d8c
+SIGNED_BY           self
 SUBJECT             /C=US/O=Globus Alliance/CN=Globus Certificate Service
 MAY_SIGN            /C=US/O=Globus Alliance/OU=Service/*
 MAY_SIGN            /C=US/O=Globus Alliance/OU=User/*
