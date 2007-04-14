@@ -1,10 +1,11 @@
-# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.3 2007-03-13 19:27:35-07 kst Exp $
+# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.4 2007-04-13 19:20:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2418a3f3.bg-acad-ca.cadesc,v $
 
 CA_NAME             BG ACAD CA
 HOMEPAGE            http://www.ca.acad.bg/
 CONTACT             operations@ca.acad.bg
 HASH                2418a3f3
+SIGNED_BY           self
 SUBJECT             /DC=bg/DC=acad/CN=BG.ACAD CA
 MAY_SIGN            /DC=bg/DC=acad/CN=BG.ACAD CA
 MAY_SIGN            /DC=bg/DC=acad/O=people/*
