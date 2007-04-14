@@ -1,10 +1,11 @@
-# $Id: 2a237f16.balticgrid.cadesc,v 1.2 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 2a237f16.balticgrid.cadesc,v 1.3 2007-04-13 19:20:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2a237f16.balticgrid.cadesc,v $
 
 CA_NAME             Baltic Grid Certification Authority
 HOMEPAGE            http://ca.balticgrid.org/
 CONTACT             ca@ca.balticgrid.org
 HASH                2a237f16
+SIGNED_BY           self
 SUBJECT             /DC=org/DC=balticgrid/CN=Baltic Grid Certification Authority
 MAY_SIGN            /DC=org/DC=balticgrid/*
 CERTIFICATE_MD5     EB:31:19:3E:67:44:C4:5A:93:2C:C4:65:F2:8D:A2:80
