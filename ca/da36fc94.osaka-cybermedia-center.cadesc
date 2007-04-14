@@ -1,10 +1,11 @@
-# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.6 2007-03-12 17:52:42-07 kst Exp $
+# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.7 2007-04-13 19:20:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/da36fc94.osaka-cybermedia-center.cadesc,v $
 
 CA_NAME             Osaka University Cybermedia Center CA
 HOMEPAGE            ?
 CONTACT             date@ais.cmc.osaka-u.ac.jp
 HASH                da36fc94
+SIGNED_BY           self
 SUBJECT             /C=JP/ST=Osaka/L=Ibaraki/O=Osaka University/OU=Cybermedia Center/CN=Susumu Date/emailAddress=date@ais.cmc.osaka-u.ac.jp
 MAY_SIGN            /C=JP/ST=Kyoto/L=Uji/O=Kyoto University/OU=Bioinformatics Center/*
 MAY_SIGN            /C=JP/ST=Osaka/L=Ibaraki/O=Osaka University/*
