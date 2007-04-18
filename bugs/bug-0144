@@ -1,4 +1,4 @@
-# $Id: bug-0144,v 1.1 2007-04-05 18:25:09-07 kst Exp $
+# $Id: bug-0144,v 1.2 2007-04-17 20:01:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0144,v $
 
 gx-map bug 0144
@@ -6,7 +6,7 @@ Date: Wed 2007-04-04
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.5.3.2.025
 Title: Consider supporting deferred propagation
 
 See the e-mail discussion with Michael Shapiro, Wed 2007-04-04.
@@ -47,3 +47,10 @@ Another possibility is, if a resource name can't be determined,
 to submit the mapping with *each* resource matching the wildcard
 in tgcdb-db-config.  All these additions would be deferred within
 the TGCDB until the account is added.
+
+Fix: Submit the mapping for each matching resource_name for which
+there is at least one corresponding user.
+
+Fixed:
+gx-map 0.5.3.2.025
+gx-propagate.in.teragrid 1.40
