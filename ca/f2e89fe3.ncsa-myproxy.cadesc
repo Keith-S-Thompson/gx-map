@@ -1,4 +1,4 @@
-# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.4 2007-04-13 19:20:40-07 kst Exp $
+# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.5 2007-04-17 18:05:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f2e89fe3.ncsa-myproxy.cadesc,v $
 
 CA_NAME             NCSA MyProxy CA
@@ -8,16 +8,16 @@ HASH                f2e89fe3
 SIGNED_BY           self
 SUBJECT             /C=US/O=National Center for Supercomputing Applications/OU=Certificate Authorities/CN=MyProxy
 MAY_SIGN            /C=US/O=National Center for Supercomputing Applications/CN=*
-CERTIFICATE_MD5     AC:54:CC:F5:92:6F:E6:2A:27:3E:78:D3:25:E2:12:84
-CERTIFICATE_SHA1    89:16:AB:CA:36:B5:39:AE:BC:14:87:8C:F1:66:9F:9A:75:2F:A8:FC
+CERTIFICATE_MD5     A4:19:F9:EB:F0:4D:13:67:7F:8D:89:A5:05:EC:E0:69
+CERTIFICATE_SHA1    45:6E:D7:BD:6B:28:06:33:4D:77:CE:E3:40:23:89:AE:95:E8:BC:8D
 CERTIFICATE_URL     http://catest.ncsa.uiuc.edu/f2e89fe3.0
 SIGNING_POLICY_URL  http://catest.ncsa.uiuc.edu/f2e89fe3.signing_policy
 CRL_URL             ?
 ALLOW_MISSING_CRL   yes
-CERT_BEGINS         Wed 2007-03-07 16:49:51 UTC
-CERT_EXPIRES        Mon 2012-03-05 16:49:51 UTC
+CERT_BEGINS         Tue 2007-04-17 19:50:35 UTC
+CERT_EXPIRES        Sun 2012-04-15 19:50:35 UTC
 
-# MD5 and SHA1 fingerprints from f2e89fe3.0 downloaded Thu 2007-03-08
+# MD5 and SHA1 fingerprints from f2e89fe3.0 downloaded Tue 2007-04-17
 
 # This CA has not gone into production.  When it does, the files currently
 # served from <http://catest.ncsa.uiuc.edu/> will instead be served
@@ -25,3 +25,5 @@ CERT_EXPIRES        Mon 2012-03-05 16:49:51 UTC
 
 # As of Thu 2007-04-05, f2e89fe3.signing_policy has been updated
 # (due to IGTF requirements, I think).  I can't tell when it was changed.
+
+# Yet another new version of this certificate was issued Tue 2007-04-17.
