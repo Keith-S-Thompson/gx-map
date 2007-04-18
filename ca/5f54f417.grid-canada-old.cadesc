@@ -1,4 +1,4 @@
-# $Id: 5f54f417.grid-canada-old.cadesc,v 1.3 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 5f54f417.grid-canada-old.cadesc,v 1.4 2007-04-17 18:00:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5f54f417.grid-canada-old.cadesc,v $
 
 CA_NAME             Grid Canada CA (old)
@@ -15,6 +15,7 @@ SIGNING_POLICY_URL  http://www.gridcanada.ca/ca/5f54f417.signing_policy
 CRL_URL             http://www.gridcanada.ca/ca/5f54f417.r0
 CERT_BEGINS         Thu 2002-04-11 03:59:29 UTC
 CERT_EXPIRES        Tue 2007-04-10 03:59:29 UTC
+DISABLE             yes
 
 # MD5 and SHA1 fingerprints from 5f54f417.0 downloaded Tue 2005-03-29
 # Re-verified Tue 2006-10-03
