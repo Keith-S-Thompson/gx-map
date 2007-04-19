@@ -1,4 +1,4 @@
-# $Id: bug-0144,v 1.2 2007-04-17 20:01:54-07 kst Exp $
+# $Id: bug-0144,v 1.3 2007-04-18 18:02:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0144,v $
 
 gx-map bug 0144
@@ -54,3 +54,24 @@ there is at least one corresponding user.
 Fixed:
 gx-map 0.5.3.2.025
 gx-propagate.in.teragrid 1.40
+
+Based on a phone discussion with Michael Shapiro, Wed 2007-04-18,
+it's probably best *not* to propagate any mappings for which a
+resource_name can't be determined.  If an account is later created,
+any existing DNs will be transmitted from the site to the TGCDB in
+an AMIE packet.  (TGCDB sends an AMIE RAC (Request Account Create)
+packet; the site responds by creating the account and sending an AMIE
+NAC (Notify Account Create) packet containing any DNs extracted from
+the local grid-mapfile(s), so the DNs will get into the TGCDB and be
+distributed to the sites.)
+
+As of 0.5.3.2, gx-propagate will submit a mapping with the specified
+resource_name even if the user doesn't have an account on that resource
+(because it doesn't bother to check).  Michael suggests that this is
+unnecessary; gx-propagate should always check whether the user has
+an account on any matching resource, whether a wildcard is specified
+or not.  If there is no matching resource, don't propagate the mapping.
+
+Fixed (by *not* supporting deferred propagation):
+gx-map release 0.5.3.2.026
+gx-propagate.in.teragrid 1.43
