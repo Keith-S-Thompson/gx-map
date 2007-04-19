@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.41 2007-04-17 20:40:39-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.42 2007-04-18 17:39:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -59,8 +59,7 @@ sub Quote(@);
 sub Init_Mappings();
 sub Get_User_List($);
 sub Get_DN_List($);
-sub Get_All_User_Resources();
-sub Get_User_Resource_List($);
+sub Get_User_Resource($);
 sub Add_Mapping($$$);
 sub Remove_Mapping($$$);
 sub Debug(@);
@@ -308,28 +307,6 @@ sub Get_DN_List($) {
 # ----------------------------------------------------------------------
 
 #
-# Return a list of all resources for which one or more users exist.
-# Applies only when $DB_Config->{resource_name} is a wildcard.
-#
-sub Get_All_User_Resources() {
-    my @result = ();
-    my $query = qq {
-        select distinct resource_name
-        from   gxmap.users
-        where  resource_name like '$DB_Config->{resource_name}'
-    };
-    my $sth = $tg->dbh->prepare($query);
-    $sth->execute();
-    my @datarow;
-    while (@datarow = $sth->fetchrow()) {
-        push @result, $datarow[0];
-    }
-    return @result;
-} # Get_All_User_Resources
-
-# ----------------------------------------------------------------------
-
-#
 # Given a username, return a resource name for which that user has
 # an account.
 #
@@ -348,55 +325,47 @@ sub Get_All_User_Resources() {
 # but this approach saves the expense of a query when there's only one
 # possible result.
 #
-sub Get_User_Resource_List($) {
+sub Get_User_Resource($) {
     my($username) = @_;
 
-    if ($DB_Config->{resource_name} =~ /%/) {
-        my $query = qq {
-            select resource_name
-            from   gxmap.users
-            where  resource_name like '$DB_Config->{resource_name}'
-            and    username = '$username'
-        };
-        my $sth = $tg->dbh->prepare($query);
-        $sth->execute();
-        my @datarow = $sth->fetchrow();
-        #
-        # @datarow is a list containing the first row of the query
-        # results.  Because of the form of the query, the row contains
-        # only one element (or none if the query failed); we don't bother
-        # looping to obtain other rows.
-        # 
-        if (@datarow) {
-            return $datarow[0];
-        }
-        else {
-            return Get_All_User_Resources;
-        }
+    my $query = qq {
+        select resource_name
+        from   gxmap.users
+        where  resource_name like '$DB_Config->{resource_name}'
+        and    username = '$username'
+    };
+    my $sth = $tg->dbh->prepare($query);
+    $sth->execute();
+    my @datarow = $sth->fetchrow();
+    #
+    # @datarow is a list containing the first row of the query
+    # results.  Because of the form of the query, the row contains
+    # only one element (or none if the query failed); we don't bother
+    # looping to obtain other rows.
+    # 
+    if (@datarow) {
+        return $datarow[0];
     }
     else {
-        return $DB_Config->{resource_name};
+        return undef;
     }
-} # Get_User_Resource_List
+} # Get_User_Resource
 
 # ----------------------------------------------------------------------
 
 sub Add_Mapping($$$) {
     my($tg, $username, $dn) = @_;
-    my @resource_list = Get_User_Resource_List $username;
-    if (not @resource_list) {
+    my $resource = Get_User_Resource_List $username;
+    if (not defined $resource) {
         die "$Program_Name: Can't determine resource for user $username\n";
     }
-    foreach my $resource (@resource_list) {
-        my $message =
-            "\$tg->gxmap_add_dn($resource, $username, \"$dn\")\n";
-        if ($User_Opt->{dryrun}) {
-            print STDERR $message;
-        }
-        else {
-            Debug $message;
-            $tg->gxmap_add_dn($resource, $username, $dn);
-        }
+    my $message = "\$tg->gxmap_add_dn($resource, $username, \"$dn\")\n";
+    if ($User_Opt->{dryrun}) {
+        print STDERR $message;
+    }
+    else {
+        Debug $message;
+        $tg->gxmap_add_dn($resource, $username, $dn);
     }
 } # Add_Mapping
 
@@ -404,20 +373,17 @@ sub Add_Mapping($$$) {
 
 sub Remove_Mapping($$$) {
     my($tg, $username, $dn) = @_;
-    my @resource_list = Get_User_Resource_List $username;
-    if (not @resource_list) {
+    my $resource = Get_User_Resource_List $username;
+    if (not defined $resource) {
         die "$Program_Name: Can't determine resource for user $username\n";
     }
-    foreach my $resource (@resource_list) {
-        my $message =
-            "\$tg->gxmap_remove_dn($resource, $username, \"$dn\")\n";
-        if ($User_Opt->{dryrun}) {
-            print STDERR $message;
-        }
-        else {
-            Debug $message;
-            $tg->gxmap_remove_dn($resource, $username, $dn);
-        }
+    my $message = "\$tg->gxmap_remove_dn($resource, $username, \"$dn\")\n";
+    if ($User_Opt->{dryrun}) {
+        print STDERR $message;
+    }
+    else {
+        Debug $message;
+        $tg->gxmap_remove_dn($resource, $username, $dn);
     }
 } # Remove_Mapping
 
