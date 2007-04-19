@@ -1,6 +1,6 @@
 #!%PERL% -wT
 
-# $Id: gx-propagate.in.teragrid,v 1.42 2007-04-18 17:39:44-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.43 2007-04-18 18:01:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -355,7 +355,7 @@ sub Get_User_Resource($) {
 
 sub Add_Mapping($$$) {
     my($tg, $username, $dn) = @_;
-    my $resource = Get_User_Resource_List $username;
+    my $resource = Get_User_Resource $username;
     if (not defined $resource) {
         die "$Program_Name: Can't determine resource for user $username\n";
     }
@@ -373,7 +373,7 @@ sub Add_Mapping($$$) {
 
 sub Remove_Mapping($$$) {
     my($tg, $username, $dn) = @_;
-    my $resource = Get_User_Resource_List $username;
+    my $resource = Get_User_Resource $username;
     if (not defined $resource) {
         die "$Program_Name: Can't determine resource for user $username\n";
     }
