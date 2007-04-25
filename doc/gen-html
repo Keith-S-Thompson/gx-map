@@ -1,0 +1,17 @@
+#!/bin/sh
+
+# $Id: gen-html,v 1.1 2007-04-24 20:54:58-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/doc/gen-html,v $
+
+try() {
+    echo "% $@"
+    "$@" || exit 1
+}
+
+version=`cd .. ; ./get-version`
+
+for file in *.pod ; do
+    basename=`basename $file .pod`
+    outfile=$basename.html
+    try pod2html --infile $file --outfile $outfile --title "gx-map $version - $basename"
+done
