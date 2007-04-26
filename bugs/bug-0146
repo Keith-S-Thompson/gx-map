@@ -1,0 +1,15 @@
+# $Id: bug-0146,v 1.1 2007-04-25 19:27:03-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0146,v $
+
+gx-map bug 0146
+Date: Wed 2007-04-25
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Bugs in "gx-request -interactive"
+
+The "gx-request -interactive" command fails in some cases.  An attempt
+to do a "remove" or "remove-dn" results in a fatal error message,
+either "No DN specified" or "No username specified", though it hasn't
+prompted for the required information.
