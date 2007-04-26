@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.108 2007-03-15 18:36:23-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.109 2007-04-25 17:38:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -611,7 +611,7 @@ sub Get_Request_Info($) {
         #
         if ($seconds - $Now > 60) {
             push @{$result->{ERRORS}},
-                 "Future timestamp: $result->{timestamp}";
+                 "Future timestamp: $result->{timestamp} vs. $Now";
         }
     }
     else {
