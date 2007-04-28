@@ -1,0 +1,36 @@
+# $Id: bug-0148,v 1.1 2007-04-27 20:36:54-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0148,v $
+
+gx-map bug 0148
+Date: Fri 2007-04-27
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2
+Status: Open
+Title: Extraneous username field
+
+At NCSA and TACC, several records have shown up in the errors.log file.
+Here's a sample from TACC:
+
+{
+	ERRORS             Extraneous username field
+	NAMESPACE          TACC
+	OWNER_NAME         globust
+	OWNER_UID          29611
+	PROCESSED          1168019857.775447 Fri 2007-01-05 17:57:37 UTC
+	REQUEST_FILE       1168019730.501611-lonestar2.ls.tacc.utexas.edu-globust-23318.request
+	SOURCE             admin
+	dn                 "/C=US/O=UTAustin/OU=TACC/CN=David M Carver/UID=dcarver"
+	hostname           lonestar2.ls.tacc.utexas.edu
+	operation          remove-dn
+	requested_by_name  globust
+	requested_by_uid   29611
+	timestamp          1168019730.501611 Fri 2007-01-05 17:55:30 UTC
+	username           globust
+}
+
+The "username" field should never be set for a remove-dn operation.
+I haven't yet figured out how this can happen.  (Of course, a bogus
+gx-request command or manual editing of the request file could cause
+this, but that's unlikely, especially since it's happened several
+times at two sites.)
