@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-cadesc-release,v 1.1 2006-09-14 18:58:34-07 kst Exp $
+# $Id: make-cadesc-release,v 1.2 2007-05-01 01:21:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-cadesc-release,v $
 
 try() {
@@ -8,21 +8,61 @@ try() {
     eval "$@" || exit 1
 }
 
+old=0
+force=0
+
+for arg in "$@" ; do
+    case "$arg" in
+        -old)
+            old=1
+            ;;
+        -force)
+            force=1
+            ;;
+        *)
+            echo "Usage: $0 [-old] [-force]" 1>&2
+            exit 1
+            ;;
+    esac
+done
+
 today=`date +%Y-%m-%d`
 
 dir=gx-map-cadesc-$today
 tarball=gx-map-cadesc-$today.tar.gz
 
+if [ -d release/$dir ] ; then
+    if [ $force = 1 ] ; then
+        try rm -rf release/$dir
+    else
+        echo "release/$dir already exists" 1>&2
+        exit 1
+    fi
+fi
+
 if [ -f release/$tarball ] ; then
-    echo "release/$tarball already exists" 1>&2
-    exit 1
+    if [ $force = 1 ] ; then
+        try rm -f release/$tarball
+    else
+        echo "release/$tarball already exists" 1>&2
+        exit 1
+    fi
 fi
 
 try mkdir release/$dir
 try cd release/$dir
 ls ../../ca | grep '\.cadesc$' | \
     while read file ; do
-        try cp -p ../../ca/$file .
+        if [ $old = 1 ] ; then
+            if egrep '^(CERTIFICATE_FORM|CRL_FORM)' ../../ca/$file >/dev/null 2>&1 ; then
+                echo "Skipping $file"
+            else
+                echo $file
+                sed '/^SIGNED_BY *self$/s/^/# /;/^CERT_BEGINS/s/^/# /' ../../ca/$file > $file
+            fi
+        else
+            try cp -p ../../ca/$file .
+        fi
     done
 
 cat >README <<EOF
