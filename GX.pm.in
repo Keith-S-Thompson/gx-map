@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.29 2007-05-01 20:49:27-07 kst Exp $
+# $Id: GX.pm.in,v 1.30 2007-05-01 20:55:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -675,10 +675,11 @@ sub Get_PW_UID($) {
 
 #
 # Return the current hostname, as a fully qualified domain name if
-# possible.  Use the Net::Domain module if it's available; otherwise,
-# fall back to the hostname command.
+# possible.  Use the Net::Domain module if it's available and returns
+# a defined value; otherwise, fall back to the hostname command.
 #
 sub Get_Hostname() {
+    my $hostname = undef;
     if ($Have_Net_Domain_Module) {
         #
         # Workaround for Perl bug on Blue Gene/L (Linux/PPC64).
@@ -692,14 +693,21 @@ sub Get_Hostname() {
         # Use_Commands sets $PATH.
         #
         GX::Use_Commands();
-        return eval 'Net::Domain::hostfqdn()';
+        $hostname = eval 'Net::Domain::hostfqdn()';
     }
-    else {
+    if (not defined $hostname) {
+        #
+        # Net::Domain::hostfqdn is unavailable, or it failed.
+        #
         GX::Use_Commands 'hostname';
-        my $hostname = `hostname 2>/dev/null`;
+        $hostname = `hostname 2>/dev/null`;
         chomp $hostname;
-        return $hostname;
+        GX::Untaint $hostname;
     }
+    if ($hostname eq '') {
+        $hostname = 'UNKNOWN_HOSTNAME';
+    }
+    return $hostname;
 } # Get_Hostname
 
 # ----------------------------------------------------------------------
