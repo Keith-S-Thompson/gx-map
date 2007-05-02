@@ -1,0 +1,43 @@
+# $Id: bug-0149,v 1.1 2007-05-01 20:55:59-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0149,v $
+
+gx-map bug 0149
+Date: Tue 2007-05-01
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Fixed 0.5.9.001
+Title: Output of hostname command is tainted
+
+On most gx-map installations, the Get_Hostname function uses
+Net::Domain::hostfqdn().  If the Net::Domain module is not available,
+it falls back to using the "hostname" command.
+
+The problem: the output of the "hostname" command is "tainted".
+On one system (a FreeBSD 6.2 system running under VMware), the
+Net::Domain::hostfqdn() function returns undef, so I manually edited
+the Get_Hostname() function to use the hostname command.  The result:
+
+% gx-ca-update -verbose -target ~/certificates
+Processing 01621954 UK e-Science CA (old)
+Insecure dependency in link while running with -T switch at /usr/local/apps/gx-map-0.5.3.3/lib/Gridmap_Utils.pm line 1559.
+Traceback:
+    /usr/local/apps/gx-map-0.5.3.3/lib/Gridmap_Utils.pm:1559 in Gridmap_Utils::Make_Hard_Link
+    /usr/local/apps/gx-map-0.5.3.3/lib/Gridmap_Utils.pm:1954 in Gridmap_Utils::Cache_File
+    /usr/local/apps/gx-map-0.5.3.3/sbin/gx-ca-update:833 in main::Update_Certificate
+    /usr/local/apps/gx-map-0.5.3.3/sbin/gx-ca-update:380
+
+1. If the Net::Domain module is available, but the
+   Net::Domain::hostfqdn() function returns undef, fall back to the
+   hostname command.
+
+2. Consider checking the output of the hostname command for funky
+   characters, particularly '/'.  This probably isn't worth the effort;
+   attacking the hostname command would require write permissions on
+   one of the directories in PATH.
+
+3. Untaint() the result of the hostname command.
+
+Fixed:
+GX.pm.in 1.30
+gx-map release 0.5.9.001
