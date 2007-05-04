@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.147 2007-04-13 19:12:42-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.148 2007-05-03 19:29:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -102,9 +102,6 @@ my $User_Opt = { permissions => '444',
 my @Opts = ( $User_Opt,
              qw( help!
                  version!
-                 unsafe!
-                 U! UN! UNS! UNSA! UNSAF!
-                 UNSAFE!
                  ca=s@
                  ca-list=s@
                  list-cas!
@@ -113,11 +110,7 @@ my @Opts = ( $User_Opt,
                  download!
                  permissions=s
                  gt3-compatible!
-                 allow-missing-crl!
-                 expire-crl=s
-                 warn-crl=s
                  force!
-                 ignore-disable!
                  email!
                  ignore-bad-cadesc!
                  verbose!
@@ -142,29 +135,6 @@ GX::Require_Owner $Program_Name;
 $GX::Debugging = 1 if $User_Opt->{debugging};
 
 $| = 1 if $User_Opt->{verbose};
-
-if (defined $User_Opt->{unsafe}) {
-    Usage "The \"-UNSAFE\" option is case-sensitive\n";
-}
-foreach my $opt (qw(U UN UNS UNSA UNSAF)) {
-    if (defined $User_Opt->{$opt}) {
-        Usage "The \"-UNSAFE\" option must be spelled out in full\n";
-    }
-}
-
-if (not $User_Opt->{UNSAFE}) {
-    my @errors = ();
-    foreach my $opt ( qw( allow-missing-crl
-                          expire-crl
-                          ignore-disable ) )
-    {
-        if (defined $User_Opt->{$opt}) {
-            push @errors, "The \"$opt\" option is disabled " .
-                          "(use \"-UNSAFE\" to enable it).\n";
-        }
-    }
-    Usage @errors if @errors;
-}
 
 if ($User_Opt->{'list-cas'} and $User_Opt->{'list-all-cas'}) {
     Usage "The \"-list-cas\" and \"-list-all-cas\" options " .
@@ -231,21 +201,6 @@ GX::Untaint $User_Opt->{permissions};
 #
 my $Octal_Permissions = $User_Opt->{permissions};
 my $Permissions = oct "0$Octal_Permissions";
-
-my $CRL_Expiration = undef;
-foreach my $opt (qw(expire-crl warn-crl)) {
-    if (defined $User_Opt->{$opt}) {
-        if ($User_Opt->{$opt} =~ /^(\d+)([smhd])$/) {
-            $CRL_Expiration = $1;
-            if    ($2 eq 'm') { $CRL_Expiration *= 60 }
-            elsif ($2 eq 'h') { $CRL_Expiration *= 3600 }
-            elsif ($2 eq 'd') { $CRL_Expiration *= 86400 }
-        }
-        else {
-            Usage "Invalid argument to \"-$opt\" option\n";
-        }
-    }
-}
 
 if ($User_Opt->{debugging}) {
     foreach my $opt (sort keys %$User_Opt) {
@@ -1003,14 +958,10 @@ sub Update_And_Install_CRL($) {
     my $have_crl_url = $ref->{CRL_URL} =~ m<(https?|ftp)://>;
     if (not $have_crl_url) {
         #
-        # If no CRL is specified, it's considered an error unless either
-        # the "-allow-missing-crl" (with "-UNSAFE") option is specified
-        # on the command line *or* the ALLOW_MISSING_CRL attribute is
-        # set to "yes" in the cadesc file.
+        # If no CRL is specified, it's considered an error unless the
+        # ALLOW_MISSING_CRL attribute is set to "yes" in the cadesc file.
         #
-        if (not $User_Opt->{'allow-missing-crl'} and
-            not Allow_Missing_CRL $ref)
-        {
+        if (not Allow_Missing_CRL $ref) {
             Error $ref, undef, undef, "No CRL specified";
         }
         return;
@@ -1093,9 +1044,7 @@ sub Update_And_Install_CRL($) {
         my $remaining = $new_crl_info->{next_update} - $now;
         # Debug "remaining = $remaining\n";
         if ($remaining <= 0) {
-            if ($User_Opt->{'allow-missing-crl'} or
-                 Allow_Missing_CRL $ref)
-            {
+            if (Allow_Missing_CRL $ref) {
                 Vprint "CRL has expired\n";
             }
             else {
@@ -1103,13 +1052,6 @@ sub Update_And_Install_CRL($) {
                             $new_crl_info->{next_update},
                             "CRL has expired";
             }
-        }
-        elsif (defined $CRL_Expiration and $remaining < $CRL_Expiration) {
-            Error $ref, 'crl_will_expire',
-                        $new_crl_info->{next_update},
-                        "CRL expires in " .
-                        Seconds_To_String($remaining) .
-                        ", not installing";
         }
         elsif (not $new_crl_info->{verified}) {
             Error $ref, undef, undef, "Can't verify new CRL";
@@ -1213,16 +1155,6 @@ sub Update_And_Install_CRL($) {
                 Error $ref, undef, undef, "Removing unverified CRL";
                 $remove_crl = 1;
             }
-            elsif (defined $CRL_Expiration and
-                   $remaining < $CRL_Expiration)
-            {
-                Error $ref, 'crl_will_expire',
-                            $crl_info->{next_update},
-                            "CRL will expire in " .
-                            Seconds_To_String($remaining) .
-                            ", removing it";
-                $remove_crl = 1;
-            }
             if ($remove_crl) {
                 unlink $ref->{_CRL_FILE};
             }
@@ -1233,11 +1165,6 @@ sub Update_And_Install_CRL($) {
                 my $notify = 0;
                 if ($crl_info->{used} > 0.9) {
                     $notify = 1;
-                }
-                elsif (defined $User_Opt->{'warn-crl'}) {
-                    if ($remaining < $User_Opt->{'warn-crl'}) {
-                        $notify = 1;
-                    }
                 }
                 if ($remaining < 0) {
                     Error $ref, 'crl_has_expired',
@@ -1641,13 +1568,6 @@ sub Usage(@) {
 Usage: $Program_Name [options]
     -help              Display this message and exit.
     -version           Display version information and exit.
-    -UNSAFE            By default, options that can create security
-                       problems are disabled.  You can use the
-                       "-UNSAFE" option (case-sensitive) to enable
-                       them.  The "unsafe" options are:
-                            -allow-missing-crl
-                            -expire-crl time
-                            -ignore-disable
     -ca name           Name of a CA.  This option may be given multiple
                        times, or CA names may be delimited by commas or
                        blanks.  The argument is a field of the *.cadesc
@@ -1675,22 +1595,7 @@ Usage: $Program_Name [options]
                        be necessary or useful.  By default, generated
                        *.signing_policy files are compatible with both
                        GT2 and GT4, and with GT3 pre-WS.
-    -allow-missing-crl Allow a CA with no CRL to be installed.
-                       Requires "-UNSAFE".
-    -expire-crl time   Remove a CRL that will expire within
-                       "time".  "time" is expressed as a number
-                       followed by 's' (seconds), 'm' (minutes),
-                       'h' (hours) or 'd' (days); for example
-                       "-expire-crl 75m".  By default, expiring CRLs
-                       are left in place.
-                       Requires "-UNSAFE".
-    -warn-crl time     Issue a warning message if the CRL will expire
-                       within the specified time.  Regardless of this
-                       option, a warning will also be issued if the CRL
-                       has used more than 90% of its lifetime.
     -force             Force file updates.
-    -ignore-disable    Ignore "DISABLE" attribute in cadesc files.
-                       Requires "-UNSAFE".
     -email             Send e-mail to configured ADMIN_EMAIL address on errors.
                        Default is "-email"; use "-noemail" to disable.
     -ignore-bad-cadesc By default, a syntax error in a cadesc file causes
