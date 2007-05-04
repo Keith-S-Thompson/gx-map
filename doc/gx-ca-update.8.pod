@@ -1,4 +1,4 @@
-# $Id: gx-ca-update.8.pod,v 1.13 2007-01-01 13:01:34-08 kst Exp $
+# $Id: gx-ca-update.8.pod,v 1.14 2007-05-04 00:19:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-ca-update.8.pod,v $
 
 =for comment
@@ -106,12 +106,6 @@ correct than this man page.
 
 Display the software version number and exit.
 
-=item B<-UNSAFE>
-
-Enable options that can create potential security problems.
-The B<-UNSAFE> option must be in all-caps, and it may not be
-abbreviated.
-
 =item B<-ca> I<name>
 
 Name of a certificate authority.  Normally this is given as the
@@ -161,50 +155,10 @@ This should rarely be necessary or useful.  By default, generated
 *.signing_policy files are compatible with both GT2 and GT4, and with
 GT3 pre-WS (so no B<-gt2-compatible> option is needed).
 
-=item B<-allow-missing-crl>
-
-Allow a CA with no CRL to be installed.  Some Certificate Authorities
-don't provide Certificate Revocation Lists.  This creates a
-potential security hole, since there's no way to revoke a compromised
-certificate.  This requires the B<-UNSAFE> option.
-
-If a CA issues only short-term certificates, the lack of a CRL isn't
-necessarily a problem.  For these CAs, the B<-allow-missing-crl> option
-isn't required.  These CAs are indicated by the B<ALLOW_MISSING_CRL>
-option in the F<*.cadesc> file.
-
-=item B<-expire-crl> I<time>
-
-Remove a CRL that will expire within I<time>.  The time is expressed as
-a number followed by 's' (seconds), 'm' (minutes), 'h' (hours), or 'd'
-(days); it should be slightly longer than the interval of the cron job.
-By default, expiring CRLs are left in place.
-
-Removing an expiring CRL means that all certificates issued by the CA
-will potentially be accepted, even if they've been revoked; this is a
-potential security issue.  Leaving an expired CRL in place causes all
-certificates issued by the CA to be rejected.  The proper solution
-is to make sure that a current CRL is always available; this is the
-responsibility of the CA administrators.
-
-This option requires the b<-UNSAFE> option.
-
-=item B<-warn-crl> I<time>
-
-Issue an e-mail warning message if the CRL will expire within the
-specified time.  Regardless of this option, a warning will also be
-issued if the CRL has used more than 90% of its lifetime.
-
 =item B<-force>
 
 Force file updates.  This applies to certificates, signing_policy
 files, and CRLs.
-
-=item B<-ignore-disable>
-
-Certain CAs are disabled by default, as indicated by the B<DISABLE>
-attribute in the F<*.cadesc> file.  This option overrides that attribute
-and allows the CA to be used.  This requires the B<-UNSAFE> option.
 
 =item B<-email>
 
