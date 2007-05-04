@@ -1,4 +1,4 @@
-# $Id: bug-0150,v 1.1 2007-05-03 19:21:35-07 kst Exp $
+# $Id: bug-0150,v 1.2 2007-05-03 19:29:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0150,v $
 
 gx-map bug 0150
@@ -6,7 +6,7 @@ Date: Thu 2007-05-03
 Severity: High
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.3
-Status: Open
+Status: Fixed 0.5.9.002
 Title: gx-ca-update -warn-crl removes expiring CRL
 
 Due to a logical flaw in the handling of the "-warn-crl" and
@@ -17,5 +17,13 @@ option.
 
 Proposed fix:
 
-Delete *all* the "unsafe" options.  (I've sent a message to the
-gx-map@sdsc.edu mailing list warning about this change.)
+Delete the "-warn-crl" option and *all* the "unsafe" options:
+    -allow-missing-crl
+    -expire-crl time
+    -ignore-disable
+(I've sent a message to the gx-map@sdsc.edu mailing list warning
+about this change.)
+
+Fixed:
+gx-ca-update.in 1.148
+gx-map release 0.5.9.002
