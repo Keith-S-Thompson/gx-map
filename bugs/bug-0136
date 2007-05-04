@@ -1,4 +1,4 @@
-# $Id: bug-0136,v 1.1 2007-02-12 15:46:05-08 kst Exp $
+# $Id: bug-0136,v 1.2 2007-05-03 17:18:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0136,v $
 
 gx-map bug 0136
@@ -6,7 +6,34 @@ Date: Fri 2007-02-09
 Severity: Urgent
 Reported by: Benjamin Bennett <ben@psc.edu>
 Version: 0.5.3.2
-Status: Open
-Title: Unspecified bug in gx-gen-mapfile
+Status: Fixed 0.5.3.3
+Title: Race condition in gx-gen-mapfile
 
 See e-mail exchange with ben@psc.edu starting Fri 2007-02-09.
+
+> gx-gen-mapfile would typically be run from cron, making its temporary
+> filenames based on unix timestamp and pid easily guessable.  There is
+> also a race condition here, between were the mapfile data is written
+> out to the temporary file, and that file is copied to a safe location.
+> By being able to guess the time at which gx-gen-mapfile will run (by
+> looking at when the grid-mapfile was written for example), an attacker
+> can control the entire mapfile, including mapping dn's to root.
+
+An exploit was demonstrated.
+
+Actually, guessing the name of the temporary file is not necessary;
+it should also be possible to exploit the race condition by examining
+all files in /tmp.
+
+As of 0.5.3.3, gx-gen-mapfile no longer writes the grid-mapfile to
+a temporary location before copying it; instead, it writes it to a
+temporary file in the same directory as its target.  The ability to
+write multiple grid-mapfiles has been removed; gx-gen-mapfile writes
+either to a single specified file, or to stdout.
+
+As a result of this bug and bug-0135, release 0.5.3.2 and all earlier
+releases are now unsupportd; all users should upgrade to 0.5.3.2p1
+or 0.5.3.3.
+
+Fixed:
+gx-map release 0.5.3.3
