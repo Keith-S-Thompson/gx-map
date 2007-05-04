@@ -1,4 +1,4 @@
-# $Id: bug-0135,v 1.2 2007-02-12 15:46:04-08 kst Exp $
+# $Id: bug-0135,v 1.3 2007-05-03 17:18:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0135,v $
 
 gx-map bug 0135
@@ -6,7 +6,38 @@ Date: Fri 2007-02-09
 Severity: Urgent
 Reported by: Benjamin Bennett <ben@psc.edu>
 Version: 0.5.3.2
-Status: Open
-Title: Unspecified bug in gx-check-requests
+Status: Fixed 0.5.3.3
+Title: Race condition in gx-check-requests
 
 See e-mail exchange with ben@psc.edu starting Fri 2007-02-09.
+
+> In gx-check-requests there is a race condition between reading a request
+> file, and stat'ing it to verify ownership.  This is compounded by the
+> stat following symlinks.  This allows an unprivileged user to create
+> a mapping request for an arbitrary account (the victim), unlink the
+> request after it has been opened for reading, and symlink the request
+> location to a file owned by the victim before the stat is called to
+> check ownership.  I believe the root mapping prohibition happens after
+> this step, so it only allows mapping to anyone other than root who
+> owns files on the system.
+
+An exploit was demonstrated.
+
+Also, the ".update" file in the new-requests directory is owned by
+the gx-map owner and has world write permissions.  An attacker could
+very easily write a bogus request to the ".update" file (which would
+not change its ownership), then create a symlink or hard link to it
+with a name that looks like a valid request file.  This bug does not
+involve a race condition, and is very easy to exploit if you know
+what you're doing.
+
+Release 0.5.3.3 corrects this by being more careful about reading
+request files, and by eliminating the "gx-request -update" option
+and the ".update" file.
+
+As a result of this bug and bug-0136, release 0.5.3.2 and all earlier
+releases are now unsupportd; all users should upgrade to 0.5.3.2p1
+or 0.5.3.3.
+
+Fixed:
+gx-map release 0.5.3.3
