@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.3 2007-03-20 18:29:33-07 kst Exp $
+# $Id: bug-0140,v 1.4 2007-05-03 18:58:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -70,3 +70,15 @@ then:
         attempt to rename "xxxxxxxx.0" to "xxxxxxxx.0.bak"
     else
         Ok.
+
+I think there's a simpler way to handle this.
+
+Install a newly downloaded CRL whether it's expired or not (but only
+if the signature test succeeds).
+
+After everything is installed, do a check; if a CRL is required,
+and no CRL (expired or not) has been installed, then disable the CA
+by renaming xxxxxxxx.0 to xxxxxxxx.0.bak.
+
+Then, if both xxxxxxxx.0 and xxxxxxxx.0.bak exist, delete
+xxxxxxxx.0.bak.
