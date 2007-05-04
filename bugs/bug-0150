@@ -1,0 +1,21 @@
+# $Id: bug-0150,v 1.1 2007-05-03 19:21:35-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0150,v $
+
+gx-map bug 0150
+Date: Thu 2007-05-03
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: gx-ca-update -warn-crl removes expiring CRL
+
+Due to a logical flaw in the handling of the "-warn-crl" and
+"-expire-crl" options of the gx-ca-update command, they both behave
+identically.  The "-warn-crl" option, in addition to issuing a warning,
+will actually remove the CRL, even without the use of the "-UNSAFE"
+option.
+
+Proposed fix:
+
+Delete *all* the "unsafe" options.  (I've sent a message to the
+gx-map@sdsc.edu mailing list warning about this change.)
