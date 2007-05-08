@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.92 2007-04-06 16:23:47-07 kst Exp $
+# $Id: install-gx-map.in,v 1.93 2007-05-08 16:31:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -187,7 +187,12 @@ done
 if [ -r .config-file ] ; then
     config_file=`cat .config-file`
     config_file_basename=`basename $config_file`
-    echo "Copying $config_file"
+    echo "Copying $config_file to gx-map.conf"
+    verbosely cp $config_file $ETC_DIR/gx-map.conf
+    verbosely chmod 644 $ETC_DIR/gx-map.conf
+
+    echo "Copying $config_file to $config_file_basename"
+
     (
         echo "########################################################################"
         echo "# THIS COPY OF THE CONFIGURATION FILE IS INCLUDED HERE FOR REFERENCE.  #"
