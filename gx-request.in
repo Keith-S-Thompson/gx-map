@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.72 2007-03-15 18:36:26-07 kst Exp $
+# $Id: gx-request.in,v 1.73 2007-05-08 16:35:43-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -116,6 +116,7 @@ my $default_cert_file =
 my $User_Opt = { };
 my @Opts = ( $User_Opt,
              qw( help long-help version
+                 show-config
                  interactive
                  quick-add quick-remove
                  add
@@ -136,6 +137,20 @@ Long_Usage if $User_Opt->{'long-help'};
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
+}
+
+if ($User_Opt->{'show-config'}) {
+    my $Config = GX::Get_Config "$Install_Dir/etc/gx-map/gx-map.conf";
+
+    print "GX::Config (hard-wired):\n";
+    foreach my $key (sort keys %GX::Config) {
+        printf "    %-24s => \"%s\"\n", $key, $GX::Config{$key};
+    }
+
+    print "Config from gx-map.conf:\n";
+    foreach my $key (sort keys %$Config) {
+        printf "    %-24s => \"%s\"\n", $key, $Config->{$key};
+    }
 }
 
 $GX::Debugging = 1 if $User_Opt->{debugging};
@@ -1118,6 +1133,8 @@ Usage: $Program_Name [options]
 Option names may be abbreviated.
     -help                   : Show a brief usage message and exit.
     -version                : Show version information and exit.
+    -show-config            : Show configuration information and exit.
+                              (This is temporary.)
     -quick-add              : Add a mapping for your current certificate.
                               Equivalent to -add -default-dn.
     -quick-remove           : Remove the mapping for your current certificate.
