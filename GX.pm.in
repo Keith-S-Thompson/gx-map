@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.31 2007-05-03 19:29:44-07 kst Exp $
+# $Id: GX.pm.in,v 1.32 2007-05-08 16:35:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -89,7 +89,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.9.002';
+    $VERSION = '0.5.9.003';
 
     $Debugging = undef; 
     %Config = ( PERL                     => '%PERL%',
@@ -213,59 +213,147 @@ sub Debugf(@);
 
 ########################################################################
 
-# sub Get_Config($) {
-#     my($config_file) = @_;
-#     my $result = {};
-#     my %valid_var_name = map { $_ => 1 }
-#                              qw( PERL
-#                                  PATH
-#                                  NAMESPACE
-#                                  INSTALL_DIR
-#                                  DATA_DIR
-#                                  REQUESTS_LOG_PERMISSIONS
-#                                  GX_MAP_OWNER
-#                                  ADDITIONAL_ADMINS
-#                                  ADMIN_EMAIL
-#                                  VALID_MAPPINGS_FILE
-#                                  GX_PROPAGATE );
-#     my %optional_var = ( VALID_MAPPINGS_FILE => 1 );
-#     open my $Config, '<', $config_file or die "$config_file: $!\n";
-#     while (<$Config>) {
-#         s/#.*$//;
-#         s/^\s+//;
-#         s/\s+$//;
-#         next if /^$/;
-#    
-#         chomp;
-#    
-#         if (/^(\w+)\s+(.*)$/) {
-#             my($name, $value) = ($1, $2);
-#             eval { $value =~ s/~(\w+)/Home_Dir $1/eg; };
-#             if ($@) {
-#                 chomp $@;
-#                 push @errors, "$@, $config_file line $.\n";
-#             }
-#             if ($valid_var_name{$name}) {
-#                 if (exists $Config{$name}) {
-#                     push @errors,
-#                          "Duplicate name \"$name\", $config_file line $.\n";
-#                 }
-#                 else {
-#                     $result->{$name} = $value;
-#                 }
-#             }
-#             else {
-#                 push @errors, "Invalid name \"$name\", $config_file line $.\n";
-#             }
-#             if ($value eq 'UNDEF' and not $optional_var{$name}) {
-#                 push @errors,
-#                      "Undefined value for \"$name\", $config_file line $.\n";
-#             }
-#         }
-#     }
-#     close $Config;
-#     die @errors if @errors;
-# } Get_Config
+sub Get_Config($) {
+    my($config_file) = @_;
+    my $Config = {};
+    my %required =
+        map { $_ => 1 }
+            qw( PERL
+                PATH
+                NAMESPACE
+                INSTALL_DIR
+                DATA_DIR
+                REQUESTS_LOG_PERMISSIONS
+                GX_MAP_OWNER
+                ADDITIONAL_ADMINS
+                ADMIN_EMAIL
+                REQUIRE_SIGNATURES
+                CERTIFICATES_DIR
+                GX_PROPAGATE
+                EXTRAS );
+    $Config = GX::Read_Records '-single', $config_file;
+
+    my @missing = ();
+    my @extra = ();
+    my @errors = ();
+
+    foreach my $key_needed (sort keys %required) {
+        push @missing, $key_needed if not exists $Config->{$key_needed};
+    }
+    push @errors, "Missing key(s): @missing\n" if @missing;
+    foreach my $key_seen (sort keys %$Config) {
+        push @extra, $key_seen if not $required{$key_seen};
+    }
+    push @errors, "Extraneous key(s): @extra\n" if @extra;
+
+    if (@errors) {
+        die "Error(s) in $config_file:\n", @errors;
+    }
+
+    #
+    # Check PERL
+    #
+    if (not -x $Config->{PERL}) {
+        push @errors, "PERL ($Config->{PERL}) is not executable\n";
+    }
+
+    #
+    # Check PATH
+    #
+    DIR:
+    foreach my $dir (split/:/, $Config->{PATH}) {
+        if ($dir !~ /^\// or not -d $dir) {
+            push @errors, "Bad PATH $Config->{PATH}\n";
+            last DIR;
+        }
+    }
+
+    #
+    # No checks for NAMESPACE (for now).
+    #
+
+    #
+    # Check INSTALL_DIR, DATA_DIR
+    #
+    if ($Config->{INSTALL_DIR} !~ /^\//) {
+        push @errors, "Bad value for INSTALL_DIR\n";
+    }
+    if ($Config->{DATA_DIR} !~ /^\//) {
+        push @errors, "Bad value for DATA_DIR\n";
+    }
+    if ($Config->{INSTALL_DIR} eq $Config->{DATA_DIR}) {
+        push @errors, "INSTALL_DIR and DATA_DIR should be distinct\n";
+    }
+
+    #
+    # Check REQUESTS_LOG_PERMISSIONS
+    #
+    my %permission_ok = map { $_ => 1 } qw(400 440 444);
+    if (not $permission_ok{$Config->{REQUESTS_LOG_PERMISSIONS}}) {
+        push @errors, "Bad REQUESTS_LOG_PERMISSIONS (use 400, 440, or 444)\n";
+    }
+
+    #
+    # Check GX_MAP_OWNER, ADDITIONAL_ADMINS
+    #
+    my @admins = $Config->{GX_MAP_OWNER};
+    if ($Config->{ADDITIONAL_ADMINS} ne '') {
+        push @admins, split /\s+/, $Config->{ADDITIONAL_ADMINS};
+    }
+    #
+    # The first admin is the GX_MAP_OWNER; all others (if any) are from
+    # ADDITIONAL_ADMINS.
+    #
+    my $admin_key = 'GX_MAP_OWNER';
+    foreach my $admin (@admins) {
+        my $pw = Get_PW_Name $admin;
+        if (not defined $pw) {
+            push @errors, "Bad $admin_key $admin, no such user\n";
+        }
+        elsif ($pw->{uid} == 0) {
+            push @errors, "Bad $admin_key $admin, UID is 0\n";
+        }
+        $admin_key = 'ADDITIONAL_ADMINS';
+    }
+
+    #
+    # Check ADMIN_EMAIL
+    #
+    if ($Config->{ADMIN_EMAIL} !~ /^[^@]+\@[^@]+\.[^@]$/) {
+        push @errors, "Bad ADMIN_EMAIL $Config->{ADMIN_EMAIL}\n";
+    }
+
+    #
+    # Check REQUIRE_SIGNATURES
+    #
+    if ($Config->{REQUIRE_SIGNATURES} ne 'yes' and
+        $Config->{REQUIRE_SIGNATURES} ne 'no')
+    {
+        push @errors, "Bad value for REQUIRE_SIGNATURES, must be yes or no\n"
+    }
+
+    #
+    # Check CERTIFICATES_DIR
+    #
+    if (not -d $Config->{CERTIFICATES_DIR}) {
+        push @errors, "CERTIFICATES_DIR $Config->{CERTIFICATES_DIR} " .
+                      "is not a directory\n";
+    }
+
+    #
+    # No check for GX_PROPAGATE
+    #
+
+    #
+    # No check for EXTRAS
+    #
+
+    if (@errors) {
+        die "Error(s) in $config_file:\n", @errors;
+    }
+
+    return $Config;
+} # Get_Config
 
 # ----------------------------------------------------------------------
 
