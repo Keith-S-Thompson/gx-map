@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.35 2007-05-08 18:02:16-07 kst Exp $
+# $Id: GX.pm.in,v 1.36 2007-05-08 20:53:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -84,7 +84,11 @@ my $Have_Time_HiRes_Module;
 
 BEGIN {
     require 5.006;
-    use vars qw($VERSION $Debugging %Config $Registered_Handler_Function);
+    use vars qw( $VERSION
+                 $Debugging
+                 $Initial_Config
+                 $Config
+                 $Registered_Handler_Function );
 
     #
     # The layout of the following line is significant; see configure-gx-map.
@@ -92,19 +96,20 @@ BEGIN {
     $VERSION = '0.5.9.003';
 
     $Debugging = undef; 
-    %Config = ( PERL                     => '%PERL%',
-                PATH                     => '%PATH%',
-                NAMESPACE                => '%NAMESPACE%',
-                INSTALL_DIR              => '%INSTALL_DIR%',
-                DATA_DIR                 => '%DATA_DIR%',
-                REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
-                GX_MAP_OWNER             => '%GX_MAP_OWNER%',
-                ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
-                ADMIN_EMAIL              => '%ADMIN_EMAIL%',
-                REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
-                CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
-                GX_PROPAGATE             => '%GX_PROPAGATE%',
-                EXTRAS                   => '%EXTRAS%' );
+    $Initial_Config =
+        { PERL                     => '%PERL%',
+          PATH                     => '%PATH%',
+          NAMESPACE                => '%NAMESPACE%',
+          INSTALL_DIR              => '%INSTALL_DIR%',
+          DATA_DIR                 => '%DATA_DIR%',
+          REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
+          GX_MAP_OWNER             => '%GX_MAP_OWNER%',
+          ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
+          ADMIN_EMAIL              => '%ADMIN_EMAIL%',
+          REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
+          CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
+          GX_PROPAGATE             => '%GX_PROPAGATE%',
+          EXTRAS                   => '%EXTRAS%' };
     use File::Basename ();
     use File::Path ();
     use File::Temp ();
@@ -119,7 +124,7 @@ BEGIN {
 
 # ----------------------------------------------------------------------
 
-sub Get_Config($);
+sub Set_Config($);
 
 sub Check_Data_Dir();
 
@@ -209,9 +214,28 @@ sub Debugf(@);
 
 ########################################################################
 
-sub Get_Config($) {
+#
+# This is an auxiliary function for Set_Config.  Given a configuration
+# variable name (such as 'PERL'), it returns an empty list if the
+# variable in the gx-map.conf file matches the initial configured value
+# (indicating no error), or an error message if it's been changed.
+#
+sub Config_Error($) {
+    my($key) = @_;
+    if ($GX::Config{$key} eq $GX::Initial_Config{$key}) {
+        return (); # no error
+    }
+    else {
+        return "$key changed from $GX::Initial_Config->{$key} " .
+               "to $GX::Config->{$key}\n";
+
+    }
+} # Config_Error
+
+# ----------------------------------------------------------------------
+
+sub Set_Config($) {
     my($config_file) = @_;
-    my $Config = {};
     my %required =
         map { $_ => 1 }
             qw( PERL
@@ -227,17 +251,17 @@ sub Get_Config($) {
                 CERTIFICATES_DIR
                 GX_PROPAGATE
                 EXTRAS );
-    $Config = GX::Read_Records '-single', '-allow-empty', $config_file;
+    $GX::Config = GX::Read_Records '-single', '-allow-empty', $config_file;
 
     my @missing = ();
     my @extra = ();
     my @errors = ();
 
     foreach my $key_needed (sort keys %required) {
-        push @missing, $key_needed if not exists $Config->{$key_needed};
+        push @missing, $key_needed if not exists $GX::Config->{$key_needed};
     }
     push @errors, "Missing key(s): @missing\n" if @missing;
-    foreach my $key_seen (sort keys %$Config) {
+    foreach my $key_seen (sort keys %$GX::Config) {
         push @extra, $key_seen if not $required{$key_seen};
     }
     push @errors, "Extraneous key(s): @extra\n" if @extra;
@@ -246,59 +270,65 @@ sub Get_Config($) {
         die "Error(s) in $config_file:\n", @errors;
     }
 
-    foreach my $key (keys %$Config) {
-        $Config->{$key} =~ s/%VERSION%/$GX::VERSION/g;
+    foreach my $key (keys %$GX::Config) {
+        $GX::Config->{$key} =~ s/%VERSION%/$GX::VERSION/g;
     }
 
     #
     # Check PERL
     #
-    if (not -x $Config->{PERL}) {
-        push @errors, "PERL ($Config->{PERL}) is not executable\n";
+    if (not -x $GX::Config->{PERL}) {
+        push @errors, "PERL ($GX::Config->{PERL}) is not executable\n";
     }
+    push @errors, GX::Config_Error 'PERL';
 
     #
     # Check PATH
     #
     DIR:
-    foreach my $dir (split/:/, $Config->{PATH}) {
+    foreach my $dir (split/:/, $GX::Config->{PATH}) {
         if ($dir !~ /^\// or not -d $dir) {
-            push @errors, "Bad PATH $Config->{PATH}\n";
+            push @errors, "Bad PATH $GX::Config->{PATH}\n";
             last DIR;
         }
     }
 
     #
-    # No checks for NAMESPACE (for now).
+    # Check NAMESPACE.
     #
+    push @errors, GX::Config_Error 'NAMESPACE';
 
     #
     # Check INSTALL_DIR, DATA_DIR
     #
-    if ($Config->{INSTALL_DIR} !~ /^\//) {
+    if ($GX::Config->{INSTALL_DIR} !~ /^\//) {
         push @errors, "Bad value for INSTALL_DIR\n";
     }
-    if ($Config->{DATA_DIR} !~ /^\//) {
+    if ($GX::Config->{DATA_DIR} !~ /^\//) {
         push @errors, "Bad value for DATA_DIR\n";
     }
-    if ($Config->{INSTALL_DIR} eq $Config->{DATA_DIR}) {
+    if ($GX::Config->{INSTALL_DIR} eq $GX::Config->{DATA_DIR}) {
         push @errors, "INSTALL_DIR and DATA_DIR should be distinct\n";
     }
+    push @errors, GX::Config_Error 'INSTALL_DIR';
+    push @errors, GX::Config_Error 'DATA_DIR';
 
     #
     # Check REQUESTS_LOG_PERMISSIONS
     #
     my %permission_ok = map { $_ => 1 } qw(400 440 444);
-    if (not $permission_ok{$Config->{REQUESTS_LOG_PERMISSIONS}}) {
+    if (not $permission_ok{$GX::Config->{REQUESTS_LOG_PERMISSIONS}}) {
         push @errors, "Bad REQUESTS_LOG_PERMISSIONS (use 400, 440, or 444)\n";
     }
+    push @errors, GX::Config_Error 'REQUESTS_LOG_PERMISSIONS';
 
     #
     # Check GX_MAP_OWNER, ADDITIONAL_ADMINS
     #
-    my @admins = $Config->{GX_MAP_OWNER};
-    if ($Config->{ADDITIONAL_ADMINS} ne '') {
-        push @admins, split /\s+/, $Config->{ADDITIONAL_ADMINS};
+    push @errors, GX::Config_Error 'GX_MAP_OWNER';
+    my @admins = $GX::Config->{GX_MAP_OWNER};
+    if ($GX::Config->{ADDITIONAL_ADMINS} ne '') {
+        push @admins, split /\s+/, $GX::Config->{ADDITIONAL_ADMINS};
     }
     #
     # The first admin is the GX_MAP_OWNER; all others (if any) are from
@@ -319,15 +349,15 @@ sub Get_Config($) {
     #
     # Check ADMIN_EMAIL
     #
-    if ($Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
-        push @errors, "Bad ADMIN_EMAIL $Config->{ADMIN_EMAIL}\n";
+    if ($GX::Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
+        push @errors, "Bad ADMIN_EMAIL $GX::Config->{ADMIN_EMAIL}\n";
     }
 
     #
     # Check REQUIRE_SIGNATURES
     #
-    if ($Config->{REQUIRE_SIGNATURES} ne 'yes' and
-        $Config->{REQUIRE_SIGNATURES} ne 'no')
+    if ($GX::Config->{REQUIRE_SIGNATURES} ne 'yes' and
+        $GX::Config->{REQUIRE_SIGNATURES} ne 'no')
     {
         push @errors, "Bad value for REQUIRE_SIGNATURES, must be yes or no\n"
     }
@@ -335,25 +365,25 @@ sub Get_Config($) {
     #
     # Check CERTIFICATES_DIR
     #
-    if (not -d $Config->{CERTIFICATES_DIR}) {
-        push @errors, "CERTIFICATES_DIR $Config->{CERTIFICATES_DIR} " .
+    if (not -d $GX::Config->{CERTIFICATES_DIR}) {
+        push @errors, "CERTIFICATES_DIR $GX::Config->{CERTIFICATES_DIR} " .
                       "is not a directory\n";
     }
 
     #
-    # No check for GX_PROPAGATE
+    # Check GX_PROPAGATE.
     #
+    push @errors, GX::Config_Error 'GX_PROPAGATE';
 
     #
-    # No check for EXTRAS
+    # Check EXTRAS.
     #
+    push @errors, GX::Config_Error 'EXTRAS';
 
     if (@errors) {
         die "Error(s) in $config_file:\n", @errors;
     }
-
-    return $Config;
-} # Get_Config
+} # Set_Config
 
 # ----------------------------------------------------------------------
 
