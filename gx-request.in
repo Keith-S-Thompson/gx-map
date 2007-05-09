@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.76 2007-05-08 20:55:56-07 kst Exp $
+# $Id: gx-request.in,v 1.77 2007-05-09 03:18:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -139,7 +139,7 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 
-GX::Set_Config();
+GX::Set_Config;
 
 if ($User_Opt->{'show-config'}) {
     print "GX::Initial_Config (hard-wired):\n";
