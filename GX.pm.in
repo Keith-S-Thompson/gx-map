@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.37 2007-05-08 20:59:40-07 kst Exp $
+# $Id: GX.pm.in,v 1.38 2007-05-09 03:18:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -62,10 +62,10 @@ package GX;
 # The value of the VERSION variable is the version number for the entire
 # gx-map system.
 #
-# The %Config hash contains values generated before installation by
-# configure-gx-map.  Note that the PERL and INSTALL_DIR options are
+# The $Config hash reference contains values generated before installation
+# by configure-gx-map.  Note that the PERL and INSTALL_DIR options are
 # necessarily expanded directly in each file; other options should be
-# referenced via the %GX::Config hash.
+# referenced via the $GX::Config hash reference
 # 
 
 #
@@ -222,7 +222,7 @@ sub Debugf(@);
 #
 sub Config_Error($) {
     my($key) = @_;
-    if ($GX::Config{$key} eq $GX::Initial_Config{$key}) {
+    if ($GX::Config->{$key} eq $GX::Initial_Config->{$key}) {
         return (); # no error
     }
     else {
@@ -238,7 +238,7 @@ sub Set_Config(;$) {
     my $config_file;
     if (scalar @_ == 0) {
         $config_file
-            = "$GX:Initial_Config->{INSTALL_DIR}/etc/gx-map/gx-map.conf";
+            = "$GX::Initial_Config->{INSTALL_DIR}/etc/gx-map/gx-map.conf";
     }
     else {
         $config_file = $_[0];
@@ -279,7 +279,8 @@ sub Set_Config(;$) {
     }
 
     foreach my $key (keys %$GX::Config) {
-        $GX::Config->{$key} =~ s/%VERSION%/$GX::VERSION/g;
+        my $pattern = '%' . 'VERSION' . '%'; # avoid expansion
+        $GX::Config->{$key} =~ s/$pattern/$GX::VERSION/g;
     }
 
     #
@@ -400,8 +401,8 @@ sub Set_Config(;$) {
 # Die with an error message if it doesn't.
 #
 sub Check_Data_Dir() {
-   my $install_dir = $GX::Config{INSTALL_DIR};
-   my $data_dir    = $GX::Config{DATA_DIR};
+   my $install_dir = $GX::Config->{INSTALL_DIR};
+   my $data_dir    = $GX::Config->{DATA_DIR};
     if (    -l "$install_dir/gx-map-data" and
         not -d "$install_dir/gx-map-data/.")
     {
@@ -882,7 +883,7 @@ sub Dir_Error($) {
 
 sub Require_Owner($) {
     my($program_name) = @_;
-    my $owner = $GX::Config{GX_MAP_OWNER}; 
+    my $owner = $GX::Config->{GX_MAP_OWNER}; 
     my $owner_pw = GX::Get_PW_Name $owner;
     my $owner_uid = $owner_pw->{uid};
     #
@@ -902,8 +903,8 @@ sub Is_Admin_Account($) {
 
     if (scalar keys %is_admin_account == 0) {
         my @admins = ();
-        push @admins, $GX::Config{GX_MAP_OWNER};
-        push @admins, split /\s+/, $GX::Config{ADDITIONAL_ADMINS};
+        push @admins, $GX::Config->{GX_MAP_OWNER};
+        push @admins, split /\s+/, $GX::Config->{ADDITIONAL_ADMINS};
         %is_admin_account = map { $_ => 1 } @admins;
     }
 
@@ -921,7 +922,7 @@ sub Is_Admin_Account($) {
 sub Use_Commands(@) {
     my(@commands) = @_;
     my @unfound = ();
-    $ENV{PATH} = $GX::Config{PATH};
+    $ENV{PATH} = $GX::Config->{PATH};
     my @path = split /:/, $ENV{PATH};
     foreach my $command (@commands) {
         my $foundit = 0;
@@ -1752,8 +1753,8 @@ sub Slurp_File($$) {
             $request->{dn} = $dn;
             $request->{username} = $user;
             $request->{timestamp} = $$Slurp_Timestamp;
-            $request->{OWNER_NAME} = $GX::Config{GX_MAP_OWNER};
-            $request->{NAMESPACE} = $GX::Config{NAMESPACE};
+            $request->{OWNER_NAME} = $GX::Config->{GX_MAP_OWNER};
+            $request->{NAMESPACE} = $GX::Config->{NAMESPACE};
             GX::Debug "Adding dn=$dn user=$user timestamp=$$Slurp_Timestamp\n";
             $$Slurp_Timestamp
                 = GX::Increment_Timestamp $$Slurp_Timestamp;
@@ -1901,9 +1902,9 @@ sub Gen_Mappings(@) {
             GX::Debug "Reject, no NAMESPACE\n";
             next REQUEST;
         }
-        if ($request->{NAMESPACE} ne $GX::Config{NAMESPACE}) {
+        if ($request->{NAMESPACE} ne $GX::Config->{NAMESPACE}) {
             GX::Debug "Reject, bad NAMESPACE $request->{NAMESPACE}, " .
-                  "expected $GX::Config{NAMESPACE}\n";
+                  "expected $GX::Config->{NAMESPACE}\n";
             next REQUEST;
         }
 
@@ -2239,7 +2240,7 @@ sub Cache_File(@) {
     my $is_ftp = $url =~ /^ftp:/;
 
     if (not defined $cache_dir) {
-        $cache_dir = "$GX::Config{INSTALL_DIR}/gx-map-data/cache";
+        $cache_dir = "$GX::Config->{INSTALL_DIR}/gx-map-data/cache";
     }
     my $filename = GX::QP_Encode $url;
 
@@ -2942,7 +2943,7 @@ sub DN_List($@) {
 #
 sub Send_Email($$$$) {
     my($program_name, $recipient, $subject, $body) = @_;
-    my $data_dir = "$GX::Config{INSTALL_DIR}/gx-map-data";
+    my $data_dir = "$GX::Config->{INSTALL_DIR}/gx-map-data";
     my $mail_log = "$data_dir/$program_name-mail.log";
 
     GX::Untaint $mail_log;
@@ -3099,7 +3100,7 @@ sub Get_CA_Ref($) {
 #
 sub Get_Lock($) {
     my($name) = @_;
-    my $dir = "$GX::Config{INSTALL_DIR}/gx-map-data";
+    my $dir = "$GX::Config->{INSTALL_DIR}/gx-map-data";
     my $hostname = GX::Get_Hostname;
     my $lock_file = "$dir/.$name.lock";
     my $unique_lock_file = "$lock_file.$hostname.$$";
@@ -3169,7 +3170,7 @@ sub Get_Lock($) {
 #
 sub Release_Lock($) {
     my($name) = @_;
-    my $dir = "$GX::Config{INSTALL_DIR}/gx-map-data";
+    my $dir = "$GX::Config->{INSTALL_DIR}/gx-map-data";
     my $lock_file = "$dir/.$name.lock";
     GX::Untaint $lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
