@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.33 2007-05-08 17:09:24-07 kst Exp $
+# $Id: GX.pm.in,v 1.34 2007-05-08 17:17:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -315,7 +315,7 @@ sub Get_Config($) {
     #
     # Check ADMIN_EMAIL
     #
-    if ($Config->{ADMIN_EMAIL} !~ /^[^@]+\@[^@]+\.[^@]$/) {
+    if ($Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
         push @errors, "Bad ADMIN_EMAIL $Config->{ADMIN_EMAIL}\n";
     }
 
