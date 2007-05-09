@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.109 2007-04-25 17:38:41-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.110 2007-05-09 03:18:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -88,6 +88,8 @@ my @Opts = ( $User_Opt,
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
 Usage if @ARGV;
+
+GX::Set_Config;
 
 if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
@@ -203,7 +205,7 @@ if (not @good_requests and not @bad_requests) {
     exit;
 }
 
-$ENV{PATH} = $GX::Config{PATH};
+$ENV{PATH} = $GX::Config->{PATH};
 
 #
 # We need to invoke gx-propagate *before* appending the good requests
@@ -300,7 +302,7 @@ if (-x $propagate) {
     }
     if (@propagation_failures) {
         my $count = scalar @propagation_failures;
-        my $recipient = $GX::Config{ADMIN_EMAIL};
+        my $recipient = $GX::Config->{ADMIN_EMAIL};
         my $subject = ($count == 1 ? "gx-propagate: 1 failure"
                                    : "gx-propagate: $count failures");
         my $body = "$propagate\n" .
@@ -374,7 +376,7 @@ if (@rename_errors) {
 #
 if (@bad_request_files) {
     my $count = scalar @bad_request_files;
-    my $recipient = $GX::Config{ADMIN_EMAIL};
+    my $recipient = $GX::Config->{ADMIN_EMAIL};
     my $subject = ($count == 1 ? "$Program_Name: bad request"
                                : "$Program_Name: $count bad requests");
     my $body = "$Program_Name detected ";
@@ -725,12 +727,12 @@ sub Get_Request_Info($) {
         $result->{SOURCE} = ( $owner_is_admin ? 'admin' : 'user' );
     }
 
-    $result->{NAMESPACE} = $GX::Config{NAMESPACE};
+    $result->{NAMESPACE} = $GX::Config->{NAMESPACE};
 
     if ($result->{SOURCE} eq 'user' and
         $result->{operation} eq 'add' and
-        defined $GX::Config{REQUIRE_SIGNATURES} and
-        $GX::Config{REQUIRE_SIGNATURES} eq 'yes')
+        defined $GX::Config->{REQUIRE_SIGNATURES} and
+        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
     {
         #
         # Check signature (preliminary)
@@ -742,8 +744,8 @@ sub Get_Request_Info($) {
             }
         }
         else {
-            if (defined $GX::Config{STRICT_SIGNATURES} and
-                $GX::Config{STRICT_SIGNATURES} eq 'yes')
+            if (defined $GX::Config->{STRICT_SIGNATURES} and
+                $GX::Config->{STRICT_SIGNATURES} eq 'yes')
             {
                 push @{$result->{ERRORS}},
                      "missing signature, strict checking requested";
@@ -779,7 +781,7 @@ sub Append_To_Log($@) {
     # records to it, then change it back to read-only.
     # Watch out for the permissions on the RCS file (bug-0003).
     #
-    my $readonly = oct $GX::Config{REQUESTS_LOG_PERMISSIONS};
+    my $readonly = oct $GX::Config->{REQUESTS_LOG_PERMISSIONS};
     my $writable = $readonly | 0200;
 
     if (-e $log_file) {
@@ -810,8 +812,8 @@ sub Append_To_Log($@) {
 # exist on the current system.  If not, die with an error message.
 #
 sub Check_Admin_Accounts() {
-    my @admins = ( $GX::Config{GX_MAP_OWNER},
-                   split /\s+/, $GX::Config{ADDITIONAL_ADMINS} );
+    my @admins = ( $GX::Config->{GX_MAP_OWNER},
+                   split /\s+/, $GX::Config->{ADDITIONAL_ADMINS} );
     my @missing = ();
     foreach my $admin (@admins) {
         #
