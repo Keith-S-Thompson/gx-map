@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.148 2007-05-03 19:29:19-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.149 2007-05-09 03:18:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -124,6 +124,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
 
 GX::Check_Data_Dir;
 
@@ -1530,12 +1532,12 @@ sub Notify() {
         my $subject = "$Program_Name: $new_error_count error(s), " .
                       "$new_error_ca_count/$total_ca_count CA(s)";
 
-        my $recipient = $GX::Config{ADMIN_EMAIL};
+        my $recipient = $GX::Config->{ADMIN_EMAIL};
         $mail_message_body
             .= "\n$Program_Name (gx-map $GX::VERSION) on " .
                "$Hostname\n";
         GX::Send_Email $Program_Name,
-                       $GX::Config{ADMIN_EMAIL},
+                       $GX::Config->{ADMIN_EMAIL},
                        $subject,
                        $mail_message_body;
     }
