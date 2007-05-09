@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.10 2007-03-15 18:36:25-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.11 2007-05-08 20:57:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -87,6 +87,8 @@ if ($User_Opt->{version}) {
     exit 0;
 }
 Usage if scalar @ARGV != 1;
+
+GX::Set_Config();
 
 if (not defined $User_Opt->{name} and not defined $User_Opt->{primary}) {
     Usage qq(Either "-name" or "-primary" must be specified\n);
