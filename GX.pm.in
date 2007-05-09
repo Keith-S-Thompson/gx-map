@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.34 2007-05-08 17:17:12-07 kst Exp $
+# $Id: GX.pm.in,v 1.35 2007-05-08 18:02:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -244,6 +244,10 @@ sub Get_Config($) {
 
     if (@errors) {
         die "Error(s) in $config_file:\n", @errors;
+    }
+
+    foreach my $key (keys %$Config) {
+        $Config->{$key} =~ s/%VERSION%/$GX::VERSION/g;
     }
 
     #
