@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.73 2007-05-08 16:35:43-07 kst Exp $
+# $Id: gx-request.in,v 1.74 2007-05-08 17:25:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -151,6 +151,7 @@ if ($User_Opt->{'show-config'}) {
     foreach my $key (sort keys %$Config) {
         printf "    %-24s => \"%s\"\n", $key, $Config->{$key};
     }
+    exit 0;
 }
 
 $GX::Debugging = 1 if $User_Opt->{debugging};
