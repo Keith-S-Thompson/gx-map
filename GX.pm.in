@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.36 2007-05-08 20:53:09-07 kst Exp $
+# $Id: GX.pm.in,v 1.37 2007-05-08 20:59:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -124,7 +124,7 @@ BEGIN {
 
 # ----------------------------------------------------------------------
 
-sub Set_Config($);
+sub Set_Config(;$);
 
 sub Check_Data_Dir();
 
@@ -234,8 +234,16 @@ sub Config_Error($) {
 
 # ----------------------------------------------------------------------
 
-sub Set_Config($) {
-    my($config_file) = @_;
+sub Set_Config(;$) {
+    my $config_file;
+    if (scalar @_ == 0) {
+        $config_file
+            = "$GX:Initial_Config->{INSTALL_DIR}/etc/gx-map/gx-map.conf";
+    }
+    else {
+        $config_file = $_[0];
+    }
+
     my %required =
         map { $_ => 1 }
             qw( PERL
