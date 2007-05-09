@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.32 2007-05-08 16:35:55-07 kst Exp $
+# $Id: GX.pm.in,v 1.33 2007-05-08 17:09:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -119,11 +119,7 @@ BEGIN {
 
 # ----------------------------------------------------------------------
 
-#
-# Get_Config (for runtime configuration) should be in the next major
-# release.
-#
-# sub Get_Config($);
+sub Get_Config($);
 
 sub Check_Data_Dir();
 
@@ -231,7 +227,7 @@ sub Get_Config($) {
                 CERTIFICATES_DIR
                 GX_PROPAGATE
                 EXTRAS );
-    $Config = GX::Read_Records '-single', $config_file;
+    $Config = GX::Read_Records '-single', '-allow-empty', $config_file;
 
     my @missing = ();
     my @extra = ();
@@ -1303,6 +1299,10 @@ sub Increment_Timestamp($) {
 #
 #           Comments are ignored by default.
 #
+#   '-allow-empty'
+#           Allow the value of a field to be empty.  By default, a key
+#           name with no value is a syntax error.
+#
 #   '-filename=...'
 #           Specify a file name, to be used only error messages.  This is
 #           useful when the last argument is an opened file handle rather
@@ -1334,6 +1334,7 @@ sub Read_Records(@) {
     my $filename = 'input file';
     my $multiple = 1;
     my $keep_comments = 0;
+    my $allow_empty = 0;
     for (my $i = 0; $i <= $#_; $i ++) {
         if ($_[$i] eq '-single') {
             $multiple = 0;
@@ -1343,6 +1344,9 @@ sub Read_Records(@) {
         }
         elsif ($_[$i] eq '-keep-comments') {
             $keep_comments = 1;
+        }
+        elsif ($_[$i] eq '-allow-empty') {
+            $allow_empty = 1;
         }
         elsif ($_[$i] =~ /^-filename=(.*)$/) {
             $filename = $1;
@@ -1454,8 +1458,18 @@ sub Read_Records(@) {
                 undef $ref;
                 $context = 'none';
             }
-            elsif (/^(\w+)\s+(.*)$/) {
+            elsif (/^(\w+)\s*(.*)$/) {
                 my($key, $value) = ($1, $2);
+                if (not $allow_empty and $value eq '') {
+                    my $message = "Missing value at line $. of $filename\n";
+                    if ($multiple) {
+                        $syntax_error = $message;
+                    }
+                    else {
+                        die $message;
+                    }
+                }
+
                 if (defined $ref->{$key}) {
                     if (ref $ref->{$key} ne 'ARRAY') {
                         $ref->{$key} = [ $ref->{$key} ];
