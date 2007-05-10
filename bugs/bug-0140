@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.5 2007-05-09 17:57:13-07 kst Exp $
+# $Id: bug-0140,v 1.6 2007-05-09 20:50:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -85,3 +85,27 @@ xxxxxxxx.0.bak.
 
 But that can create a window in which the certificate exists, but
 the CRL doesn't.  Hmm.
+
+...
+
+Ok, this has been confusing, but I think I've got it worked out.
+
+Given the current code, I believe that, if the cadesc file specifies
+that a CRL is required, the only time we'll be left with a certificate
+but no CRL is if the CA was previously installed by itself (which could
+easily happen).  gx-ca-update itself will refuse to do the initial
+installation of the certificate if it can't also install a valid CRL.
+
+So the additional step is:
+
+    In Finalize_Certificate(), if a CRL is required, and the CA
+    certificate exists, and the CRL does not exist, then disable the
+    CA certificate (by renaming it to xxxxxxxx.0.disabled) and treat
+    it as a fatal error.
+
+Since this fixes an existing vulnerability, there's no real concern
+about a brief time window.
+
+Fixed:
+gx-ca-update.in 1.151
+gx-map release 0.5.9.006
