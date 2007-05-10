@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.150 2007-05-09 17:56:32-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.151 2007-05-09 20:50:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -1205,6 +1205,22 @@ sub Update_And_Install_CRL($) {
 #
 sub Finalize_Certificate($) {
     my($ref) = @_;
+
+    #
+    # Avoid a situation where a CA certificate was previously installed
+    # (likely by something other than gx-ca-update), but we're unable
+    # to install the CRL.  If that happens, disable the certificate by
+    # changing its name to <hash>.0.disabled.
+    #
+    if (not Allow_Missing_CRL $ref and
+        -e $ref->{_CERT_FILE} and
+        not -e $ref->{_CRL_FILE})
+    {
+        rename $ref->{_CERT_FILE}, "$ref->{_CERT_FILE}.disabled"
+            or Error $ref, undef, undef,
+                     "rename $ref->{_CERT_FILE}: $!";
+        Error $ref, undef, undef, "Disabled $ref->{_CERT_FILE}";
+    }
 
     if ($ref->{_FATAL_ERROR}) {
         if (defined $ref->{_TEMP_CERT_FILE}) {
