@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.4 2007-05-03 18:58:21-07 kst Exp $
+# $Id: bug-0140,v 1.5 2007-05-09 17:57:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -82,3 +82,6 @@ by renaming xxxxxxxx.0 to xxxxxxxx.0.bak.
 
 Then, if both xxxxxxxx.0 and xxxxxxxx.0.bak exist, delete
 xxxxxxxx.0.bak.
+
+But that can create a window in which the certificate exists, but
+the CRL doesn't.  Hmm.
