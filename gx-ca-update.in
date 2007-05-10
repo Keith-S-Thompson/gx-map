@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.149 2007-05-09 03:18:13-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.150 2007-05-09 17:56:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -311,22 +311,12 @@ CA:
 foreach my $ref (@ca_list) {
     Vprint "Processing $ref->{HASH} $ref->{CA_NAME}\n";
     if (Disabled $ref) {
-        if ($User_Opt->{'ignore-disable'}) {
-            Vprint "CA is disabled\n";
-        }
-        else {
-            #
-            # The user explicitly requested a disabled CA without
-            # specifying the "-ignore-disable" option.
-            #
-            Error $ref, undef, undef, "CA is disabled";
-        }
-        if ($User_Opt->{'ignore-disable'}) {
-            Vprint "Overriding \"DISABLE\" attribute\n";
-            $ref->{DISABLE} = 'no';
-        }
+        #
+        # The user requested a disabled CA.
+        #
+        Error $ref, undef, undef, "CA is disabled";
     }
-    if (not Disabled $ref) {
+    else {
         my $prefix = "$User_Opt->{'target-dir'}/$ref->{HASH}";
         GX::Untaint $prefix;
         $ref->{_CERT_FILE}           = "$prefix.0";
@@ -744,7 +734,7 @@ sub CRL_Info($$$) {
 #
 # Update CA certificate if necessary.
 # Don't install it to its final location yet; wait until after we've
-# checked the CRL.  Instead, install it with a ".$$" suffix.
+# checked the CRL.  Instead, install it with a ".tmp" suffix.
 # (We need the certificate to validate the CRL, but we want to see whether
 # we have a CRL before installing the certificate, since installing a
 # certificate without a CRL causes all revocations to be ignored.)
@@ -872,7 +862,7 @@ sub Update_And_Install_Certificate($) {
     if ($ref->{_FATAL_ERROR}) {
         return;
     }
-    $ref->{_TEMP_CERT_FILE} = "$ref->{_CERT_FILE}.$$";
+    $ref->{_TEMP_CERT_FILE} = "$ref->{_CERT_FILE}.tmp";
     Vprint    "Installing $ref->{_TEMP_CERT_FILE}\n";
     Log $ref, "Installing $ref->{_TEMP_CERT_FILE}\n";
     if ($ref->{CERTIFICATE_FORM} eq 'PEM') {
@@ -1386,13 +1376,13 @@ sub Error_File($) {
 #
 sub Error($$$$;$) {
     my($ref, $desc, $timestamp, $message, $severity) = @_;
-    my $warning_only = 0;
+    my $fatal = 1;
     if (defined $severity) {
         if ($severity eq 'warning') {
-            $warning_only = 1;
+            $fatal = 0;
         }
         elsif ($severity eq 'error') {
-            $warning_only = 0;
+            $fatal = 1;
         }
         else {
             die "Internal error, bad severity argument to Error()\n";
@@ -1416,7 +1406,7 @@ sub Error($$$$;$) {
     }
 
     push @{$ref->{_ERRORS}}, $error_ref;
-    if (not $warning_only) {
+    if ($fatal) {
         $ref->{_FATAL_ERROR} = 1;
     }
 } # Error
