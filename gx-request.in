@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.78 2007-05-10 17:25:12-07 kst Exp $
+# $Id: gx-request.in,v 1.79 2007-05-11 02:34:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -725,44 +725,38 @@ EOF
         }
     }
 
-    my $what;
-    if    ($OP eq 'add')     { $what = 'map' }
-    elsif ($OP =~ /^remove/) { $what = 'unmap' }
-    else                     { die "Internal error" }
-
     #
-    # Get user name if needed
+    # If $OP is 'remove-dn', leave username undefined.
     #
-    my $need_user_name = 0;
-    if ($Is_Admin and $OP ne 'remove-dn') {
-        $need_user_name = 1;
-    }
-    else {
-        $Options->{username} = $PW->{name};
-    }
+    if ($OP ne 'remove-dn') {
+        if ($Is_Admin) {
+            my $what;
+            if    ($OP eq 'add')     { $what = 'map' }
+            elsif ($OP =~ /^remove/) { $what = 'unmap' }
+            else                     { die "Internal error" }
 
-    if ($need_user_name) {
-        while (not defined $Options->{username}) {
-            print "What user name do you want to $what ",
-                  "(default is $PW->{name}) ? ";
-            chomp($response = scalar <STDIN>);
-            $response =~ s/^ *//;
-            $response =~ s/ *$//;
-            if ($response eq '') {
-                $Options->{username} = $PW->{name};
-            }
-            else {
-                if (GX::Is_Legal_Username $response) {
-                    $Options->{username} = $response;
+            while (not defined $Options->{username}) {
+                print "What user name do you want to $what ",
+                      "(default is $PW->{name}) ? ";
+                chomp($response = scalar <STDIN>);
+                $response =~ s/^ *//;
+                $response =~ s/ *$//;
+                if ($response eq '') {
+                    $Options->{username} = $PW->{name};
                 }
                 else {
-                    print ">>> \"$response\" is not a legal user name\n";
+                    if (GX::Is_Legal_Username $response) {
+                        $Options->{username} = $response;
+                    }
+                    else {
+                        print ">>> \"$response\" is not a legal user name\n";
+                    }
                 }
             }
         }
-    }
-    else {
-        $Options->{username} = $PW->{name};
+        else {
+            $Options->{username} = $PW->{name};
+        }
     }
 
     #
