@@ -1,4 +1,4 @@
-# $Id: bug-0148,v 1.1 2007-04-27 20:36:54-07 kst Exp $
+# $Id: bug-0148,v 1.2 2007-05-11 02:29:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0148,v $
 
 gx-map bug 0148
@@ -6,7 +6,7 @@ Date: Fri 2007-04-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.5.9.008
 Title: Extraneous username field
 
 At NCSA and TACC, several records have shown up in the errors.log file.
@@ -34,3 +34,14 @@ I haven't yet figured out how this can happen.  (Of course, a bogus
 gx-request command or manual editing of the request file could cause
 this, but that's unlikely, especially since it's happened several
 times at two sites.)
+
+...
+
+I've managed to reproduce this problem using release 0.5.9.007 with
+a "remove-dn" request in interactive mode.  In release 0.5.3.2p1 /
+0.5.3.3, this bug is masked by a bug in interactive mode; see bug-0146,
+corrected in 0.5.9.007.
+
+Fixed:
+gx-request.in 1.79
+gx-map release 0.5.9.008
