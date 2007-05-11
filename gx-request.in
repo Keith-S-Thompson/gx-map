@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.77 2007-05-09 03:18:14-07 kst Exp $
+# $Id: gx-request.in,v 1.78 2007-05-10 17:25:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -617,7 +617,7 @@ EOF
         > (r) Remove a grid-mapfile entry
         > (x) Exit
 EOF
-        print "What do you want to do? [arux] ";
+        print "What do you want to do? [arx] ";
         chomp($response = lc scalar <STDIN>);
         if ($response =~ /^a/) {
             $Options->{operation} = 'add';
@@ -725,175 +725,170 @@ EOF
         }
     }
 
+    my $what;
+    if    ($OP eq 'add')     { $what = 'map' }
+    elsif ($OP =~ /^remove/) { $what = 'unmap' }
+    else                     { die "Internal error" }
+
     #
-    # For other operations, collect more information.
+    # Get user name if needed
     #
+    my $need_user_name = 0;
+    if ($Is_Admin and $OP ne 'remove-dn') {
+        $need_user_name = 1;
+    }
     else {
-        my $what;
-        if    ($OP eq 'add')     { $what = 'map' }
-        elsif ($OP =~ /^remove/) { $what = 'unmap' }
-        else                     { die "Internal error" }
+        $Options->{username} = $PW->{name};
+    }
 
-        #
-        # Get user name if needed
-        #
-        my $need_user_name = 0;
-        if ($Is_Admin and $OP ne 'remove-dn') {
-            $need_user_name = 1;
-        }
-        else {
-            $Options->{username} = $PW->{name};
-        }
-
-        if ($need_user_name) {
-            while (not defined $Options->{username}) {
-                print "What user name do you want to $what ",
-                      "(default is $PW->{name}) ? ";
-                chomp($response = scalar <STDIN>);
-                $response =~ s/^ *//;
-                $response =~ s/ *$//;
-                if ($response eq '') {
-                    $Options->{username} = $PW->{name};
-                }
-                else {
-                    if (GX::Is_Legal_Username $response) {
-                        $Options->{username} = $response;
-                    }
-                    else {
-                        print ">>> \"$response\" is not a legal user name\n";
-                    }
-                }
-            }
-        }
-        else {
-            $Options->{username} = $PW->{name};
-        }
-
-        #
-        # Get DN
-        #
-        if ($OP ne 'remove-user') {
-            my $choices = '';
-            $choices .= 'c' if defined $user_cert_file;
-            $choices .= 'p' if defined $proxy_file;
-            $choices .= 'fix';
-            my $dn = undef;
-            my $cert_file = undef;
-            while (not defined $dn) {
-
-                print Strip <<"EOF";
-                > 
-                > You can specify the DN in one of the following ways:
-EOF
-
-                print Strip <<"EOF" if defined $user_cert_file;
-                > (c) Certificate, extract from $user_cert_file
-EOF
-
-                print Strip <<"EOF" if defined $proxy_file;
-                > (p) Proxy, extract from your current proxy certificate,
-                >     $proxy_file
-EOF
-
-                print Strip <<"EOF";
-                > (f) File, extract from a specified certificate file
-EOF
-
-                print Strip <<"EOF";
-                > (i) Input the DN directly
-                > (x) Exit
-EOF
-
-                print "How do you want to specify the DN? [$choices] ";
-                chomp($response = lc scalar <STDIN>);
-
-                if (defined $user_cert_file and $response =~ /^c/) {
-                    $cert_file = $user_cert_file;
-                }
-                elsif (defined $proxy_file and $response =~ /^p/) {
-                    $cert_file = $proxy_file;
-                }
-                elsif ($response =~ /^f/) {
-                    print "Enter certificate file name: ";
-                    chomp($cert_file = scalar <STDIN>);
-                }
-                elsif ($response =~ /^i/) {
-                    print "Enter distinguished name: ";
-                    chomp($dn = scalar <STDIN>);
-                    $dn =~ s/^"//;
-                    $dn =~ s/"$//;
-                    $dn = GX::Normalize_DN $dn;
-                }
-                elsif ($response =~ /^x/) {
-                    exit 0;
-                }
-                else {
-                    print ">>> Unrecognized input\n";
-                }
-
-                if (defined $cert_file) {
-                    $dn = Get_DN_From_Certificate $cert_file;
-                    if ($dn =~ /^\//) {
-                        $dn = GX::Normalize_DN $dn;
-                        print "DN is \"$dn\"\n";
-                    }
-                    else {
-                        #
-                        # Get_DN_From_Certificate returned an error message.
-                        #
-                        print "$dn\n";
-                        undef $dn;
-                        undef $cert_file;
-                    }
-                }
-            }
-
-            $Options->{dn} = $dn;
-        }
-        if (not $Is_Admin and
-            defined $GX::Config->{REQUIRE_SIGNATURES} and
-            $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
-        {
-            print ">>> Not yet implemented <<<\n";
-            print "Enter verification for \"$Options->{dn}\"\n";
-            my $response;
+    if ($need_user_name) {
+        while (not defined $Options->{username}) {
+            print "What user name do you want to $what ",
+                  "(default is $PW->{name}) ? ";
             chomp($response = scalar <STDIN>);
-            $Options->{signature} = $response;
+            $response =~ s/^ *//;
+            $response =~ s/ *$//;
+            if ($response eq '') {
+                $Options->{username} = $PW->{name};
+            }
+            else {
+                if (GX::Is_Legal_Username $response) {
+                    $Options->{username} = $response;
+                }
+                else {
+                    print ">>> \"$response\" is not a legal user name\n";
+                }
+            }
+        }
+    }
+    else {
+        $Options->{username} = $PW->{name};
+    }
+
+    #
+    # Get DN
+    #
+    if ($OP ne 'remove-user') {
+        my $choices = '';
+        $choices .= 'c' if defined $user_cert_file;
+        $choices .= 'p' if defined $proxy_file;
+        $choices .= 'fix';
+        my $dn = undef;
+        my $cert_file = undef;
+        while (not defined $dn) {
+
+            print Strip <<"EOF";
+            > 
+            > You can specify the DN in one of the following ways:
+EOF
+
+            print Strip <<"EOF" if defined $user_cert_file;
+            > (c) Certificate, extract from $user_cert_file
+EOF
+
+            print Strip <<"EOF" if defined $proxy_file;
+            > (p) Proxy, extract from your current proxy certificate,
+            >     $proxy_file
+EOF
+
+            print Strip <<"EOF";
+            > (f) File, extract from a specified certificate file
+EOF
+
+            print Strip <<"EOF";
+            > (i) Input the DN directly
+            > (x) Exit
+EOF
+
+            print "How do you want to specify the DN? [$choices] ";
+            chomp($response = lc scalar <STDIN>);
+
+            if (defined $user_cert_file and $response =~ /^c/) {
+                $cert_file = $user_cert_file;
+            }
+            elsif (defined $proxy_file and $response =~ /^p/) {
+                $cert_file = $proxy_file;
+            }
+            elsif ($response =~ /^f/) {
+                print "Enter certificate file name: ";
+                chomp($cert_file = scalar <STDIN>);
+            }
+            elsif ($response =~ /^i/) {
+                print "Enter distinguished name: ";
+                chomp($dn = scalar <STDIN>);
+                $dn =~ s/^"//;
+                $dn =~ s/"$//;
+                $dn = GX::Normalize_DN $dn;
+            }
+            elsif ($response =~ /^x/) {
+                exit 0;
+            }
+            else {
+                print ">>> Unrecognized input\n";
+            }
+
+            if (defined $cert_file) {
+                $dn = Get_DN_From_Certificate $cert_file;
+                if ($dn =~ /^\//) {
+                    $dn = GX::Normalize_DN $dn;
+                    print "DN is \"$dn\"\n";
+                }
+                else {
+                    #
+                    # Get_DN_From_Certificate returned an error message.
+                    #
+                    print "$dn\n";
+                    undef $dn;
+                    undef $cert_file;
+                }
+            }
         }
 
-        #
-        # Get e-mail address
-        #
-        print Strip <<"EOF";
-        > 
-        > You may provide your e-mail address if you wish.
-        > It will be recorded in the request log, and may be used
-        > to contact you if there is a problem with your certificate.
-EOF
-        print "E-mail address (<return> for none): ";
+        $Options->{dn} = $dn;
+    }
+    if (not $Is_Admin and
+        defined $GX::Config->{REQUIRE_SIGNATURES} and
+        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
+    {
+        print ">>> Not yet implemented <<<\n";
+        print "Enter verification for \"$Options->{dn}\"\n";
+        my $response;
         chomp($response = scalar <STDIN>);
-        $response =~ s/^\s*//;
-        $response =~ s/\s*$//;
-        if ($response ne '') {
-            $Options->{email} = $response;
-        }
+        $Options->{signature} = $response;
+    }
 
-        #
-        # Get comment
-        #
-        print Strip <<"EOF";
-        > 
-        > You may provide an optional comment.
-        > If you do, it will be recorded in the request log.
-        > Press return if you don't wish to provide a comment.
+    #
+    # Get e-mail address
+    #
+    print Strip <<"EOF";
+    > 
+    > You may provide your e-mail address if you wish.
+    > It will be recorded in the request log, and may be used
+    > to contact you if there is a problem with your certificate.
 EOF
-        print "Comment: ";
-        chomp($response = scalar <STDIN>);
-        $response =~ s/^\s*//;
-        $response =~ s/\s*$//;
-        if ($response ne '') {
-            $Options->{comment} = $response;
-        }
+    print "E-mail address (<return> for none): ";
+    chomp($response = scalar <STDIN>);
+    $response =~ s/^\s*//;
+    $response =~ s/\s*$//;
+    if ($response ne '') {
+        $Options->{email} = $response;
+    }
+
+    #
+    # Get comment
+    #
+    print Strip <<"EOF";
+    > 
+    > You may provide an optional comment.
+    > If you do, it will be recorded in the request log.
+    > Press return if you don't wish to provide a comment.
+EOF
+    print "Comment: ";
+    chomp($response = scalar <STDIN>);
+    $response =~ s/^\s*//;
+    $response =~ s/\s*$//;
+    if ($response ne '') {
+        $Options->{comment} = $response;
     }
     print "\n";
 
