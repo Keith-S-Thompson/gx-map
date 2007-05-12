@@ -1,4 +1,4 @@
-# $Id: bug-0141,v 1.2 2007-03-27 18:59:32-07 kst Exp $
+# $Id: bug-0141,v 1.3 2007-05-11 17:31:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0141,v $
 
 gx-map bug 0141
@@ -6,7 +6,7 @@ Date: Mon 2007-03-19
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2
-Status: Open
+Status: Fixed 0.5.9.009
 Title: gx-db-check-requests leaves lock file on transient error
 
 The gx-db-check-requests command should remove its lock file on
@@ -34,3 +34,7 @@ Traceback:
 It *should* have removed the lock so it could try again an hour later.
 Instead, the gx-db-check-requests command was shut down until I
 manually ran gx-remove-locks.
+
+Fixed:
+gx-db-check-requests.in 1.14
+gx-map release 0.5.9.009
