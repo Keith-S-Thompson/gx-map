@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.13 2007-03-15 18:36:24-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.14 2007-05-11 17:31:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -438,7 +438,14 @@ sub Get_Mappings_From_DB($) {
                            $DB_Config->{user},
                            $DB_Config->{password},
                            { RaiseError => 1, PrintError => 1 });
-    die "Unable to connect to database\n" if not $dbh;
+    if (not $dbh) {
+        #
+        # Assume this is a transient error.  Remove the lock so we can
+        # try again later without having to run gx-remove-locks.
+        #
+        GX::Release_Lock $Program_Name;
+        die "Unable to connect to database\n";
+    }
 
     my @datarow;
     my $sth = $dbh->prepare($query);
