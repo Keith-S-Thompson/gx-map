@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.6 2007-05-09 20:50:06-07 kst Exp $
+# $Id: bug-0140,v 1.7 2007-05-11 17:23:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -35,57 +35,10 @@ of things I have found:
     If there is no CRL, that's a problem.  We probably want to just
     go ahead and install expired CRLs.
 
+
 ...
-
-Using gx-ca-update 0.5.3.2.022, and the CNRS-DataGrid CA (6b4ddd18)
-(which currently happens to have an expired CRL):
-
-Installing into an empty directory:
-    Installs temporary certificate (6b4ddd18.0.4120).
-    Downloads CRL, sees that it's expired.
-    Deletes certificate (good!)
-
-Installing into a directory that already has the certificate:
-    Skips certificate
-    Downloads CRL, sees that it's expired.
-    Doesn't install CRL; leaves certificate in place.
-    Bad; it should install the expired CRL, thereby disabling the CA.
-
-Installing into a directory that already has the certificate *and*
-an expired CRL:
-    The existing certificate and CRL are left in place.
-    That's probably ok; the CA remains disabled.
-
-In general, if a CA requires a CRL, and I'm unable to download a
-valid one for any of several reasons:
-    The downloaded CRL has expired.
-    The downloaded CRL is corrupted (signature test fails).
-    The CRL cannot be downloaded.
-then:
-    if a CRL is already installed or cached:
-        Use it.  (If it's expired, so be it.)
-    else if the CA certificate is already installed:
-        Install the expired CRL if possible.
-        Otherwise, we still need to disable the CA;
-        attempt to rename "xxxxxxxx.0" to "xxxxxxxx.0.bak"
-    else
-        Ok.
-
-I think there's a simpler way to handle this.
-
-Install a newly downloaded CRL whether it's expired or not (but only
-if the signature test succeeds).
-
-After everything is installed, do a check; if a CRL is required,
-and no CRL (expired or not) has been installed, then disable the CA
-by renaming xxxxxxxx.0 to xxxxxxxx.0.bak.
-
-Then, if both xxxxxxxx.0 and xxxxxxxx.0.bak exist, delete
-xxxxxxxx.0.bak.
-
-But that can create a window in which the certificate exists, but
-the CRL doesn't.  Hmm.
-
+[I've deleted some confused ramblings here.  See the CVS archive of this
+file if you really want to read them.]
 ...
 
 Ok, this has been confusing, but I think I've got it worked out.
