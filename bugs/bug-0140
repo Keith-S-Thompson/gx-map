@@ -1,4 +1,4 @@
-# $Id: bug-0140,v 1.7 2007-05-11 17:23:25-07 kst Exp $
+# $Id: bug-0140,v 1.8 2007-05-11 17:32:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0140,v $
 
 gx-map bug 0140
@@ -6,7 +6,7 @@ Date: Wed 2007-03-14
 Severity: High
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2.020
-Status: Open
+Status: Fixed 0.5.9.006
 Title: Certificate is installed if CRL has expired
 
 If a CRL has expired, gx-ca-update installs the CA certificate but
