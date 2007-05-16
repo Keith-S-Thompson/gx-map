@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.59 2007-05-15 21:01:02-07 kst Exp $
+# $Id: configure-gx-map,v 1.60 2007-05-15 21:13:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -580,15 +580,20 @@ sub Command_Exists($$) {
 sub Get_Version() {
     my $result;
     my $module = 'GX.pm.in';
-    open MODULE, $module or die "${module}: $!\n";
-    while (<MODULE>) {
+    open my $MODULE, $module or die "${module}: $!\n";
+    while (<$MODULE>) {
         if (/\$VERSION\s*=\s*'(.*)'/) {
             $result = $1;
             last;
         }
     }
-    close MODULE;
-    die "Can't get version number from $module\n" if not defined $version;
+    close $MODULE;
+    if (defined $result) {
+        return $result;
+    }
+    else {
+        die "Can't get version number from $module\n";
+    }
 } # Get_Version
 
 # ----------------------------------------------------------------------
