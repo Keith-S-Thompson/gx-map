@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.51.2.1 2007-03-02 01:27:36-08 kst Exp $
+# $Id: configure-gx-map,v 1.59 2007-05-15 21:01:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -10,7 +10,7 @@
 ########################################################################
 # @Copyright@
 #
-# Copyright (c) 2006 The Regents of the University of California. All
+# Copyright (c) 2007 The Regents of the University of California. All
 # rights reserved.
 #
 # Redistribution and use in source and binary forms, with or without
@@ -54,182 +54,320 @@
 
 use strict;
 
-use File::Basename;
+use File::Basename ();
+use Getopt::Long ();
 
+sub Option_Name($);
+sub Get_Config_From_File($);
+sub Same_Directory($$);
 sub Need_File($);
 sub Home_Dir($);
 sub Command_Exists($$);
 sub Get_Version();
-sub Check_Admin($$);
+sub Check_Admin($);
 sub Pod2Man_Command();
 sub Make_Man_Pages();
 sub Usage(@);
-
-my $Program_Name = File::Basename::basename $0;
-my $Config_File = undef;
-my %Config = ();
-my @Required_Var_Names
-    = qw( PERL PATH
-          NAMESPACE
-          INSTALL_DIR DATA_DIR
-          REQUESTS_LOG_PERMISSIONS
-          GX_MAP_OWNER ADDITIONAL_ADMINS ADMIN_EMAIL );
-my @Optional_Var_Names = qw( GX_PROPAGATE EXTRAS );
-my @Var_Names = ( @Required_Var_Names, @Optional_Var_Names );
-my %Required_Var_Name = map { $_ => 1 } @Required_Var_Names;
-my %Valid_Var_Name    = map { $_ => 1 } @Var_Names;
-
-my $Is_Patch = 0;
-
-if (scalar @ARGV >= 1 and $ARGV[0] eq '-patch') {
-    $Is_Patch = 1;
-    shift @ARGV;
-}
-
-if (scalar @ARGV == 1 and -e $ARGV[0]) {
-    $Config_File = $ARGV[0];
-}
-else {
-    Usage;
-}
 
 my %Is_TGCDB_File = ( 'gx-db-check-requests.in' => 1,
                       'gx-db-request.in'        => 1,
                       'gx-db-dump.in'           => 1 );
 
-my $Prereq_Error = undef;
-my $Pod2Man_Error = undef;
+my $Program_Name = File::Basename::basename $0;
+
+my $User_Opt = {};
+my @Opts = ( $User_Opt,
+             qw( help
+                 version
+                 perl=s
+                 path=s
+                 namespace=s
+                 install-dir|prefix=s
+                 data-dir=s
+                 request-log-permissions=s
+                 gx-map-owner=s
+                 additional-admins=s
+                 admin-email=s
+                 require-signatures!
+                 certificates-dir=s
+                 gx-propagate=s
+                 extras=s
+                 teragrid
+                 debugging ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if $User_Opt->{help};
+Usage if scalar @ARGV > 1;
+my $Config_File = undef;
+if (scalar @ARGV == 1) {
+    $Config_File = $ARGV[0];
+}
+
+$| = 1 if $User_Opt->{debugging};
 
 my $version = Get_Version;
 
+if ($User_Opt->{version}) {
+    print "$Program_Name (gx-map) $version\n";
+    exit 0;
+}
+
+my @Var_Names
+    = qw( PERL
+          PATH
+          NAMESPACE
+          INSTALL_DIR
+          DATA_DIR
+          REQUESTS_LOG_PERMISSIONS
+          GX_MAP_OWNER
+          ADDITIONAL_ADMINS
+          ADMIN_EMAIL
+          REQUIRE_SIGNATURES
+          CERTIFICATES_DIR
+          GX_PROPAGATE
+          EXTRAS );
+my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
+my @Required_Var_Names
+    = qw( PERL
+          NAMESPACE
+          INSTALL_DIR
+          DATA_DIR
+          GX_MAP_OWNER
+          GX_PROPAGATE
+          EXTRAS );
+my %Required_Var_Name = map { $_ => 1 } @Required_Var_Names;
+my %May_Be_Empty
+    = map { $_ => 1 }
+          qw( ADDITIONAL_ADMINS
+              GX_PROPAGATE
+              CERTIFICATES_DIR
+              EXTRAS );
+
+my $Config = {};
 my @errors = ();
-my @warnings = ();
 
-if (not $Is_Patch) {
-    #
-    # Record the name of the config file so it can be installed in etc/gx-map
-    #
-    open CONFIG_FILE_NAME, ">.config-file";
-    print CONFIG_FILE_NAME "$Config_File\n";
-    close CONFIG_FILE_NAME;
+#
+# First, get values from config file, if any.
+#
+if (defined $Config_File) {
+    $Config = Get_Config_From_File $Config_File;
 }
 
-open CONFIG, $Config_File or die "$Config_File: $!\n";
-while (<CONFIG>) {
-    s/#.*$//;
-    s/^\s+//;
-    s/\s+$//;
-    next if /^$/;
-
-    chomp;
-
-    if (/^(\w+)\s+(.*)$/) {
-        my($name, $value) = ($1, $2);
-        eval { $value =~ s/~([\w.-]+)/Home_Dir $1/eg; };
-        if ($@) {
-            chomp $@;
-            push @errors, "$@, $Config_File line $.\n";
-        }
-        $value =~ s/%VERSION%/$version/g;
-        if ($Valid_Var_Name{$name}) {
-            if (exists $Config{$name}) {
-                push @errors,
-                     "Duplicate name \"$name\", $Config_File line $.\n";
-            }
-            else {
-                $Config{$name} = $value;
-            }
-        }
-        else {
-            push @errors, "Invalid name \"$name\", $Config_File line $.\n";
-        }
-    }
-    elsif (/^(\w+)$/) {
-        #
-        # Only ADDITIONAL_ADMINS is allowed to have an empty definition.
-        #
-        my($name) = $1;
-        if ($name eq 'ADDITIONAL_ADMINS') {
-            $Config{$name} = '';
-        }
-        else {
-            push @errors, "Invalid value for $name, $Config_File line $.\n";
-        }
-    }
-}
-close CONFIG;
-
+#
+# Then get values ffrom command-line options.
+#
 foreach my $name (@Var_Names) {
-    if (not defined $Config{$name}) {
-        if ($Required_Var_Name{$name}) {
-            push @errors, "Missing definition for \"$name\" in $Config_File\n";
-        }
-        else {
-            #
-            # If GX_PROPAGATE or EXTRAS isn't defined, it's more
-            # convenient to set it to the empty string.
-            #
-            $Config{$name} = '';
-        }
+    my $option = Option_Name $name;
+    if (defined $User_Opt->{$option}) {
+        $Config->{$name} = $User_Opt->{$option};
+    }
+}
+
+my $Prereq_Error = undef;
+my $Pod2Man_Error = undef;
+
+#
+# Apply defaults, check for validity.
+#
+
+#
+# PERL defaults to '/usr/bin/perl'
+#
+if (not defined $Config->{PERL}) {
+    if (-x '/usr/bin/perl') {
+        $Config->{PERL} = '/usr/bin/perl';
+    }
+}
+if (not defined $Config->{PERL}) {
+    push @errors, "PERL is not defined\n";
+}
+elsif (not -e $Config->{PERL}) {
+    push @errors, "PERL ($Config->{PERL}) does not exist\n";
+}
+elsif (not -x $Config->{PERL}) {
+    push @errors, "PERL ($Config->{PERL}) is not executable\n";
+}
+
+#
+# PATH defaults to '/bin:/usr/bin' *or* to '/usr/bin'
+#
+if (not defined $Config->{PATH}) {
+    if (Same_Directory '/bin/', '/usr/bin') {
+        $Config->{PATH} = '/usr/bin';
+    }
+    else {
+        $Config->{PATH} = '/bin:/usr/bin';
+    }
+}
+foreach my $dir (split /:/, $Config->{PATH}) {
+    if ($dir !~ /^\// or not -d $dir) {
+        push @errors, "Bad directory \"$dir\" in PATH\n";
     }
 }
 
 #
-# Do some quick sanity checks.
+# NAMESPACE has no default, and must be specified.
 #
-if (defined $Config{PERL} and
-    ($Config{PERL} !~ /^\// or not -x $Config{PERL}))
+if (defined $Config->{NAMESPACE}) {
+    if ($Config->{NAMESPACE} !~ /^[\w_.-]+$/) {
+        push @errors, "Bad value for NAMESPACE\n";
+    }
+}
+else {
+    push @errors, "No value specified for NAMESPACE\n";
+}
+
+#
+# INSTALL_DIR has no default, and must be specified.
+#
+if (defined $Config->{INSTALL_DIR}) {
+    if ($Config->{INSTALL_DIR} !~ /^\//) {
+        push @errors, "Bad value for INSTALL_DIR (prefix)\n";
+    }
+}
+else {
+    push @errors, "No value specified for INSTALL_DIR (prefix)\n";
+}
+
+#
+# DATA_DIR defaults to INSTALL_DIR with "-data" appended.
+#
+if (defined $Config->{DATA_DIR}) {
+    if ($Config->{INSTALL_DIR} !~ /^\//) {
+        push @errors, "Bad value for INSTALL_DIR (prefix)\n";
+    }
+}
+else {
+    if (defined $Config->{INSTALL_DIR}) {
+        $Config->{DATA_DIR} = $Config->{INSTALL_DIR} . '-data';
+    }
+    else {
+        # Don't bother with an error message; we've already complained
+        # that INSTALL_DIR isn't defined.
+    }
+}
+if (defined $Config->{INSTALL_DIR} and
+    defined $Config->{DATA_DIR} and
+    $Config->{INSTALL_DIR} eq $Config->{DATA_DIR})
 {
-    push @errors, "$Config_File: Bad value for \"PERL\"\n";
+    push @errors, "INSTALL_DIR (prefix) and DATA_DIR may not be the same\n";
 }
-if (defined $Config{PATH}) {
-    foreach my $dir (split /:/, $Config{PATH}) {
-        if ($dir !~ /^\// or not -d $dir) {
-            push @errors, "$Config_File: Bad directory \"$dir\" in PATH\n";
+
+#
+# REQUESTS_LOG_PERMISSIONS defaults to 444.
+# Permitted values are 400, 440, 444
+#
+if (defined $Config->{REQUESTS_LOG_PERMISSIONS}) {
+    my %permission_ok = map { $_ => 1 } qw(400 440 444);
+    if (not $permission_ok{$Config->{REQUESTS_LOG_PERMISSIONS}}) {
+        push @errors, "Bad REQUESTS_LOG_PERMISSIONS (use 400, 440, or 444)\n";
+    }
+}
+else {
+    $Config->{REQUESTS_LOG_PERMISSIONS} = '444';
+}
+
+#
+# GX_MAP_OWNER, if specified, must be the name of the user
+# running this script.
+#
+my $owner = (getpwuid $<)[0];
+if (defined $Config->{GX_MAP_OWNER}) {
+    if ($Config->{GX_MAP_OWNER} ne $owner) {
+        push @errors, "Bad value for GX_MAP_OWNER, must be \"$owner\"\n";
+    }
+}
+else {
+    $Config->{GX_MAP_OWNER} = $owner;
+}
+
+#
+# ADDITIONAL_ADMINS defaults to the empty string.
+# If specified, it must be a whitespace-separated list of user names.
+#
+if (defined $Config->{ADDITIONAL_ADMINS}) {
+    my @accts = split /\s+/, $Config->{ADDITIONAL_ADMINS};
+    foreach my $acct (@accts) {
+        my @pw = getpwnam $acct;
+        if (not @pw) {
+            push @errors,
+                 "ADDITIONAL_ADMINS, no user \"$acct\"\n";
+        }
+        elsif ($pw[2] eq 0) {
+            push @errors,
+                 "ADDITIONAL_ADMINS, user \"$acct\" has UID 0, not allowed\n";
         }
     }
-    #
-    # Currently, all external commands are mandatory.  (curl is arguably
-    # optional, but only if you don't use a downloaded requests.log *and*
-    # you don't use gx-ca-update.)
-    #
-    my %optional = ();
-    foreach my $command (qw(curl rcs ci)) {
-        if (not Command_Exists $command, $Config{PATH}) {
-            if ($optional{$command}) {
-                push @warnings,
-                     "Command $command not found in configured PATH\n";
-            }
-            else {
-                push @errors,
-                     "Command $command not found in configured PATH\n";
-            }
-        }
+}
+else {
+    $Config->{ADDITIONAL_ADMINS} = '';
+}
+
+#
+# ADMIN_EMAIL has no default.  It must be a valid e-mail address.
+#
+if (defined $Config->{ADMIN_EMAIL}) {
+    if ($Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
+        push @errors, "Bad ADMIN_EMAIL $Config->{ADMIN_EMAIL}\n";
     }
 }
-foreach my $name (qw(INSTALL_DIR DATA_DIR)) {
-    if (defined $Config{$name} and $Config{$name} !~ /^\//) {
-        push @errors, "$Config_File: Bad value for \"$name\"\n";
+
+#
+# REQUIRE_SIGNATURES defaults to 'yes'.
+# The value must be either 'yes' or 'no'.
+#
+if (defined $Config->{REQUIRE_SIGNATURES}) {
+    if ($Config->{REQUIRE_SIGNATURES} ne 'yes' and
+        $Config->{REQUIRE_SIGNATURES} ne 'no')
+    {
+        push @errors, "Bad value for REQUIRE_SIGNATURES, must be yes or no\n"
     }
 }
-if (defined $Config{REQUESTS_LOG_PERMISSIONS}) {
-    my %ok = ( '400' => 1, '440' => 1, '444' => 1 );
-    if (not $ok{$Config{REQUESTS_LOG_PERMISSIONS}}) {
-        push @errors, "$Config_File: Bad REQUESTS_LOG_PERMISSIONS " .
-                      "(use 400, 440, or 444)\n";
+else {
+    $Config->{REQUIRE_SIGNATURES} = 'yes';
+}
+
+#
+# CERTIFICATES_DIR defaults to '/etc/grid-security/certificates'.
+#
+if (defined $Config->{CERTIFICATES_DIR}) {
+    if ($Config->{CERTIFICATES_DIR} !~ /^\//) {
+        push @errors, "Bad value for CERTIFICATES_DIR\n"
     }
 }
-if (defined $Config{GX_MAP_OWNER}) {
-    Check_Admin $Config{GX_MAP_OWNER}, 'GX_MAP_OWNER';
+else {
+    $Config->{CERTIFICATES_DIR} = '/etc/grid-security/certificates';
 }
-if (defined $Config{ADDITIONAL_ADMINS}) {
-    foreach my $acct (split /\s+/, $Config{ADDITIONAL_ADMINS}) {
-        Check_Admin $acct, 'ADDITIONAL_ADMINS';
+
+#
+# GX_PROPAGATE defaults to the empty string.
+#
+# TODO: Allow values other than 'gx-propagate.in.teragrid' and
+# 'gx-propagate.in.test'.
+#
+if (defined $Config->{GX_PROPAGATE}) {
+    if ($Config->{GX_PROPAGATE} ne 'gx-propagate.in.teragrid' and
+        $Config->{GX_PROPAGATE} ne 'gx-propagate.in.test')
+    {
+        push @errors, "Bad value for GX_PROPAGATE\n";
     }
 }
-if ($Config{EXTRAS} ne '' and $Config{EXTRAS} ne 'TGCDB') {
-    push @errors, "$Config_File: Bad value for EXTRAS\n";
+else {
+    $Config->{GX_PROPAGATE} = '';
 }
+
+#
+# EXTRAS defaults to the empty string.
+# The only other allowed value is 'TGCDB'.
+#
+if (defined $Config->{EXTRAS}) {
+    if ($Config->{EXTRAS} ne 'TGCDB') {
+        push @errors, "Bad value for EXTRAS\n";
+    }
+}
+else {
+    $Config->{EXTRAS} = '';
+}
+
 
 die @errors if @errors;
 
@@ -238,10 +376,10 @@ die @errors if @errors;
 #
 print "Checking prerequisites... \n";
 if (-x 'gx-check-prereqs') {
-    my @command = ( $Config{PERL},
+    my @command = ( $Config->{PERL},
                     './gx-check-prereqs',
-                    '-path', $Config{PATH} );
-    if ($Config{GX_PROPAGATE} =~ /teragrid/i) {
+                    '-path', $Config->{PATH} );
+    if ($Config->{GX_PROPAGATE} =~ /teragrid/i) {
         push @command, '-teragrid';
     }
     print "% @command\n";
@@ -266,9 +404,9 @@ foreach my $in_file (sort grep /\.in$/, readdir DIR) {
 }
 closedir DIR;
 
-if ($Config{GX_PROPAGATE} ne '') {
-    push @in_files, $Config{GX_PROPAGATE};
-    $out_file{$Config{GX_PROPAGATE}} = 'gx-propagate';
+if ($Config->{GX_PROPAGATE} ne '') {
+    push @in_files, $Config->{GX_PROPAGATE};
+    $out_file{$Config->{GX_PROPAGATE}} = 'gx-propagate';
 }
 
 die "No *.in files found\n" if not @in_files;
@@ -285,7 +423,7 @@ foreach my $in_file (@in_files) {
     open OUT, ">$out_file" or die "$out_file: $!\n";
     while (<IN>) {
         foreach my $var (@Var_Names) {
-            s/%$var%/$Config{$var}/g;
+            s/%$var%/$Config->{$var}/g;
         }
         if (/%[A-Za-z_]\w+%/) {
             warn ">>> Unrecognized variable $&, $in_file line $.\n";
@@ -311,10 +449,91 @@ if (defined $Pod2Man_Error) {
 
 ########################################################################
 
+#
+# Map a configuration variable name (such as "INSTALL_DIR") to the
+# corresponding command-line option name (such as "install-dir").
+#
+sub Option_Name($) {
+    my($name) = @_;
+    $name = lc $name;
+    $name =~ s/_/-/g;
+} # Option_Name
+
+# ----------------------------------------------------------------------
+
+sub Get_Config_From_File($) {
+    my($Config_File) = @_;
+    my @errors = ();
+    my @warnings = ();
+    my $Config = {};
+
+    open my $CONFIG, '<', $Config_File or die "$Config_File: $!\n";
+    while (<$CONFIG>) {
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+
+        chomp;
+
+        if (/^\.?(\w+)\s+(.*)$/) {
+            my($name, $value) = ($1, $2, $3);
+            eval { $value =~ s/~([\w.-]+)/Home_Dir $1/eg; };
+            if ($@) {
+                chomp $@;
+                push @errors, "$@, $Config_File line $.\n";
+            }
+            $value =~ s/%VERSION%/$version/g;
+            if ($Valid_Var_Name{$name}) {
+                if (exists $Config->{$name}) {
+                    push @errors,
+                         "Duplicate name \"$name\", $Config_File line $.\n";
+                }
+                else {
+                    $Config->{$name} = $value;
+                }
+            }
+            else {
+                push @errors, "Invalid name \"$name\", $Config_File line $.\n";
+            }
+        }
+        elsif (/^\.?(\w+)$/) {
+            my($name) = ($1, $2);
+            $Config->{$name} = '';
+            if (not $May_Be_Empty{$name}) {
+                push @errors, "$Config_File: $name requires non-empty value\n";
+            }
+        }
+    }
+    close $CONFIG;
+    #
+    # TODO: @errors? @warnings?
+    #
+} # Get_Config_From_File
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the two arguments refer to the same directory.
+# If they have the same device and inode numbers (the first two
+# fields of the list returned by stat(), they're the same.
+#
+sub Same_Directory($$) {
+    my($dir_a, $dir_b) = @_;
+    my @stat_a = stat $dir_a;
+    my @stat_b = stat $dir_b;
+    return ( scalar @stat_a >= 2 and
+             scalar @stat_b >= 2 and
+             $stat_a[0] == $stat_b[0] and
+             $stat_a[1] == $stat_b[1] );
+} # Same_Directory
+
+# ----------------------------------------------------------------------
+
 sub Need_File($) {
     my($file) = @_;
     if ($Is_TGCDB_File{$file}) {
-        return $Config{EXTRAS} eq 'TGCDB';
+        return $Config->{EXTRAS} eq 'TGCDB';
     }
     else {
         return 1;
@@ -359,8 +578,8 @@ sub Command_Exists($$) {
 # ----------------------------------------------------------------------
 
 sub Get_Version() {
-    my $result = undef;
-    my $module = 'Gridmap_Utils.pm.in';
+    my $result;
+    my $module = 'GX.pm.in';
     open MODULE, $module or die "${module}: $!\n";
     while (<MODULE>) {
         if (/\$VERSION\s*=\s*'(.*)'/) {
@@ -369,28 +588,21 @@ sub Get_Version() {
         }
     }
     close MODULE;
-    die "Can't get version number from $module\n" if not defined $result;
-    return $result;
+    die "Can't get version number from $module\n" if not defined $version;
 } # Get_Version
 
 # ----------------------------------------------------------------------
 
-sub Check_Admin($$) {
-    my($acct, $from) = @_;
-    if ($acct eq 'root') {
-        push @errors, "$Config_File: root is not allowed in $from\n";
+sub Check_Admin($) {
+    my($acct) = @_;
+    my @pw = getpwnam $acct;
+    if (not @pw) {
+        push @errors,
+             "$Config_File: No user \"$acct\"\n";
     }
-    else {
-        my @pw = getpwnam $acct;
-        if (not @pw) {
-            push @errors,
-                 "$Config_File: No user \"$acct\" in $from\n";
-        }
-        elsif ($pw[2] eq 0) {
-            push @errors,
-                 "$Config_File: User \"$acct\" has UID 0, " .
-                 "not allowed in $from\n";
-        }
+    elsif ($pw[2] eq 0) {
+        push @errors,
+             "$Config_File: User \"$acct\" has UID 0, not allowed\n";
     }
 } # Check_Admin
 
@@ -399,7 +611,7 @@ sub Check_Admin($$) {
 sub Pod2Man_Command() {
     my %checked = ();
 
-    my $perl_command = $Config{PERL};
+    my $perl_command = $Config->{PERL};
     while (defined $perl_command and -l $perl_command) {
         my $dir = File::Basename::dirname $perl_command;
         $perl_command = readlink $perl_command;
@@ -412,7 +624,7 @@ sub Pod2Man_Command() {
     if (defined $perl_command) {
         push @dirs, File::Basename::dirname $perl_command;
     }
-    push @dirs, split(/:/, $Config{PATH});
+    push @dirs, split(/:/, $Config->{PATH});
     push @dirs, split(/:/, $ENV{PATH});
 
     DIR:
@@ -466,11 +678,71 @@ sub Make_Man_Pages() {
 
 # ----------------------------------------------------------------------
 
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
-Usage: $Program_Name [-patch] config-file
-    The "-patch" option is used only by patch-gx-map-0.5.3.2.
+Usage: $Program_Name options [filename]
+    -help               Display this message and exit.
+    -version            Display the gx-map version number and exit.
+    -perl               Location of the Perl executable.
+                        Default is "/usr/bin/perl".
+    -path               Value for \$PATH
+                        Default is "/usr/bin:/bin", or just "/usr/bin"
+                        if they're the same directory.
+    -namespace          Namespace for this installation.
+                        Required.
+    -install-dir        Installation directory; required.
+                        The string "%VERSION" is replaced with the gx-map
+                        version number.
+    -prefix             A synonym for "-install-dir".
+    -data-dir           Data directory.
+                        The string "%VERSION" is replaced with the gx-map
+                        version number.
+                        Default is installation directory with "-data"
+                        appended.
+    -request-log-permissions
+                        Octal permissions for requests.log file.
+                        Permitted values are 444, 440, 400.
+                        Default is 444.
+    -gx-map-owner       Owner of the gx-map installation.
+                        This option is included here only for completeness;
+                        if specified, it must be the user running this
+                        command.
+    -additional-admins  A list of one or more additional administrative
+                        accounts, separated by commas or spaces.
+                        Default is empty.  Recommendation: Don't set this.
+    -admin-email        An e-mail address for notifications of significant
+                        events.
+    -[no]require-signatures 
+                        Specify whether non-admin request must be
+                        cryptographically signed.
+    -certificates-dir   If signatures are required, specify 
+                        the directory containing CA certificates.
+                        Default is "/etc/grid-security/certifiates".
+    -gx-propagate       Name of a file implementing the gx-propagate
+                        command.  If not a full pathname, use
+                        a file in the source distribution,
+                        either "gx-propagate.in.test" or
+                        "gx-propagate.in.teragrid".  By default,
+                        the gx-propagate command is not installed.
+    -extras             A list of extra components to be installed.
+                        The only currently supported value is TGCDB.
+    -teragrid           Equivalent to
+                        "-gx-propagate gx-propagate.in.teragrid -extras TGCDB"
+    -debugging          Enable debugging output.
+
+A filename argument, if present, is taken to be an existing
+configuration file specifying configuration information.  Unrecognized
+variables in the file are ignored; command-line options (see above)
+override variables specified in the file.  This can be used to import
+configuration information from an existing gx-map installation, possibly
+an earlier version.
 EOF
     exit 1;
 } # Usage
