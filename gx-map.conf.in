@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.7 2007-05-11 19:01:40-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.8 2007-05-15 21:10:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -109,7 +109,7 @@ REQUESTS_LOG_PERMISSIONS
 # behalf of other users, so access to this account *must* be guarded as
 # carefully as access to the root account.
 #
-GX_MAP_OWNER
+.GX_MAP_OWNER
 
 #
 # A space-separated list of zero or more users who are allowed to
