@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.60 2007-05-15 21:13:13-07 kst Exp $
+# $Id: configure-gx-map,v 1.61 2007-05-16 15:46:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -67,6 +67,7 @@ sub Get_Version();
 sub Check_Admin($);
 sub Pod2Man_Command();
 sub Make_Man_Pages();
+sub Debug(@);
 sub Usage(@);
 
 my %Is_TGCDB_File = ( 'gx-db-check-requests.in' => 1,
@@ -149,18 +150,29 @@ my @errors = ();
 # First, get values from config file, if any.
 #
 if (defined $Config_File) {
+    Debug "Calling Get_Config_From_File \"$Config_File\"\n";
     $Config = Get_Config_From_File $Config_File;
+    if ($User_Opt->{debugging}) {
+        Debug "After Get_Config_From_File:\n";
+        foreach my $key (sort keys %$Config) {
+            Debug "    $key => \"$Config->{$key}\"\n";
+        }
+    }
 }
 
 #
-# Then get values ffrom command-line options.
+# Then get values from command-line options.
 #
+Debug "Checking command-line arguments\n";
 foreach my $name (@Var_Names) {
     my $option = Option_Name $name;
+    Debug "\$name = $name, \$option = $option\n";
     if (defined $User_Opt->{$option}) {
+        Debug "Setting \$Config->{$name} to \$User_Opt->{$option} = \"$User_Opt->{$option}\"\n";
         $Config->{$name} = $User_Opt->{$option};
     }
 }
+Debug "Done checking command-line arguments\n";
 
 my $Prereq_Error = undef;
 my $Pod2Man_Error = undef;
@@ -457,6 +469,7 @@ sub Option_Name($) {
     my($name) = @_;
     $name = lc $name;
     $name =~ s/_/-/g;
+    return $name;
 } # Option_Name
 
 # ----------------------------------------------------------------------
@@ -509,6 +522,7 @@ sub Get_Config_From_File($) {
     #
     # TODO: @errors? @warnings?
     #
+    return $Config;
 } # Get_Config_From_File
 
 # ----------------------------------------------------------------------
