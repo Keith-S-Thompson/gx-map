@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.30.2.4 2007-03-02 01:59:50-08 kst Exp $
+# $Id: make-release,v 1.31 2007-05-16 21:40:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -8,69 +8,53 @@ try() {
     eval "$@" || exit 1
 }
 
-usage() {
-    echo "Usage: $0 [-help] [-cadesc filename] [version]"
-    exit 1
-}
-
 today=`date +%Y-%m-%d`
 
-cadesc_flag=0
-got_version=0
-for arg in "$@" ; do
-    if [ "$arg" = "-h" -o "$arg" = "-help" ] ; then
-        usage
-    elif [ $cadesc_flag -eq 1 ] ; then
-        cadesc_tarball="$arg"
-        case $cadesc_tarball in
-            /*)
-                ;;
-            *)
-                cadesc_tarball=`pwd`/$cadesc_tarball
-                ;;
-        esac
-        cadesc_flag=0
-    elif [ $arg = "-cadesc" ] ; then
-        cadesc_flag=1
-    else
-        version="$arg"
-    fi
-done
-
-if [ "$version" = "" ] ; then
-    version=`./get-version`
-fi
-
-if [ "$version" = "" ] ; then
-    echo "Error getting version" 1>&2
-    usage
-fi
-
-if [ -f release/gx-map-$version.tar.gz ] ; then
-    echo "release/gx-map-$version.tar.gz already exists" 1>&2
+if [ $# -eq 0 ] ; then
+    num=`./get-version`
+elif [ $# -eq 1 ] ; then
+    case "$1" in
+        [0-9]*)
+            num=$1
+            ;;
+        *)
+            echo "Usage: $0 [num]" 1>&2
+            exit 1
+            ;;
+    esac
+else
+    echo "Usage: $0 [num]" 1>&2
     exit 1
 fi
 
-if [ "$cadesc_tarball" == "" ] ; then
-    cadesc_tarball=`pwd`/release/gx-map-cadesc-$today.tar.gz
-    if [ -f $cadesc_tarball ] ; then
-        echo ">>> Using existing $cadesc_tarball"
-    else
-        try ./make-cadesc-release
-    fi
+if [ "$num" = "" ] ; then
+    echo "Error getting version" 1>&2
+    echo "Usage: $0 [num]" 1>&2
+    exit 1
 fi
 
-in_files=`ls *.in | grep -v gx-map.conf.in`
+if [ -f release/gx-map-$num.tar.gz ] ; then
+    echo "release/gx-map-$num.tar.gz already exists" 1>&2
+    exit 1
+fi
+
+cadesc_tarball=gx-map-cadesc-$today.tar.gz
+if [ -f release/$cadesc_tarball ] ; then
+    echo ">>> Using existing $cadesc_tarball"
+else
+    try ./make-cadesc-release
+fi
+
+in_file=*.in
 other_files="INSTALL LICENSE Makefile README README.TeraGrid \
              README.Upgrade Relnotes auto.txt cleanup-gx-map \
              configure-gx-map gettimeofday.c gx-check-prereqs \
              gx-propagate.in.teragrid gx-propagate.in.test \
-             patch-gx-map-0.5.3.2 \
              sample-gx-cron-job.conf sample.conf test-gx-map \
              tgcdb.db-config"
 
-try mkdir release/gx-map-$version
-try cd release/gx-map-$version
+try mkdir release/gx-map-$num
+try cd release/gx-map-$num
 
 for file in $in_files ; do
     try cp -p ../../$file .
@@ -79,7 +63,7 @@ for file in $other_files ; do
     try cp -p ../../$file .
 done
 
-try cp -p $cadesc_tarball .
+try cp -p ../$cadesc_tarball .
 
 try mkdir bugs
 try cd bugs
@@ -98,5 +82,5 @@ ls ../../../doc | grep '\.pod$' | \
 try cd ..
 
 try cd ..
-try tar zcf gx-map-$version.tar.gz gx-map-$version
-try rm -rf gx-map-$version
+try tar zcf gx-map-$num.tar.gz gx-map-$num
+try rm -rf gx-map-$num
