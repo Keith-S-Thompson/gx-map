@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.12 2007-05-09 03:18:14-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.13 2007-05-16 18:41:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -177,10 +177,11 @@ sub Timestamp_Of($) {
 # ----------------------------------------------------------------------
         
 #   
-# Rename the specified file by appending its last modification time to
-# its name, returning the name of the backup (which may be ignored if
-# it's not needed).  If file doesn't exist, return undef.  May be used  
-# on directories as well as ordinary files.
+# Rename the specified file by appending its last modification time
+# plus an index number (to ensure uniqueness) to its name, returning
+# the name of the backup (which may be ignored if it's not needed).
+# If file doesn't exist, return undef.  May be used on directories as
+# well as ordinary files.
 #
 sub Backup($) {
     my($filename) = @_;
@@ -188,15 +189,11 @@ sub Backup($) {
     
     return undef if not -e $filename;
     my $timestamp = Timestamp_Of GX::Get_mtime $filename;
-    my $backup_name = "$filename-$timestamp";  
-    if (-e $backup_name) {
-        #
-        # Don't need a stack traceback
-        #
-        GX::Uninstall_Handlers;
-        die "$backup_name already exists\n",
-            "Remove or rename it and try again\n";
-    }
+    my $index = 0;
+    my $backup_name;
+    do {
+        $backup_name = sprintf "%s-%s-%03d", $filename, $timestamp, $index++;
+    } while -e $backup_name;
     rename $filename, $backup_name or die "$backup_name: $!\n";
     return $backup_name;
 } # Backup
