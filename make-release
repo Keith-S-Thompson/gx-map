@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.31 2007-05-16 21:40:52-07 kst Exp $
+# $Id: make-release,v 1.32 2007-05-16 21:42:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -45,7 +45,7 @@ else
     try ./make-cadesc-release
 fi
 
-in_file=*.in
+in_files=*.in
 other_files="INSTALL LICENSE Makefile README README.TeraGrid \
              README.Upgrade Relnotes auto.txt cleanup-gx-map \
              configure-gx-map gettimeofday.c gx-check-prereqs \
