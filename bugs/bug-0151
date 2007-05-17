@@ -1,4 +1,4 @@
-# $Id: bug-0151,v 1.1 2007-05-16 17:29:09-07 kst Exp $
+# $Id: bug-0151,v 1.2 2007-05-16 18:41:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0151,v $
 
 gx-map bug 0151
@@ -6,7 +6,7 @@ Date: Wed 2007-05-16
 Severity: Medium
 Reported by: David Carver <dcarver@tacc.utexas.edu>
 Version: 0.5.3.3
-Status: Open
+Status: Fixed 0.5.9.010
 Title: gx-install-cadesc chokes if backup dir already exists
 
 The gx-install-cadesc command renames the existing "ca-config"
@@ -30,3 +30,8 @@ By default, name it "ca-config-YYYY-MM-DD-HHMMSSZ-000"; increment
 the last field as needed until we find something that doesn't exist.
 (There's a potential race condition here, but I don't think it's
 worth worrying about.)
+
+Fixed:
+gx-install-cadesc 1.13
+gx-map release 0.5.9.010
+(Not yet fully tested.)
