@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.61 2007-05-16 15:46:33-07 kst Exp $
+# $Id: configure-gx-map,v 1.62 2007-05-16 19:09:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -357,9 +357,11 @@ else {
 # 'gx-propagate.in.test'.
 #
 if (defined $Config->{GX_PROPAGATE}) {
-    if ($Config->{GX_PROPAGATE} ne 'gx-propagate.in.teragrid' and
-        $Config->{GX_PROPAGATE} ne 'gx-propagate.in.test')
-    {
+    my %ok = map { $_ => 1 }
+                 ( '',
+                   'gx-propagate.in.teragrid',
+                   'gx-propagate.in.test' );
+    if (not $ok{$Config->{GX_PROPAGATE}}) {
         push @errors, "Bad value for GX_PROPAGATE\n";
     }
 }
@@ -372,14 +374,15 @@ else {
 # The only other allowed value is 'TGCDB'.
 #
 if (defined $Config->{EXTRAS}) {
-    if ($Config->{EXTRAS} ne 'TGCDB') {
+    my %ok = map { $_ => 1 }
+                 ( '', 'TGCDB' );
+    if (not $ok{$Config->{EXTRAS}}) {
         push @errors, "Bad value for EXTRAS\n";
     }
 }
 else {
     $Config->{EXTRAS} = '';
 }
-
 
 die @errors if @errors;
 
