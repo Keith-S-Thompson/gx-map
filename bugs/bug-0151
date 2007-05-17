@@ -1,0 +1,32 @@
+# $Id: bug-0151,v 1.1 2007-05-16 17:29:09-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0151,v $
+
+gx-map bug 0151
+Date: Wed 2007-05-16
+Severity: Medium
+Reported by: David Carver <dcarver@tacc.utexas.edu>
+Version: 0.5.3.3
+Status: Open
+Title: gx-install-cadesc chokes if backup dir already exists
+
+The gx-install-cadesc command renames the existing "ca-config"
+directory for backup purposes before it creates a new one.  The backup
+directory name consists of "ca-config-" followed by a timestamp,
+determined by the modification time of the existing "ca-config"
+directory (e.g., ca-config-2006-12-09-105510Z).
+
+If a directory (or file) by that name already exists, the
+gx-install-cadesc command dies with an error message, such as:
+
+ca-config-2007-05-15-070351Z: Directory not empty
+Traceback:
+    /usr/local/apps/gx-map-0.5.3.3/sbin/gx-install-cadesc:170 in main::Backup
+    /usr/local/apps/gx-map-0.5.3.3/sbin/gx-install-cadesc:116
+
+This can happen if an update is applied multiple times.
+
+Proposed fix: Ensure that the backup directory has a unique name.
+By default, name it "ca-config-YYYY-MM-DD-HHMMSSZ-000"; increment
+the last field as needed until we find something that doesn't exist.
+(There's a potential race condition here, but I don't think it's
+worth worrying about.)
