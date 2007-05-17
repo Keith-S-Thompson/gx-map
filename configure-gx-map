@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.62 2007-05-16 19:09:38-07 kst Exp $
+# $Id: configure-gx-map,v 1.63 2007-05-16 20:13:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -59,6 +59,7 @@ use Getopt::Long ();
 
 sub Option_Name($);
 sub Get_Config_From_File($);
+sub Write_Config_File();
 sub Same_Directory($$);
 sub Need_File($);
 sub Home_Dir($);
@@ -386,6 +387,8 @@ else {
 
 die @errors if @errors;
 
+Write_Config_File();
+
 #
 # Check prerequisites
 #
@@ -527,6 +530,33 @@ sub Get_Config_From_File($) {
     #
     return $Config;
 } # Get_Config_From_File
+
+# ----------------------------------------------------------------------
+
+sub Write_Config_File() {
+    my $in_file  = 'gx-map.conf.in';
+    my $out_file = 'gx-map.conf';
+    open my $IN,  '<', $in_file or die "$in_file: $!\n";
+    open my $OUT, '>', $out_file or die "$out_file: $!\n";
+    while (<$IN>) {
+        if (/^(\.?)(\w+)\s*$/) {
+            my ($dot, $name) = ($1, $2);
+            my $full_name = $dot . $name;
+            printf $OUT "%-25s", $full_name;
+            if (defined $Config->{$name}) {
+                print $OUT "$Config->{$name}\n";
+            }
+            else {
+                print $OUT "UNDEF\n";
+            }
+        }
+        else {
+            print $OUT $_;
+        }
+    }
+    close $IN  or die "$in_file: $!\n";
+    close $OUT or die "$out_file: $!\n";
+} # Write_Config_File
 
 # ----------------------------------------------------------------------
 
