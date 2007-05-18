@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.63 2007-05-16 20:13:15-07 kst Exp $
+# $Id: configure-gx-map,v 1.64 2007-05-17 17:21:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -495,7 +495,7 @@ sub Get_Config_From_File($) {
 
         chomp;
 
-        if (/^\.?(\w+)\s+(.*)$/) {
+        if (/^(\w+)\s+(.*)$/) {
             my($name, $value) = ($1, $2, $3);
             eval { $value =~ s/~([\w.-]+)/Home_Dir $1/eg; };
             if ($@) {
@@ -516,7 +516,7 @@ sub Get_Config_From_File($) {
                 push @errors, "Invalid name \"$name\", $Config_File line $.\n";
             }
         }
-        elsif (/^\.?(\w+)$/) {
+        elsif (/^(\w+)$/) {
             my($name) = ($1, $2);
             $Config->{$name} = '';
             if (not $May_Be_Empty{$name}) {
@@ -539,10 +539,9 @@ sub Write_Config_File() {
     open my $IN,  '<', $in_file or die "$in_file: $!\n";
     open my $OUT, '>', $out_file or die "$out_file: $!\n";
     while (<$IN>) {
-        if (/^(\.?)(\w+)\s*$/) {
-            my ($dot, $name) = ($1, $2);
-            my $full_name = $dot . $name;
-            printf $OUT "%-25s", $full_name;
+        if (/^(\w+)\s*$/) {
+            my $name = $1;
+            printf $OUT "%-25s", $name;
             if (defined $Config->{$name}) {
                 print $OUT "$Config->{$name}\n";
             }
