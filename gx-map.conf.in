@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.8 2007-05-15 21:10:35-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.9 2007-05-17 17:21:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -37,7 +37,7 @@
 #                     the TGCDB subsystem)
 #     DBD::Pg         (needed by DBI)
 #
-.PERL
+PERL
 
 #
 # The value to be used for $PATH.
@@ -68,21 +68,21 @@ PATH
 # relevant systems within that domain have consistent user names and
 # numeric UIDs.)
 #
-.NAMESPACE
+NAMESPACE
 
 #
 # The installation directory for the gx-map package.
 # The gx-map package may be installed either in its own directory or
 # in a shared directory (such as $GLOBUS_LOCATION).
 #
-.INSTALL_DIR
+INSTALL_DIR
 
 #
 # The default directory containing data for the gx-map system.
 # On installation, INSTALL_DIR/gx-map-data will be created as a symlink
 # to this directory.
 #
-.DATA_DIR
+DATA_DIR
 
 #
 # Permissions for the requests.log file.
@@ -109,7 +109,7 @@ REQUESTS_LOG_PERMISSIONS
 # behalf of other users, so access to this account *must* be guarded as
 # carefully as access to the root account.
 #
-.GX_MAP_OWNER
+GX_MAP_OWNER
 
 #
 # A space-separated list of zero or more users who are allowed to
@@ -154,11 +154,11 @@ CERTIFICATES_DIR
 # version, "gx-propagate.in.test", and a TeraGrid-specific version,
 # "gx-propagate.in.teragrid").  This may be left empty.
 #
-.GX_PROPAGATE
+GX_PROPAGATE
 
 #
 # The EXTRAS attribute can be used to specify additional components to be
 # installed.  The only currently supported value is TGCDB, which causes a
 # set of TeraGrid-specific tools to be installed.  This may be left empty.
 #
-.EXTRAS
+EXTRAS
