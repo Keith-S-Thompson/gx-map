@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# $Id: update.2007-05-21,v 1.1 2007-05-21 17:34:14-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/update.2007-05-21,v $
+
+try() {
+    echo "% $@"
+    "$@" || exit $?
+}
+
+try mkdir -p $HOME/$$/`hostname`
+try cd $HOME/$$/`hostname`
+try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz
+try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz.sig
+try gpg gx-map-cadesc-2007-05-15.tar.gz.sig
+try /usr/local/apps/gx-map-0.5.3.2/sbin/gx-install-cadesc gx-map-cadesc-2007-05-15.tar.gz
