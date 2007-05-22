@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: update.2007-05-21,v 1.6 2007-05-21 17:50:32-07 kst Exp $
+# $Id: update.2007-05-21,v 1.7 2007-05-21 17:53:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/update.2007-05-21,v $
 
 try() {
@@ -18,11 +18,13 @@ else
     try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz
 fi
 
-sha1=`sha1sum gx-map-cadesc-2007-05-15.tar.gz | sed 's/ .*$//'`
-expected=54cbc38420ec9686d310cf3f7d6dcefa5eb099f1
-if [ $sha1 != $expected ] ; then
-    echo ">>> Bad sha1sum for gx-map-cadesc-2007-05-15.tar.gz"
+md5=`md5sum gx-map-cadesc-2007-05-15.tar.gz | sed 's/ .*$//'`
+expected=894c663095bc944f7ef83351779eeb1c
+if [ "$md5" != $expected ] ; then
+    echo ">>> Bad md5sum for gx-map-cadesc-2007-05-15.tar.gz"
     exit 1
+else
+    echo "md5sum ok"
 fi
 
 try /usr/local/apps/gx-map-0.5.3.2/sbin/gx-install-cadesc gx-map-cadesc-2007-05-15.tar.gz
