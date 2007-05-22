@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: update.2007-05-21,v 1.4 2007-05-21 17:47:55-07 kst Exp $
+# $Id: update.2007-05-21,v 1.5 2007-05-21 17:48:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/update.2007-05-21,v $
 
 try() {
@@ -12,7 +12,7 @@ tarball=gx-map-cadesc-2007-05-15.tar.gz
 
 try mkdir -p $HOME/$today/`hostname`
 try cd $HOME/$today/`hostname`
-if [ -e ../$tarball] ; then
+if [ -e ../$tarball ] ; then
     try cp -p ../$tarball .
 else
     try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz
