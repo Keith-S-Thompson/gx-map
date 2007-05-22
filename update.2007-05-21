@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: update.2007-05-21,v 1.3 2007-05-21 17:44:55-07 kst Exp $
+# $Id: update.2007-05-21,v 1.4 2007-05-21 17:47:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/update.2007-05-21,v $
 
 try() {
@@ -8,10 +8,15 @@ try() {
     "$@" || exit $?
 }
 
+tarball=gx-map-cadesc-2007-05-15.tar.gz
+
 try mkdir -p $HOME/$today/`hostname`
 try cd $HOME/$today/`hostname`
-try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz
-# try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz.sig
+if [ -e ../$tarball] ; then
+    try cp -p ../$tarball .
+else
+    try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz
+fi
 
 sha1=`sha1sum gx-map-cadesc-2007-05-15.tar.gz | sed 's/ .*$//'`
 expected=54cbc38420ec9686d310cf3f7d6dcefa5eb099f1
