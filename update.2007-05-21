@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: update.2007-05-21,v 1.1 2007-05-21 17:34:14-07 kst Exp $
+# $Id: update.2007-05-21,v 1.2 2007-05-21 17:39:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/update.2007-05-21,v $
 
 try() {
@@ -12,5 +12,12 @@ try mkdir -p $HOME/$$/`hostname`
 try cd $HOME/$$/`hostname`
 try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz
 try ncftpget ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/gx-map-cadesc-2007-05-15.tar.gz.sig
+
 try gpg gx-map-cadesc-2007-05-15.tar.gz.sig
+printf "Ok? "
+read ans
+if [ $ans != 'y' ] ; then
+    exit 1
+fi
+
 try /usr/local/apps/gx-map-0.5.3.2/sbin/gx-install-cadesc gx-map-cadesc-2007-05-15.tar.gz
