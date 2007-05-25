@@ -1,0 +1,24 @@
+# $Id: bug-0153,v 1.1 2007-05-24 21:10:38-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0153,v $
+
+gx-map bug 0153
+Date: Thu 2007-05-24
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2p1
+Status: Open
+Title: DB request files not moved
+
+On TACC's Maverick and Lonestar systems, db-request files are not
+being moved from the new-db-requests directory to the old-db-requests
+directory, though it appears they are being processed (the
+tgcdb-mappings files is up to date).
+
+I don't know why this would be happening.  The directory permissions
+look ok.  Probably any errors would result in e-mail, either to
+the ADMIN_EMAIL address or to the owner of the relevant cron job.
+Perhaps something is dying (without leaving a lock file) after the
+request is processed but before the files are moved?
+
+The effect is likely to be that each run of gx-db-check-requests will
+have to reexamine all 72,000+ files.
