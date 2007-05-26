@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.64 2007-05-17 17:21:52-07 kst Exp $
+# $Id: configure-gx-map,v 1.65 2007-05-25 19:01:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -415,6 +415,7 @@ my %out_file = ();
 
 opendir DIR, '.' or die ".: $!\n";
 foreach my $in_file (sort grep /\.in$/, readdir DIR) {
+    next if $in_file eq 'gx-map.conf.in';
     if (Need_File $in_file) {
         push @in_files, $in_file;
         ($out_file{$in_file} = $in_file) =~ s/\.in$//;
@@ -536,18 +537,26 @@ sub Get_Config_From_File($) {
 sub Write_Config_File() {
     my $in_file  = 'gx-map.conf.in';
     my $out_file = 'gx-map.conf';
-    open my $IN,  '<', $in_file or die "$in_file: $!\n";
+    Debug "Reading from $in_file, writing to $out_file\n";
+    open my $IN,  '<', $in_file  or die "$in_file: $!\n";
     open my $OUT, '>', $out_file or die "$out_file: $!\n";
     while (<$IN>) {
         if (/^(\w+)\s*$/) {
             my $name = $1;
-            printf $OUT "%-25s", $name;
-            if (defined $Config->{$name}) {
-                print $OUT "$Config->{$name}\n";
-            }
-            else {
-                print $OUT "UNDEF\n";
-            }
+            Debug "Line $., \$name = \"$name\"\n";
+#           printf $OUT "%-25s %s\n",
+#                       $name,
+#                       ( defined $Config->{$name}
+#                         ? $Config->{$name}
+#                         : 'UNDEF' );
+            my $out_line
+                = sprintf "%-25s %s",
+                          $name,
+                          ( defined $Config->{$name}
+                            ? $Config->{$name}
+                            : 'UNDEF' );
+            Debug "Printing to $out_file: \"$out_line\"\n";
+            print $OUT "$out_line\n";
         }
         else {
             print $OUT $_;
@@ -555,6 +564,17 @@ sub Write_Config_File() {
     }
     close $IN  or die "$in_file: $!\n";
     close $OUT or die "$out_file: $!\n";
+
+    if ($User_Opt->{debugging}) {
+        Debug "Current directory:\n";
+        system 'pwd';
+        system 'ls', '-AlsGF', '--time-style=+%Y-%m-%d %T', $in_file, $out_file;
+        print ">>> $in_file (decommented):\n";
+        system 'decomment', $in_file;
+        print ">>> $out_file (decommented):\n";
+        system 'decomment', $out_file;
+        print ">>> end\n";
+    }
 } # Write_Config_File
 
 # ----------------------------------------------------------------------
