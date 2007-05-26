@@ -1,4 +1,4 @@
-# $Id: bug-0154,v 1.1 2007-05-25 18:54:55-07 kst Exp $
+# $Id: bug-0154,v 1.2 2007-05-25 18:57:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0154,v $
 
 gx-map bug 0154
@@ -21,5 +21,7 @@ Gridmap_Utils.pm.in (now GX.pm.in).  The $kind variable is set based on
 an argument to either "-log", "-gridmap-before", or "-gridmap-after".
 The intended default, if none of these options is specified, is
 "-log", but it's set to "log", resulting in the above error.
+
+This will affect both "-remove-user" and "-remove-dn".
 
 Solution: Default $kind to "-log", not "log".
