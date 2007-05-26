@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.46 2007-05-25 18:59:11-07 kst Exp $
+# $Id: GX.pm.in,v 1.47 2007-05-25 19:02:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1812,7 +1812,7 @@ sub Gen_Mappings(@) {
     my(@args) = @_;
     GX::Debug "Entering GX::Gen_Mappings(@args)\n";
     my $All = 0;
-    my $kind = 'log';
+    my $kind = '-log';
 
     my @requests = ();
 
