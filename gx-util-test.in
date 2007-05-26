@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.14 2007-03-15 18:36:26-07 kst Exp $
+# $Id: gx-util-test.in,v 1.15 2007-05-25 18:59:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -90,7 +90,15 @@ GX::Install_Warn_Handler;
 
 Usage if not @ARGV;
 
-if (Match $ARGV[0], 'Check_Data_Dir') {
+if (Match $ARGV[0], 'Set_Config') {
+    Usage if scalar @ARGV != 1;
+    GX::Set_Config();
+    foreach my $key (sort keys %$GX::Config) {
+        printf "%-25s => \"%s\"\n", $key, $GX::Config->{$key};
+    }
+}
+
+elsif (Match $ARGV[0], 'Check_Data_Dir') {
     Usage if scalar @ARGV != 1;
     GX::Check_Data_Dir();
     print "ok\n";
@@ -348,7 +356,8 @@ Option names may be abbreviated.
     -debugging                Enable debugging messages.
 
 Command names are case-insensitive; underscores and hyphens are ignored.
-    Check_Data_Dir            directory
+    Set_Config
+    Check_Data_Dir
     Get_mtime                 filename
     Get_PW_Name               user
     Get_PW_UID                UID
