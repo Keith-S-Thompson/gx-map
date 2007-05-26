@@ -1,0 +1,25 @@
+# $Id: bug-0154,v 1.1 2007-05-25 18:54:55-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0154,v $
+
+gx-map bug 0154
+Date: Fri 2007-05-25
+Severity: High
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2p1
+Status: Open
+Title: gx-propagate fails for "-remove-user", "-remove-dn"
+
+gx-propagate with the "-remove-user" option failed with the following
+(from gx-propagate.log):
+
+Fri 2007-05-25 20:05:05 UTC
+gx-propagate -source admin -remove-user -username [deleted]
+Internal error, $kind = "log"
+
+The problem is a typo in the Gen_Mappings function in
+Gridmap_Utils.pm.in (now GX.pm.in).  The $kind variable is set based on
+an argument to either "-log", "-gridmap-before", or "-gridmap-after".
+The intended default, if none of these options is specified, is
+"-log", but it's set to "log", resulting in the above error.
+
+Solution: Default $kind to "-log", not "log".
