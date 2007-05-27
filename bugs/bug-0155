@@ -1,4 +1,4 @@
-# $Id: bug-0155,v 1.2 2007-05-26 20:19:52-07 kst Exp $
+# $Id: bug-0155,v 1.3 2007-05-26 20:33:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0155,v $
 
 gx-map bug 0155
@@ -6,7 +6,7 @@ Date: Sat 2007-05-26
 Severity: Low
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.2p1
-Status: Open
+Status: Fixed 0.5.9.012
 Title: gx-db-request, gx-db-check-requests don't normalize DNs
 
 The gx-db-request command doesn't normalize DNs.  Instead, the raw DN
@@ -22,3 +22,8 @@ This isn't a huge deal, since DNs are normalized by gx-request.
 Suggested fix: gx-db-request should filter DNs through Normalize_DN,
 and gx-db-check-requests should leave them alone (since they'll
 already be normalized).
+
+Fixed:
+gx-db-request.in 1.9
+gx-db-check-requests.in 1.16
+gx-map release 0.5.9.012
