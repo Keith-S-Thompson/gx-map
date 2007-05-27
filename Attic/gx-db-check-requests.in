@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.15 2007-05-26 20:25:31-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.16 2007-05-26 20:32:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -273,7 +273,7 @@ sub Process_DB_Request($$) {
             }
             my %dn_seen = ();
             foreach my $dn (@dn_list) {
-                $dn_seen{GX::GT4_Subject $dn} = 1;
+                $dn_seen{$dn} = 1;
             }
             #
             # No need to sort; order is irrelevant.
