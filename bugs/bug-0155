@@ -1,4 +1,4 @@
-# $Id: bug-0155,v 1.1 2007-05-26 20:17:18-07 kst Exp $
+# $Id: bug-0155,v 1.2 2007-05-26 20:19:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0155,v $
 
 gx-map bug 0155
@@ -18,3 +18,7 @@ Normalize_DN instead.  (Trailing occurrences of /CN=proxy and
 /CN=[0-9]+ are not deleted.)
 
 This isn't a huge deal, since DNs are normalized by gx-request.
+
+Suggested fix: gx-db-request should filter DNs through Normalize_DN,
+and gx-db-check-requests should leave them alone (since they'll
+already be normalized).
