@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.14 2007-05-11 17:31:45-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.15 2007-05-26 20:25:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -223,7 +223,7 @@ foreach my $mapping (@added_mappings) {
     Request 'add', $mapping;
 }
 
-GX::Release_Lock $Program_Name;
+Cleanup;
 
 ########################################################################
 
