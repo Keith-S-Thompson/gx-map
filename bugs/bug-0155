@@ -1,0 +1,20 @@
+# $Id: bug-0155,v 1.1 2007-05-26 20:17:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0155,v $
+
+gx-map bug 0155
+Date: Sat 2007-05-26
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2p1
+Status: Open
+Title: gx-db-request, gx-db-check-requests don't normalize DNs
+
+The gx-db-request command doesn't normalize DNs.  Instead, the raw DN
+(presumably from the TGCDB) is stored in the db-request file.
+
+The gx-db-check-requests command normalizes DNs, but only incompletely.
+It filters them through the GT4_Subject function.  It should use
+Normalize_DN instead.  (Trailing occurrences of /CN=proxy and
+/CN=[0-9]+ are not deleted.)
+
+This isn't a huge deal, since DNs are normalized by gx-request.
