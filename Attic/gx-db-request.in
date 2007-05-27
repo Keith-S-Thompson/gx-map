@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-request.in,v 1.8 2007-03-15 18:36:25-07 kst Exp $
+# $Id: gx-db-request.in,v 1.9 2007-05-26 20:31:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-request.in,v $
 
 ########################################################################
@@ -140,6 +140,7 @@ if ($Operation eq 'add' or $Operation eq 'remove') {
         @dn_list = GX::Get_DNs_From_List_File
                        $User_Opt->{'dn-list-file'};
     }
+    @dn_list = map GX::Normalize_DN, @dn_list;
     push @request_args, @dn_list;
 }
 Request $Operation, @request_args;
