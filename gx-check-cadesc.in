@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-cadesc.in,v 1.3 2007-04-13 19:11:56-07 kst Exp $
+# $Id: gx-check-cadesc.in,v 1.4 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-cadesc.in,v $
 
 ########################################################################
@@ -89,6 +89,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
 
 Usage if scalar @ARGV == 0;
 
