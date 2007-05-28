@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-ingest.in,v 1.28 2007-03-15 18:36:25-07 kst Exp $
+# $Id: gx-ingest.in,v 1.29 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -74,6 +74,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
 
 my $gx_request_command = "$Install_Dir/bin/gx-map";
 if (-x "$Install_Dir/bin/gx-request") {
