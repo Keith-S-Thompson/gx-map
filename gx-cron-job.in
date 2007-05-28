@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-cron-job.in,v 1.21 2007-03-15 18:36:24-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.22 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -92,6 +92,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
 
 GX::Install_Die_Handler;
 GX::Install_Warn_Handler;
