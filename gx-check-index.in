@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-index.in,v 1.15 2007-03-15 18:36:23-07 kst Exp $
+# $Id: gx-check-index.in,v 1.16 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -88,6 +88,8 @@ Usage if @ARGV;
 if (not defined $User_Opt->{ca} or not defined $User_Opt->{index}) {
     Usage "Both \"-ca\" and \"-index\" must be specified\n";
 }
+
+GX::Set_Config;
 
 GX::Install_Die_Handler;
 GX::Install_Warn_Handler;
