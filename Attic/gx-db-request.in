@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-request.in,v 1.10 2007-05-27 20:13:30-07 kst Exp $
+# $Id: gx-db-request.in,v 1.11 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-request.in,v $
 
 ########################################################################
@@ -84,6 +84,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
 
 my $Operation = undef;
 
