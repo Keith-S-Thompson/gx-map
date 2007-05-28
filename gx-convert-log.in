@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-convert-log.in,v 1.36 2007-03-15 18:36:24-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.37 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -80,6 +80,9 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
+
 Usage if scalar @ARGV != 1;
 my $Input_Log = $ARGV[0];
 
