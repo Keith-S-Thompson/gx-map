@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-watch-locks.in,v 1.7 2007-03-15 18:36:26-07 kst Exp $
+# $Id: gx-watch-locks.in,v 1.8 2007-05-27 20:33:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
 
 ########################################################################
@@ -84,6 +84,8 @@ if ($User_Opt->{version}) {
     print "$Program_Name (gx-map) $GX::VERSION\n";
     exit 0;
 }
+
+GX::Set_Config;
 
 my $Data_Dir;
 
