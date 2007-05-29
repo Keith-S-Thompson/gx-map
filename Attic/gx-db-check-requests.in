@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.17 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.18 2007-05-29 01:28:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -562,7 +562,8 @@ sub Request($$) {
 
 sub Cleanup() {
     foreach my $file (@processed_files) {
-        rename "$New_Requests_Dir/$file", "$Old_Requests_Dir/$file";
+        # rename "$New_Requests_Dir/$file", "$Old_Requests_Dir/$file";
+        GX::Save_File $file, $New_Requests_Dir, $Old_Requests_Dir, undef;
     }
     GX::Release_Lock $Program_Name;
 } # Cleanup
