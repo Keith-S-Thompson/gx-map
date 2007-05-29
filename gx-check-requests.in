@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.110 2007-05-09 03:18:13-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.111 2007-05-29 01:28:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -162,6 +162,7 @@ my @good_requests = ();
 my @good_request_files = ();
 my @bad_requests = ();
 my @bad_request_files = ();
+my %timestamp = ();
 
 foreach my $file (@files) {
     next if $file eq '.' or
@@ -187,6 +188,14 @@ foreach my $file (@files) {
                 $mtime < $Now + 60;
     }
     my $request = Get_Request_Info "$new_request_dir/$file";
+    if (defined $request->{timestamp} and
+        $request->{timestamp} =~ /^\d+/)
+    {
+        $timestamp{$file} = $&;
+    }
+    else {
+        $timestamp{$file} = undef;
+    }
     if (defined $request->{ERRORS}) {
         push @bad_requests, $request;
         push @bad_request_files, $file;
@@ -358,11 +367,11 @@ if (defined $User_Opt->{copy}) {
 #
 my @rename_errors = ();
 foreach my $file (@good_request_files) {
-    rename "$new_request_dir/$file", "$good_request_dir/$file"
+    GX::Save_File $file, $new_request_dir, $good_request_dir, $timestamp{$file}
         or push @rename_errors, "${file}: $!\n";
 }
 foreach my $file (@bad_request_files) {
-    rename "$new_request_dir/$file", "$bad_request_dir/$file"
+    GX::Save_File $file, $new_request_dir, $bad_request_dir, $timestamp{$file}
         or push @rename_errors, "${file}: $!\n";
 }
 
