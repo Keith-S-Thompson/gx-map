@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.50 2007-05-27 20:34:21-07 kst Exp $
+# $Id: GX.pm.in,v 1.51 2007-05-29 01:28:28-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -157,6 +157,8 @@ sub Timestamp_Of($);
 sub Time_Image($);
 sub Long_Time_Image($);
 sub Time_Value($);
+
+sub Save_File($$$$);
 
 sub Get_DNs_From_List_File($);
 
@@ -1160,6 +1162,51 @@ sub Time_Value($) {
         return undef;
     }
 } # Time_Value
+
+# ----------------------------------------------------------------------
+
+#
+# Move a file to a directory to be saved after processing.  This is
+# used for request files (moved to good-requests or bad-requests) or
+# db-request files (moved to old-db-requests).
+#
+# Arguments are file name (without directory), source directory, target
+# directory, and the file's timestamp; the timestamp may be undef.
+# 
+# The file is moved to subdirectory with a name of the form
+# "$target_dir/YYYY/MM/DD", which is created if necessary.  The date
+# is computed from the timestamp, and represents the date in UTC.
+# If a timestamp is not provided, the mtime of the file is used.  If a
+# timestamp cannot be determined for some reason, attempt to move the
+# file directly to the target subdirectory (this should never happen).
+#
+sub Save_File($$$$) {
+    my($filename, $source_dir, $target_dir, $timestamp) = @_;
+
+    if (not defined $timestamp) {
+        $timestamp = GX::Get_mtime "$source_dir/$filename";
+    }
+
+    my($YYYY, $MM, $DD);
+    my $target_subdir = $target_dir;
+    if (defined $timestamp) {
+        my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
+            = gmtime $timestamp;
+        $YYYY = $year + 1900;
+        $MM   = $mon + 1;
+        $DD   = $mday;
+        $target_subdir = $target_dir;
+        TRY:
+        foreach my $elem ($YYYY, $MM, $DD) {
+            $target_subdir .= "/$elem";
+            if (not mkdir $target_subdir) {
+                $target_subdir = $target_dir;
+                last TRY;
+            }
+        }
+    }
+    return rename "$source_dir/$filename", "$target_subdir/$filename";
+} # Save_File
 
 # ----------------------------------------------------------------------
 
