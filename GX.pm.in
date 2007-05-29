@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.52 2007-05-29 01:29:43-07 kst Exp $
+# $Id: GX.pm.in,v 1.53 2007-05-29 01:41:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1193,8 +1193,8 @@ sub Save_File($$$$) {
         my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
             = gmtime $timestamp;
         $YYYY = $year + 1900;
-        $MM   = $mon + 1;
-        $DD   = $mday;
+        $MM   = sprintf '%02d', $mon + 1;
+        $DD   = sprintf '%02d', $mday;
         $target_subdir = $target_dir;
         TRY:
         foreach my $elem ($YYYY, $MM, $DD) {
