@@ -1,4 +1,4 @@
-# $Id: bug-0152,v 1.2 2007-05-29 21:51:02-07 kst Exp $
+# $Id: bug-0152,v 1.3 2007-05-29 21:51:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0152,v $
 
 gx-map bug 0152
@@ -32,6 +32,8 @@ with the intermediate directories being created on the fly as needed.
 Theoretically this could also be done for the bad-requests directory.
 It may or may not be worth the effort.  (Actually, it might be simpler
 just to do it consistently.)
+
+Fixed for new-db-requests, good-requests, and bad-requests directories.
 
 Fixed:
 GX.pm.in 1.53
