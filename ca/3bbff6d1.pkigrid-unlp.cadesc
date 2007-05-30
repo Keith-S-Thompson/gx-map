@@ -1,0 +1,28 @@
+# $Id: 3bbff6d1.pkigrid-unlp.cadesc,v 1.1 2007-05-29 21:29:15-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/3bbff6d1.pkigrid-unlp.cadesc,v $
+
+CA_NAME             PKIGrid UNLP
+HOMEPAGE            http://www.pkigrid.unlp.edu.ar/
+CONTACT             ca@pkigrid.unlp.edu.ar
+HASH                3bbff6d1
+SIGNED_BY           self
+SUBJECT             /C=AR/O=e-Ciencia/OU=UNLP/L=CeSPI/CN=PKIGrid/emailAddress=camanager@pkigrid.unlp.edu.ar
+MAY_SIGN            ?
+CERTIFICATE_MD5     F1:0C:86:81:BE:81:E3:44:F9:6F:6C:0C:DE:F6:96:5B
+CERTIFICATE_SHA1    D7:55:B8:EF:BE:AC:05:E9:FB:CA:22:24:32:F5:5F:47:25:AC:25:DF
+CERTIFICATE_URL     https://www.pkigrid.unlp.edu.ar/pub/cacert/cacert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             https://www.pkigrid.unlp.edu.ar/pub/crl/cacrl.pem
+CERT_BEGINS         Tue 2007-05-22 14:28:42 UTC
+CERT_EXPIRES        Sun 2017-05-21 14:28:42 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from cacert.pem (b7bcb7b2.0), downloaded
+# Tue 2007-05-29
+
+# The CA certificate replaces an older certificate
+# from the same site with hash b7bcb7b2 and subject
+# "/C=AR/O=e-Ciencia/OU=UNLP/L=CeSPI/CN=PKIGrid".
+
+# I have not found a signing_policy for this CA.  The CA is marked as
+# disabled until that's resolved.
