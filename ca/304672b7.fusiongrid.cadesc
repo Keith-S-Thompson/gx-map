@@ -1,0 +1,24 @@
+# $Id: 304672b7.fusiongrid.cadesc,v 1.1 2007-05-29 20:50:52-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/304672b7.fusiongrid.cadesc,v $
+
+CA_NAME             FusionGrid CA
+HOMEPAGE            http://dsd.lbl.gov/FusionGrid/FusionGridCAs.html
+CONTACT             Mary Thompson <mrthompson@lbl.gov>
+HASH                304672b7
+SIGNED_BY           /DC=net/DC=ES/O=ESnet/OU=Certificate Authorities/CN=ESnet Root CA 1
+SUBJECT             /DC=org/DC=fusiongrid/OU=Certificate Authorities/CN=FusionGrid CA
+MAY_SIGN            /DC=org/DC=fusiongrid/*
+MAY_SIGN            /DC=org/DC=FusionGrid/*
+CERTIFICATE_MD5     04:2B:98:EE:B0:0E:30:DA:AC:A9:38:9C:81:85:A6:C5
+CERTIFICATE_SHA1    51:0C:30:E5:E6:06:CA:6F:20:8D:68:D8:37:CC:CE:D2:A7:9F:B5:36
+CERTIFICATE_URL     http://dsd.lbl.gov/FusionGrid/304672b7.0.txt
+SIGNING_POLICY_URL  http://dsd.lbl.gov/FusionGrid/304672b7.signing_policy.txt
+CRL_URL             ?
+ALLOW_MISSING_CRL   yes
+CERT_BEGINS         Wed 2004-10-20 07:00:00 UTC
+CERT_EXPIRES        Wed 2010-10-20 07:00:00 UTC
+
+# MD5 and SHA1 fingerprints from 304672b7.0.txt downloaded Tue 2007-05-29
+
+# There is no CRL as far as I can tell.  Consider this when deciding
+# whether to recognize this CA.
