@@ -1,0 +1,38 @@
+# $Id: bug-0156,v 1.1 2007-05-30 17:55:11-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0156,v $
+
+gx-map bug 0156
+Date: Wed 2007-05-30
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.2p1
+Status: Open
+Title: Unknown error, locked for 0 second(s)
+
+I sometimes get e-mail messages indicating that something was locked
+for 0 second(s), or occasionally for 1 second(s).
+
+Here's the most recent (headers trimmed):
+========================================================================
+From gxmap@sdsc.edu  Wed May 30 10:07:35 2007
+Return-Path: <gxmap@sdsc.edu>
+Date: Wed, 30 May 2007 10:07:31 -0700
+Message-Id: <200705301707.l4UH7Vo2024787@chester.sdsc.edu>
+From: root@chester.sdsc.edu (Cron Daemon)
+To: gxmap@sdsc.edu
+Subject: Cron <gxmap@chester> /usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job
+
+Locked since Wed 2007-05-30 17:07:30 UTC (0 second(s))
+gx-check-requests (gx-map 0.5.3.2p1) PID=24645 on chester.sdsc.edu at Wed 2007-05-30 17:07:30 UTC
+Consider running gx-remove-locks
+Traceback:
+    /usr/local/apps/gx-map-0.5.3.2/lib/Gridmap_Utils.pm:2661 in Gridmap_Utils::Get_Lock
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-check-requests:141
+gx-cron-job: job Generate mapfile (chester) failed: exit 1
+Traceback:
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job:258 in main::Run_Jobs
+    /usr/local/apps/gx-map-0.5.3.2/sbin/gx-cron-job:123
+
+========================================================================
+
+To do: Figure out what's causing these errors, and fix it.
