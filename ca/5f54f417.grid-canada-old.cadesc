@@ -1,4 +1,4 @@
-# $Id: 5f54f417.grid-canada-old.cadesc,v 1.4 2007-04-17 18:00:13-07 kst Exp $
+# $Id: 5f54f417.grid-canada-old.cadesc,v 1.5 2007-06-01 16:59:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5f54f417.grid-canada-old.cadesc,v $
 
 CA_NAME             Grid Canada CA (old)
@@ -22,5 +22,3 @@ DISABLE             yes
 # Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
 
 # This CA has been superseded by a new CA; see bffbd7d0.grid-canada.cadesc
-# Certificates issued by this CA will remain valid until 2007-04-10, but
-# no new certificates will be issued.
