@@ -1,0 +1,24 @@
+# $Id: efdf6f74.asgcca-2007.cadesc,v 1.1 2007-06-01 16:08:48-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/efdf6f74.asgcca-2007.cadesc,v $
+
+CA_NAME             Academia Sinica Grid Computing CA
+HOMEPAGE            http://ca.grid.sinica.edu.tw/
+CONTACT             ca@lists.grid.sinica.edu.tw
+HASH                efdf6f74
+SIGNED_BY           self
+SUBJECT             /C=TW/O=AS/CN=Academia Sinica Grid Computing Certificate Authority
+MAY_SIGN            /C=TW/*
+CERTIFICATE_MD5     3B:B4:C7:08:52:C4:9D:6C:5C:DD:9A:D2:9B:8B:2E:53
+CERTIFICATE_SHA1    FF:23:07:88:27:7A:4A:6D:DF:49:BD:46:DD:B8:8C:7C:CD:8E:FC:EF
+CERTIFICATE_URL     ?
+SIGNING_POLICY_URL  ?
+CRL_URL             http://ca.grid.sinica.edu.tw/publication/CRL/ASGCCA-crl.pem
+CERT_BEGINS         Thu 2007-05-31 06:07:40 UTC
+CERT_EXPIRES        Wed 2027-05-26 06:07:40 UTC
+DISABLE             yes
+
+# Information on this CA is included in the IGTF 1.14 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.14/accredited/igtf-policy-installation-bundle-1.14.tar.gz>
+# but the files are not yet available on the web site.  The CA is marked
+# as DISABLEd until this is resolved and the files' attributes are
+# verified.
