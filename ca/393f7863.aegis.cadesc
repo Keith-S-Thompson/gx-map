@@ -1,0 +1,24 @@
+# $Id: 393f7863.aegis.cadesc,v 1.1 2007-05-31 18:51:53-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/393f7863.aegis.cadesc,v $
+
+CA_NAME             AEGIS
+HOMEPAGE            http://aegis-ca.rcub.bg.ac.yu/
+CONTACT             aegis-ca@aegis-ca.rcub.bg.ac.yu
+HASH                393f7863
+SIGNED_BY           self
+SUBJECT             /C=RS/O=AEGIS/CN=AEGIS-CA
+MAY_SIGN            /C=RS/O=AEGIS/*
+CERTIFICATE_MD5     2A:79:D5:CC:B9:83:B6:E9:92:C5:6B:11:5D:E0:7C:79
+CERTIFICATE_SHA1    1B:60:CD:E5:50:72:B0:1E:96:42:86:42:CA:0C:D6:8E:F3:51:2B:DD
+CERTIFICATE_URL     http://aegis-ca.rcub.bg.ac.yu/repository/ca.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://aegis-ca.rcub.bg.ac.yu/repository/crl-v2.crl
+CRL_FORM            DER
+CERT_BEGINS         Tue 2007-04-17 08:03:19 UTC
+CERT_EXPIRES        Mon 2017-04-17 08:03:19 UTC
+
+# MD5 and SHA1 fingerprints from ca.pem (393f7863.0) downloaded Thu 2007-05-31
+
+# Fingerprints verified against <http://aegis-ca.rcub.bg.ac.yu/>
+
+# (IGTF information coming soon)
