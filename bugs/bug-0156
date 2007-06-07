@@ -1,4 +1,4 @@
-# $Id: bug-0156,v 1.2 2007-05-30 19:11:14-07 kst Exp $
+# $Id: bug-0156,v 1.3 2007-06-07 16:21:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0156,v $
 
 gx-map bug 0156
@@ -39,3 +39,8 @@ This affects both gx-check-index and gx-check-requests, and it does
 so nearly equally.
 
 To do: Figure out what's causing these errors, and fix it.
+
+My best guess is that some kind of NFS glitch is causing the program
+to collide with its own lock.  Since it's sporadic, it's not a severe
+problem; a program running into this will just bail out and be tried
+again later.
