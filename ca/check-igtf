@@ -1,0 +1,246 @@
+#!/usr/bin/perl
+
+# $Id: check-igtf,v 1.1 2007-06-08 20:08:20-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
+
+use strict;
+use warnings;
+
+sub Set_cadesc_Info($);
+sub Set_Cert_Info($);
+sub Set_igtf_Info($);
+sub Check_Consistency($);
+
+my $hash_pattern = qr([\da-f]{8});
+
+my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
+# my $igtf_dir = "$ca_dir/.igtf-1.14-all";
+my $igtf_dir = "$ca_dir/.igtf-1.14/igtf-policy-installation-bundle-1.14/src";
+
+die "No file $ca_dir\n"   if not -d $ca_dir;
+die "No file $igtf_dir\n" if not -d $igtf_dir;
+
+opendir my $IGTF, $igtf_dir or die "$igtf_dir: $!\n";
+my @igtf_subdirs = sort grep !/^\./, readdir $IGTF;
+closedir $IGTF;
+
+my $cadesc_info = {};
+
+opendir my $CA_DIR, $ca_dir or die "$ca_dir: $!\n";
+my @files = sort grep { /\.cadesc$/ and not /^00000000/ } readdir $CA_DIR;
+closedir $CA_DIR;
+
+foreach my $file (@files) {
+    my $hash = $file;
+    $hash =~ s/\..*$//;
+    die "Bad hash $hash, file $file\n" if $hash !~ /^$hash_pattern$/;
+    $cadesc_info->{$hash}->{HASH} = $hash;
+    $cadesc_info->{$hash}->{CADESC_FILENAME} = "$ca_dir/$file";
+    Set_cadesc_Info   $cadesc_info->{$hash};
+    Set_Cert_Info     $cadesc_info->{$hash};
+    Set_igtf_Info     $cadesc_info->{$hash};
+    Check_Consistency $cadesc_info->{$hash};
+    last;
+}
+
+foreach my $hash (sort keys %$cadesc_info) {
+    print "$hash {\n";
+    my $ref = $cadesc_info->{$hash};
+    foreach my $key (sort keys %$ref) {
+        if (ref $ref->{$key} eq 'ARRAY') {
+            my @arr = @{$ref->{$key}};
+            foreach my $elem (@arr) {
+                printf "    %-20s => %s\n", $key, $elem;
+            }
+        }
+        elsif (ref $ref->{$key} eq 'HASH') {
+            printf "    %-20s => {\n", $key;
+            foreach my $subkey (sort keys %{$ref->{$key}}) {
+                next if $subkey eq '_status';
+                my $status = $ref->{$key}->{_status}->{$subkey};
+                $status = '' if not defined $status;
+                printf "%6s  %-20s => %s\n",
+                       $status, $subkey, $ref->{$key}->{$subkey};
+            }
+            print "    }\n";
+        }
+        else {
+            printf "    %-20s => %s\n", $key, $ref->{$key};
+        }
+    }
+    print "}\n\n";
+    last;
+}
+
+########################################################################
+
+sub Set_cadesc_Info($) {
+    my($ref) = @_;
+
+    my $filename = $ref->{CADESC_FILENAME};
+    open my $CADESC, '<', $filename or die "${filename}: $!\n";
+    while (<$CADESC>) {
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        if (/^(\w+)\s+(.*)$/) {
+            $ref->{cadesc}->{$1} = $2;
+        }
+        else {
+            die "${filename}:$.: Syntax error\n";
+        }
+    }
+    close $CADESC;
+} # Set_cadesc_Info
+
+# ----------------------------------------------------------------------
+
+sub Set_Cert_Info($) {
+    my($ref) = @_;
+    my $certificate_url = $ref->{cadesc}->{CERTIFICATE_URL};
+    my $crl_url = $ref->{cadesc}->{CRL_URL};
+    my $command = 'cert-info';
+    if (defined $certificate_url) {
+        $command .= " '$certificate_url'";
+    }
+    if (defined $crl_url and $crl_url ne '?') {
+        $command .= " '$crl_url'";
+    }
+
+    my $section = 'certificate'; # 'certificate' or 'crl'
+
+    open my $PIPE, "$command 2>/dev/null |" or die "cert-info: $!\n";
+    while (<$PIPE>) {
+        if (/^$/) {
+            $section = 'crl';
+        }
+        elsif (/^File type\s+(.*)$/) {
+            $ref->{$section}->{file_type} = $1;
+        }
+        elsif (/^hash\s+($hash_pattern)$/) {
+            $ref->{$section}->{hash} = $1;
+        }
+        elsif (/^md5 fingerprint\s+(.*)$/) {
+            $ref->{$section}->{md5} = $1;
+        }
+        elsif (/^sha1 fingerprint\s+(.*)$/) {
+            $ref->{$section}->{sha1} = $1;
+        }
+        elsif (/^issuer\s+(.*)$/) {
+            $ref->{$section}->{issuer} = $1;
+        }
+        elsif (/^subject\s+(.*)$/) {
+            $ref->{$section}->{subject} = $1;
+        }
+        elsif (/^not before\s+(.*)$/) {
+            $ref->{$section}->{not_before} = $1;
+        }
+        elsif (/^not after\s+(.*)$/) {
+            $ref->{$section}->{not_after} = $1;
+        }
+        elsif (/^verification\s+(.*)$/) {
+            $ref->{$section}->{verification} = $1;
+        }
+    }
+    close $PIPE;
+} # Set_Cert_Info
+
+# ----------------------------------------------------------------------
+
+sub Set_igtf_Info($) {
+    my($ref) = @_;
+
+    my $filename = undef;
+
+    foreach my $subdir (@igtf_subdirs) {
+        if (-e "$igtf_dir/$subdir/$ref->{HASH}.info") {
+            $filename = "$igtf_dir/$subdir/$ref->{HASH}.info";
+            last;
+        }
+    }
+    return if not defined $filename;
+
+    open my $INFO, '<', $filename or die "${filename}: $!\n";
+    while (<$INFO>) {
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        next if /^$/;
+        if (/^([\w.]+)\s+=\s+(.*)$/) {
+            $ref->{igtf}->{$1} = $2;
+        }
+        else {
+            die "${filename}:$.: Syntax error\n";
+        }
+    }
+    close $INFO;
+    $ref->{IGTF_FILENAME} = $filename;
+} # Set_igtf_Info
+
+# ----------------------------------------------------------------------
+
+sub Check_Consistency($) {
+    my($ref) = @_;
+
+    return if not defined $ref->{IGTF_FILENAME};
+
+    if ($ref->{cadesc}->{CERTIFICATE_SHA1} eq $ref->{igtf}->{'sha1fp.0'} and
+        $ref->{igtf}->{'sha1fp.0'} eq $ref->{certificate}->{sha1})
+    {
+        $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
+        $ref->{igtf}->{_status}->{'sha1fp.0'} =
+        $ref->{certificate}->{_status}->{sha1} = 'ok';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
+        $ref->{igtf}->{_status}->{'sha1fp.0'} =
+        $ref->{certificate}->{_status}->{sha1} = 'ERR';
+        push @{$ref->{'ERROR'}}, "SHA1 mismatch";
+    }
+
+    if ($ref->{cadesc}->{CERTIFICATE_MD5} eq $ref->{certificate}->{md5}) {
+        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
+        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ok';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
+        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ERR';
+        push @{$ref->{'ERROR'}}, "MD5 mismatch";
+    }
+
+    if (defined $ref->{cadesc}->{CRL_URL} and
+        defined $ref->{igtf}->{crl_url} and
+        $ref->{cadesc}->{CRL_URL} eq $ref->{igtf}->{crl_url})
+    {
+        $ref->{cadesc}->{_status}->{CRL_URL} =
+        $ref->{iftf}->{_status}->{crl_url} = 'ok';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{CRL_URL} =
+        $ref->{igtf}->{_status}->{crl_url} = 'ERR';
+        push @{$ref->{'ERROR'}}, "CRL_URL mismatch";
+    }
+
+    if (defined $ref->{cadesc}->{HOMEPAGE} and
+        defined $ref->{igtf}->{url} and
+        $ref->{cadesc}->{HOMEPAGE} ne $ref->{igtf}->{url})
+    {
+        push @{$ref->{'ERROR'}}, "HOMEPAGE mismatch";
+    }
+
+    if (defined $ref->{cadesc}->{CERT_BEGINS} and
+        defined $ref->{certificate}->{not_before} and
+        $ref->{cadesc}->{CERT_BEGINS} ne $ref->{certificate}->{not_before})
+    {
+        push @{$ref->{'ERROR'}}, "CERT_BEGINS mismatch";
+    }
+
+    if (defined $ref->{cadesc}->{CERT_EXPIRES} and
+        defined $ref->{certificate}->{not_after} and
+        $ref->{cadesc}->{CERT_EXPIRES} ne $ref->{certificate}->{not_after})
+    {
+        push @{$ref->{'ERROR'}}, "CERT_EXPIRES mismatch";
+    }
+
+} # Check_Consistency
