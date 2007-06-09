@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.3 2007-06-08 20:30:24-07 kst Exp $
+# $Id: check-igtf,v 1.4 2007-06-08 20:43:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -89,8 +89,18 @@ foreach my $hash (sort keys %$cadesc_info) {
                 next if $subkey eq '_status';
                 my $status = $ref->{$key}->{_status}->{$subkey};
                 $status = '' if not defined $status;
-                printf "%6s  %-20s => %s\n",
-                       $status, $subkey, $ref->{$key}->{$subkey};
+                if (ref $ref->{$key}->{$subkey} eq 'ARRAY') {
+                    printf "%6s  %-20s => [\n",
+                           $status, $subkey;
+                    foreach my $elem (@{$ref->{$key}->{$subkey}}) {
+                        printf "%12s%s\n", '', $elem;
+                    }
+                    printf "%8s%s\n", '', ']';
+                }
+                else {
+                    printf "%6s  %-20s => %s\n",
+                           $status, $subkey, $ref->{$key}->{$subkey};
+                }
             }
             print "    }\n";
         }
@@ -114,7 +124,16 @@ sub Set_cadesc_Info($) {
         s/\s+$//;
         next if /^$/;
         if (/^(\w+)\s+(.*)$/) {
-            $ref->{cadesc}->{$1} = $2;
+            my($key, $value) = ($1, $2);
+            if (defined $ref->{cadesc}->{$key}) {
+                if (ref $ref->{cadesc}->{$key} ne 'ARRAY') {
+                    $ref->{cadesc}->{$key} = [ $ref->{cadesc}->{$key} ];
+                }
+                push @{$ref->{cadesc}->{$key}}, $value;
+            }
+            else {
+                $ref->{cadesc}->{$key} = $value;
+            }
         }
         else {
             die "${filename}:$.: Syntax error\n";
@@ -253,22 +272,40 @@ sub Check_Consistency($) {
 
     if (defined $ref->{cadesc}->{HOMEPAGE} and
         defined $ref->{igtf}->{url} and
-        $ref->{cadesc}->{HOMEPAGE} ne $ref->{igtf}->{url})
+        $ref->{cadesc}->{HOMEPAGE} eq $ref->{igtf}->{url})
     {
+        $ref->{cadesc}->{_status}->{HOMEPAGE} = 
+        $ref->{igtf}->{_status}->{url} = 'ERR';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{HOMEPAGE} = 
+        $ref->{igtf}->{_status}->{url} = 'ok';
         push @{$ref->{'ERROR'}}, "HOMEPAGE mismatch";
     }
 
     if (defined $ref->{cadesc}->{CERT_BEGINS} and
         defined $ref->{certificate}->{not_before} and
-        $ref->{cadesc}->{CERT_BEGINS} ne $ref->{certificate}->{not_before})
+        $ref->{cadesc}->{CERT_BEGINS} eq $ref->{certificate}->{not_before})
     {
+        $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
+        $ref->{certificate}->{_status}->{not_before} = 'ok';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
+        $ref->{certificate}->{_status}->{not_before} = 'ERR';
         push @{$ref->{'ERROR'}}, "CERT_BEGINS mismatch";
     }
 
     if (defined $ref->{cadesc}->{CERT_EXPIRES} and
         defined $ref->{certificate}->{not_after} and
-        $ref->{cadesc}->{CERT_EXPIRES} ne $ref->{certificate}->{not_after})
+        $ref->{cadesc}->{CERT_EXPIRES} eq $ref->{certificate}->{not_after})
     {
+        $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
+        $ref->{certificate}->{_status}->{not_after} = 'ok';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
+        $ref->{certificate}->{_status}->{not_after} = 'ERR';
         push @{$ref->{'ERROR'}}, "CERT_EXPIRES mismatch";
     }
 
