@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.2 2007-06-08 20:29:39-07 kst Exp $
+# $Id: check-igtf,v 1.3 2007-06-08 20:30:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -34,12 +34,12 @@ if (scalar keys %hash_requested == 0 and not $all_requested) {
 }
 
 # print ">>> Hashes requested: ";
-if ($all_requested) {
-    print "ALL\n";
-}
-else {
-    print join(' ', sort keys %hash_requested), "\n";
-}
+# if ($all_requested) {
+#     print "ALL\n";
+# }
+# else {
+#     print join(' ', sort keys %hash_requested), "\n";
+# }
 
 my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
 # my $igtf_dir = "$ca_dir/.igtf-1.14-all";
