@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.1 2007-06-08 20:08:20-07 kst Exp $
+# $Id: check-igtf,v 1.2 2007-06-08 20:29:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -11,7 +11,35 @@ sub Set_Cert_Info($);
 sub Set_igtf_Info($);
 sub Check_Consistency($);
 
+sub Usage(@);
+
 my $hash_pattern = qr([\da-f]{8});
+
+my %hash_requested = ();
+my $all_requested = 0;
+
+foreach my $arg (@ARGV) {
+    if ($arg =~ /^$hash_pattern$/) {
+        $hash_requested{$arg} = 1;
+    }
+    elsif ($arg eq '-all') {
+        $all_requested = 1;
+    }
+    else {
+        Usage "Unrecognized argument $arg\n";
+    }
+}
+if (scalar keys %hash_requested == 0 and not $all_requested) {
+    Usage "No hashes requested\n";
+}
+
+# print ">>> Hashes requested: ";
+if ($all_requested) {
+    print "ALL\n";
+}
+else {
+    print join(' ', sort keys %hash_requested), "\n";
+}
 
 my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
 # my $igtf_dir = "$ca_dir/.igtf-1.14-all";
@@ -33,14 +61,16 @@ closedir $CA_DIR;
 foreach my $file (@files) {
     my $hash = $file;
     $hash =~ s/\..*$//;
-    die "Bad hash $hash, file $file\n" if $hash !~ /^$hash_pattern$/;
-    $cadesc_info->{$hash}->{HASH} = $hash;
-    $cadesc_info->{$hash}->{CADESC_FILENAME} = "$ca_dir/$file";
-    Set_cadesc_Info   $cadesc_info->{$hash};
-    Set_Cert_Info     $cadesc_info->{$hash};
-    Set_igtf_Info     $cadesc_info->{$hash};
-    Check_Consistency $cadesc_info->{$hash};
-    last;
+    if ($all_requested or $hash_requested{$hash}) {
+        # print ">>> Getting info for $hash\n";
+        die "Bad hash $hash, file $file\n" if $hash !~ /^$hash_pattern$/;
+        $cadesc_info->{$hash}->{HASH} = $hash;
+        $cadesc_info->{$hash}->{CADESC_FILENAME} = "$ca_dir/$file";
+        Set_cadesc_Info   $cadesc_info->{$hash};
+        Set_Cert_Info     $cadesc_info->{$hash};
+        Set_igtf_Info     $cadesc_info->{$hash};
+        Check_Consistency $cadesc_info->{$hash};
+    }
 }
 
 foreach my $hash (sort keys %$cadesc_info) {
@@ -69,7 +99,6 @@ foreach my $hash (sort keys %$cadesc_info) {
         }
     }
     print "}\n\n";
-    last;
 }
 
 ########################################################################
@@ -244,3 +273,15 @@ sub Check_Consistency($) {
     }
 
 } # Check_Consistency
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $0 [arguments]
+    -all        Show all 
+    xxxxxxxx    An 8-digit hexadecimal hash
+EOF
+    exit 0;
+} # Usage
