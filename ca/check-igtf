@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.4 2007-06-08 20:43:45-07 kst Exp $
+# $Id: check-igtf,v 1.5 2007-06-11 18:00:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -232,6 +232,21 @@ sub Check_Consistency($) {
     my($ref) = @_;
 
     return if not defined $ref->{IGTF_FILENAME};
+
+    if ($ref->{HASH} eq $ref->{cadesc}->{HASH} and
+        $ref->{cadesc}->{HASH} eq $ref->{certificate}->{hash} and
+        $ref->{certificate}->{hash} eq $ref->{crl}->{hash})
+    {
+        $ref->{cadesc}->{_status}->{HASH} =
+        $ref->{crl}->{_status}->{hash} =
+        $ref->{certificate}->{_status}->{hash} = 'ok';
+    }
+    else {
+        $ref->{cadesc}->{_status}->{HASH} =
+        $ref->{crl}->{_status}->{hash} =
+        $ref->{certificate}->{_status}->{hash} = 'ERR';
+        push @{$ref->{'ERROR'}}, "HASH mismatch";
+    }
 
     if ($ref->{cadesc}->{CERTIFICATE_SHA1} eq $ref->{igtf}->{'sha1fp.0'} and
         $ref->{igtf}->{'sha1fp.0'} eq $ref->{certificate}->{sha1})
