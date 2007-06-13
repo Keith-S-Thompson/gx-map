@@ -1,13 +1,20 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.8 2007-06-12 19:44:02-07 kst Exp $
+# $Id: check-igtf,v 1.9 2007-06-12 21:35:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
+
+#
+# TODO:
+#     Check for missing fields.
+#     Set status on URLs depending on whether they can be accessed.
+#
 
 use strict;
 use warnings;
 
 sub Set_cadesc_Info($);
 sub Set_Cert_Info($);
+sub Set_Signing_Policy_Info($);
 sub Set_igtf_Info($);
 sub Check_Consistency($);
 sub All_Equal(@);
@@ -35,16 +42,7 @@ if (scalar keys %hash_requested == 0 and not $all_requested) {
     Usage "No hashes requested\n";
 }
 
-# print ">>> Hashes requested: ";
-# if ($all_requested) {
-#     print "ALL\n";
-# }
-# else {
-#     print join(' ', sort keys %hash_requested), "\n";
-# }
-
 my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
-# my $igtf_dir = "$ca_dir/.igtf-1.14-all";
 my $igtf_dir = "$ca_dir/.igtf-1.14/igtf-policy-installation-bundle-1.14/src";
 
 die "No file $ca_dir\n"   if not -d $ca_dir;
@@ -68,10 +66,11 @@ foreach my $file (@files) {
         die "Bad hash $hash, file $file\n" if $hash !~ /^$hash_pattern$/;
         $cadesc_info->{$hash}->{HASH} = $hash;
         $cadesc_info->{$hash}->{CADESC_FILENAME} = "$ca_dir/$file";
-        Set_cadesc_Info   $cadesc_info->{$hash};
-        Set_Cert_Info     $cadesc_info->{$hash};
-        Set_igtf_Info     $cadesc_info->{$hash};
-        Check_Consistency $cadesc_info->{$hash};
+        Set_cadesc_Info         $cadesc_info->{$hash};
+        Set_Cert_Info           $cadesc_info->{$hash};
+        Set_igtf_Info           $cadesc_info->{$hash};
+        Set_Signing_Policy_Info $cadesc_info->{$hash};
+        Check_Consistency       $cadesc_info->{$hash};
     }
 }
 
@@ -79,6 +78,7 @@ foreach my $hash (sort keys %$cadesc_info) {
     print "$hash {\n";
     my $ref = $cadesc_info->{$hash};
     foreach my $key (sort keys %$ref) {
+        next if not defined $ref->{$key};
         if (ref $ref->{$key} eq 'ARRAY') {
             my @arr = @{$ref->{$key}};
             foreach my $elem (@arr) {
@@ -89,21 +89,21 @@ foreach my $hash (sort keys %$cadesc_info) {
             printf "    %-20s => {\n", $key;
             foreach my $subkey (sort keys %{$ref->{$key}}) {
                 next if $subkey eq '_status';
+                #
+                # Some nonexistent keys may have been autovivified to undef
+                #
+                next if not defined $ref->{$key}->{$subkey};
                 my $status = $ref->{$key}->{_status}->{$subkey};
                 $status = '' if not defined $status;
                 if (ref $ref->{$key}->{$subkey} eq 'ARRAY') {
-#                   printf "%6s  %-20s => [\n",
-#                          $status, $subkey;
                     printf "%-8s%-20s => [\n",
                            $status, $subkey;
                     foreach my $elem (@{$ref->{$key}->{$subkey}}) {
-                        printf "%12s%s\n", '', $elem;
+                        printf "%-12s%s\n", $status, $elem;
                     }
-                    printf "%8s%s\n", '', ']';
+                    printf "%-8s%s\n", $status, ']';
                 }
                 else {
-#                   printf "%6s  %-20s => %s\n",
-#                          $status, $subkey, $ref->{$key}->{$subkey};
                     printf "%-8s%-20s => %s\n",
                            $status, $subkey, $ref->{$key}->{$subkey};
                 }
@@ -135,10 +135,7 @@ sub Set_cadesc_Info($) {
         next if /^$/;
         if (/^(\w+)\s+(.*)$/) {
             my($key, $value) = ($1, $2);
-            if (defined $ref->{cadesc}->{$key}) {
-                if (ref $ref->{cadesc}->{$key} ne 'ARRAY') {
-                    $ref->{cadesc}->{$key} = [ $ref->{cadesc}->{$key} ];
-                }
+            if ($key eq 'MAY_SIGN') {
                 push @{$ref->{cadesc}->{$key}}, $value;
             }
             else {
@@ -216,39 +213,99 @@ sub Set_Cert_Info($) {
 sub Set_igtf_Info($) {
     my($ref) = @_;
 
-    my $filename = undef;
+    my $info_file = undef;
+    my $signing_policy_file = undef;
 
     foreach my $subdir (@igtf_subdirs) {
         if (-e "$igtf_dir/$subdir/$ref->{HASH}.info") {
-            $filename = "$igtf_dir/$subdir/$ref->{HASH}.info";
-            last;
+            $info_file = "$igtf_dir/$subdir/$ref->{HASH}.info";
         }
+        if (-e "$igtf_dir/$subdir/$ref->{HASH}.signing_policy") {
+            $signing_policy_file = "$igtf_dir/$subdir/$ref->{HASH}.signing_policy";
+        }
+        last if defined $info_file and defined $signing_policy_file;
     }
-    if (not defined $filename) {
-        push @{$ref->{ERROR}}, "No file $filename";
-        return;
+    if (not defined $info_file) {
+        push @{$ref->{ERROR}}, "No IGTF info file";
+    }
+    if (not defined $signing_policy_file) {
+        push @{$ref->{ERROR}}, "No IGTF signing_policy file";
     }
 
-    my $INFO = undef;
-    if (not open $INFO, '<', $filename) {
-        push @{$ref->{ERROR}}, "${filename}: $!";
-        return;
-    }
-    while (<$INFO>) {
-        s/#.*$//;
-        s/^\s+//;
-        s/\s+$//;
-        next if /^$/;
-        if (/^([\w.]+)\s+=\s+(.*)$/) {
-            $ref->{igtf}->{$1} = $2;
+    if (defined $info_file) {
+        my $INFO = undef;
+        if (not open $INFO, '<', $info_file) {
+            push @{$ref->{ERROR}}, "${info_file}: $!";
+            return;
         }
-        else {
-            die "${filename}:$.: Syntax error\n";
+        while (<$INFO>) {
+            s/#.*$//;
+            s/^\s+//;
+            s/\s+$//;
+            next if /^$/;
+            if (/^([\w.]+)\s+=\s+(.*)$/) {
+                $ref->{igtf}->{$1} = $2;
+            }
+            else {
+                die "$info_file:$.: Syntax error\n";
+            }
         }
+        close $INFO;
+        $ref->{IGTF_INFO_FILE} = $info_file;
     }
-    close $INFO;
-    $ref->{IGTF_FILENAME} = $filename;
+
+    if (defined $signing_policy_file) {
+        $ref->{IGTF_SIGNING_POLICY_FILE} = $signing_policy_file;
+    }
 } # Set_igtf_Info
+
+# ----------------------------------------------------------------------
+
+sub Set_Signing_Policy_Info($) {
+    my($ref) = @_;
+    my $signing_policy_url = $ref->{cadesc}->{SIGNING_POLICY_URL};
+    if (defined $signing_policy_url and $signing_policy_url ne '?') {
+        my $PIPE = undef;
+        if (open $PIPE, "curl --silent --fail --location --insecure $signing_policy_url | may-sign |") {
+            while (<$PIPE>) {
+                if (/^(\w+)\s+(.*)$/) {
+                    my($key, $value) = ($1, $2);
+                    if ($key eq 'MAY_SIGN') {
+                        push @{$ref->{signing_policy}->{$key}}, $value;
+                    }
+                    else {
+                        $ref->{signing_policy}->{$key} = $value;
+                    }
+                }
+                else {
+                    die "may-sign:$.: Syntax error\n";
+                }
+            }
+        }
+        close $PIPE;
+    }
+
+    if (defined $ref->{IGTF_SIGNING_POLICY_FILE}) {
+        my $PIPE = undef;
+        if (open $PIPE, "may-sign $ref->{IGTF_SIGNING_POLICY_FILE} |") {
+            while (<$PIPE>) {
+                if (/^(\w+)\s+(.*)$/) {
+                    my($key, $value) = ($1, $2);
+                    if ($key eq 'MAY_SIGN') {
+                        push @{$ref->{igtf_signing_policy}->{$key}}, $value;
+                    }
+                    else {
+                        $ref->{igtf_signing_policy}->{$key} = $value;
+                    }
+                }
+                else {
+                    die "may-sign:$.: Syntax error\n";
+                }
+            }
+        }
+        close $PIPE;
+    }
+} # Set_Signing_Policy_Info
 
 # ----------------------------------------------------------------------
 
@@ -272,6 +329,112 @@ sub Check_Consistency($) {
         $ref->{certificate}->{_status}->{hash} = $status;
         if ($status ne 'ok') {
             push @{$ref->{ERROR}}, "HASH mismatch";
+        }
+    }
+
+    #
+    # Check SUBJECT
+    #
+    {
+        my @list = ();
+        foreach my $item ( $ref->{cadesc}->{SUBJECT},
+                           $ref->{certificate}->{subject},
+                           $ref->{signing_policy}->{SUBJECT},
+                           $ref->{igtf_signing_policy}->{SUBJECT},
+                           $ref->{crl}->{issuer},
+                           $ref->{igtf}->{subject} )
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
+        $ref->{cadesc}->{_status}->{SUBJECT} =
+        $ref->{certificate}->{_status}->{subject} =
+        $ref->{signing_policy}->{_status}->{SUBJECT} =
+        $ref->{igtf_signing_policy}->{_status}->{SUBJECT} =
+        $ref->{crl}->{_status}->{issuer} =
+        $ref->{igtf}->{_status}->{subject} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{ERROR}}, "SUBJECT mismatch";
+        }
+    }
+
+    #
+    # Check SIGNED_BY / issuer
+    #
+    {
+        my @list = ();
+        my $SIGNED_BY = $ref->{cadesc}->{SIGNED_BY};
+        if ($SIGNED_BY eq 'self') {
+            $SIGNED_BY = $ref->{cadesc}->{SUBJECT};
+        }
+        foreach my $item ( $SIGNED_BY,
+                           $ref->{certificate}->{issuer} )
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
+        $ref->{cadesc}->{_status}->{SIGNED_BY} =
+        $ref->{certificate}->{_status}->{issuer} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{ERROR}}, "SIGNED_BY / issuer mismatch";
+        }
+    }
+
+    #
+    # Check CERTIFICATE_FORM
+    #
+    {
+        my $CERTIFICATE_FORM = $ref->{cadesc}->{CERTIFICATE_FORM};
+        if (not defined $CERTIFICATE_FORM) {
+            $CERTIFICATE_FORM = 'PEM';
+        }
+        my $file_type = $ref->{certificate}->{file_type};
+        if (defined $file_type and $file_type =~ /^Certificate, (.*) format$/) {
+            $file_type = $1;
+        }
+        else {
+            $file_type = 'unknown';
+        }
+        my @list = ();
+        foreach my $item ( $CERTIFICATE_FORM,
+                           $file_type )
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
+        $ref->{cadesc}->{_status}->{CERTIFICATE_FORM} =
+        $ref->{certificate}->{_status}->{file_type} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{ERROR}}, "CERTIFICATE_FORM mismatch";
+        }
+    }
+
+    #
+    # Check CRL_FORM
+    #
+    {
+        my $CRL_FORM = $ref->{cadesc}->{CRL_FORM};
+        if (not defined $CRL_FORM) {
+            $CRL_FORM = 'PEM';
+        }
+        my $file_type = $ref->{crl}->{file_type};
+        if (defined $file_type and $file_type =~ /^CRL, (.*) format$/) {
+            $file_type = $1;
+        }
+        else {
+            $file_type = 'unknown';
+        }
+        my @list = ();
+        foreach my $item ( $CRL_FORM,
+                           $file_type )
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
+        $ref->{cadesc}->{_status}->{CRL_FORM} =
+        $ref->{crl}->{_status}->{file_type} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{ERROR}}, "CRL_FORM mismatch";
         }
     }
 
@@ -333,6 +496,23 @@ sub Check_Consistency($) {
     }
 
     #
+    # Check CRL verification
+    #
+    {
+        my $verification = $ref->{crl}->{verification};
+        my $status;
+        if (defined $verification) {
+            if ($verification =~ /^Signed by /) {
+                $status = 'ok';
+            }
+            else {
+                $status = 'ERR';
+            }
+        }
+        $ref->{crl}->{_status}->{verification} = $status;
+    }
+
+    #
     # Check HOMEPAGE / url
     #
     {
@@ -347,6 +527,24 @@ sub Check_Consistency($) {
         $ref->{igtf}->{_status}->{url} = $status;
         if ($status ne 'ok') {
             push @{$ref->{'ERROR'}}, "HOMEPAGE / url mismatch";
+        }
+    }
+
+    #
+    # Check CONTACT / email
+    #
+    {
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{CONTACT},
+                          $ref->{igtf}->{email})
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
+        $ref->{cadesc}->{_status}->{CONTACT} =
+        $ref->{igtf}->{_status}->{email} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{'ERROR'}}, "CONTACT / email mismatch";
         }
     }
 
@@ -383,6 +581,26 @@ sub Check_Consistency($) {
         $ref->{certificate}->{_status}->{not_after} = $status;
         if ($status ne 'ok') {
             push @{$ref->{'ERROR'}}, "CERT_EXPIRES / not_after mismatch";
+        }
+    }
+
+    #
+    # Check MAY_SIGN
+    #
+    {
+        my $may_sign0 = $ref->{cadesc}->{MAY_SIGN};
+        my $may_sign1 = $ref->{signing_policy}->{MAY_SIGN};
+        my $may_sign2 = $ref->{igtf_signing_policy}->{MAY_SIGN};
+        my @list = ();
+        push @list, join("\n", sort @$may_sign0) if defined $may_sign0;
+        push @list, join("\n", sort @$may_sign1) if defined $may_sign1;
+        push @list, join("\n", sort @$may_sign2) if defined $may_sign2;
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
+        $ref->{cadesc}->{_status}->{MAY_SIGN} =
+        $ref->{signing_policy}->{_status}->{MAY_SIGN} =
+        $ref->{igtf_signing_policy}->{_status}->{MAY_SIGN} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{'ERROR'}}, "MAY_SIGN / signing_policy mismatch";
         }
     }
 
