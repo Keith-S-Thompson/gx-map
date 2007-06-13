@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience-old.cadesc,v 1.4 2007-04-13 19:20:26-07 kst Exp $
+# $Id: 01621954.uk-escience-old.cadesc,v 1.5 2007-06-12 19:25:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/01621954.uk-escience-old.cadesc,v $
 
 CA_NAME             UK e-Science CA (old)
@@ -33,12 +33,3 @@ CERT_EXPIRES        Sat 2007-08-04 10:36:41 UTC
 # ones, a root CA with hash 8175c1cd and a new UK e-Science CA with
 # hash adcbc9ef.  The old CA has not yet expired, but it will not issue
 # any new certificates.
-
-# As of Fri 2006-08-18, the 01621954.signing_policy at the specified URL
-# is incorrect.  It specifies a subject name of
-#     /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca@grid-support.ac.uk 
-# rather than the actual subject name of the certificate:
-#     /C=UK/O=eScience/OU=Authority/CN=CA/emailAddress=ca-operator@grid-support.ac.uk
-# The SUBJECT and MAY_SIGN attributes in this file show the correct
-# subject names.
-# I have reported this problem to support@grid-support.ac.uk.
