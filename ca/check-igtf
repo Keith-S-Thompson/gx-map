@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.5 2007-06-11 18:00:18-07 kst Exp $
+# $Id: check-igtf,v 1.6 2007-06-12 17:32:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -90,7 +90,9 @@ foreach my $hash (sort keys %$cadesc_info) {
                 my $status = $ref->{$key}->{_status}->{$subkey};
                 $status = '' if not defined $status;
                 if (ref $ref->{$key}->{$subkey} eq 'ARRAY') {
-                    printf "%6s  %-20s => [\n",
+#                   printf "%6s  %-20s => [\n",
+#                          $status, $subkey;
+                    printf "%-8s%-20s => [\n",
                            $status, $subkey;
                     foreach my $elem (@{$ref->{$key}->{$subkey}}) {
                         printf "%12s%s\n", '', $elem;
@@ -98,7 +100,9 @@ foreach my $hash (sort keys %$cadesc_info) {
                     printf "%8s%s\n", '', ']';
                 }
                 else {
-                    printf "%6s  %-20s => %s\n",
+#                   printf "%6s  %-20s => %s\n",
+#                          $status, $subkey, $ref->{$key}->{$subkey};
+                    printf "%-8s%-20s => %s\n",
                            $status, $subkey, $ref->{$key}->{$subkey};
                 }
             }
@@ -233,45 +237,70 @@ sub Check_Consistency($) {
 
     return if not defined $ref->{IGTF_FILENAME};
 
-    if ($ref->{HASH} eq $ref->{cadesc}->{HASH} and
-        $ref->{cadesc}->{HASH} eq $ref->{certificate}->{hash} and
-        $ref->{certificate}->{hash} eq $ref->{crl}->{hash})
+    if (defined $ref->{cadesc}->{HASH} and
+        defined $ref->{certificate}->{hash})
     {
-        $ref->{cadesc}->{_status}->{HASH} =
-        $ref->{crl}->{_status}->{hash} =
-        $ref->{certificate}->{_status}->{hash} = 'ok';
+        if ($ref->{HASH} eq $ref->{cadesc}->{HASH} and
+            $ref->{cadesc}->{HASH} eq $ref->{certificate}->{hash} and
+            $ref->{certificate}->{hash} eq $ref->{crl}->{hash})
+        {
+            $ref->{cadesc}->{_status}->{HASH} =
+            $ref->{crl}->{_status}->{hash} =
+            $ref->{certificate}->{_status}->{hash} = 'ok';
+        }
+        else {
+            $ref->{cadesc}->{_status}->{HASH} =
+            $ref->{crl}->{_status}->{hash} =
+            $ref->{certificate}->{_status}->{hash} = 'ERR';
+            push @{$ref->{ERROR}}, "HASH mismatch";
+        }
     }
     else {
-        $ref->{cadesc}->{_status}->{HASH} =
-        $ref->{crl}->{_status}->{hash} =
-        $ref->{certificate}->{_status}->{hash} = 'ERR';
-        push @{$ref->{'ERROR'}}, "HASH mismatch";
+        push @{$ref->{ERROR}}, "Missing HASH info";
     }
 
-    if ($ref->{cadesc}->{CERTIFICATE_SHA1} eq $ref->{igtf}->{'sha1fp.0'} and
-        $ref->{igtf}->{'sha1fp.0'} eq $ref->{certificate}->{sha1})
+    if (defined $ref->{cadesc}->{CERTIFICATE_SHA1} and
+        defined $ref->{igtf}->{'sha1fp.0'} and
+        defined $ref->{certificate}->{sha1})
     {
-        $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
-        $ref->{igtf}->{_status}->{'sha1fp.0'} =
-        $ref->{certificate}->{_status}->{sha1} = 'ok';
+        if ($ref->{cadesc}->{CERTIFICATE_SHA1} eq $ref->{igtf}->{'sha1fp.0'} and
+            $ref->{igtf}->{'sha1fp.0'} eq $ref->{certificate}->{sha1})
+        {
+            $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
+            $ref->{igtf}->{_status}->{'sha1fp.0'} =
+            $ref->{certificate}->{_status}->{sha1} = 'ok';
+        }
+        else {
+            $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
+            $ref->{igtf}->{_status}->{'sha1fp.0'} =
+            $ref->{certificate}->{_status}->{sha1} = 'ERR';
+            push @{$ref->{'ERROR'}}, "SHA1 mismatch";
+        }
     }
     else {
-        $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
-        $ref->{igtf}->{_status}->{'sha1fp.0'} =
-        $ref->{certificate}->{_status}->{sha1} = 'ERR';
-        push @{$ref->{'ERROR'}}, "SHA1 mismatch";
+        push @{$ref->{ERROR}}, "Missing SHA1 info";
     }
 
-    if ($ref->{cadesc}->{CERTIFICATE_MD5} eq $ref->{certificate}->{md5}) {
-        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
-        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ok';
+    if (defined $ref->{cadesc}->{CERTIFICATE_MD5} and
+        defined $ref->{certificate}->{md5})
+    {
+        if ($ref->{cadesc}->{CERTIFICATE_MD5} eq $ref->{certificate}->{md5}) {
+            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
+            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ok';
+        }
+        else {
+            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
+            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ERR';
+            push @{$ref->{'ERROR'}}, "MD5 mismatch";
+        }
     }
     else {
-        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
-        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ERR';
-        push @{$ref->{'ERROR'}}, "MD5 mismatch";
+        push @{$ref->{ERROR}}, "Missing MD5 info";
     }
 
+    #
+    # CRL is optional (kinda sorta)
+    #
     if (defined $ref->{cadesc}->{CRL_URL} and
         defined $ref->{igtf}->{crl_url} and
         $ref->{cadesc}->{CRL_URL} eq $ref->{igtf}->{crl_url})
@@ -285,6 +314,9 @@ sub Check_Consistency($) {
         push @{$ref->{'ERROR'}}, "CRL_URL mismatch";
     }
 
+    #
+    # HOMEPAGE / url is optional
+    #
     if (defined $ref->{cadesc}->{HOMEPAGE} and
         defined $ref->{igtf}->{url} and
         $ref->{cadesc}->{HOMEPAGE} eq $ref->{igtf}->{url})
@@ -299,29 +331,41 @@ sub Check_Consistency($) {
     }
 
     if (defined $ref->{cadesc}->{CERT_BEGINS} and
-        defined $ref->{certificate}->{not_before} and
-        $ref->{cadesc}->{CERT_BEGINS} eq $ref->{certificate}->{not_before})
+        defined $ref->{certificate}->{not_before})
     {
-        $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
-        $ref->{certificate}->{_status}->{not_before} = 'ok';
+        if ($ref->{cadesc}->{CERT_BEGINS} eq
+            $ref->{certificate}->{not_before})
+        {
+            $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
+            $ref->{certificate}->{_status}->{not_before} = 'ok';
+        }
+        else {
+            $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
+            $ref->{certificate}->{_status}->{not_before} = 'ERR';
+            push @{$ref->{'ERROR'}}, "CERT_BEGINS mismatch";
+        }
     }
     else {
-        $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
-        $ref->{certificate}->{_status}->{not_before} = 'ERR';
-        push @{$ref->{'ERROR'}}, "CERT_BEGINS mismatch";
+        push @{$ref->{ERROR}}, "Missing CERT_BEGINS info";
     }
 
     if (defined $ref->{cadesc}->{CERT_EXPIRES} and
-        defined $ref->{certificate}->{not_after} and
-        $ref->{cadesc}->{CERT_EXPIRES} eq $ref->{certificate}->{not_after})
+        defined $ref->{certificate}->{not_after})
     {
-        $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
-        $ref->{certificate}->{_status}->{not_after} = 'ok';
+        if ($ref->{cadesc}->{CERT_EXPIRES} eq
+            $ref->{certificate}->{not_after})
+        {
+            $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
+            $ref->{certificate}->{_status}->{not_after} = 'ok';
+        }
+        else {
+            $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
+            $ref->{certificate}->{_status}->{not_after} = 'ERR';
+            push @{$ref->{'ERROR'}}, "CERT_EXPIRES mismatch";
+        }
     }
     else {
-        $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
-        $ref->{certificate}->{_status}->{not_after} = 'ERR';
-        push @{$ref->{'ERROR'}}, "CERT_EXPIRES mismatch";
+        push @{$ref->{ERROR}}, "Missing CERT_EXPIRES info";
     }
 
 } # Check_Consistency
