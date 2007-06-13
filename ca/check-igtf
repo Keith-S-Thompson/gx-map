@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.7 2007-06-12 19:40:57-07 kst Exp $
+# $Id: check-igtf,v 1.8 2007-06-12 19:44:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -266,7 +266,7 @@ sub Check_Consistency($) {
         {
             push @list, $item if defined $item;
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{HASH} =
         $ref->{crl}->{_status}->{hash} =
         $ref->{certificate}->{_status}->{hash} = $status;
@@ -286,7 +286,7 @@ sub Check_Consistency($) {
         {
             push @list, $item if defined $item;
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
         $ref->{igtf}->{_status}->{'sha1fp.0'} =
         $ref->{certificate}->{_status}->{sha1} = $status;
@@ -305,7 +305,7 @@ sub Check_Consistency($) {
         {
             push @list, $item if defined $item;
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
         $ref->{certificate}->{_status}->{md5} = $status;
         if ($status ne 'ok') {
@@ -324,7 +324,7 @@ sub Check_Consistency($) {
             push @list, $item if defined $item;
 
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{CRL_URL} =
         $ref->{igtf}->{_status}->{crl_url} = $status;
         if ($status ne 'ok') {
@@ -342,7 +342,7 @@ sub Check_Consistency($) {
         {
             push @list, $item if defined $item;
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{HOMEPAGE} =
         $ref->{igtf}->{_status}->{url} = $status;
         if ($status ne 'ok') {
@@ -360,7 +360,7 @@ sub Check_Consistency($) {
         {
             push @list, $item if defined $item;
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{CERT_BEGINS} =
         $ref->{certificate}->{_status}->{not_before} = $status;
         if ($status ne 'ok') {
@@ -378,7 +378,7 @@ sub Check_Consistency($) {
         {
             push @list, $item if defined $item;
         }
-        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        my $status = All_Equal(@list) ? 'ok' : 'ERR';
         $ref->{cadesc}->{_status}->{CERT_EXPIRES} =
         $ref->{certificate}->{_status}->{not_after} = $status;
         if ($status ne 'ok') {
