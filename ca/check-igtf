@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.6 2007-06-12 17:32:22-07 kst Exp $
+# $Id: check-igtf,v 1.7 2007-06-12 19:40:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 use strict;
@@ -10,6 +10,8 @@ sub Set_cadesc_Info($);
 sub Set_Cert_Info($);
 sub Set_igtf_Info($);
 sub Check_Consistency($);
+sub All_Equal(@);
+sub Status_Image($);
 
 sub Usage(@);
 
@@ -121,7 +123,11 @@ sub Set_cadesc_Info($) {
     my($ref) = @_;
 
     my $filename = $ref->{CADESC_FILENAME};
-    open my $CADESC, '<', $filename or die "${filename}: $!\n";
+    my $CADESC = undef;
+    if (not open $CADESC, '<', $filename) {
+        push @{$ref->{ERROR}}, "${filename}: $!\n";
+        return;
+    }
     while (<$CADESC>) {
         s/#.*$//;
         s/^\s+//;
@@ -162,7 +168,11 @@ sub Set_Cert_Info($) {
 
     my $section = 'certificate'; # 'certificate' or 'crl'
 
-    open my $PIPE, "$command 2>/dev/null |" or die "cert-info: $!\n";
+    my $PIPE = undef;
+    if (not open $PIPE, "$command 2>/dev/null |") {
+        push @{$ref->{ERROR}}, "${command}: $!";
+        return;
+    }
     while (<$PIPE>) {
         if (/^$/) {
             $section = 'crl';
@@ -196,6 +206,9 @@ sub Set_Cert_Info($) {
         }
     }
     close $PIPE;
+    if ($?) {
+        push @{$ref->{ERROR}}, ("openssl: " . Status_Image $?);
+    }
 } # Set_Cert_Info
 
 # ----------------------------------------------------------------------
@@ -211,9 +224,16 @@ sub Set_igtf_Info($) {
             last;
         }
     }
-    return if not defined $filename;
+    if (not defined $filename) {
+        push @{$ref->{ERROR}}, "No file $filename";
+        return;
+    }
 
-    open my $INFO, '<', $filename or die "${filename}: $!\n";
+    my $INFO = undef;
+    if (not open $INFO, '<', $filename) {
+        push @{$ref->{ERROR}}, "${filename}: $!";
+        return;
+    }
     while (<$INFO>) {
         s/#.*$//;
         s/^\s+//;
@@ -235,140 +255,176 @@ sub Set_igtf_Info($) {
 sub Check_Consistency($) {
     my($ref) = @_;
 
-    return if not defined $ref->{IGTF_FILENAME};
-
-    if (defined $ref->{cadesc}->{HASH} and
-        defined $ref->{certificate}->{hash})
+    #
+    # Check hash
+    #
     {
-        if ($ref->{HASH} eq $ref->{cadesc}->{HASH} and
-            $ref->{cadesc}->{HASH} eq $ref->{certificate}->{hash} and
-            $ref->{certificate}->{hash} eq $ref->{crl}->{hash})
+        my @list = ();
+        foreach my $item ( $ref->{cadesc}->{HASH},
+                           $ref->{certificate}->{hash},
+                           $ref->{crl}->{hash} )
         {
-            $ref->{cadesc}->{_status}->{HASH} =
-            $ref->{crl}->{_status}->{hash} =
-            $ref->{certificate}->{_status}->{hash} = 'ok';
+            push @list, $item if defined $item;
         }
-        else {
-            $ref->{cadesc}->{_status}->{HASH} =
-            $ref->{crl}->{_status}->{hash} =
-            $ref->{certificate}->{_status}->{hash} = 'ERR';
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{HASH} =
+        $ref->{crl}->{_status}->{hash} =
+        $ref->{certificate}->{_status}->{hash} = $status;
+        if ($status ne 'ok') {
             push @{$ref->{ERROR}}, "HASH mismatch";
         }
     }
-    else {
-        push @{$ref->{ERROR}}, "Missing HASH info";
-    }
 
-    if (defined $ref->{cadesc}->{CERTIFICATE_SHA1} and
-        defined $ref->{igtf}->{'sha1fp.0'} and
-        defined $ref->{certificate}->{sha1})
+    #
+    # Check SHA1 fingerprint
+    #
     {
-        if ($ref->{cadesc}->{CERTIFICATE_SHA1} eq $ref->{igtf}->{'sha1fp.0'} and
-            $ref->{igtf}->{'sha1fp.0'} eq $ref->{certificate}->{sha1})
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{CERTIFICATE_SHA1},
+                          $ref->{igtf}->{'sha1fp.0'},
+                          $ref->{certificate}->{sha1})
         {
-            $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
-            $ref->{igtf}->{_status}->{'sha1fp.0'} =
-            $ref->{certificate}->{_status}->{sha1} = 'ok';
+            push @list, $item if defined $item;
         }
-        else {
-            $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
-            $ref->{igtf}->{_status}->{'sha1fp.0'} =
-            $ref->{certificate}->{_status}->{sha1} = 'ERR';
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{CERTIFICATE_SHA1} =
+        $ref->{igtf}->{_status}->{'sha1fp.0'} =
+        $ref->{certificate}->{_status}->{sha1} = $status;
+        if ($status ne 'ok') {
             push @{$ref->{'ERROR'}}, "SHA1 mismatch";
         }
     }
-    else {
-        push @{$ref->{ERROR}}, "Missing SHA1 info";
-    }
 
-    if (defined $ref->{cadesc}->{CERTIFICATE_MD5} and
-        defined $ref->{certificate}->{md5})
+    #
+    # Check MD5 fingerprint
+    #
     {
-        if ($ref->{cadesc}->{CERTIFICATE_MD5} eq $ref->{certificate}->{md5}) {
-            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
-            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ok';
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{CERTIFICATE_MD5},
+                          $ref->{certificate}->{md5})
+        {
+            push @list, $item if defined $item;
         }
-        else {
-            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
-            $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} = 'ERR';
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{CERTIFICATE_MD5} =
+        $ref->{certificate}->{_status}->{md5} = $status;
+        if ($status ne 'ok') {
             push @{$ref->{'ERROR'}}, "MD5 mismatch";
         }
     }
-    else {
-        push @{$ref->{ERROR}}, "Missing MD5 info";
-    }
 
     #
-    # CRL is optional (kinda sorta)
+    # Check CRL URL
     #
-    if (defined $ref->{cadesc}->{CRL_URL} and
-        defined $ref->{igtf}->{crl_url} and
-        $ref->{cadesc}->{CRL_URL} eq $ref->{igtf}->{crl_url})
     {
-        $ref->{cadesc}->{_status}->{CRL_URL} =
-        $ref->{iftf}->{_status}->{crl_url} = 'ok';
-    }
-    else {
-        $ref->{cadesc}->{_status}->{CRL_URL} =
-        $ref->{igtf}->{_status}->{crl_url} = 'ERR';
-        push @{$ref->{'ERROR'}}, "CRL_URL mismatch";
-    }
-
-    #
-    # HOMEPAGE / url is optional
-    #
-    if (defined $ref->{cadesc}->{HOMEPAGE} and
-        defined $ref->{igtf}->{url} and
-        $ref->{cadesc}->{HOMEPAGE} eq $ref->{igtf}->{url})
-    {
-        $ref->{cadesc}->{_status}->{HOMEPAGE} = 
-        $ref->{igtf}->{_status}->{url} = 'ERR';
-    }
-    else {
-        $ref->{cadesc}->{_status}->{HOMEPAGE} = 
-        $ref->{igtf}->{_status}->{url} = 'ok';
-        push @{$ref->{'ERROR'}}, "HOMEPAGE mismatch";
-    }
-
-    if (defined $ref->{cadesc}->{CERT_BEGINS} and
-        defined $ref->{certificate}->{not_before})
-    {
-        if ($ref->{cadesc}->{CERT_BEGINS} eq
-            $ref->{certificate}->{not_before})
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{CRL_URL},
+                          $ref->{igtf}->{crl_url})
         {
-            $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
-            $ref->{certificate}->{_status}->{not_before} = 'ok';
+            push @list, $item if defined $item;
+
         }
-        else {
-            $ref->{cadesc}->{_status}->{CERT_BEGINS} = 
-            $ref->{certificate}->{_status}->{not_before} = 'ERR';
-            push @{$ref->{'ERROR'}}, "CERT_BEGINS mismatch";
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{CRL_URL} =
+        $ref->{igtf}->{_status}->{crl_url} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{'ERROR'}}, "CRL_URL mismatch";
         }
-    }
-    else {
-        push @{$ref->{ERROR}}, "Missing CERT_BEGINS info";
     }
 
-    if (defined $ref->{cadesc}->{CERT_EXPIRES} and
-        defined $ref->{certificate}->{not_after})
+    #
+    # Check HOMEPAGE / url
+    #
     {
-        if ($ref->{cadesc}->{CERT_EXPIRES} eq
-            $ref->{certificate}->{not_after})
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{HOMEPAGE},
+                          $ref->{igtf}->{url})
         {
-            $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
-            $ref->{certificate}->{_status}->{not_after} = 'ok';
+            push @list, $item if defined $item;
         }
-        else {
-            $ref->{cadesc}->{_status}->{CERT_EXPIRES} = 
-            $ref->{certificate}->{_status}->{not_after} = 'ERR';
-            push @{$ref->{'ERROR'}}, "CERT_EXPIRES mismatch";
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{HOMEPAGE} =
+        $ref->{igtf}->{_status}->{url} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{'ERROR'}}, "HOMEPAGE / url mismatch";
         }
     }
-    else {
-        push @{$ref->{ERROR}}, "Missing CERT_EXPIRES info";
+
+    #
+    # Check CERT_BEGINS / not_before
+    #
+    {
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{CERT_BEGINS},
+                          $ref->{certificate}->{not_before})
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{CERT_BEGINS} =
+        $ref->{certificate}->{_status}->{not_before} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{'ERROR'}}, "CERT_BEGINS / not_before mismatch";
+        }
+    }
+
+    #
+    # Check CERT_EXPIRES / not_after
+    #
+    {
+        my @list = ();
+        foreach my $item ($ref->{cadesc}->{CERT_EXPIRES},
+                          $ref->{certificate}->{not_after})
+        {
+            push @list, $item if defined $item;
+        }
+        my $status = (All_Equal @list ? 'ok' : 'ERR');
+        $ref->{cadesc}->{_status}->{CERT_EXPIRES} =
+        $ref->{certificate}->{_status}->{not_after} = $status;
+        if ($status ne 'ok') {
+            push @{$ref->{'ERROR'}}, "CERT_EXPIRES / not_after mismatch";
+        }
     }
 
 } # Check_Consistency
+
+# ----------------------------------------------------------------------
+
+sub All_Equal(@) {
+    my(@list) = @_;
+    for (my $i = 0; $i < $#list; $i ++) {
+        if ($list[$i] ne $list[$i+1]) {
+            return 0;
+        }
+    }
+    return 1;
+} # All_Equal
+
+# ----------------------------------------------------------------------
+
+#
+# Legible image of $?
+#
+sub Status_Image($) {
+    my($status) = @_;
+    my @list = ();
+    my $signal = $? & 0x7f;
+    my $coredumped = $? & 0x80;
+    my $exit_status = $? >> 8;
+    if ($signal != 0) {
+        push @list, "Signal $signal";
+    }
+    if ($coredumped) {
+        push @list, "core dumped";
+    }
+    if ($exit_status != 0) {
+        push @list, "Exit $exit_status";
+    }
+    if (not @list) {
+        push @list, "Exit 0";
+    }
+    return join(", ", @list);
+} # Status_Image
 
 # ----------------------------------------------------------------------
 
