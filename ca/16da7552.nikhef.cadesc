@@ -1,27 +1,43 @@
-# $Id: 16da7552.nikhef.cadesc,v 1.12 2007-04-13 19:20:27-07 kst Exp $
+# $Id: 16da7552.nikhef.cadesc,v 1.13 2007-06-13 21:25:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/16da7552.nikhef.cadesc,v $
 
 CA_NAME             DutchGrid Medium-Security Certification Authority
-HOMEPAGE            http://certificate.nikhef.nl/medium/
-CONTACT             ca@nikhef.nl
+HOMEPAGE            http://ca.dutchgrid.nl/medium/
+CONTACT             ca@dutchgrid.nl
 HASH                16da7552
 SIGNED_BY           self
 SUBJECT             /C=NL/O=NIKHEF/CN=NIKHEF medium-security certification auth
 MAY_SIGN            /C=NL/O=NIKHEF/CN=NIKHEF medium-security certification auth
 MAY_SIGN            /O=dutchgrid/O=users/*
 MAY_SIGN            /O=dutchgrid/O=hosts/*
+MAY_SIGN            /O=dutchgrid/O=robots/*
 CERTIFICATE_MD5     62:ED:76:7D:78:B9:E6:6B:0D:1B:07:38:AC:E6:60:F9
 CERTIFICATE_SHA1    E5:FA:C3:3B:44:8F:26:1B:3D:D1:DE:BA:5F:EC:ED:35:A9:3F:23:21
-CERTIFICATE_URL     http://certificate.nikhef.nl/medium/cacert.pem
-SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/16da7552.signing_policy
-CRL_URL             http://certificate.nikhef.nl/medium/cacrl.pem
+CERTIFICATE_URL     http://ca.dutchgrid.nl/medium/cacert.pem
+SIGNING_POLICY_URL  http://ca.dutchgrid.nl/medium/package/16da7552.signing_policy
+CRL_URL             http://ca.dutchgrid.nl/medium/cacrl.pem
 CERT_BEGINS         Fri 2001-09-21 00:00:00 UTC
 CERT_EXPIRES        Tue 2021-02-09 00:00:00 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (16da7552.0) downloaded 2005-03-29
-# Re-verified Tue 2006-09-26
+# Re-verified Tue 2006-09-26 and Wed 2007-06-13
 # Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
 
-# An older version of this certificate, downloaded 2004-10-10, had
-# an expiration date of Feb  9 09:36:14 2006 GMT and
-# an MD5 fingerprint of 11:7B:F0:B2:4A:2B:64:78:8A:F4:BE:87:E9:84:3D:61
+# The fingerprints and other information have also been
+# verified against the IGTF 1.14 release, available at
+# <https://dist.eugridpma.info/distribution/igtf/1.14/accredited/igtf-policy-installation-bundle-1.14.tar.gz>
+
+# The following is a copy of the 16da7552.info file
+# from the IGTF 1.14 release:
+## #
+## # @(#)$Id: 16da7552.nikhef.cadesc,v 1.13 2007-06-13 21:25:55-07 kst Exp $
+## # Information for CA NIKHEF
+## #   
+## alias = NIKHEF
+## ca_url = http://ca.dutchgrid.nl/medium/cacert.pem
+## crl_url = http://ca.dutchgrid.nl/medium/cacrl.pem
+## email = ca@dutchgrid.nl
+## status = accredited:classic
+## url = http://ca.dutchgrid.nl/medium/
+## version = 1.14
+## sha1fp.0 = E5:FA:C3:3B:44:8F:26:1B:3D:D1:DE:BA:5F:EC:ED:35:A9:3F:23:21
