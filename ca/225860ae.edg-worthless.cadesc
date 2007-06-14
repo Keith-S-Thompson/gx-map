@@ -1,4 +1,4 @@
-# $Id: 225860ae.edg-worthless.cadesc,v 1.9 2007-06-05 20:17:09-07 kst Exp $
+# $Id: 225860ae.edg-worthless.cadesc,v 1.10 2007-06-13 21:25:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/225860ae.edg-worthless.cadesc,v $
 
 CA_NAME             EDG Tutorial Worthless Certification Authority
@@ -45,12 +45,12 @@ DISABLE             yes
 # appropriate MAY_SIGN line above to enable this.
 
 # Information from the IGTF 1.14 225860ae.info file follows:
-# #
-# # @(#)$Id: 225860ae.edg-worthless.cadesc,v 1.9 2007-06-05 20:17:09-07 kst Exp $
-# # Information for CA EDG-Tutorial
-# #   obtained from 225860ae in EDG-Tutorial/
-# alias = EDG-Tutorial
-# crl_url = http://certificate.nikhef.nl/cgi-bin/tutorca-list?command=crl
-# status = worthless
-# version = 1.14
-# sha1fp.0 = 2F:68:33:33:B5:F7:17:2B:2E:88:E7:F7:D4:A0:32:99:8B:8B:95:98
+## #
+## # @(#)$Id: 225860ae.edg-worthless.cadesc,v 1.10 2007-06-13 21:25:55-07 kst Exp $
+## # Information for CA EDG-Tutorial
+## #   obtained from 225860ae in EDG-Tutorial/
+## alias = EDG-Tutorial
+## crl_url = http://certificate.nikhef.nl/cgi-bin/tutorca-list?command=crl
+## status = worthless
+## version = 1.14
+## sha1fp.0 = 2F:68:33:33:B5:F7:17:2B:2E:88:E7:F7:D4:A0:32:99:8B:8B:95:98
