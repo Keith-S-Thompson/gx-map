@@ -1,9 +1,9 @@
-# $Id: 140817fc.sdg-testbed.cadesc,v 1.7 2007-04-13 19:20:27-07 kst Exp $
+# $Id: 140817fc.sdg-testbed.cadesc,v 1.8 2007-06-13 21:25:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/140817fc.sdg-testbed.cadesc,v $
 
-CA_NAME             SDC Testbed CA
+CA_NAME             SDG Testbed CA
 HOMEPAGE            http://www.sdg.ac.cn/
-CONTACT             ?
+CONTACT             ntarl@cnic.ac.cn
 HASH                140817fc
 SIGNED_BY           self
 SUBJECT             /O=Grid/O=SDG/CN=Testbed-CA
@@ -15,7 +15,14 @@ SIGNING_POLICY_URL  http://www.sdg.ac.cn/download/140817fc.signing_policy
 CRL_URL             ?
 CERT_BEGINS         ?
 CERT_EXPIRES        Sun 2008-07-06 03:54:29 UTC
+DISABLE             yes
 
 # There does not appear to be a CRL.
 
 # MD5 and SHA1 fingerprints from 140817fc.0 downloaded 2005-03-29
+
+# An English-language version of the web page is at
+# <http://en.sdg.ac.cn/>.
+
+# This CA is obsolete.  See b2771d44.cnic.cadesc and c48c63f3.sdg.cadesc
+# for information about the replacement CAs.
