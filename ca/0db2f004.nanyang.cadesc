@@ -1,4 +1,4 @@
-# $Id: 0db2f004.nanyang.cadesc,v 1.5 2007-04-13 19:20:27-07 kst Exp $
+# $Id: 0db2f004.nanyang.cadesc,v 1.6 2007-06-13 21:25:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0db2f004.nanyang.cadesc,v $
 
 CA_NAME             Nanyang CA
@@ -10,15 +10,19 @@ SUBJECT             /C=SG/O=Nanyang Technological University/OU=Nanyang Campus G
 MAY_SIGN            /C=SG/O=Nanyang Technological University/OU=Nanyang Campus Grid/*
 CERTIFICATE_MD5     2D:01:20:B3:7A:6C:F2:03:8C:76:FC:0A:78:01:C2:AD
 CERTIFICATE_SHA1    5A:93:93:3B:F1:33:F5:DE:B5:D0:B9:B2:81:0E:ED:46:2C:27:C9:9F
-CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/0db2f004.0
-SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/0db2f004.signing_policy
+CERTIFICATE_URL     http://ntu-cg.ntu.edu.sg/mogas_pragma/0db2f004.0
+SIGNING_POLICY_URL  http://ntu-cg.ntu.edu.sg/mogas_pragma/0db2f004.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Wed 2005-05-18 08:50:19 UTC
 CERT_EXPIRES        Sat 2015-05-16 08:50:19 UTC
 
-#
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
-#
-# MD5 and SHA1 checksums from 0db2f004.0, downloaded Wed 2005-12-21
-#
+# There is no CRL.  If this is acceptable, uncomment the
+# "ALLOW_MISSING_CRL" line above.
+
+# MD5 and SHA1 checksums from 0db2f004.0, downloaded Wed 2007-06-13
+
+# Note that the home page links to
+# <http://ntu-cg.ntu.edu.sg/certservices/html/cert/publickey.html>,
+# which contains an obsolete copy of the certificate file (one that
+# expired Tue 2005-05-17).
