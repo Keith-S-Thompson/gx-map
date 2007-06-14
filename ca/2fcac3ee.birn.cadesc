@@ -1,8 +1,8 @@
-# $Id: 2fcac3ee.birn.cadesc,v 1.7 2007-04-13 19:20:29-07 kst Exp $
+# $Id: 2fcac3ee.birn.cadesc,v 1.8 2007-06-13 21:25:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2fcac3ee.birn.cadesc,v $
 
 CA_NAME             BIRN CA
-HOMEPAGE            https://portal.nbirn.net/BIRN/CA/
+HOMEPAGE            https://legacy-portal.nbirn.net/BIRN/CA/
 CONTACT             portal@nbirn.net
 HASH                2fcac3ee
 SIGNED_BY           self
@@ -10,16 +10,16 @@ SUBJECT             /C=US/O=BIRN/OU=BIRN-CC/CN=certman/UID=1
 MAY_SIGN            ?
 CERTIFICATE_MD5     9A:3C:00:B0:06:29:4E:9E:00:24:71:06:96:54:4B:3A
 CERTIFICATE_SHA1    7C:F9:45:12:75:58:0A:15:C3:6E:21:0A:3A:A3:09:7D:AF:CA:84:AF
-CERTIFICATE_URL     https://portal.nbirn.net/BIRN/CA/2fcac3ee.0
-SIGNING_POLICY_URL  https://portal.nbirn.net/BIRN/CA/2fcac3ee.signing_policy
+CERTIFICATE_URL     https://legacy-portal.nbirn.net/BIRN/CA/2fcac3ee.0
+SIGNING_POLICY_URL  https://legacy-portal.nbirn.net/BIRN/CA/2fcac3ee.signing_policy
 CRL_URL             ?
-CERT_BEGINS         ?
+CERT_BEGINS         Tue 2003-07-01 18:37:07 UTC
 CERT_EXPIRES        Sun 2013-06-30 18:37:07 UTC
 DISABLE             yes
 
 # The signing_policy file provided by portal.nbirn.net specifies that the CA
 # may sign any certificate.  Because of this, I'm leaving this CA
 # disabled by default.
-#
 
-# MD5 and SHA1 fingerprints from 2fcac3ee.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from 2fcac3ee.0 downloaded Tue 2005-03-29,
+# re-checked Wed 2007-06-13.
