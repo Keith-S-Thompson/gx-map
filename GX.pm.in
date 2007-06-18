@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.53 2007-05-29 01:41:35-07 kst Exp $
+# $Id: GX.pm.in,v 1.54 2007-06-17 22:13:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -93,7 +93,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.9.014';
+    $VERSION = '0.5.9.016';
 
     $Debugging = undef; 
     $Initial_Config =
@@ -161,6 +161,8 @@ sub Time_Value($);
 sub Save_File($$$$);
 
 sub Get_DNs_From_List_File($);
+
+sub Submit_Request($);
 
 sub Write_Records($$@);
 sub Read_Records(@);
@@ -1239,6 +1241,114 @@ sub Get_DNs_From_List_File($) {
     }
     return @result;
 } # Get_DNs_From_List_File
+
+# ----------------------------------------------------------------------
+
+sub Submit_Request($) {
+    my($request) = @_;
+
+    my $time_of_day       = GX::Get_Time_Of_Day;
+    my $timestamp         = GX::Long_Time_Image $time_of_day;
+    my $hostname          = GX::Get_Hostname;
+    my $PW                = GX::Get_PW_UID $<;
+    my $Data_Dir          = "$GX::Config->{INSTALL_DIR}/gx-map-data";
+    my $Requests_Dir      = "$Data_Dir/new-requests";
+
+    #
+    # timestamp and hostname are set here unconditionally.
+    #
+    $request->{timestamp} = $timestamp;
+    $request->{hostname}  = $hostname;
+
+    #
+    # Do some quick sanity checks.
+    # Apply default values for some fields.
+    #
+    #
+    my @ERRORS = ();
+    if (defined $request->{operation}) {
+        my $OP = $request->{operation};
+        my %expected = ( 'add'         => 'dn, username',
+                         'remove'      => 'dn, username',
+                         'remove-dn'   => 'dn',
+                         'remove-user' => 'username' );
+        my @seen = ();
+        push @seen, 'dn'       if defined $request->{dn};
+        push @seen, 'username' if defined $request->{username};
+        my $seen = join ', ', @seen;
+        $seen = "()" if $seen eq '';
+
+        if (defined $expected{$OP}) {
+            if ($expected{$OP} ne $seen) {
+                push @ERRORS, "Expected $expected{$OP}, got $seen\n";
+            }
+        }
+        else {
+            push @ERRORS, "Invalid operation $OP\n";
+        }
+    }
+    else {
+        push @ERRORS, "No operation specified\n";
+    }
+
+    if (@ERRORS) {
+        die "GX::Submit_Request:\n@ERRORS";
+    }
+
+    if (not defined $request->{requested_by_name}) {
+        $request->{requested_by_name} = $PW->{name};
+    }
+    if (not defined $request->{requested_by_uid}) {
+        $request->{requested_by_uid} = $PW->{uid};
+    }
+    if (not defined $request->{source}) {
+        if (GX::Is_Admin_Account $PW->{name}) {
+            $request->{source} = 'admin';
+        }
+        else {
+            $request->{source} = 'user';
+        }
+    }
+
+    if (defined $request->{username} and not defined $request->{user_uid}) {
+        my $user_PW = GX::Get_PW_Name $request->{username};
+        if (defined $user_PW->{uid}) {
+            $request->{user_uid} = $user_PW->{uid};
+        }
+    }
+
+    my $request_file = "$Requests_Dir/$time_of_day-$hostname-$PW->{name}";
+    if (defined $request->{username}) {
+        $request_file .= "_$request->{username}";
+    }
+    $request_file .= "-$$.request";
+
+    #
+    # If gx-check-requests sees a partial request file, it will reject
+    # it and move it to the bad-requests directory.  To avoid this,
+    # create a temporary request file with a name ending in ".tmp"
+    # (making it invisible to gx-check-requests).  After the temporary
+    # file is created and has the proper permissions, rename it to the
+    # correct name.
+    #
+    my $tmp_file = "$request_file.tmp";
+
+    GX::Write_Records '-single', $tmp_file, $request;
+
+    if (not -o $tmp_file) {
+        #
+        # I just created a file, but I don't own it.  Most likely I'm
+        # root, and the target NFS filesystem has root squashing enabled.
+        #
+        my $message = "Bad ownership for temporary file:\n$tmp_file\n";
+        if ($< == 0) {
+            $message .= "(likely NFS problem)\n";
+        }
+        die $message;
+    }
+    chmod 0444, $tmp_file or die "chmod $tmp_file: $!\n";
+    rename $tmp_file, $request_file or die "rename $tmp_file: $!\n";
+} # Submit_Request
 
 # ----------------------------------------------------------------------
 
