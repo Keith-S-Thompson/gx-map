@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.79 2007-05-11 02:34:52-07 kst Exp $
+# $Id: gx-request.in,v 1.80 2007-06-17 22:16:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -59,7 +59,7 @@ BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
 
-my $Default_Data_Dir = "$Install_Dir/gx-map-data";
+my $Data_Dir = "$Install_Dir/gx-map-data";
 
 sub Usage(@);
 sub Long_Usage();
@@ -76,8 +76,6 @@ sub Debug(@);
 sub Debugf(@);
 
 my $Program_Name = File::Basename::basename $0;
-my $hostname;
-my $Now               = GX::Get_Time_Of_Day;
 my $proxy_file        = Proxy_File_Name;
 my $user_cert_file    = User_Cert_File_Name;
 my $default_cert_file =
@@ -124,10 +122,10 @@ my @Opts = ( $User_Opt,
                  quiet force no-admin
                  dn=s certificate-file=s default-dn
                  username=s
-                 directory=s
                  email=s
                  force-dn literal-dn no-email comment=s
                  source=s
+                 slurp=s
                  debugging ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if $User_Opt->{help};
@@ -149,7 +147,11 @@ if ($User_Opt->{'show-config'}) {
 
     print "Config from gx-map.conf:\n";
     foreach my $key (sort keys %$GX::Config) {
-        printf "    %-24s => \"%s\"\n", $key, $GX::Config->{$key};
+        my $initial = '';
+        if ($GX::Config->{$key} ne $GX::Initial_Config->{$key}) {
+            $initial = 'M';'
+        }
+        printf "%-4s%-24s => \"%s\"\n", $initial, $key, $GX::Config->{$key};
     }
     exit 0;
 }
@@ -225,6 +227,17 @@ my $Is_Admin = (not $User_Opt->{'no-admin'} and
                 GX::Is_Admin_Account $PW->{name});
 my $Options  = {};
 
+if (defined $User_Opt->{slurp}) {
+    if (not $Is_Admin) {
+        Usage "The -slurp option may only be used " .
+              "by a gx-map administrator\n";
+    }
+    my @slurped_requests = Read_Records '-multiple', $User_Opt->{slurp};
+    foreach my $request (@slurped_requests) {
+        GX::Submit_Request $request;
+    }
+}
+
 if ($User_Opt->{interactive}) {
     $Options = Get_Options_Interactively();
 }
@@ -237,10 +250,7 @@ foreach my $key (sort keys %$Options) {
     Debug "    $key => $Options->{$key}\n";;
 }
 
-my $Requests_Dir = "$Options->{directory}/new-requests";
-
-Die_Quietly "No directory $Options->{directory}\n"
-    if not -d $Options->{directory};
+my $Requests_Dir = "$Data_Dir/new-requests";
 
 Die_Quietly "No directory $Requests_Dir\n" if not -d $Requests_Dir;
 
@@ -393,9 +403,6 @@ if (not $Options->{force}) {
     }
 }
 
-$hostname = GX::Get_Hostname();
-
-my $Timestamp = GX::Long_Time_Image $Now;
 my $requested_uid = undef;
 if (defined $requested_pw) {
     $requested_uid = $requested_pw->{uid};
@@ -410,10 +417,8 @@ if ((defined $Options->{username} and $Options->{username} eq 'root')
 
 my $request = {
     operation         => $Options->{operation},
-    timestamp         => $Timestamp,
     requested_by_uid  => $PW->{uid},
     requested_by_name => $PW->{name},
-    hostname          => $hostname
 };
 if (defined $Options->{dn}) {
     $request->{dn} = '"' . $Options->{dn} . '"';
@@ -430,35 +435,7 @@ $request->{email}     = $Options->{email}     if defined $Options->{email};
 $request->{comment}   = $Options->{comment}   if defined $Options->{comment};
 $request->{signature} = $Options->{signature} if defined $Options->{signature};
 
-my @requests = ( $request );
-
-my $index = 0;
-
-foreach my $request (@requests) {
-    #
-    # If gx-check-requests sees a partial request file, it will reject it
-    # and move it to the bad-requests directory.  To avoid this, create
-    # a temporary request file with a name ending in ".tmp" (making it
-    # invisible to gx-check-requests).  After the temporary file is created
-    # and has the proper permissions, rename it to the correct name.
-    #
-    my $request_file = Gen_Request_File_Name $request->{timestamp};
-    my $tmp_file = "$request_file.tmp";
-    GX::Write_Records '-single', $tmp_file, $request;
-    if (not -o $tmp_file) {
-        #
-        # I just created a file, but I don't own it.  Most likely I'm
-        # root, and the target NFS filesystem has root squashing enabled.
-        # 
-        my $message = "Bad ownership for temporary file:\n$tmp_file\n";
-        if ($< == 0) {
-            $message .= "(likely NFS problem)\n";
-        }
-        die $message;
-    }
-    chmod 0444, $tmp_file or die "chmod $tmp_file: $!\n";
-    rename $tmp_file, $request_file or die "rename $tmp_file: $!\n";
-}
+GX::Submit_Request $request;
 
 unless ($Options->{force} and $Options->{quiet}) {
     print "Mapping request submitted.\n";
@@ -531,23 +508,6 @@ sub User_Cert_File_Name() {
         return undef;
     }
 } # User_Cert_File_Name
-
-# ----------------------------------------------------------------------
-
-sub Gen_Request_File_Name($) {
-    my($timestamp) = @_;
-    my $result = "$Requests_Dir/";
-    $timestamp =~ s/ .*$//;
-    $result .= $timestamp;
-    $result .= "-$hostname-$PW->{name}";
-    if (defined $Options->{username} and
-        $Options->{username} ne $PW->{name})
-    {
-        $result .= "_$Options->{username}";
-    }
-    $result .= "-$$.request";
-    return $result;
-} # Gen_Request_File_Name
 
 # ----------------------------------------------------------------------
 
@@ -634,31 +594,6 @@ EOF
     }
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
-
-    if ($Is_Admin) {
-        while (not defined $Options->{directory}) {
-            print "Data directory (default is $Default_Data_Dir): ";
-            chomp($response = scalar <STDIN>);
-            if ($response eq '') {
-                $Options->{directory} = $Default_Data_Dir;
-            }
-            elsif (not -e $response) {
-                print ">>> $response does not exist\n";
-            }
-            elsif (not -d _) {
-                print ">>> $response is not a directory\n";
-            }
-            elsif (not -r $response or not -x _ or not -w _) {
-                print ">>> Insufficient access to directory $response\n";
-            }
-            else {
-                $Options->{directory} = $response;
-            }
-        }
-    }
-    else {
-        $Options->{directory} = $Default_Data_Dir;
-    }
 
     if ($Is_Admin) {
         undef $response;
@@ -935,18 +870,6 @@ sub Get_Options_From_Command_Line() {
     $Options->{quiet}        = 1 if $User_Opt->{quiet};
     $Options->{force}        = 1 if $User_Opt->{quiet} or $User_Opt->{force};
 
-    if (defined $User_Opt->{directory}) {
-        if ($Is_Admin) {
-            $Options->{directory} = $User_Opt->{directory};
-        }
-        else {
-            Usage "Only a gx-map administrator may specify a data directory\n"
-        }
-    }
-    else {
-        $Options->{directory} = $Default_Data_Dir;
-    }
-
     if (defined $User_Opt->{source}) {
         if ($Is_Admin) {
             if ($User_Opt->{source} !~ /^[A-Za-z0-9._-]+$/) {
@@ -1165,11 +1088,6 @@ Note: Exactly one of -interactive, -quick-add, -quick-remove,
     -username name          : Unix user name to map.
                               This option is for use by gx-map
                               administrators only.
-    -directory dir          : Specify an alternate data directory.
-                              This option is for use by gx-map administrators
-                              only.
-                              The default data directory is
-                              $Default_Data_Dir .
     -email addr             : Your contact e-mail address (optional).
                               This may be used to contact you if there's
                               a problem with your certificate.
@@ -1179,6 +1097,10 @@ Note: Exactly one of -interactive, -quick-add, -quick-remove,
                               Argument may consist only of letters, digits,
                               underscore, period, and hyphen characters
                               ([A-Za-z0-9_.-]).
+                              This option is for use by gx-map administrators
+                              only.
+    -slurp file             : Read multiple mapping requests from an input
+                              file.  Not available in interactive mode.
                               This option is for use by gx-map administrators
                               only.
     -debugging              : Enable debugging output.
