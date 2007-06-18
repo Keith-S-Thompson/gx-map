@@ -1,4 +1,4 @@
-# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.7 2007-04-13 19:20:39-07 kst Exp $
+# $Id: da36fc94.osaka-cybermedia-center.cadesc,v 1.8 2007-06-17 22:21:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/da36fc94.osaka-cybermedia-center.cadesc,v $
 
 CA_NAME             Osaka University Cybermedia Center CA
@@ -23,3 +23,7 @@ CERT_EXPIRES        Fri 2013-02-08 17:52:21 UTC
 # There does not appear to be a CRL.
 
 # MD5 and SHA1 fingerprints from da36fc94.0 downloaded 2005-03-29
+
+# The da36fc94.signing_policy includes information about the obsolete
+# Globus CA (see 42864e48.globus-ca.cadesc); this is ignored in the
+# MAY_SIGN attributes here.
