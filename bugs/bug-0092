@@ -1,4 +1,4 @@
-# $Id: bug-0092,v 1.2 2006-06-30 16:51:23-07 kst Exp $
+# $Id: bug-0092,v 1.3 2007-06-17 22:19:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0092,v $
 
 gx-map bug 0092
@@ -12,12 +12,12 @@ Title: Multiple gx-request invocations are slow
 Summary:
 In some cases, gx-request may be invoked many times in a row (hundreds,
 or even thousands).  This can happen due to running a script generated
-by gx-ingest or an initial run of gx-db-check-requests.  On chester,
+by gx-ingest or in an initial run of gx-db-check-requests.  On chester,
 this seems to average about 0.45 second per request, or 135 requests
 per minute.
 
 I suspect that a great deal of the overhead is caused by re-invoking
-the gx-request script and re-loading Perl interpreter and various
+the gx-request script and re-loading the Perl interpreter and various
 perl modules.
 
 Add a new function Gridmap_Utils::Submit_Request that processes
@@ -31,6 +31,6 @@ Let gx-request call this function to create a request file.
 Create either a new command, or an option to gx-request, that takes
 a text file as input and invokes Gridmap_Utils::Submit_Request for
 each line.  gx-ingest could create a text file to be submitted rather
-than a shel script (or make it an option).
+than a shell script (or make it an option).
 
 Measure the actual speedup, if any.
