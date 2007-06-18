@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.80 2007-06-17 22:16:55-07 kst Exp $
+# $Id: gx-request.in,v 1.81 2007-06-18 01:01:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -149,7 +149,7 @@ if ($User_Opt->{'show-config'}) {
     foreach my $key (sort keys %$GX::Config) {
         my $initial = '';
         if ($GX::Config->{$key} ne $GX::Initial_Config->{$key}) {
-            $initial = 'M';'
+            $initial = 'M';
         }
         printf "%-4s%-24s => \"%s\"\n", $initial, $key, $GX::Config->{$key};
     }
@@ -232,7 +232,7 @@ if (defined $User_Opt->{slurp}) {
         Usage "The -slurp option may only be used " .
               "by a gx-map administrator\n";
     }
-    my @slurped_requests = Read_Records '-multiple', $User_Opt->{slurp};
+    my @slurped_requests = GX::Read_Records '-multiple', $User_Opt->{slurp};
     foreach my $request (@slurped_requests) {
         GX::Submit_Request $request;
     }
