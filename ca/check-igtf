@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.9 2007-06-12 21:35:24-07 kst Exp $
+# $Id: check-igtf,v 1.10 2007-06-17 22:18:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 #
@@ -313,6 +313,46 @@ sub Check_Consistency($) {
     my($ref) = @_;
 
     #
+    # Check for required keys.  Not all of these are actually required
+    # by gx-ca-update, but they should all be present in any distributed
+    # *.cadesc file.
+    #
+    my @missing = ();
+    foreach my $key (qw( CA_NAME HOMEPAGE CONTACT HASH SIGNED_BY
+                         SUBJECT MAY_SIGN CERTIFICATE_MD5
+                         CERTIFICATE_SHA1 CERTIFICATE_URL
+                         SIGNING_POLICY_URL CRL_URL CERT_BEGINS
+                         CERT_EXPIRES ))
+    {
+        if (not defined $ref->{cadesc}->{$key}) {
+            push @missing, $key;
+        }
+    }
+    if (@missing) {
+        my $s = scalar @missing == 1 ? '' : 's';
+        push @{$ref->{ERROR}}, "Missing key$s in cadesc: @missing";
+    }
+
+    @missing = ();
+    foreach my $key (qw( file_type hash issuer md5
+                         not_after not_before
+                         sha1 subject ))
+    {
+        if (not defined $ref->{certificate}->{$key}) {
+            push @missing, "Missing $key in certificate";
+        }
+    }
+    if (@missing) {
+        my $s = scalar @missing == 1 ? '' : 's';
+        push @{$ref->{ERROR}}, "Missing key$s in certificate: @missing";
+    }
+
+    @missing = ();
+    #
+    # TODO: Check for missing fields in other sections.
+    #
+
+    #
     # Check hash
     #
     {
@@ -413,10 +453,19 @@ sub Check_Consistency($) {
     # Check CRL_FORM
     #
     {
-        my $CRL_FORM = $ref->{cadesc}->{CRL_FORM};
-        if (not defined $CRL_FORM) {
-            $CRL_FORM = 'PEM';
+        my $CRL_FORM;
+        if (not defined $ref->{cadesc}->{CRL_URL} or
+            $ref->{cadesc}->{CRL_URL} eq '?')
+        {
+            $CRL_FORM = 'unknown';
         }
+        else {
+            $CRL_FORM = $ref->{cadesc}->{CRL_FORM};
+            if (not defined $CRL_FORM) {
+                $CRL_FORM = 'PEM';
+            }
+        }
+
         my $file_type = $ref->{crl}->{file_type};
         if (defined $file_type and $file_type =~ /^CRL, (.*) format$/) {
             $file_type = $1;
