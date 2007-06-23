@@ -1,4 +1,4 @@
-# $Id: 00000000.example.cadesc,v 1.13 2007-03-12 17:52:36-07 kst Exp $
+# $Id: 00000000.example.cadesc,v 1.14 2007-06-22 18:24:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/00000000.example.cadesc,v $
 
 CA_NAME             example.org CA
@@ -11,8 +11,10 @@ MAY_SIGN            /O=Grid/OU=example.org/*
 CERTIFICATE_MD5     00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 CERTIFICATE_SHA1    00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00:00
 CERTIFICATE_URL     http://www.example.org/CA/00000000.0
+# CERTIFICATE_FORM    PEM
 SIGNING_POLICY_URL  http://www.example.org/CA/00000000.signing_policy
 CRL_URL             http://www.example.org/CA/00000000.r0
+# CRL_FORM            PEM
 # ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Thu 1970-01-01 00:00:00 UTC
 CERT_EXPIRES        Thu 1970-01-01 00:00:00 UTC
