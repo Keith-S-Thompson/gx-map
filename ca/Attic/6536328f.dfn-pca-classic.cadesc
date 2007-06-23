@@ -1,0 +1,25 @@
+# $Id: 6536328f.dfn-pca-classic.cadesc,v 1.1 2007-06-22 18:48:44-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/Attic/6536328f.dfn-pca-classic.cadesc,v $
+
+CA_NAME             DFN-Verein PCA Classic - G01
+HOMEPAGE            http://www.pca.dfn.de/
+CONTACT             dfnpki@dfn-cert.de
+HASH                6536328f
+SIGNED_BY           self
+SUBJECT             /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein PCA Classic - G01
+MAY_SIGN            ?
+CERTIFICATE_MD5     EF:08:E6:9F:6A:C7:25:2C:58:8C:55:FD:45:13:31:0A
+CERTIFICATE_SHA1    12:63:41:60:D0:8C:FE:6A:87:6D:F7:86:D3:AD:C2:F7:74:FF:21:9F
+CERTIFICATE_URL     http://cdp.pca.dfn.de/dfn-pki/certification/x509/classic/g1/data/certs/root-ca-cert.pem
+SIGNING_POLICY_URL  ?
+CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/classic/g1/data/crls/root-ca-crl.pem
+CERT_BEGINS         Mon 2005-02-28 00:29:37 UTC
+CERT_EXPIRES        Sun 2013-04-28 00:29:37 UTC
+DISABLE             yes
+
+# MD5 and SHA1 fingerprints from root-ca-cert.pem (6536328f.0) downloaded 
+# Fri 2007-06-22
+# Also verified against <https://www.tacar.org/repos/>, Fri 2007-06-22
+
+# I have been unable to find a signing_policy for this CA.  It's marked
+# as DISABLEd until that's corrected.
