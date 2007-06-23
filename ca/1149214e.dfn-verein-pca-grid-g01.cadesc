@@ -1,0 +1,28 @@
+# $Id: 1149214e.dfn-verein-pca-grid-g01.cadesc,v 1.1 2007-06-22 20:55:01-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/1149214e.dfn-verein-pca-grid-g01.cadesc,v $
+
+CA_NAME             DFN-Verein PCA Grid - G01
+HOMEPAGE            http://www.pca.dfn.de/
+CONTACT             dfnpki@dfn-cert.de
+HASH                1149214e
+SIGNED_BY           self
+SUBJECT             /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein PCA Grid - G01
+MAY_SIGN            /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein PCA Grid - G01
+MAY_SIGN            /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein Server CA Grid - G01
+MAY_SIGN            /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein User CA Grid - G01
+CERTIFICATE_MD5     41:39:4A:58:2E:F0:45:B2:29:28:F1:72:AB:F7:05:08
+CERTIFICATE_SHA1    1C:BB:D4:BA:97:7B:3A:B9:FF:CD:4A:97:77:50:87:9C:6A:2E:8E:38
+CERTIFICATE_URL     http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/data/certs/root-ca-cert.pem
+SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/1149214e.signing_policy
+CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/grid/g1/data/crls/root-ca-crl.pem
+CERT_BEGINS         Thu 2005-07-07 13:35:15 UTC
+CERT_EXPIRES        Sat 2013-09-07 13:35:15 UTC
+
+# The SIGNING_POLICY_URL is from a separate site.  That site is down as
+# I write this; I got the signing_policy from the Google cache.
+
+
+# MD5 and SHA1 fingerprints from root-ca-cert.pem (1149214e.0) downloaded
+# Thu 2006-11-30
+
+# The web site is in German.
