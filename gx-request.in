@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.81 2007-06-18 01:01:17-07 kst Exp $
+# $Id: gx-request.in,v 1.82 2007-06-22 17:17:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -236,6 +236,7 @@ if (defined $User_Opt->{slurp}) {
     foreach my $request (@slurped_requests) {
         GX::Submit_Request $request;
     }
+    exit;
 }
 
 if ($User_Opt->{interactive}) {
