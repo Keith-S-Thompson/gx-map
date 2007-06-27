@@ -1,0 +1,71 @@
+Return-Path: <owner-ops@teragrid.org>
+Received: from reubens.uits.indiana.edu (reubens.uits.indiana.edu
+	[129.79.1.193]) by larkspur.uits.indiana.edu (Cyrus v2.2.10) with LMTPA;
+	Tue, 26 Jun 2007 16:53:00 -0400
+X-Sieve: CMU Sieve 2.2
+Received: from pop.ncsa.uiuc.edu (pop.ncsa.uiuc.edu [141.142.2.28]) by
+	reubens.uits.indiana.edu (8.13.8/8.13.8/IU Messaging Team) with ESMTP id
+	l5QKqvxi011871 for <jomlowe@iupui.edu>; Tue, 26 Jun 2007 16:52:59 -0400
+Received: (from majordomo@localhost) by pop.ncsa.uiuc.edu (8.11.7/8.11.7)
+	id l5QKqUw26137; Tue, 26 Jun 2007 15:52:30 -0500
+X-Authentication-Warning: pop.ncsa.uiuc.edu: majordomo set sender to
+	owner-ops@teragrid.org using -f
+X-Envelope-From: brechin@ncsa.uiuc.edu
+X-Envelope-To: <ops@teragrid.org>
+Received: from rimantadine.ncsa.uiuc.edu (rimantadine.ncsa.uiuc.edu
+	[141.142.2.77]) by pop.ncsa.uiuc.edu (8.11.7/8.11.7) with ESMTP id
+	l5QKqUq26125 for <ops@teragrid.org>; Tue, 26 Jun 2007 15:52:30 -0500
+Received: from yams.ncsa.uiuc.edu (yams.ncsa.uiuc.edu [141.142.237.7]) by
+	rimantadine.ncsa.uiuc.edu (8.13.8/8.13.8) with ESMTP id l5QKqe2p014000 for
+	<ops@teragrid.org>; Tue, 26 Jun 2007 15:52:40 -0500
+Received: from [141.142.232.38] (eight.ncsa.uiuc.edu [141.142.232.38])
+	(using TLSv1 with cipher DHE-RSA-AES256-SHA (256/256 bits)) (Client did not
+	present a certificate) by yams.ncsa.uiuc.edu (Postfix) with ESMTP id
+	B413741EEC for <ops@teragrid.org>; Tue, 26 Jun 2007 15:52:40 -0500 (CDT)
+Message-ID: <46817D13.9050403@ncsa.uiuc.edu>
+Date: Tue, 26 Jun 2007 15:54:43 -0500
+From: Jason <brechin@ncsa.uiuc.edu>
+User-Agent: Thunderbird 2.0.0.4 (Windows/20070604)
+MIME-Version: 1.0
+To: ops@teragrid.org
+Subject: grid-mapfile generation
+X-Enigmail-Version: 0.95.1
+OpenPGP: id=18D35C71
+Content-Type: text/plain; charset=ISO-8859-1
+X-NCSA-MailScanner-Information: Please contact help@ncsa.uiuc.edu for more
+	information, amantadine.ncsa.uiuc.edu
+X-NCSA-MailScanner: Found to be clean
+Sender: owner-ops@teragrid.org
+Precedence: bulk
+Reply-To: ops@teragrid.org
+Content-Transfer-Encoding: quoted-printable
+
+This is my first take on generating grid-mapfiles from info in the TGCDB.
+
+You can find my script at
+http://yams.ncsa.uiuc.edu/~brechin/mapgen.pl
+
+Run as "./mapgen.pl $CLUSTER_NAME" where $CLUSTER_NAME is the same value as in
+tgusage.  It is the resource name for your cluster.  It should be something like
+dtf.ncsa.teragrid
+abe.ncsa.teragrid
+dtf.sdsc.teragrid
+dtf.anl.teragrid
+
+Please do not use this to recreate your grid-mapfiles right now.  It should
+still be considered to be in the "testing" phase.  Please run it and compare to
+your expectations.
+
+About 10 seconds later, it will print out DN/username entries that bear a strong
+resemblance to a grid-mapfile.  Right now it sorts the entries by username and
+then by dn_id, which as far as I can tell from looking at the database is the
+order they were added.
+
+It should run wherever tgusage will run (it uses the same database modules),
+though doesn't have to be run on the resource in question.  If anyone needs help
+getting it working, or if you have any requests for additional/different
+functionality to fit your needs, please let me know.
+
+Thanks,
+Jason
+
