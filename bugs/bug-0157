@@ -1,0 +1,36 @@
+# $Id: bug-0157,v 1.1 2007-06-27 20:18:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0157,v $
+
+gx-map bug 0157
+Date: Wed 2007-06-27
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Consider a non-world-writable new-requests directory
+
+So far, this is only a vague idea.
+
+The gx-request command writes a request to the new-requests directory,
+which is world-writable (permissions 1733, rwx-wx-wt).
+
+In practice, most requests are submitted by the owner account.
+Consider using *two* new-requests directories, one for ordinary
+user requests with the current permissions, and another owned by the
+GX_MAP_OWNER account with permissions 755, or even 700, to be used
+only by the GX_MAP_OWNER.
+
+Let's call the directories new-requests.pub and new-requests.priv.
+
+gx-check-requests would have to check both directories.
+Requests in the new-requests.priv directory can be assumed to be
+administrative requests.  If ADDITIONAL_ADMINS is empty, requests
+in the new-requests.pub directory can be assumed *not* to be
+administrative requests.
+
+I'm not (yet) convinced that this really buys us anything, since the
+world-writable new-requests.pub directory is still there.  On the
+other hand, a site could choose to disable user-submitted requests
+and remove or chmod the new-requests.pub directory.  On the other
+other hand, I'm not comfortable with the security model changing
+depending on whether ADDITIONAL_ADMINS is empty or not.
