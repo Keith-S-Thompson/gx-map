@@ -1,0 +1,29 @@
+# $Id: bug-0158,v 1.1 2007-06-27 22:26:14-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0158,v $
+
+gx-map bug 0158
+Date: Wed 2007-06-27
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Add "-immediate" option to gx-db-request
+
+The need to run both gx-db-request and gx-db-check-requests can
+be confusing, especially when gx-db-request is only run with the
+"-full-request" option.
+
+Add a "-immediate" option to gx-db-request.  This simply causes it
+to invoke gx-db-check-requests before terminating.
+
+So rather than periodically running
+    gx-db-request -full-request
+    gx-db-check-requests
+a site can run run
+    gx-db-request -full-request -immediate
+and the gx-db-check-requests comand doesn't need to be invoked
+explicitly at all.
+
+Sites that invoke "gx-db-request -add" or "gx-db-request -remove"
+in response to incoming AMIE packets would not use the "-immediate"
+option.
