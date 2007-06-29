@@ -1,4 +1,4 @@
-# $Id: bug-0092,v 1.3 2007-06-17 22:19:45-07 kst Exp $
+# $Id: bug-0092,v 1.4 2007-06-29 00:47:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0092,v $
 
 gx-map bug 0092
@@ -33,4 +33,14 @@ a text file as input and invokes Gridmap_Utils::Submit_Request for
 each line.  gx-ingest could create a text file to be submitted rather
 than a shell script (or make it an option).
 
+Later: Added "-slurp" option to gx-request; input file is read by
+GX::Read_Records.
+
 Measure the actual speedup, if any.
+
+Fixed (tentatively):
+GX.pm.in 1.54
+gx-request.in 1.81
+gx-ingest.in 1.30
+gx-db-check-requests.in
+gx-map release 0.5.9.018
