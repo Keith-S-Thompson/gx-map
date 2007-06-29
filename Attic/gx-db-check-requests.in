@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.18 2007-05-29 01:28:46-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.19 2007-06-28 21:35:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -80,6 +80,7 @@ my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
 my @Opts = ( $User_Opt, qw( help!
                             version!
+                            full-query!
                             dryrun!
                             debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -133,18 +134,33 @@ my @processed_files = ();
 opendir my $REQUESTS, $New_Requests_Dir or die "$New_Requests_Dir: $!\n";
 my @files = sort grep /\.db-request$/, readdir $REQUESTS;
 closedir $REQUESTS;
-if (not @files) {
+if (not @files and not $User_Opt->{'full-query'}) {
     Debug "Nothing to do\n";
     Cleanup;
     exit 0;
 }
 
-#
-# Process any db-request files, applying changes to $New_Mappings.
-#
-foreach my $file (@files) {
-    $New_Mappings = Process_DB_Request $New_Mappings, "$New_Requests_Dir/$file";
-    push @processed_files, $file;
+if ($User_Opt->{'full-query'}) {
+    #
+    # Ignore any pending requests, but prepare to move all db-requests
+    # files from new-db-requests to new-db-requests.
+    #
+    if (not defined $Mappings_From_DB) {
+        ($Mappings_From_DB, $DB_Info)
+            = Get_Mappings_From_DB $DB_Config_File;
+    }
+    $New_Mappings = $Mappings_From_DB;
+    push @processed_files, @files;
+}
+else {
+    #
+    # Process any db-request files, applying changes to $New_Mappings.
+    #
+    foreach my $file (@files) {
+        $New_Mappings
+            = Process_DB_Request $New_Mappings, "$New_Requests_Dir/$file";
+        push @processed_files, $file;
+    }
 }
 
 my $Flat_Old_Mappings = Flatten $Old_Mappings;
@@ -588,6 +604,8 @@ sub Usage(@) {
 Usage: $Program_Name [options]
     -help         : Display this message and exit.
     -version      : Display version number and exit.
+    -full-query   : Do the equivalent of "gx-db-request -full-query" before
+                    processing db requests.
     -dryrun       : Don't perform updates.
     -debugging    : Enable debugging output.
 EOF
