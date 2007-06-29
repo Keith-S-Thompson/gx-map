@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.20 2007-06-29 00:45:56-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.21 2007-06-29 01:19:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -241,7 +241,7 @@ foreach my $mapping (@removed_mappings) {
     my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
     push @requests, { operation => 'remove',
                       username  => $username,
-                      dn        => $dn,
+                      dn        => qq("$dn"),
                       source    => 'TGCDB' };
 }
 foreach my $mapping (@added_mappings) {
@@ -249,7 +249,7 @@ foreach my $mapping (@added_mappings) {
     my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
     push @requests, { operation => 'add',
                       username  => $username,
-                      dn        => $dn,
+                      dn        => qq("$dn"),
                       source    => 'TGCDB' };
 }
 
@@ -542,55 +542,6 @@ sub Flatten($) {
     }
     return $result;
 } # Flatten
-
-# ----------------------------------------------------------------------
-
-# #
-# # Submit a request.
-# # Arguments:
-# #    action:  "add" or "remove"
-# #    mapping: A string of the form "username dn" (no quotes)
-# #
-# sub Request($$) {
-#     my ($action, $mapping) = @_;
-# 
-#     Debug "Request, action=$action, mapping=\"$mapping\"\n";
-#     my @command = ($gx_request_command);
-# 
-#     my($dn, $username);
-#     if ($mapping =~ /^(\S+)\s+(.*)$/) {
-#         ($username, $dn) = ($1, $2);
-#         Debug "    username=$username dn=\"$dn\"\n"
-#     }
-#     else {
-#         die "Invalid mapping: \"$mapping\"\n";
-#     }
-# 
-#     if    ($action eq 'add')    { push @command, '-add' }
-#     elsif ($action eq 'remove') { push @command, '-remove' }
-#     else                        { die "Internal error, action=$action\n" }
-#     push @command, '-quiet';
-#     push @command, '-force';
-#     push @command, '-dn', $dn;
-#     push @command, '-username', $username;
-#     push @command, '-source', 'TGCDB';
-# 
-#     my @printable_command = @command;
-#     foreach (@printable_command) {
-#         $_ = "\"$_\"" if $_ =~ / /;
-#     }
-#     if ($User_Opt->{dryrun}) {
-#         my @printable_command = @command;
-#         foreach (@printable_command) {
-#             $_ = "\"$_\"" if $_ =~ / /;
-#         }
-#         print "% @printable_command\n";
-#     }
-#     else {
-#         Debug "% @printable_command\n";
-#         system @command;
-#     }
-# } # Request
 
 # ----------------------------------------------------------------------
 
