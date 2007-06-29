@@ -1,4 +1,4 @@
-# $Id: bug-0158,v 1.2 2007-06-28 18:30:40-07 kst Exp $
+# $Id: bug-0158,v 1.3 2007-06-28 21:35:29-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0158,v $
 
 gx-map bug 0158
@@ -33,3 +33,7 @@ remains synchronized.
 (An alternative is to add a "-immediate" option to gx-db-requests,
 causing it to invoke gx-db-check-requests.  That was my first idea,
 but I like the "gx-db-check-requests -full-query" idea better.)
+
+Fixed:
+gx-db-check-requests.in 1.19
+gx-map release 0.5.9.017
