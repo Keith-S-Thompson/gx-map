@@ -1,4 +1,4 @@
-# $Id: bug-0158,v 1.1 2007-06-27 22:26:14-07 kst Exp $
+# $Id: bug-0158,v 1.2 2007-06-28 18:30:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0158,v $
 
 gx-map bug 0158
@@ -7,23 +7,29 @@ Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.3
 Status: Open
-Title: Add "-immediate" option to gx-db-request
+Title: Add "-full-query" option to gx-db-check-requests
 
 The need to run both gx-db-request and gx-db-check-requests can
 be confusing, especially when gx-db-request is only run with the
-"-full-request" option.
+"-full-query" option.
 
-Add a "-immediate" option to gx-db-request.  This simply causes it
-to invoke gx-db-check-requests before terminating.
+Add a "-full-query" option to gx-db-check-requests.  This causes it
+to assume a single "full-query" request; it will also (as usual)
+process and ignore all existing db-request files moving them from
+old-requests to new-requests.
 
 So rather than periodically running
-    gx-db-request -full-request
+    gx-db-request -full-query
     gx-db-check-requests
 a site can run run
-    gx-db-request -full-request -immediate
-and the gx-db-check-requests comand doesn't need to be invoked
-explicitly at all.
+    gx-db-check-requests -full-query
+and the gx-db-requests comand doesn't need to be invoked at all.
 
 Sites that invoke "gx-db-request -add" or "gx-db-request -remove"
-in response to incoming AMIE packets would not use the "-immediate"
-option.
+in response to incoming AMIE packets would not use this new option,
+except perhaps for a periodic full-query used to ensure that everything
+remains synchronized.
+
+(An alternative is to add a "-immediate" option to gx-db-requests,
+causing it to invoke gx-db-check-requests.  That was my first idea,
+but I like the "gx-db-check-requests -full-query" idea better.)
