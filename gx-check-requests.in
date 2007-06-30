@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.111 2007-05-29 01:28:46-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.112 2007-06-30 03:09:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -144,7 +144,7 @@ my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
                    qw( dn username email comment
-                       user_uid source signature ) );
+                       user_uid source signature scope ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
@@ -245,7 +245,9 @@ if (-x $propagate) {
 
     REQUEST:
     foreach my $request (@good_requests) {
-        if (not $User_Opt->{propagate}) {
+        if (not $User_Opt->{propagate} or
+            (defined $request->{scope} and $request->{scope} eq 'local'))
+        {
             $request->{PROPAGATION} = 'skipped';
             next REQUEST;
         }
@@ -760,6 +762,14 @@ sub Get_Request_Info($) {
                      "missing signature, strict checking requested";
             }
         }
+    }
+
+    if (defined $result->{scope} and
+        $result->{scope} ne 'local' and
+        $result->{scope} ne 'global')
+    {
+        push @{$result->{ERRORS}},
+             "Invalid scope";
     }
 
     return $result;
