@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.58 2007-06-30 15:34:56-07 kst Exp $
+# $Id: GX.pm.in,v 1.59 2007-06-30 15:39:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1201,7 +1201,7 @@ sub Save_File($$$$) {
         TRY:
         foreach my $elem ($YYYY, $MM, $DD) {
             $target_subdir .= "/$elem";
-            if (not mkdir $target_subdir) {
+            if (not -d $target_subdir and not mkdir $target_subdir) {
                 $target_subdir = $target_dir;
                 last TRY;
             }
