@@ -1,4 +1,4 @@
-# $Id: bug-0092,v 1.4 2007-06-29 00:47:36-07 kst Exp $
+# $Id: bug-0092,v 1.5 2007-06-30 03:13:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0092,v $
 
 gx-map bug 0092
@@ -6,7 +6,7 @@ Date: Fri 2006-05-19
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.1
-Status: Open
+Status: Fixed 0.5.9.019
 Title: Multiple gx-request invocations are slow
 
 Summary:
@@ -44,3 +44,34 @@ gx-request.in 1.81
 gx-ingest.in 1.30
 gx-db-check-requests.in
 gx-map release 0.5.9.018
+
+There's still a major bottleneck.  When I run
+    gx-db-check-requests -full-query
+to get all the entries from the TGCDB (this is TeraGrid-specific),
+it invokes gx-request just once with a huge list of requests -- but
+then gx-check-requests invokes gx-propagate once for each request.
+Since each request has its "source" attribute set to "TGCDB",
+gx-propagate does nothing, but it takes a substantial fraction of a
+second to do it.  Since there are thousands of requests, this adds up.
+
+I think the solution is to fix bug-0033 (which I was planning to
+leave unfixed) and implement a "scope" attribute, value "local" or
+"global".  Requests will be global by default; a new "-local" option
+to gx-request will set them to "local".  (The attribute is optional;
+if it's missing, treat it as global.)
+
+Requests submitted by gx-db-check-requests will have
+    source => TGCDB
+    scope => local
+The source attribute is already there, and tells the TGCDB version of
+gx-propagate to do nothing, but gx-check-requests needs to allow for
+implementations of gx-propagate other than the TGCDB one, so it still
+has to invoke the gx-propagate command.  Setting the scope attribute
+to "local" will allow gx-check-requests to skip invoking gx-propagate
+without being TGCDB-specific.
+
+Fixed:
+gx-request.in 1.83
+gx-chek-requests.in 1.112
+gx-map release 0.5.9.019
+(and see above)
