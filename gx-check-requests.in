@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.112 2007-06-30 03:09:18-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.113 2007-06-30 15:26:47-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -714,7 +714,7 @@ sub Get_Request_Info($) {
             push @{$result->{ERRORS}},
                  "request for another user by a non-admin";
         }
-        elsif (defined $result->{source}) {
+        elsif (defined $result->{source} and $result->{source} ne 'user') {
             push @{$result->{ERRORS}},
                  "source set by non-admin";
         }
