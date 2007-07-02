@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.60 2007-06-30 15:39:55-07 kst Exp $
+# $Id: GX.pm.in,v 1.61 2007-07-02 16:55:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -279,6 +279,17 @@ sub Set_Config(;$) {
     push @errors, "Extraneous key(s): @extra\n" if @extra;
 
     if (@errors) {
+        die "Error(s) in $config_file:\n", @errors;
+    }
+
+    my @undefined_keys = ();
+    foreach my $key (sort keys %$GX::Config) {
+        if ($GX::Config->{$key} eq 'UNDEFINED') {
+            push @undefined_keys, $key;
+        }
+    }
+    if (@undefined_keys) {
+        push @errors, "Undefined @undefined_keys\n";
         die "Error(s) in $config_file:\n", @errors;
     }
 
