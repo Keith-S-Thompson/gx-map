@@ -1,4 +1,4 @@
-# $Id: bug-0158,v 1.3 2007-06-28 21:35:29-07 kst Exp $
+# $Id: bug-0158,v 1.4 2007-07-02 16:46:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0158,v $
 
 gx-map bug 0158
@@ -6,7 +6,7 @@ Date: Wed 2007-06-27
 Severity: Med
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.5.3.3
-Status: Open
+Status: Fixed 0.5.9.017
 Title: Add "-full-query" option to gx-db-check-requests
 
 The need to run both gx-db-request and gx-db-check-requests can
