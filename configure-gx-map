@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.65 2007-05-25 19:01:08-07 kst Exp $
+# $Id: configure-gx-map,v 1.66 2007-07-02 16:56:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -386,6 +386,13 @@ else {
 }
 
 die @errors if @errors;
+
+foreach my $var (@Var_Names) {
+    next if $May_Be_Empty{$var};
+    if (not defined $Config->{$var} or $Config->{$var} eq '') {
+        $Config->{$var} = 'UNDEFINED';
+    }
+}
 
 Write_Config_File();
 
