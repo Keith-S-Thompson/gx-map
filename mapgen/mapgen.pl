@@ -9,6 +9,8 @@ use DBI;
 use DBI qw(:sql_types);
 use DBD::Pg qw(:pg_types);
 
+my $gridmapfile = '/etc/grid-security/grid-mapfile';
+
 my $DBHOST = 'tgcdb.teragrid.org';
 my $DBNAME = 'teragrid';
 my $DBPORT = 5432;                   # default
@@ -37,42 +39,199 @@ my $dbh = dbconnect();
 my $sql = "SELECT resource_id FROM acct.resources WHERE resource_name='$CLUSTER_NAME'";
 my $resource_id = dbexecsql($dbh, $sql);
 $resource_id = $resource_id->[0];
+if ( ! $resource_id ) {
+  die "Invalid CLUSTER_NAME specified!\n";
+}
 
 my $sql = "SELECT a.dn_id, a.person_id, a.dn, s.username 
           FROM acct.distinguished_names a, acct.system_accounts s
           WHERE a.person_id=s.person_id AND s.resource_id=$resource_id";
 my @userinfo = dbexecsql($dbh, $sql);
 
+my %DNs;
 my %users;
+
 foreach my $userentry (@userinfo) {
-  adduser_byusername(@$userentry);
+  adduser(@$userentry);
 }
 
-printmap_byusername();
+addMissingGTcompat();
+
+my @gridmap = getmap();
 
 dbdisconnect($dbh);
 
+print @gridmap;
 
-sub adduser_byusername {
-  my( $dn_id, $person_id, $dn, $username ) = @_;
-  $users{$username}{$dn_id} = $dn;
+compareMap($gridmapfile, @gridmap);
+
+
+
+sub compareMap {
+  my $mapfile = shift;
+  my @genmap = @_;
+
+  open(MAPFILE, $mapfile) or die "Couldn't open $mapfile: $!";
+  my @map = <MAPFILE>;
+  close MAPFILE;
+
+  my @missing = getmissing(\@genmap, \@map);
+  print STDERR "In generated, not local: ";
+  print STDERR scalar(@missing) . "\n";
+
+  my @extra = getmissing(\@map, \@genmap);
+  print STDERR "In local, not generated: ";
+  print STDERR scalar(@extra) . "\n";
 }
 
-sub printmap_byusername {
-  my @usernames = sort keys(%users);
-  foreach my $username (@usernames) {
-    my @dn_ids = sort keys(%{$users{$username}});
-    foreach (@dn_ids) {
-      print '"' . $users{$username}{$_} . "\" $username\n";
+sub getmissing {
+  my( $arr1, $arr2 ) = @_;
+  my @genmap = @$arr1;
+  my @map = @$arr2;
+
+  my @missing;
+
+  my %lines;
+  
+  foreach my $line (@genmap) {
+    $lines{$line} += 1;
+  }
+
+  foreach my $line (@map) {
+    $lines{$line} += 4;
+  }
+
+  while( my ($dn, $val) = each(%lines) ) {
+    if ( $val == 1 ) { #In 1st, not second
+      push( @missing, $dn );
+    }
+  }
+  return @missing;
+}
+  
+    
+sub adduser {
+  my( $dn_id, $person_id, $dn, $username ) = @_;
+  if ( !defined($dn) || ! defined($username) ) {
+    return;
+  }
+  $DNs{$dn_id}{'dn'} = $dn;
+  foreach my $id (@{ $users{$username} }) {
+    if ( $DNs{$id}{'dn'} eq $dn ) {
+#      print "$dn already in list!\n";
+      return;
+    }
+  }
+  push( @{ $users{$username} }, $dn_id );
+  if ( $DNs{$dn_id}{'username'} ) {
+    $DNs{$dn_id}{'username'} .= ',' . $username;
+  } else {
+    $DNs{$dn_id}{'username'} = $username;
+  }
+}
+
+sub addMissingGTcompat {
+  my $newid = '99999a';
+  foreach my $user (sort keys(%users)) {
+    my @dnids = @{ $users{$user} };
+    foreach my $id (@dnids) {
+      my $dn = $DNs{$id}{'dn'};
+      adduser($newid++, 000, addgt2($dn), $user);
+      adduser($newid++, 000, addgt4($dn), $user);
     }
   }
 }
 
-sub adduser_bydnid {
-  my( $dn_id, $person_id, $dn, $username ) = @_;
-  $users{$dn_id}{'username'} = $username;
-  $users{$dn_id}{'dn'} = $dn;
+
+
+sub getmap {
+  my %ids;
+  my @mapfile;
+  foreach my $user (sort keys(%users)) {
+    my @dnids = @{ $users{$user} };
+    foreach my $id (@dnids) {
+      if ( ! $ids{$id}++ ) {
+        my $entry = '"' . $DNs{$id}{'dn'} . '" ' . $DNs{$id}{'username'} . "\n";
+        push( @mapfile, $entry );
+        #isgt2($DNs{$id}{'dn'}) && print "GT2\n";
+        #isgt3($DNs{$id}{'dn'}) && print "GT3\n";
+        #isgt4($DNs{$id}{'dn'}) && print "GT4\n";
+      }
+    }
+  }
+#  print "Got " . scalar(@mapfile). " entries\n";
+  return @mapfile;
 }
+
+sub isgt2 {
+  my $dn = shift;
+  if ( $dn =~ /USERID=(\w+)/ ) {
+    my $userid = $1;
+    if ( $dn =~ /Email=(\S+)\/?/ ) {
+      my $email = $1;
+      return $dn;
+    }
+  }
+  return undef;
+}
+
+sub addgt2 {
+  my $dn = shift;
+  if ( isgt2($dn) ) {
+    return;
+  } else {
+    if ( isgt4($dn) ) {
+      $dn =~ s/emailAddress=/Email=/;
+    } else { #GT3
+      $dn =~ s/E=/Email=/;
+    }
+    $dn =~ s/UID=/USERID=/;
+  }
+  return isgt2($dn);
+}
+
+sub isgt4 {
+  my $dn = shift;
+  if ( $dn =~ /UID=(\w+)/ ) {
+    my $userid = $1;
+    if ( $dn =~ /emailAddress=(\S+)\/?/ ) {
+      my $email = $1;
+      return $dn;
+    }
+  }
+  return undef;
+}
+
+sub addgt4 {
+  my $dn = shift;
+  if ( isgt4($dn) ) {
+    return;
+  } else {
+    if ( isgt2($dn) ) {
+      $dn =~ s/USERID=/UID=/;
+      $dn =~ s/Email=/emailAddress=/;
+      return isgt4($dn);
+    } else { #GT3
+      $dn =~ s/E=/emailAddress=/;
+      return isgt4($dn);
+    }
+  }
+  return undef;
+}
+
+sub isgt3 {
+  my $dn = shift;
+  if ( $dn =~ /UID=(\w+)/ ) {
+    my $userid = $1;
+    if ( $dn =~ /E=(\S+)\/?/ ) {
+      my $email = $1;
+      return $dn;
+    }
+  }
+  return undef;
+}
+
+
 
 # Connect to the database
 sub dbconnect {
