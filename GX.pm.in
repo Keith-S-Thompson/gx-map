@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.64 2007-07-03 19:47:47-07 kst Exp $
+# $Id: GX.pm.in,v 1.65 2007-07-03 19:52:10-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -410,8 +410,13 @@ sub Set_Config(;$$) {
     #
     # Check ADMIN_EMAIL
     #
-    if ($GX::Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
-        push @errors, "Bad ADMIN_EMAIL $GX::Config->{ADMIN_EMAIL}\n";
+    if ($ignore_errors and $GX::Config->{ADMIN_EMAIL} eq 'UNDEFINED') {
+        # ok
+    }
+    else {
+        if ($GX::Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
+            push @errors, "Bad ADMIN_EMAIL $GX::Config->{ADMIN_EMAIL}\n";
+        }
     }
 
     #
