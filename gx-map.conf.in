@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.9 2007-05-17 17:21:52-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.10 2007-07-05 19:23:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -7,12 +7,10 @@
 # or to some default value.
 # Each command reads gx-map.conf during initialization at run time.
 #
-# gx-map.conf may be edited after installation, but variables whose
-# names start with a period, such as ".PERL", should not be modified.
-# Variables set to UNDEF must be set to some valid value; otherwise the
-# gx-map system will not work.
+# gx-map.conf may be edited after installation, but certain variables
+# may not be modified (they're marked with comments to that effect).
 #
-# Comments starting with '#' are ignored, as are empty lines.
+# Comments introduced by '#' are ignored, as are empty lines.
 #
 
 #
