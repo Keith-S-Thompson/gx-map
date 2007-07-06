@@ -1,0 +1,19 @@
+# $Id: bug-0159,v 1.1 2007-07-06 16:52:18-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0159,v $
+
+gx-map bug 0159
+Date: Fri 2007-07-06
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Don't use $^S in __DIE__ handler
+
+"perldoc perlvar" says:
+
+    Having to even think about the $^S variable in your exception handlers
+    is simply wrong.  $SIG{__DIE__} as currently implemented invites
+    grievous and difficult to track down errors.  Avoid it and use an
+    "END{}" or CORE::GLOBAL::die override instead.
+
+Do this.
