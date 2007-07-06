@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.65 2007-07-03 19:52:10-07 kst Exp $
+# $Id: GX.pm.in,v 1.66 2007-07-05 19:27:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -93,7 +93,7 @@ BEGIN {
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
-    $VERSION = '0.5.9.023';
+    $VERSION = '0.5.9.024';
 
     $Debugging = undef; 
     $Initial_Config =
@@ -284,7 +284,11 @@ sub Set_Config(;$$) {
                 CERTIFICATES_DIR
                 GX_PROPAGATE
                 EXTRAS );
-    $GX::Config = GX::Read_Records '-single', '-allow-empty', $config_file;
+    $GX::Config = GX::Read_Records
+                      '-single',
+                      '-end-of-line-comments',
+                      '-allow-empty',
+                      $config_file;
 
     my @missing = ();
     my @extra = ();
@@ -1552,6 +1556,17 @@ sub Increment_Timestamp($) {
 #
 #           Comments are ignored by default.
 #
+#   '-end-of-line-comments'
+#           Allow end-of-line comments anywhere in the input, even within
+#           a record.  This option causes everything following any '#'
+#           character to be quietly ignored.  It is therefore incompatible
+#           with the '-keep-comments' option.
+#
+#           This option should be used with caution, since it doesn't
+#           allow for '#' characters in DNs (which are rare but
+#           permitted).  It is intended to be used to parse configuration
+#           files, usually with '-single'.
+#
 #   '-allow-empty'
 #           Allow the value of a field to be empty.  By default, a key
 #           name with no value is a syntax error.
@@ -1568,12 +1583,13 @@ sub Increment_Timestamp($) {
 #
 # Leading and trailing whitespace are ignored.
 #
-# Comments start with a '#' character, and are either ignored or stored as
-# comment records, depending on whether '-keep-comments' is specified.
-# A comment must be on a line by itself; end-of-line comments are not
-# supported on lines containing other data (so '#' characters can be
-# used in field values).  Comments are not allowed within records (i.e.,
-# between a '{' line and a '}' line).
+# Comments start with a '#' character, and are either ignored or stored
+# as comment records, depending on whether '-keep-comments' is specified.
+# If the '-end-of-line-comments' option is not given, a comment must be
+# on a line by itself; end-of-line comments are not supported on lines
+# containing other data (so '#' characters can be used in field values).
+# Comments are not allowed within records (i.e., between a '{' line and a
+# '}' line) unless the '-end-of-line-comments' option is given.
 #
 # An empty line terminates a comment block but is otherwise ignored.
 # 
@@ -1587,6 +1603,7 @@ sub Read_Records(@) {
     my $filename = 'input file';
     my $multiple = 1;
     my $keep_comments = 0;
+    my $end_of_line_comments = 0;
     my $allow_empty = 0;
     for (my $i = 0; $i <= $#_; $i ++) {
         if ($_[$i] eq '-single') {
@@ -1597,6 +1614,9 @@ sub Read_Records(@) {
         }
         elsif ($_[$i] eq '-keep-comments') {
             $keep_comments = 1;
+        }
+        elsif ($_[$i] eq '-end-of-line-comments') {
+            $end_of_line_comments = 1;
         }
         elsif ($_[$i] eq '-allow-empty') {
             $allow_empty = 1;
@@ -1618,6 +1638,9 @@ sub Read_Records(@) {
     }
     if ($keep_comments and not $multiple) {
         die "GX::Read_Records: Usage error, -keep-comments vs. -single\n";
+    }
+    if ($keep_comments and $end_of_line_comments) {
+        die "GX::Read_Records: Usage error, -keep-comments vs. -end-of-line-comments\n";
     }
 
     #
@@ -1660,6 +1683,10 @@ sub Read_Records(@) {
     LINE:
     while (<$FILE>) {
         chomp;
+        if ($end_of_line_comments) {
+            s/#.*$//;
+        }
+
         s/^\s+//;
         s/\s+$//;
 
