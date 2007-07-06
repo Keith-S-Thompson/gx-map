@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.67 2007-07-05 18:33:05-07 kst Exp $
+# $Id: configure-gx-map,v 1.68 2007-07-05 19:27:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -128,15 +128,6 @@ my @Var_Names
           GX_PROPAGATE
           EXTRAS );
 my %Valid_Var_Name = map { $_ => 1 } @Var_Names;
-my @Required_Var_Names
-    = qw( PERL
-          NAMESPACE
-          INSTALL_DIR
-          DATA_DIR
-          GX_MAP_OWNER
-          GX_PROPAGATE
-          EXTRAS );
-my %Required_Var_Name = map { $_ => 1 } @Required_Var_Names;
 my %May_Be_Empty
     = map { $_ => 1 }
           qw( ADDITIONAL_ADMINS
@@ -332,6 +323,9 @@ if (defined $Config->{ADMIN_EMAIL}) {
     if ($Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
         push @errors, "Bad ADMIN_EMAIL $Config->{ADMIN_EMAIL}\n";
     }
+}
+else {
+    push @errors, "No value specified for ADMIN_EMAIL\n";
 }
 
 #
