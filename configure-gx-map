@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.66 2007-07-02 16:56:19-07 kst Exp $
+# $Id: configure-gx-map,v 1.67 2007-07-05 18:33:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -142,6 +142,16 @@ my %May_Be_Empty
           qw( ADDITIONAL_ADMINS
               GX_PROPAGATE
               CERTIFICATES_DIR
+              EXTRAS );
+my %Immutable
+    = map { $_ => 1 }
+          qw( PERL
+              NAMESPACE
+              INSTALL_DIR
+              DATA_DIR
+              REQUESTS_LOG_PERMISSIONS
+              GX_MAP_OWNER
+              GX_PROPAGATE
               EXTRAS );
 
 my $Config = {};
@@ -551,17 +561,11 @@ sub Write_Config_File() {
         if (/^(\w+)\s*$/) {
             my $name = $1;
             Debug "Line $., \$name = \"$name\"\n";
-#           printf $OUT "%-25s %s\n",
-#                       $name,
-#                       ( defined $Config->{$name}
-#                         ? $Config->{$name}
-#                         : 'UNDEF' );
             my $out_line
-                = sprintf "%-25s %s",
-                          $name,
-                          ( defined $Config->{$name}
-                            ? $Config->{$name}
-                            : 'UNDEF' );
+                = sprintf "%-25s %s", $name, $Config->{$name};
+            if ($Immutable{$name}) {
+                $out_line .= '  # DO NOT MODIFY THIS LINE';
+            }
             Debug "Printing to $out_file: \"$out_line\"\n";
             print $OUT "$out_line\n";
         }
