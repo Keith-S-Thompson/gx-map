@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.68 2007-07-05 19:27:23-07 kst Exp $
+# $Id: configure-gx-map,v 1.69 2007-07-05 19:34:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -325,7 +325,7 @@ if (defined $Config->{ADMIN_EMAIL}) {
     }
 }
 else {
-    push @errors, "No value specified for ADMIN_EMAIL\n";
+    push @errors, "No value specified for ADMIN_EMAIL (you can change it later)\n";
 }
 
 #
