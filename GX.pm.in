@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.67 2007-07-06 18:31:42-07 kst Exp $
+# $Id: GX.pm.in,v 1.68 2007-07-06 19:07:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -318,11 +318,6 @@ sub Set_Config(;$$) {
         die "Please edit $config_file:\n", @errors;
     }
 
-    foreach my $key (keys %$GX::Config) {
-        my $pattern = '%' . 'VERSION' . '%'; # avoid expansion
-        $GX::Config->{$key} =~ s/$pattern/$GX::VERSION/g;
-    }
-
     my $bad_modifications = 0;
     foreach my $key (qw(PERL NAMESPACE INSTALL_DIR DATA_DIR
                         GX_MAP_OWNER GX_PROPAGATE EXTRAS))
@@ -337,6 +332,11 @@ sub Set_Config(;$$) {
     }
     if ($bad_modifications) {
         push @errors, "Please correct $config_file\n";
+    }
+
+    foreach my $key (keys %$GX::Config) {
+        my $pattern = '%' . 'VERSION' . '%'; # avoid expansion
+        $GX::Config->{$key} =~ s/$pattern/$GX::VERSION/g;
     }
 
     #
