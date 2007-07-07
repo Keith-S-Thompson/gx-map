@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.70 2007-07-06 18:01:57-07 kst Exp $
+# $Id: configure-gx-map,v 1.71 2007-07-06 18:31:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -519,7 +519,7 @@ sub Get_Config_From_File($) {
                 chomp $@;
                 push @errors, "$@, $Config_File line $.\n";
             }
-            $value =~ s/%VERSION%/$version/g;
+            # $value =~ s/%VERSION%/$version/g;
             if ($Valid_Var_Name{$name}) {
                 if (exists $Config->{$name}) {
                     push @errors,
@@ -779,12 +779,12 @@ Usage: $Program_Name options [filename]
     -namespace          Namespace for this installation.
                         Required.
     -install-dir        Installation directory; required.
-                        The string "%VERSION" is replaced with the gx-map
-                        version number.
+                        The string "%VERSION%" will be replaced with the
+                        gx-map version number.
     -prefix             A synonym for "-install-dir".
     -data-dir           Data directory.
-                        The string "%VERSION" is replaced with the gx-map
-                        version number.
+                        The string "%VERSION%" will be replaced with the
+                        gx-map version number.
                         Default is installation directory with "-data"
                         appended.
     -request-log-permissions
