@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.71 2007-07-06 18:31:07-07 kst Exp $
+# $Id: configure-gx-map,v 1.72 2007-07-07 14:51:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -460,9 +460,10 @@ foreach my $in_file (@in_files) {
         foreach my $var (@Var_Names) {
             s/%$var%/$Config->{$var}/g;
         }
-        if (/(%[A-Za-z_]\w+%)/ and $1 ne '%VERSION%') {
-            warn ">>> Unrecognized variable $1, $in_file line $.\n";
-        }
+        s/%VERSION%/$version/g;
+#       if (/(%[A-Za-z_]\w+%)/ and $1 ne '%VERSION%') {
+#           warn ">>> Unrecognized variable $1, $in_file line $.\n";
+#       }
         print OUT;
     }
     close IN;
