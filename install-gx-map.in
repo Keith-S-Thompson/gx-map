@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.95 2007-07-06 18:31:25-07 kst Exp $
+# $Id: install-gx-map.in,v 1.96 2007-07-06 19:01:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -84,8 +84,8 @@ if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
 fi
 
 VERSION=`./get-version`
-INSTALL_DIR="`echo $INSTALL_DIR | sed 's/%VERSION%/$VERSION/g'`
-DATA_DIR="`echo $DATA_DIR | sed 's/%VERSION%/$VERSION/g'`
+INSTALL_DIR="`echo $INSTALL_DIR | sed "s/%VERSION%/$VERSION/g"`
+DATA_DIR="`echo $DATA_DIR | sed "s/%VERSION%/$VERSION/g"`
 
 BIN_FILES="gx-map gx-request"
 SBIN_FILES="gx-admins gx-ca-update gx-check-cadesc gx-check-index gx-check-requests gx-cleanup-logs gx-convert-log gx-cron-job gx-gen-mapfile gx-ingest gx-install-cadesc gx-remove-locks gx-util-test gx-watch-locks"
