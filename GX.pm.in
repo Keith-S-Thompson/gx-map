@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.70 2007-07-07 14:07:57-07 kst Exp $
+# $Id: GX.pm.in,v 1.71 2007-07-07 14:51:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -230,11 +230,7 @@ sub Debugf(@);
 #
 sub Config_Error($) {
     my($key) = @_;
-    my $initial_value = $GX::Initial_Config->{$key};
-    if ($key eq 'INSTALL_DIR' or $key eq 'DATA_DIR') {
-        $initial_value =~ s/%VERSION%/$GX::VERSION/g;
-    }
-    if ($GX::Config->{$key} eq $initial_value) {
+    if ($GX::Config->{$key} eq $GX::Initial_Config->{$key}) {
         return (); # no error
     }
     else {
@@ -243,6 +239,15 @@ sub Config_Error($) {
 
     }
 } # Config_Error
+
+# ----------------------------------------------------------------------
+
+sub Substitute_Version($) {
+    my($s) = @_;
+    my $pattern = '%' . 'VERSION' . '%';
+    $s =~ s/$pattern/$GX::VERSION/g;
+    return $s;
+} # Substitute_Version
 
 # ----------------------------------------------------------------------
 
@@ -271,7 +276,7 @@ sub Set_Config(;$$) {
     if (not defined $config_file) {
         $config_file
             = "$GX::Initial_Config->{INSTALL_DIR}/etc/gx-map/gx-map.conf";
-        $config_file =~ s/%VERSION%/$GX::VERSION/g;
+        $config_file = GX::Substitute_Version $config_file;
     }
 
     my %required =
@@ -323,6 +328,10 @@ sub Set_Config(;$$) {
         die "Please edit $config_file:\n", @errors;
     }
 
+    foreach my $key (keys %$GX::Config) {
+        $GX::Config->{$key} = GX::Substitute_Version $GX::Config->{$key};
+    }
+
     my $bad_modifications = 0;
     foreach my $key (qw(PERL NAMESPACE INSTALL_DIR DATA_DIR
                         GX_MAP_OWNER GX_PROPAGATE EXTRAS))
@@ -337,10 +346,6 @@ sub Set_Config(;$$) {
     }
     if ($bad_modifications) {
         push @errors, "Please correct $config_file\n";
-    }
-
-    foreach my $key (keys %$GX::Config) {
-        $GX::Config->{$key} =~ s/%VERSION%/$GX::VERSION/g;
     }
 
     #
