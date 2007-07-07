@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.69 2007-07-05 19:34:40-07 kst Exp $
+# $Id: configure-gx-map,v 1.70 2007-07-06 18:01:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -227,7 +227,9 @@ if (defined $Config->{NAMESPACE}) {
     }
 }
 else {
-    push @errors, "No value specified for NAMESPACE\n";
+    push @errors, "No value specified for NAMESPACE\n",
+                  "    Use \"-namespace\" option\n";
+
 }
 
 #
@@ -239,7 +241,8 @@ if (defined $Config->{INSTALL_DIR}) {
     }
 }
 else {
-    push @errors, "No value specified for INSTALL_DIR (prefix)\n";
+    push @errors, "No value specified for INSTALL_DIR\n",
+                  "    Use \"-install-dir\" or \"-prefix\" option\n";
 }
 
 #
@@ -325,7 +328,9 @@ if (defined $Config->{ADMIN_EMAIL}) {
     }
 }
 else {
-    push @errors, "No value specified for ADMIN_EMAIL (you can change it later)\n";
+    push @errors,
+         "No value specified for ADMIN_EMAIL (you can change it later)\n",
+         "    Use \"-admin-email\" option\n";
 }
 
 #
@@ -455,8 +460,8 @@ foreach my $in_file (@in_files) {
         foreach my $var (@Var_Names) {
             s/%$var%/$Config->{$var}/g;
         }
-        if (/%[A-Za-z_]\w+%/) {
-            warn ">>> Unrecognized variable $&, $in_file line $.\n";
+        if (/(%[A-Za-z_]\w+%)/ and $1 ne '%VERSION%') {
+            warn ">>> Unrecognized variable $1, $in_file line $.\n";
         }
         print OUT;
     }
