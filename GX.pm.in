@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.68 2007-07-06 19:07:00-07 kst Exp $
+# $Id: GX.pm.in,v 1.69 2007-07-06 20:08:40-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -267,6 +267,7 @@ sub Set_Config(;$$) {
     if (not defined $config_file) {
         $config_file
             = "$GX::Initial_Config->{INSTALL_DIR}/etc/gx-map/gx-map.conf";
+        $config_file =~ s/%VERSION%/$GX::VERSION/g;
     }
 
     my %required =
@@ -335,8 +336,7 @@ sub Set_Config(;$$) {
     }
 
     foreach my $key (keys %$GX::Config) {
-        my $pattern = '%' . 'VERSION' . '%'; # avoid expansion
-        $GX::Config->{$key} =~ s/$pattern/$GX::VERSION/g;
+        $GX::Config->{$key} =~ s/%VERSION%/$GX::VERSION/g;
     }
 
     #
