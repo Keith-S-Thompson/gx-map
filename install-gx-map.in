@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.96 2007-07-06 19:01:33-07 kst Exp $
+# $Id: install-gx-map.in,v 1.97 2007-07-06 19:19:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -54,14 +54,16 @@ verbosely () {
     if [ $? -ne 0 ] ; then exit 1 ; fi
 }
 
-INSTALL_DIR=%INSTALL_DIR%
+VERSION=`./get-version`
+
+INSTALL_DIR=`echo '%INSTALL_DIR%' | sed "s/%VERSION%/$VERSION/g"`
 BIN_DIR=$INSTALL_DIR/bin
 SBIN_DIR=$INSTALL_DIR/sbin
 LIB_DIR=$INSTALL_DIR/lib
 ETC_DIR=$INSTALL_DIR/etc/gx-map
 DOC_DIR=$INSTALL_DIR/doc
 MAN_DIR=$INSTALL_DIR/man
-DATA_DIR=%DATA_DIR%
+DATA_DIR=`echo '%DATA_DIR%' | sed "s/%VERSION%/$VERSION/g"`
 GX_MAP_OWNER=%GX_MAP_OWNER%
 GX_PROPAGATE=%GX_PROPAGATE%
 EXTRAS=%EXTRAS%
@@ -83,7 +85,6 @@ if [ "$whoami" != "$GX_MAP_OWNER" ] ; then
     exit 1
 fi
 
-VERSION=`./get-version`
 INSTALL_DIR="`echo $INSTALL_DIR | sed "s/%VERSION%/$VERSION/g"`
 DATA_DIR="`echo $DATA_DIR | sed "s/%VERSION%/$VERSION/g"`
 
