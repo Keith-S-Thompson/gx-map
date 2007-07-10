@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.72 2007-07-07 14:51:03-07 kst Exp $
+# $Id: configure-gx-map,v 1.73 2007-07-09 17:41:17-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -147,6 +147,17 @@ my %Immutable
 
 my $Config = {};
 my @errors = ();
+
+if ($User_Opt->{teragrid}) {
+    if (defined $User_Opt->{'gx-propagate'} or
+        defined $User_Opt->{extras})
+    {
+        Usage "Don't use \"-teragrid\" with " .
+              "\"-gx-propagate\" or \"-extras\"\n";
+    }
+    $User_Opt->{'gx-propagate'} = 'gx-propagate.in.teragrid';
+    $User_Opt->{extras}         = 'TGCDB';
+}
 
 #
 # First, get values from config file, if any.
