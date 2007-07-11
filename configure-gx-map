@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.73 2007-07-09 17:41:17-07 kst Exp $
+# $Id: configure-gx-map,v 1.74 2007-07-10 20:16:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -374,16 +374,20 @@ else {
 #
 # GX_PROPAGATE defaults to the empty string.
 #
-# TODO: Allow values other than 'gx-propagate.in.teragrid' and
-# 'gx-propagate.in.test'.
-#
 if (defined $Config->{GX_PROPAGATE}) {
-    my %ok = map { $_ => 1 }
-                 ( '',
-                   'gx-propagate.in.teragrid',
-                   'gx-propagate.in.test' );
-    if (not $ok{$Config->{GX_PROPAGATE}}) {
-        push @errors, "Bad value for GX_PROPAGATE\n";
+    my $basename = File::Basename::basename $Config->{GX_PROPAGATE};
+    if ($basename ne $Config->{GX_PROPAGATE} and
+        $Config->{GX_PROPAGATE} !~ /^\//)
+    {
+        push @errors, "Bad value for GX_PROPAGATE " .
+                      "(use absolute path name or simple file name)\n";
+    }
+    elsif ($basename !~ /^gx-propagate\.in\..*$/) {
+        push @errors, "Bad value for GX_PROPAGATE " .
+                      "(must match \"gx-propagate.in.*\")\n";
+    }
+    if (not -e $Config->{GX_PROPAGATE}) {
+        push @errors, "Bad value for  GX_PROPAGATE, file not found\n";
     }
 }
 else {
