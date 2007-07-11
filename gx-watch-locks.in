@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-watch-locks.in,v 1.8 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-watch-locks.in,v 1.9 2007-07-11 16:08:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-watch-locks.in,v $
 
 ########################################################################
@@ -170,7 +170,10 @@ sub Lock_File_Info($$$) {
     $result->{age} = $now - $result->{mtime};
 
     open my $FILE, '<', "$dir/$filename" or return undef;
-    chomp($result->{content} = scalar <$FILE>);
+    chomp($result->{content} = join '', <$FILE>);
+    #
+    # Chomping just removes the last newline (if any).
+    #
     close $FILE;
 
     return $result;
