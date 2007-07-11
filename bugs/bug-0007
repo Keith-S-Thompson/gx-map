@@ -1,4 +1,4 @@
-# $Id: bug-0007,v 1.5 2006-09-02 13:13:14-07 kst Exp $
+# $Id: bug-0007,v 1.6 2007-07-10 20:41:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0007,v $
 
 gx-map bug 0007
@@ -6,7 +6,7 @@ Date: Thu 2005-03-24
 Severity: Medium
 Reported by: Keith Thompson <kst@sdsc.edu>
 Version: 0.4.1
-Status: Open
+Status: Fixed 0.5.9.028
 Title: New configuration system
 
 Summary:
@@ -45,3 +45,7 @@ See also "new-config" in the gx-map CVS directory.
 Proposed first step: Leave the configuration and installation method
 as it is, but read the configuration from the config file at run time,
 allowing changes in *some* options to be made by editing the file.
+
+Fixed:
+gx-map release 0.5.9.028
+There's probably more work to do on this, but it's basically finished.
