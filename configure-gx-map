@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.74 2007-07-10 20:16:12-07 kst Exp $
+# $Id: configure-gx-map,v 1.75 2007-07-10 20:20:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -374,7 +374,7 @@ else {
 #
 # GX_PROPAGATE defaults to the empty string.
 #
-if (defined $Config->{GX_PROPAGATE}) {
+if (defined $Config->{GX_PROPAGATE} and $Config->{GX_PROPAGATE} ne '') {
     my $basename = File::Basename::basename $Config->{GX_PROPAGATE};
     if ($basename ne $Config->{GX_PROPAGATE} and
         $Config->{GX_PROPAGATE} !~ /^\//)
