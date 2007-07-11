@@ -1,0 +1,73 @@
+# $Id: new-config,v 1.1 2007-07-10 20:40:22-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/new-config,v $
+
+Modify configure-gx-map so it takes command-line arguments specifying
+the various configuration variables.  This creates a config file
+to be installed in the INSTALL_DIR.
+
+Specify all of them, and you're done.  Leave some out, and it creates
+a config file setting them to "UNDEF", which triggers a run-time
+message reminding you to update the config file.
+
+PERL
+	Defaults to first of
+	    /usr/bin/perl
+	    /usr/local/bin/perl
+	that exists and is at least 5.006
+
+PATH
+	If not specified:
+	Start with /bin:/usr/bin (unless they're the same
+	directory, then start with just /usr/bin).
+	If any of the required commands are missing, add
+	/usr/local/bin if it helps.
+	If any of the required commands are still missing,
+	set to UNDEF and put a comment in the config file.
+
+NAMESPACE
+	Default to UNDEF
+
+INSTALL_DIR
+	Mandatory.  Allow "--prefix=dir".
+
+DATA_DIR
+	Mandatory.
+
+REQUESTS_LOG_PERMISSIONS
+	Default to 444.
+
+GLOBUS_ADMINS
+	Default to "globus" if the account exists.
+
+ADMIN_EMAIL
+	Default to UNDEF
+
+VALID_MAPPINGS_FILE
+	Commented out by default.
+
+========================================================================
+
+Another idea: In addition to PATH, optionally allow locations of
+individual commands to be specified.  (For example, this lets gx-map
+use /usr/local/bin/wget without adding /usr/local/bin to PATH.)
+
+Something like
+
+COMMAND wget /usr/local/bin/wget
+COMMAND ncftpget /usr/local/bin/ncftpget
+
+During configuration, don't automatically add /usr/local/bin to PATH;
+if needed commands are found there, configure them separately.
+
+Hmm.  Maybe we should drop PATH altogether and use full pathnames
+for all external commands.  (Still need to set $PATH to something
+reasonable for tainting purposes, but it doesn't need to be visibly
+configurable.)
+
+========================================================================
+
+We need to be able to specify an existing DATA_DIR.  If it exists,
+just set up the symlink (probably do some checking).  Question,
+should we specify that it exists?  Given the new scheme, yes, it's
+just a command-line argument; no point in specifying it in gx-map.conf,
+since the directory exists by that time anyway.
