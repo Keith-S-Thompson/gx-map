@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.15 2007-07-10 21:12:04-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.16 2007-07-10 21:14:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -200,7 +200,7 @@ sub Expire_Files($) {
         my $ref = GX::Read_Records '-single', "$dir/$file";
         if (defined $ref->{CERT_EXPIRES}) {
             my $expires = GX::Time_Value $ref->{CERT_EXPIRES};
-            if (define $expires and $expires < $Now) {
+            if (defined $expires and $expires < $Now) {
                 rename "$dir/$file", "$dir/EXPIRED/$file";
             }
         }
