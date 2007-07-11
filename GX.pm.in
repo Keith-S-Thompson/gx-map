@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.77 2007-07-10 21:13:01-07 kst Exp $
+# $Id: GX.pm.in,v 1.78 2007-07-11 16:06:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -3471,7 +3471,7 @@ sub Die_Handler($) {
     if (defined $GX::Lock_File_Name and
         open my $LOCK, '>>', $GX::Lock_File_Name)
     {
-        print $LOCK, $message;
+        print $LOCK $message;
         close $LOCK;
     }
 
