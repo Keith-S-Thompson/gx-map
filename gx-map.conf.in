@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.10 2007-07-05 19:23:35-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.11 2007-07-10 20:15:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -151,6 +151,10 @@ CERTIFICATES_DIR
 # implementation.  (Currently, the distribution includes a dummy test
 # version, "gx-propagate.in.test", and a TeraGrid-specific version,
 # "gx-propagate.in.teragrid").  This may be left empty.
+#
+# If you want to provide your own implementation, its name must begin
+# with "gx-propagate.in.".  You can either provide a full pathname, or
+# copy the file to the source directory before running "configure-gx-map".
 #
 GX_PROPAGATE
 
