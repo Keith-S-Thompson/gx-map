@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.74 2007-07-10 20:16:24-07 kst Exp $
+# $Id: GX.pm.in,v 1.75 2007-07-10 20:50:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -88,12 +88,15 @@ BEGIN {
                  $Debugging
                  $Initial_Config
                  $Config
-                 $Registered_Handler_Function );
+                 $Registered_Handler_Function
+                 $Lock_File_Name );
 
     #
     # The layout of the following line is significant; see configure-gx-map.
     #
     $VERSION = '0.5.9.028';
+
+    undef $Lock_File_Name;
 
     $Debugging = undef; 
     $Initial_Config =
@@ -3363,6 +3366,7 @@ sub Get_Lock($) {
         # Got lock
         #
         unlink $unique_lock_file;
+        $GX::Lock_File_Name = $lock_file;
     }
     else {
         my $link_error = $!;
@@ -3376,6 +3380,7 @@ sub Get_Lock($) {
             # starting Thu 2006-04-06.
             #
             unlink $unique_lock_file;
+            $GX::Lock_File_Name = $lock_file;
             return;
         }
         else {
@@ -3420,6 +3425,7 @@ sub Release_Lock($) {
     my $lock_file = "$dir/.$name.lock";
     GX::Untaint $lock_file;
     unlink $lock_file or die "$lock_file: $!\n";
+    undef $GX::Lock_File_Name;
 } # Release_Lock
 
 # ----------------------------------------------------------------------
@@ -3427,11 +3433,13 @@ sub Release_Lock($) {
 sub Die_Handler($) {
     die @_ if $^S;
 
+    my $message = '';
+
     if (defined $GX::Registered_Handler_Function) {
         &$GX::Registered_Handler_Function;
     }
 
-    print STDERR $_[0];
+    $message .= $_[0];
 
     my @traceback = ();
 
@@ -3445,17 +3453,26 @@ sub Die_Handler($) {
         $i++;
     }
 
-    print STDERR "Traceback:\n";
+    $message .= "Traceback:\n";
     for (my $i = 0; $i <= $#traceback; $i++) {
         my $curr = $traceback[$i];
         if ($i < $#traceback) {
             my $next = $traceback[$i+1];
-            print STDERR "    $curr->{file}:$curr->{line} in ",
-                         "$next->{subname}\n";
+            $message
+                .= "    $curr->{file}:$curr->{line} in $next->{subname}\n";
         }
         else {
-            print STDERR "    $curr->{file}:$curr->{line}\n";;
+            $message .=  "    $curr->{file}:$curr->{line}\n";
         }
+    }
+
+    print STDERR $message;
+
+    if (defined $GX::Lock_File_Name and
+        open my $LOCK, '>>', $GX::Lock_File_Name)
+    {
+        print $LOCK, $message;
+        close $LOCK;
     }
 
     exit 1;
