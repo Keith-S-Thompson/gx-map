@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.102 2007-07-11 19:35:15-07 kst Exp $
+# $Id: install-gx-map.in,v 1.103 2007-07-11 19:41:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -229,12 +229,7 @@ if [ ! -f "$cadesc_tarball" ] ; then
     echo "Can't find cadesc tarball" 1>&2
     exit 1
 fi
-if [ $verbose -eq 1 ] ; then
-    verbose_arg='-verbose'
-else
-    verbose_arg=''
-fi
-try $SBIN_DIR/gx-install-cadesc $verbose_arg -primary $cadesc_tarball
+try $SBIN_DIR/gx-install-cadesc -primary $cadesc_tarball
 
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
     cat <<EOF
