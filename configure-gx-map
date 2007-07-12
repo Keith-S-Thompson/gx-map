@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.75 2007-07-10 20:20:57-07 kst Exp $
+# $Id: configure-gx-map,v 1.76 2007-07-11 17:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -81,6 +81,7 @@ my $User_Opt = {};
 my @Opts = ( $User_Opt,
              qw( help
                  version
+                 verbose!
                  perl=s
                  path=s
                  namespace=s
@@ -428,7 +429,7 @@ if (-x 'gx-check-prereqs') {
     my @command = ( $Config->{PERL},
                     './gx-check-prereqs',
                     '-path', $Config->{PATH} );
-    if ($Config->{GX_PROPAGATE} =~ /teragrid/i) {
+    if ($Config->{GX_PROPAGATE} eq 'gx-propagate.in.teragrid') {
         push @command, '-teragrid';
     }
     print "% @command\n";
@@ -466,9 +467,12 @@ foreach my $in_file (@in_files) {
     $max_len = length $in_file if length $in_file > $max_len;
 }
 
+print "... Processing ", scalar @in_files, " *.in files\n";
 foreach my $in_file (@in_files) {
     my $out_file = $out_file{$in_file};
-    printf "%-${max_len}s --> %s\n", $in_file, $out_file;
+    if ($User_Opt->{verbose}) {
+        printf "%-${max_len}s --> %s\n", $in_file, $out_file;
+    }
     open IN, $in_file or die "$in_file: $!\n";
     open OUT, ">$out_file" or die "$out_file: $!\n";
     while (<IN>) {
@@ -757,6 +761,7 @@ sub Make_Man_Pages() {
     foreach my $pod (@pods) {
         $max_len = length "doc/$pod" if length "doc/$pod" > $max_len;
     }
+    print "... Processing ", scalar @pods, " *.pod files\n";
     foreach my $pod (@pods) {
         if ($pod =~ /^(.*)\.(\d)\.pod$/) {
             my($name, $section) = ($1, $2);
@@ -767,7 +772,9 @@ sub Make_Man_Pages() {
                             '--center', "'$center{$section}'",
                             '--name', $name,
                             "doc/$pod" );
-            printf "%-${max_len}s --> %s\n", "doc/$pod", "doc/$man_page";
+            if ($User_Opt->{verbose}) {
+                printf "%-${max_len}s --> %s\n", "doc/$pod", "doc/$man_page";
+            }
             system "@command > doc/$man_page";
         }
     }
@@ -787,6 +794,7 @@ sub Usage(@) {
 Usage: $Program_Name options [filename]
     -help               Display this message and exit.
     -version            Display the gx-map version number and exit.
+    -verbose            Show message for each file as it's processed.
     -perl               Location of the Perl executable.
                         Default is "/usr/bin/perl".
     -path               Value for \$PATH
