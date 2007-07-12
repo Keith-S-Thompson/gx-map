@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.101 2007-07-11 18:31:33-07 kst Exp $
+# $Id: install-gx-map.in,v 1.102 2007-07-11 19:35:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -232,7 +232,7 @@ fi
 if [ $verbose -eq 1 ] ; then
     verbose_arg='-verbose'
 else
-    $verbose_arg=''
+    verbose_arg=''
 fi
 try $SBIN_DIR/gx-install-cadesc $verbose_arg -primary $cadesc_tarball
 
