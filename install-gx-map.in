@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.100 2007-07-11 17:41:45-07 kst Exp $
+# $Id: install-gx-map.in,v 1.101 2007-07-11 18:31:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -164,7 +164,9 @@ else
     echo '# $Id'':$' > $DATA_DIR/requests.log
     echo '# $Source'':$' >> $DATA_DIR/requests.log
     echo '' >> $DATA_DIR/requests.log
-    try_quietly cat $DATA_DIR/requests.log
+    if [ $verbose -eq 1 ] ; then
+        try cat $DATA_DIR/requests.log
+    fi
     try_quietly chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 fi
 
