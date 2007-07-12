@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.33 2007-07-06 19:46:37-07 kst Exp $
+# $Id: make-release,v 1.34 2007-07-11 18:32:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -8,41 +8,68 @@ try() {
     eval "$@" || exit 1
 }
 
-today=`date +%Y-%m-%d`
+try_quietly() {
+    if [ $verbose -eq 1 ] ; then
+        echo "% $@"
+    fi
+    eval "$@" || exit 1
+}
 
-if [ $# -eq 0 ] ; then
-    num=`./get-version`
-elif [ $# -eq 1 ] ; then
-    case "$1" in
+verbose=0
+force=0
+num=''
+
+for arg in "$@" ; do
+    case "$arg" in
+        -verbose)
+            verbose=1
+            ;;
+        -force)
+            force=1
+            ;;
         [0-9]*)
-            num=$1
+            num=$arg
             ;;
         *)
-            echo "Usage: $0 [num]" 1>&2
+            echo "Usage: $0 [-verbose] [num]"
             exit 1
             ;;
     esac
-else
-    echo "Usage: $0 [num]" 1>&2
-    exit 1
+done
+if [ "$num" = "" ] ; then
+    num=`./get-version`
 fi
-
 if [ "$num" = "" ] ; then
     echo "Error getting version" 1>&2
-    echo "Usage: $0 [num]" 1>&2
+    echo "Usage: $0 [-verbose] [num]" 1>&2
     exit 1
 fi
 
+today=`date +%Y-%m-%d`
+
 if [ -f release/gx-map-$num.tar.gz ] ; then
-    echo "release/gx-map-$num.tar.gz already exists" 1>&2
-    exit 1
+    if [ $force -eq 1 ] ; then
+        try rm -f release/gx-map-$num.tar.gz
+    else
+        echo "release/gx-map-$num.tar.gz already exists" 1>&2
+        exit 1
+    fi
 fi
 
 cadesc_tarball=gx-map-cadesc-$today.tar.gz
 if [ -f release/$cadesc_tarball ] ; then
-    echo ">>> Using existing $cadesc_tarball"
+    if [ $force -eq 0 ] ; then
+        echo ">>> Using existing $cadesc_tarball"
+    fi
 else
-    try ./make-cadesc-release
+    opts=''
+    if [ $force -eq 1 ] ; then
+        opts="$opts -force"
+    fi
+    if [ $verbose -eq 1 ] ; then
+        opts="$opts -verbose"
+    fi
+    try ./make-cadesc-release $opts
 fi
 
 in_files=*.in
@@ -56,28 +83,32 @@ other_files="INSTALL LICENSE Makefile README README.TeraGrid \
 try mkdir release/gx-map-$num
 try cd release/gx-map-$num
 
+echo "... Copying *.in files"
 for file in $in_files ; do
-    try cp -p ../../$file .
+    try_quietly cp -p ../../$file .
 done
+echo "... Copying other files"
 for file in $other_files ; do
-    try cp -p ../../$file .
+    try_quietly cp -p ../../$file .
 done
 
 try cp -p ../$cadesc_tarball .
 
 try mkdir bugs
 try cd bugs
+echo "... Copying bug-???? files"
 ls ../../../bugs | grep '^bug-....$' | \
     while read file ; do
-        try cp -p ../../../bugs/$file .
+        try_quietly cp -p ../../../bugs/$file .
     done
 try cd ..
 
 try mkdir doc
 try cd doc
+echo "... Copying *.pod files"
 ls ../../../doc | grep '\.pod$' | \
     while read file ; do
-        try cp -p ../../../doc/$file .
+        try_quietly cp -p ../../../doc/$file .
     done
 try cd ..
 
