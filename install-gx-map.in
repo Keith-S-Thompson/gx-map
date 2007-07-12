@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.99 2007-07-07 14:51:04-07 kst Exp $
+# $Id: install-gx-map.in,v 1.100 2007-07-11 17:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -48,11 +48,33 @@
 # Developed by Keith Thompson <kst@sdsc.edu>
 ########################################################################
 
-verbosely () {
+try () {
     echo "% $@"
     "$@"
     if [ $? -ne 0 ] ; then exit 1 ; fi
 }
+
+try_quietly () {
+    if [ $verbose -eq 1 ] ; then
+        echo "% $@"
+    fi
+    "$@"
+    if [ $? -ne 0 ] ; then exit 1 ; fi
+}
+
+verbose=0
+
+for arg in "$@" ; do
+    case "$arg" in
+        -verbose)
+            verbose=1
+            ;;
+        *)
+            echo "Usage: $0 [-verbose]\n"
+            exit 1
+            ;;
+    esac
+done
 
 VERSION=`./get-version`
 VERSION_PATTERN='%'VERSION'%' # avoid expansion here
@@ -93,6 +115,11 @@ RESTRICTED_SBIN_FILES="gx-ca-update gx-check-index gx-check-requests gx-cron-job
 LIB_FILES="GX.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes auto.txt gx-map.conf"
 
+echo "... Creating directories, starting with"
+echo "    $INSTALL_DIR"
+echo "and"
+echo "    $DATA_DIR"
+
 for dir in $INSTALL_DIR \
            $BIN_DIR \
            $SBIN_DIR \
@@ -114,8 +141,8 @@ for dir in $INSTALL_DIR \
            $DATA_DIR/ca-index/RCS
 do
     if [ ! -d $dir ] ; then
-        verbosely mkdir -p  $dir
-        verbosely chmod 755 $dir
+        try_quietly mkdir -p  $dir
+        try_quietly chmod 755 $dir
     fi
 done
 
@@ -124,95 +151,75 @@ if [ "$EXTRAS" = "TGCDB" ] ; then
                $DATA_DIR/old-db-requests
     do
         if [ ! -d $dir ] ; then
-            verbosely mkdir -p  $dir
-            verbosely chmod 755 $dir
+            try_quietly mkdir -p  $dir
+            try_quietly chmod 755 $dir
         fi
     done
 fi
 
-# verbosely touch $DATA_DIR/requests.log
+echo "... Creating requests.log"
 if [ -f $DATA_DIR/requests.log ] ; then
     echo $DATA_DIR/requests.log already exists
 else
     echo '# $Id'':$' > $DATA_DIR/requests.log
     echo '# $Source'':$' >> $DATA_DIR/requests.log
     echo '' >> $DATA_DIR/requests.log
-    verbosely cat $DATA_DIR/requests.log
-    verbosely chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
+    try_quietly cat $DATA_DIR/requests.log
+    try_quietly chmod %REQUESTS_LOG_PERMISSIONS% $DATA_DIR/requests.log
 fi
 
+echo "... Copying files to $BIN_DIR"
 for file in $BIN_FILES ; do 
-    verbosely cp -f $file  $BIN_DIR/.
+    try_quietly cp -f $file  $BIN_DIR/.
 done
+echo "... Copying files to $SBIN_DIR"
 for file in $SBIN_FILES ; do
-    verbosely cp -f $file $SBIN_DIR/.
+    try_quietly cp -f $file $SBIN_DIR/.
 done
 for file in $OPTIONAL_SBIN_FILES ; do
     if [ -f $file ] ; then
-        verbosely cp -f $file $SBIN_DIR/.
+        try_quietly cp -f $file $SBIN_DIR/.
     fi
 done
 for file in $RESTRICTED_SBIN_FILES ; do
     if [ -f $SBIN_DIR/$file ] ; then
-        verbosely chmod 744 $SBIN_DIR/$file
+        try_quietly chmod 744 $SBIN_DIR/$file
     fi
 done
+echo "... Copying files to $LIB_DIR"
 for file in $LIB_FILES ; do
-    verbosely cp -f $file  $LIB_DIR/.
+    try_quietly cp -f $file  $LIB_DIR/.
 done
+echo "... Copying files to $ETC_DIR"
 for file in $ETC_FILES ; do
-    verbosely cp -f $file  $ETC_DIR/.
+    try_quietly cp -f $file  $ETC_DIR/.
 done
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" -o  \
      "$EXTRAS" = "TGCDB" ]
 then
-    verbosely cp -f tgcdb.db-config $ETC_DIR/.
-    verbosely chmod 600 $ETC_DIR/tgcdb.db-config
+    try_quietly cp -f tgcdb.db-config $ETC_DIR/.
+    try_quietly chmod 600 $ETC_DIR/tgcdb.db-config
 fi
+echo "... Copying files to $DOC_DIR"
 for file in doc/*.pod ; do
-    verbosely cp -p $file $DOC_DIR/.
+    try_quietly cp -p $file $DOC_DIR/.
 done
+echo "... Copying files to $MAN_DIR"
 for section in 1 3 5 7 8 ; do
     for file in doc/*.$section ; do
         if [ -f "$file" ] ; then
-            verbosely cp -f $file $MAN_DIR/man$section/.
+            try_quietly cp -f $file $MAN_DIR/man$section/.
         fi
     done
 done
-# #
-# # There are a *lot* of *.cadesc files.  To avoid possible problems with
-# # overly long command lines, don't store all the names in a variable.
-# #
-# ls ca | grep '\.cadesc$' | \
-#     while read file ; do
-#         verbosely cp -f ca/$file $ETC_DIR/ca-config/.
-#     done
-if [ -r .config-file ] ; then
-    config_file=`cat .config-file`
-    config_file_basename=`basename $config_file`
-    echo "Copying $config_file to gx-map.conf"
-    verbosely cp $config_file $ETC_DIR/gx-map.conf
-    verbosely chmod 644 $ETC_DIR/gx-map.conf
-
-    echo "Copying $config_file to $config_file_basename"
-
-    (
-        echo "########################################################################"
-        echo "# THIS COPY OF THE CONFIGURATION FILE IS INCLUDED HERE FOR REFERENCE.  #"
-        echo "# MODIFYING THIS COPY WILL HAVE NO EFFECT ON THE BEHAVIOR OF GX-MAP.   #"
-        echo "########################################################################"
-        echo ""
-        cat $config_file
-    ) > $ETC_DIR/$config_file_basename
-fi
 
 if [ ! -d $DATA_DIR/new-requests ] ; then
-    verbosely mkdir -p   $DATA_DIR/new-requests
-    verbosely chmod 1733 $DATA_DIR/new-requests
+    try mkdir -p   $DATA_DIR/new-requests
+    try chmod 1733 $DATA_DIR/new-requests
 fi
 
 if [ ! -h $INSTALL_DIR/gx-map-data ] ; then
-    verbosely ln -s -f $DATA_DIR $INSTALL_DIR/gx-map-data
+    try ln -s -f $DATA_DIR $INSTALL_DIR/gx-map-data
 fi
 
 cadesc_tarball=`echo gx-map-cadesc-????-??-??.tar.gz`
@@ -220,7 +227,12 @@ if [ ! -f "$cadesc_tarball" ] ; then
     echo "Can't find cadesc tarball" 1>&2
     exit 1
 fi
-verbosely $SBIN_DIR/gx-install-cadesc -primary $cadesc_tarball
+if [ $verbose -eq 1 ] ; then
+    verbose_arg='-verbose'
+else
+    $verbose_arg=''
+fi
+try $SBIN_DIR/gx-install-cadesc $verbose_arg -primary $cadesc_tarball
 
 if [ "$GX_PROPAGATE" = "gx-propagate.in.teragrid" ] ; then
     cat <<EOF
