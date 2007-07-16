@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.83 2007-07-14 21:13:56-07 kst Exp $
+# $Id: GX.pm.in,v 1.84 2007-07-15 20:44:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -79,51 +79,50 @@ package GX;
 # separately.
 #
 
+require 5.006;
+
 my $Have_Net_Domain_Module;
 my $Have_Time_HiRes_Module;
 
-BEGIN {
-    require 5.006;
-    use vars qw( $VERSION
-                 $Debugging
-                 $Initial_Config
-                 $Config
-                 $Registered_Handler_Function
-                 $Lock_File_Name );
+use vars qw( $VERSION
+             $Debugging
+             $Initial_Config
+             $Config
+             $Registered_Handler_Function
+             $Lock_File_Name );
 
-    #
-    # The layout of the following line is significant; see configure-gx-map.
-    #
-    $VERSION = '0.5.9.034';
+#
+# The layout of the following line is significant; see configure-gx-map.
+#
+$VERSION = '0.5.9.034';
 
-    undef $Lock_File_Name;
+undef $Lock_File_Name;
 
-    $Debugging = undef; 
-    $Initial_Config =
-        { PERL                     => '%PERL%',
-          PATH                     => '%PATH%',
-          NAMESPACE                => '%NAMESPACE%',
-          INSTALL_DIR              => '%INSTALL_DIR%',
-          DATA_DIR                 => '%DATA_DIR%',
-          REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
-          GX_MAP_OWNER             => '%GX_MAP_OWNER%',
-          ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
-          ADMIN_EMAIL              => '%ADMIN_EMAIL%',
-          REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
-          CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
-          GX_PROPAGATE             => '%GX_PROPAGATE%',
-          EXTRAS                   => '%EXTRAS%' };
-    use File::Basename ();
-    use File::Path ();
-    use File::Temp ();
-    use Time::Local ();
-    use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
-    use POSIX ();
-    eval 'use Time::HiRes ()';
-    $Have_Time_HiRes_Module = ( $@ eq '' );
-    eval 'require Net::Domain';
-    $Have_Net_Domain_Module = ( $@ eq '' );
-} 
+$Debugging = undef; 
+$Initial_Config =
+    { PERL                     => '%PERL%',
+      PATH                     => '%PATH%',
+      NAMESPACE                => '%NAMESPACE%',
+      INSTALL_DIR              => '%INSTALL_DIR%',
+      DATA_DIR                 => '%DATA_DIR%',
+      REQUESTS_LOG_PERMISSIONS => '%REQUESTS_LOG_PERMISSIONS%',
+      GX_MAP_OWNER             => '%GX_MAP_OWNER%',
+      ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
+      ADMIN_EMAIL              => '%ADMIN_EMAIL%',
+      REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
+      CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
+      GX_PROPAGATE             => '%GX_PROPAGATE%',
+      EXTRAS                   => '%EXTRAS%' };
+use File::Basename ();
+use File::Path ();
+use File::Temp ();
+use Time::Local ();
+use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
+use POSIX ();
+eval 'use Time::HiRes ()';
+$Have_Time_HiRes_Module = ( $@ eq '' );
+eval 'require Net::Domain';
+$Have_Net_Domain_Module = ( $@ eq '' );
 
 # ----------------------------------------------------------------------
 
