@@ -1,4 +1,4 @@
-# $Id: GX_Request.pm.in,v 1.1 2007-07-15 20:45:28-07 kst Exp $
+# $Id: GX_Request.pm.in,v 1.2 2007-07-16 00:16:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/GX_Request.pm.in,v $
 
 ########################################################################
@@ -223,7 +223,7 @@ sub GX_Request(@) {
     # $PW is a reference to the password information (name, uid, etc)
     # of the user running this command.
     #
-    my $PW = GX::Get_PW_UID $<;
+    $PW = GX::Get_PW_UID $<;
 
     if ($PW->{uid} != $<) {
         die "Internal error, uid from passwd ($PW->{uid}) != real uid ($<)\n";
@@ -234,8 +234,8 @@ sub GX_Request(@) {
     # gx-map administrator and has not specified the "-no-admin" command-line
     # option.
     #
-    my $Is_Admin = (not $User_Opt->{'no-admin'} and
-                    GX::Is_Admin_Account $PW->{name});
+    $Is_Admin = (not $User_Opt->{'no-admin'} and
+                 GX::Is_Admin_Account $PW->{name});
     my $Options  = {};
 
     if (defined $User_Opt->{slurp}) {
