@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.34 2007-07-11 18:32:01-07 kst Exp $
+# $Id: make-release,v 1.35 2007-07-15 20:47:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -19,6 +19,8 @@ verbose=0
 force=0
 num=''
 
+usage_message="Usage: $0 [-verbose] [-force] [num]"
+
 for arg in "$@" ; do
     case "$arg" in
         -verbose)
@@ -31,7 +33,7 @@ for arg in "$@" ; do
             num=$arg
             ;;
         *)
-            echo "Usage: $0 [-verbose] [num]"
+            echo "$usage_message" 1>&2
             exit 1
             ;;
     esac
@@ -41,7 +43,7 @@ if [ "$num" = "" ] ; then
 fi
 if [ "$num" = "" ] ; then
     echo "Error getting version" 1>&2
-    echo "Usage: $0 [-verbose] [num]" 1>&2
+    echo "$usage_message" 1>&2
     exit 1
 fi
 
