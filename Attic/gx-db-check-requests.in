@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.21 2007-06-29 01:19:02-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.22 2007-07-16 17:35:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -60,6 +60,7 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
+use GX_Request ();
 
 sub Usage(@);
 sub Debug(@);
@@ -99,8 +100,6 @@ my $Data_Dir         = "$Install_Dir/gx-map-data";
 my $New_Requests_Dir = "$Data_Dir/new-db-requests";
 my $Old_Requests_Dir = "$Data_Dir/old-db-requests";
 my $Mappings_File    = "$Data_Dir/tgcdb-mappings";
-
-my $gx_request_command = "$Install_Dir/bin/gx-request";
 
 GX::Get_Lock $Program_Name;
 
@@ -239,25 +238,23 @@ my @requests = ();
 foreach my $mapping (@removed_mappings) {
     # Request 'remove', $mapping;
     my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-    push @requests, { operation => 'remove',
-                      username  => $username,
-                      dn        => qq("$dn"),
-                      source    => 'TGCDB' };
+    GX_Request::GX_Request '-remove',
+                           '-local',
+                           '-username', $username,
+                           '-dn', $dn,
+                           '-source', 'TGCDB',
+                           '-quiet';
 }
 foreach my $mapping (@added_mappings) {
     # Request 'add', $mapping;
     my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-    push @requests, { operation => 'add',
-                      username  => $username,
-                      dn        => qq("$dn"),
-                      source    => 'TGCDB' };
+    GX_Request::GX_Request '-add',
+                           '-local',
+                           '-username', $username,
+                           '-dn', $dn,
+                           '-source', 'TGCDB',
+                           '-quiet';
 }
-
-my $temp_dir = GX::Make_Temp_Dir;
-my $temp_file = "$temp_dir/requests";
-GX::Write_Records '-multiple', $temp_file, @requests;
-system $gx_request_command, '-slurp', $temp_file;
-GX::Delete_Temp_Dir $temp_dir;
 
 Cleanup;
 
