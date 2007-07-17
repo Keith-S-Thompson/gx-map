@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-ingest.in,v 1.34 2007-07-16 18:02:16-07 kst Exp $
+# $Id: gx-ingest.in,v 1.35 2007-07-16 18:03:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -136,7 +136,7 @@ if ($User_Opt->{direct}) {
             $dn = $1;
         }
         GX_Request::GX_Request
-            '-force',
+            '-quiet',
             "-$request->{operation}",
             '-username', $request->{username},
             '-dn',       $dn,
