@@ -1,5 +1,5 @@
-# $Id;$
-# $Source;$
+# $Id: renames,v 1.2 2007-07-17 18:00:19-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/renames,v $
 
 I've manually renamed some files in CVS (i.e., changed the names of
 the corresponding *,v files in the CVS repository).  This was probably
