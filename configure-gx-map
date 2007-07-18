@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.76 2007-07-11 17:41:45-07 kst Exp $
+# $Id: configure-gx-map,v 1.77 2007-07-17 18:33:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -182,8 +182,15 @@ foreach my $name (@Var_Names) {
     my $option = Option_Name $name;
     Debug "\$name = $name, \$option = $option\n";
     if (defined $User_Opt->{$option}) {
-        Debug "Setting \$Config->{$name} to \$User_Opt->{$option} = \"$User_Opt->{$option}\"\n";
+        Debug "Setting \$Config->{$name} to \$User_Opt->{$option} " .
+              "= \"$User_Opt->{$option}\"\n";
         $Config->{$name} = $User_Opt->{$option};
+        #
+        # Special case: REQUIRE_SIGNATURES must be 'yes' or 'no'.
+        #
+        if ($name eq 'REQUIRE_SIGNATURES') {
+            $Config->{$name} = $Config->{$name} ? 'yes' : 'no';
+        }
     }
 }
 Debug "Done checking command-line arguments\n";
