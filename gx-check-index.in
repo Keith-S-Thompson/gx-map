@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-index.in,v 1.16 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-check-index.in,v 1.17 2007-07-17 17:31:42-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -59,6 +59,7 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
+use GX_Request ();
 
 sub Usage(@);
 sub Debug(@);
@@ -353,33 +354,35 @@ sub Get_Index_Info($) {
 
 sub Request($$$) {
     my ($action, $ref, $comment) = @_;
-    my @command = ($gx_request_command);
+    # my @command = ($gx_request_command);
+    my @args = ();
 
-    if    ($action eq 'add')    { push @command, '-add' }
-    elsif ($action eq 'remove') { push @command, '-remove' }
+    if    ($action eq 'add')    { push @args, '-add' }
+    elsif ($action eq 'remove') { push @args, '-remove' }
     else                        { die "Internal error, action=$action\n" }
-    push @command, '-quiet';
-    push @command, '-force';
-    push @command, '-dn', $ref->{dn};
-    push @command, '-username', $ref->{uid};
+    push @args, '-quiet';
+    push @args, '-force';
+    push @args, '-dn', $ref->{dn};
+    push @args, '-username', $ref->{uid};
     if (defined $ref->{email}) {
-        push @command, '-email', $ref->{email};
+        push @args, '-email', $ref->{email};
     }
 
-    push @command, '-source', "CA_$CA->{HASH}";
+    push @args, '-source', "CA_$CA->{HASH}";
 
-    push @command, '-comment',
-                   "$CA->{HASH} $CA->{CA_NAME} # $ref->{serial} ($comment)";
+    push @args, '-comment',
+                "$CA->{HASH} $CA->{CA_NAME} # $ref->{serial} ($comment)";
 
     if ($User_Opt->{dryrun}) {
-        my @printable_command = @command;
-        foreach (@printable_command) {
+        my @printable_args = @args;
+        foreach (@printable_args) {
             $_ = "\"$_\"" if $_ =~ / /;
         }
-        print "% @printable_command\n";
+        print "% gx-request @printable_args\n";
     }
     else {
-        system @command;
+        # system @command;
+        GX_Request::GX_Request @args;
     }
 } # Request
 
