@@ -1,7 +1,7 @@
-# $Id: b7bcb7b2.pkigrid-unlp-old.cadesc,v 1.1 2007-05-29 19:55:34-07 kst Exp $
+# $Id: b7bcb7b2.pkigrid-unlp-old.cadesc,v 1.2 2007-07-20 19:05:09-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b7bcb7b2.pkigrid-unlp-old.cadesc,v $
 
-CA_NAME             PKIGrid UNLP
+CA_NAME             PKIGrid UNLP (old)
 HOMEPAGE            http://www.pkigrid.unlp.edu.ar/
 CONTACT             ca@pkigrid.unlp.edu.ar
 HASH                b7bcb7b2
@@ -20,5 +20,8 @@ DISABLE             yes
 # MD5 and SHA1 fingerprints from cacert.pem (b7bcb7b2.0), downloaded
 # Mon 2007-04-02
 
-# I have not found a signing_policy for this CA.  The CA is marked as
-# disabled until that's resolved.
+# I have not found a signing_policy for this CA.
+
+# This CA has been superseded by a newer CA; see
+# 3bbff6d1.pkigrid-unlp.cadesc.  The new CA's files are at the same URLs
+# as the old ones
