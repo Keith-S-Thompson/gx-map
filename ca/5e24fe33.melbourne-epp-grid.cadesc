@@ -1,4 +1,4 @@
-# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.8 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.9 2007-07-23 16:46:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e24fe33.melbourne-epp-grid.cadesc,v $
 
 CA_NAME             Melbourne EPP Grid CA
@@ -18,3 +18,5 @@ CERT_BEGINS         Tue 2003-03-18 06:24:28 UTC
 CERT_EXPIRES        Sun 2008-03-16 06:24:28 UTC
 
 # MD5 and SHA1 fingerprints from 5e24fe33.0 downloaded 2005-03-29
+
+# As of Fri 2007-07-20, I am unable to connect to the web site.
