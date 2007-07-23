@@ -1,4 +1,4 @@
-# $Id: bc870044.cern-old.cadesc,v 1.8 2007-04-13 19:20:37-07 kst Exp $
+# $Id: bc870044.cern-old.cadesc,v 1.9 2007-07-23 16:46:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc870044.cern-old.cadesc,v $
 
 CA_NAME             CERN CA (old)
@@ -22,4 +22,6 @@ CERT_BEGINS         Mon 2002-03-25 10:51:31 UTC
 CERT_EXPIRES        Sun 2003-11-30 12:00:00 UTC
 DISABLE             yes
 
-# MD5 and SHA1 fingerprints from bc870044.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from bc870044.0 downloaded Tue 2005-03-29
+
+# As of Fri 2007-07-20, the home page and files are unavailable.
