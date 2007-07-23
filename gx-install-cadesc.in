@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-install-cadesc.in,v 1.16 2007-07-10 21:14:02-07 kst Exp $
+# $Id: gx-install-cadesc.in,v 1.17 2007-07-23 16:52:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-install-cadesc.in,v $
 
 ########################################################################
@@ -182,7 +182,8 @@ sub Timestamp_Of($) {
 #
 # In the specified directory, for each *.cadesc file (other than
 # 00000000.example.casdesc), move the file into an EXPIRED subdirectory
-# if the CA certificate has expired.
+# if the CA certificate has expired.  Then move any disabled cadesc
+# files into a DISABLED directory.
 #
 sub Expire_Files($) {
     my($dir) = @_;
@@ -192,17 +193,25 @@ sub Expire_Files($) {
     print "% mkdir $dir/EXPIRED\n";
     mkdir "$dir/EXPIRED" or die "mkdir $dir/EXPIRED: $!\n";
 
+    print "% mkdir $dir/DISABLED\n";
+    mkdir "$dir/DISABLED" or die "mkdir $dir/DISABLED: $!\n";
+
     opendir my $DIR, $dir or die "${dir}: $!\n";
     my @cadesc_files = sort grep /\.cadesc$/, readdir $DIR;
     closedir $DIR;
+    FILE:
     foreach my $file (@cadesc_files) {
-        next if $file =~ /^00000000/;
+        next FILE if $file =~ /^00000000/;
         my $ref = GX::Read_Records '-single', "$dir/$file";
         if (defined $ref->{CERT_EXPIRES}) {
             my $expires = GX::Time_Value $ref->{CERT_EXPIRES};
             if (defined $expires and $expires < $Now) {
                 rename "$dir/$file", "$dir/EXPIRED/$file";
+                next FILE;
             }
+        }
+        if (defined $ref->{DISABLE} and $ref->{DISABLE} eq 'yes') {
+            rename "$dir/$file", "$dir/DISABLED/$file";
         }
     }
 } # Expire_Files
