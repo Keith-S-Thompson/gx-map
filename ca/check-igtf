@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.10 2007-06-17 22:18:45-07 kst Exp $
+# $Id: check-igtf,v 1.11 2007-07-23 16:46:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 #
@@ -43,7 +43,9 @@ if (scalar keys %hash_requested == 0 and not $all_requested) {
 }
 
 my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
-my $igtf_dir = "$ca_dir/.igtf-1.14/igtf-policy-installation-bundle-1.14/src";
+# my $igtf_dir = "$ca_dir/.igtf-1.14/igtf-policy-installation-bundle-1.14/src";
+my $igtf_dir
+    = "$ca_dir/.igtf-1.16-pre/igtf-policy-installation-bundle-1.16/src";
 
 die "No file $ca_dir\n"   if not -d $ca_dir;
 die "No file $igtf_dir\n" if not -d $igtf_dir;
