@@ -1,4 +1,4 @@
-# $Id: 3bbff6d1.pkigrid-unlp.cadesc,v 1.1 2007-05-29 21:29:15-07 kst Exp $
+# $Id: 3bbff6d1.pkigrid-unlp.cadesc,v 1.2 2007-07-23 16:46:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3bbff6d1.pkigrid-unlp.cadesc,v $
 
 CA_NAME             PKIGrid UNLP
@@ -8,21 +8,19 @@ HASH                3bbff6d1
 SIGNED_BY           self
 SUBJECT             /C=AR/O=e-Ciencia/OU=UNLP/L=CeSPI/CN=PKIGrid/emailAddress=camanager@pkigrid.unlp.edu.ar
 MAY_SIGN            ?
-CERTIFICATE_MD5     F1:0C:86:81:BE:81:E3:44:F9:6F:6C:0C:DE:F6:96:5B
-CERTIFICATE_SHA1    D7:55:B8:EF:BE:AC:05:E9:FB:CA:22:24:32:F5:5F:47:25:AC:25:DF
+CERTIFICATE_MD5     F3:DA:2F:65:6D:06:94:AB:4C:E7:66:E7:EB:BC:EB:25
+CERTIFICATE_SHA1    C3:71:74:4F:D5:DF:80:42:35:3A:74:62:A6:2B:2D:D0:97:FA:DC:C9
 CERTIFICATE_URL     https://www.pkigrid.unlp.edu.ar/pub/cacert/cacert.pem
-SIGNING_POLICY_URL  ?
+SIGNING_POLICY_URL  http://www.pkigrid.unlp.edu.ar/docs/3bbff6d1.signing_policy
 CRL_URL             https://www.pkigrid.unlp.edu.ar/pub/crl/cacrl.pem
-CERT_BEGINS         Tue 2007-05-22 14:28:42 UTC
-CERT_EXPIRES        Sun 2017-05-21 14:28:42 UTC
+CERT_BEGINS         Thu 2007-07-12 08:49:45 UTC
+CERT_EXPIRES        Tue 2017-07-11 08:49:45 UTC
 DISABLE             yes
 
-# MD5 and SHA1 fingerprints from cacert.pem (b7bcb7b2.0), downloaded
-# Tue 2007-05-29
+# MD5 and SHA1 fingerprints from cacert.pem (3bbff6d1.0), downloaded
+# Fri 2007-07-20.
 
-# The CA certificate replaces an older certificate
-# from the same site with hash b7bcb7b2 and subject
-# "/C=AR/O=e-Ciencia/OU=UNLP/L=CeSPI/CN=PKIGrid".
-
-# I have not found a signing_policy for this CA.  The CA is marked as
-# disabled until that's resolved.
+# The 3bbff6d1.signing_policy file is inconsistent; it shows the fields in
+# reverse order, and it implies that the certificate may only sign itself.
+# The CA is marked as disabled until that's resolved.  I've contacted
+# ca@pkigrid.unlp.edu.ar.
