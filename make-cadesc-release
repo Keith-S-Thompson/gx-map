@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-cadesc-release,v 1.3 2007-07-11 18:32:44-07 kst Exp $
+# $Id: make-cadesc-release,v 1.4 2007-07-23 17:01:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-cadesc-release,v $
 
 try() {
@@ -86,6 +86,12 @@ man page.
 These files are installed automatically as part of gx-map.  You can
 use the gx-install-cadesc command to install an updated set of *.cadesc
 files; see the gx-install-cadesc(8) man page for more information.
+
+*.cadesc for expired CAs are included for historical purposes, and
+are installed in the EXPIRED subdirectory.  Files for CAs that are
+disabled for other reasons are installed in the DISABLED subdirectory;
+if desired, you can move these files up, comment out the "DISABLE"
+line, and make any other necessary changes.
 
 This release of the *.cadesc files was built $today.
 EOF
