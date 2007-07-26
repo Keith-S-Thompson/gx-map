@@ -1,4 +1,4 @@
-# $Id: 34f8e29c.dfn-verein-user-ca-grid-g01.cadesc,v 1.1 2007-06-22 20:55:18-07 kst Exp $
+# $Id: 34f8e29c.dfn-verein-user-ca-grid-g01.cadesc,v 1.2 2007-07-26 01:40:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34f8e29c.dfn-verein-user-ca-grid-g01.cadesc,v $
 
 CA_NAME             DFN-Verein User CA Grid - G01
@@ -12,15 +12,18 @@ MAY_SIGN            /C=DE/O=GridGermany/*
 CERTIFICATE_MD5     3D:31:50:03:C7:B7:E0:53:CF:3A:80:0C:FE:AB:3D:33
 CERTIFICATE_SHA1    0F:9B:68:C9:1F:E4:E2:1E:7A:B1:90:E7:22:75:17:EC:7B:F7:06:EB
 CERTIFICATE_URL     http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-user/g1/data/certs/ca-user-cert.pem
-SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/ CAs/certs/34f8e29c.signing_policy
+SIGNING_POLICY_URL  ?
 CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-user/g1/data/crls/ca-user-crl.pem
 CERT_BEGINS         Thu 2005-07-07 14:58:15 UTC
 CERT_EXPIRES        Tue 2009-07-07 14:58:15 UTC
 
-# The SIGNING_POLICY_URL is from a separate site.  That site is down as
-# I write this; I got the signing_policy from the Google cache.
+# I was unable to find a signing_policy on the CAs site.  The MAY_SIGN
+# attributes are derived from the information in the IGTF 1.15 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.15/accredited/igtf-policy-installation-bundle-1.15.tar.gz>
 
 # MD5 and SHA1 fingerprints from ca-user-cert.pem (34f8e29c.0) downloaded
 # Thu 2006-11-30
+
+# All certificate attributes hae been verified against the IGTF 1.15 release.
 
 # The web site is in German.
