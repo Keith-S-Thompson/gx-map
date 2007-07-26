@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.11 2007-07-23 16:46:16-07 kst Exp $
+# $Id: check-igtf,v 1.12 2007-07-26 01:40:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 #
@@ -27,25 +27,36 @@ my $hash_pattern = qr([\da-f]{8});
 my %hash_requested = ();
 my $all_requested = 0;
 
+my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
+my $default_igtf_subdir = '1.16-pre';
+my $igtf_subdir = $default_igtf_subdir;
+
 foreach my $arg (@ARGV) {
-    if ($arg =~ /^$hash_pattern$/) {
-        $hash_requested{$arg} = 1;
+    if ($arg =~ /^($hash_pattern)/) {
+        $hash_requested{$1} = 1;
     }
     elsif ($arg eq '-all') {
         $all_requested = 1;
+    }
+    elsif (-d "$ca_dir/.igtf-$arg") {
+        $igtf_subdir = $arg;
     }
     else {
         Usage "Unrecognized argument $arg\n";
     }
 }
+
+my $igtf_version = $igtf_subdir;
+$igtf_version =~ s/-pre$//;
+my $igtf_dir = "$ca_dir/.igtf-$igtf_subdir/igtf-policy-installation-bundle-$igtf_version/src";
+
+if (not -d $igtf_dir) {
+    die "No directory $igtf_dir\n";
+}
+
 if (scalar keys %hash_requested == 0 and not $all_requested) {
     Usage "No hashes requested\n";
 }
-
-my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
-# my $igtf_dir = "$ca_dir/.igtf-1.14/igtf-policy-installation-bundle-1.14/src";
-my $igtf_dir
-    = "$ca_dir/.igtf-1.16-pre/igtf-policy-installation-bundle-1.16/src";
 
 die "No file $ca_dir\n"   if not -d $ca_dir;
 die "No file $igtf_dir\n" if not -d $igtf_dir;
@@ -702,7 +713,10 @@ sub Usage(@) {
     print <<"EOF";
 Usage: $0 [arguments]
     -all        Show all 
-    xxxxxxxx    An 8-digit hexadecimal hash
+    xxxxxxxx*   An 8-digit hexadecimal hash.
+                Characters after the first 8 are ignored, allowing the
+                use of *.cadesc file names.
+    <version>   IGTF release version; current default is $default_igtf_subdir
 EOF
     exit 0;
 } # Usage
