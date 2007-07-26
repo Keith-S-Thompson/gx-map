@@ -1,4 +1,4 @@
-# $Id: 2fcac3ee.birn.cadesc,v 1.8 2007-06-13 21:25:55-07 kst Exp $
+# $Id: 2fcac3ee.birn.cadesc,v 1.9 2007-07-26 01:40:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2fcac3ee.birn.cadesc,v $
 
 CA_NAME             BIRN CA
@@ -17,9 +17,11 @@ CERT_BEGINS         Tue 2003-07-01 18:37:07 UTC
 CERT_EXPIRES        Sun 2013-06-30 18:37:07 UTC
 DISABLE             yes
 
-# The signing_policy file provided by portal.nbirn.net specifies that the CA
-# may sign any certificate.  Because of this, I'm leaving this CA
-# disabled by default.
+# The signing_policy file provided by portal.nbirn.net specifies that
+# the CA may sign any certificate.  Because of this, I'm leaving this
+# CA disabled by default.  If you wish to enable it, you can comment
+# out the "DISABLE" line above and move or copy this file up to the
+# "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from 2fcac3ee.0 downloaded Tue 2005-03-29,
 # re-checked Wed 2007-06-13.
