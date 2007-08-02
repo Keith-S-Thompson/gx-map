@@ -1,4 +1,4 @@
-# $Id: gx-install-cadesc.8.pod,v 1.2 2007-01-01 13:01:35-08 kst Exp $
+# $Id: gx-install-cadesc.8.pod,v 1.3 2007-08-01 20:19:53-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/doc/gx-install-cadesc.8.pod,v $
 
 =for comment
@@ -109,7 +109,7 @@ F<cadesc> files you may have modified>, then unpacks a new set of
 files into the F<etc/gx-map/ca-config> directory.
 
 The newest set of F<cadesc> files can be found on the B<gx-map>
-web page <http://users.sdsc.edu/~kst/gx-map/> and/or ftp site
+web page <http://users.sdsc.edu/~gxmap/> and/or ftp site
 <ftp://ftp.sdsc.edu/pub/sdsc/globus/software/gx-map/>.  The
 F<cadesc> files are packaged in a tarball with a name of the form
 F<gx-map-cadesc-MMMM-DD-YY.tar.gz>.  (Each tarball is accompanied by
