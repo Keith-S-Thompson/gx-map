@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.77 2007-07-17 18:33:12-07 kst Exp $
+# $Id: configure-gx-map,v 1.78 2007-08-02 18:06:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -71,9 +71,8 @@ sub Make_Man_Pages();
 sub Debug(@);
 sub Usage(@);
 
-my %Is_TGCDB_File = ( 'gx-db-check-requests.in' => 1,
-                      'gx-db-request.in'        => 1,
-                      'gx-db-dump.in'           => 1 );
+my %Is_TGCDB_File = ( 'gx-db-requests.in' => 1,
+                      'gx-db-dump.in'     => 1 );
 
 my $Program_Name = File::Basename::basename $0;
 
