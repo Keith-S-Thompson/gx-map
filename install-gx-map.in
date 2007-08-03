@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.104 2007-07-15 20:46:54-07 kst Exp $
+# $Id: install-gx-map.in,v 1.105 2007-08-02 18:06:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -110,8 +110,8 @@ fi
 
 BIN_FILES="gx-map gx-request"
 SBIN_FILES="gx-admins gx-ca-update gx-check-cadesc gx-check-index gx-check-requests gx-cleanup-logs gx-convert-log gx-cron-job gx-gen-mapfile gx-ingest gx-install-cadesc gx-remove-locks gx-util-test gx-watch-locks"
-OPTIONAL_SBIN_FILES="gx-db-check-requests gx-db-dump gx-db-request gx-propagate"
-RESTRICTED_SBIN_FILES="gx-ca-update gx-check-index gx-check-requests gx-cron-job gx-db-check-requests gx-db-dump gx-db-request gx-propagate gx-remove-locks"
+OPTIONAL_SBIN_FILES="gx-db-dump gx-db-requests gx-propagate"
+RESTRICTED_SBIN_FILES="gx-ca-update gx-check-index gx-check-requests gx-cron-job gx-db-dump gx-db-requests gx-propagate gx-remove-locks"
 LIB_FILES="GX.pm GX_Request.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes auto.txt gx-map.conf"
 
