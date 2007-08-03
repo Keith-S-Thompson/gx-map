@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.1 2007-07-31 17:35:35-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.2 2007-08-02 18:01:30-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -66,6 +66,8 @@ sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
 
+sub Submit_Request($@);
+
 sub Process_DB_Request($$);
 
 sub Get_Mappings_From_File($);
@@ -81,7 +83,13 @@ my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
 my @Opts = ( $User_Opt, qw( help!
                             version!
+                            add!
+                            remove!
+                            username=s
+                            dn=s@
+                            dn-list-file=s@
                             full-query!
+                            process!
                             dryrun!
                             debugging! ) );
 Getopt::Long::GetOptions @Opts or Usage;
@@ -93,6 +101,61 @@ if ($User_Opt->{version}) {
 }
 
 GX::Set_Config;
+
+my @operations = ();
+foreach my $op (qw(add remove full-query)) {
+    if (defined $User_Opt->{$op}) {
+        push @operations, $op;
+    }
+}
+my $Operation = undef;
+if (scalar @operations == 1) {
+    $Operation = $operations[0];
+}
+elsif (scalar @operations > 1) {
+    Usage "Specify at most one of \"-add\", \"-remove\", \"-full-query\"\n";
+}
+
+if (not defined $Operation and not $User_Opt->{process}) {
+    Usage "Nothing to do.\n",
+          "Specify one of \"-add\", \"-remove\", \"-full-query\"\n",
+          "and/or specify \"-process\"\n";
+}
+
+my @dn_list = @{$User_Opt->{dn}};
+if (defined $User_Opt->{'dn-list-file'}) {
+    foreach my $file (@{$User_Opt->{'dn-list-file'}}) {
+        push @dn_list, GX::Get_DNs_From_List_File $file;
+    }
+}
+@dn_list = map { GX::Normalize_DN $_ } @dn_list;
+
+if (defined $Operation) {
+    if ($Operation eq 'add' or $Operation eq 'remove') {
+        if (not defined $User_Opt->{username} or
+            scalar @dn_list == 0) 
+        {
+            Usage "Must specify both \"-username\" and one or more DNs " .
+                  "with \"-add\" or \"-remove\"\n";
+        }
+    }
+    else {
+        if (defined $User_Opt->{username} or
+            scalar @dn_list > 0)
+        {
+            Usage "Cannot specify \"-username\", \"-dn\", " .
+                  "or \"-dn-list-file\" with \"-full-query\"\n";
+        }
+    }
+
+    my @request_args = ();
+    if ($Operation eq 'add' or $Operation eq 'remove') {
+        push @request_args, $User_Opt->{username};
+        push @request_args, @dn_list;
+    }
+    Submit_Request $Operation, @request_args;
+
+}
 
 my $DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
@@ -259,6 +322,35 @@ foreach my $mapping (@added_mappings) {
 Cleanup;
 
 ########################################################################
+
+#
+# Submit a request.
+# Arguments are:
+#      The operation, one of 'full-query', 'add', or 'remove'.
+#      The username (present only if operation is 'add' or 'remove').
+#      Zero or more DNs.
+sub Submit_Request($@) {
+    my ($operation, @args) = @_;
+
+    my $request = {};
+
+    $request->{request} = $operation;
+
+    if ($operation ne 'full-query') {
+        my($username, @dn_list) = @args;
+        $request->{username} = $username;
+        $request->{dn} = \@dn_list;
+    }
+
+    my $timestamp    = GX::Get_Time_Of_Day;
+    my $filename     = "$New_Requests_Dir/$timestamp.db-request";
+    my $tmp_filename = "$filename.tmp";
+
+    GX::Write_Records '-single', $tmp_filename, $request;
+    rename $tmp_filename, $filename or die "Renaming $tmp_filename: $!\n";
+} # Request
+
+# ----------------------------------------------------------------------
 
 #
 # Process a DB request, applying any changes to the specified mappings
@@ -568,12 +660,27 @@ sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
 Usage: $Program_Name [options]
-    -help         : Display this message and exit.
-    -version      : Display version number and exit.
-    -full-query   : Do the equivalent of "gx-db-request -full-query" before
-                    processing db requests.
-    -dryrun       : Don't perform updates.
-    -debugging    : Enable debugging output.
+    -help              : Display this message and exit.
+    -version           : Display version number and exit.
+    -add               : Submit a request to add a specified DN(s) for a
+                         specified user.
+    -remove            : Submit a request to remove a specified DN(s) for a
+                         specified user.
+    -username USER     : User name (required for -add or -remove).
+    -dn DN             : DN        (required for -add or -remove).
+                         May be specified multiple times for multiple DNs.
+    -dn-list-file FILE : Read a list of DNs from a specified text file,
+                         one DN per line.  Use "-dn-list-file -" to read
+                         from stdin.  May be specified multiple times.
+                         May be combined with "-dn".
+    -full-query        : Request a full query of the DN mappings in the TGCDB.
+    -process           : Process all pending requests.  May be used by
+                         itself or along with a single "-add", "-remove",
+                         or "-full-query" request.  (This is done after any
+                         request is submitted, regardless of the order of the
+                         command-line options.)
+    -dryrun            : Don't perform updates.
+    -debugging         : Enable debugging output.
 EOF
     exit 1;
 } # Usage
