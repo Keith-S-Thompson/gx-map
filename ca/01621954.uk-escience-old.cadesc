@@ -1,4 +1,4 @@
-# $Id: 01621954.uk-escience-old.cadesc,v 1.5 2007-06-12 19:25:22-07 kst Exp $
+# $Id: 01621954.uk-escience-old.cadesc,v 1.6 2007-08-07 17:41:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/01621954.uk-escience-old.cadesc,v $
 
 CA_NAME             UK e-Science CA (old)
@@ -15,6 +15,7 @@ SIGNING_POLICY_URL  http://www.grid-support.ac.uk/files/01621954.signing_policy
 CRL_URL             http://ca.grid-support.ac.uk/pub/crl/cacrl.pem
 CERT_BEGINS         Mon 2002-08-05 10:36:41 UTC
 CERT_EXPIRES        Sat 2007-08-04 10:36:41 UTC
+DISABLE             yes
 
 # MD5 and SHA1 fingerprints from cacert.pem (01621954.0) downloaded 2005-07-05
 # Re-verified Fri 2006-08-18
