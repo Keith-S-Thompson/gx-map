@@ -1,4 +1,4 @@
-# $Id: b7bcb7b2.pkigrid-unlp-old.cadesc,v 1.2 2007-07-20 19:05:09-07 kst Exp $
+# $Id: b7bcb7b2.pkigrid-unlp-old.cadesc,v 1.3 2007-08-08 21:29:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b7bcb7b2.pkigrid-unlp-old.cadesc,v $
 
 CA_NAME             PKIGrid UNLP (old)
@@ -24,4 +24,4 @@ DISABLE             yes
 
 # This CA has been superseded by a newer CA; see
 # 3bbff6d1.pkigrid-unlp.cadesc.  The new CA's files are at the same URLs
-# as the old ones
+# as the old ones; the old files are no longer available.
