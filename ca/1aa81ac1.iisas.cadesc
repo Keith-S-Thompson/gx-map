@@ -1,4 +1,4 @@
-# $Id: 1aa81ac1.iisas.cadesc,v 1.7 2007-04-13 19:20:28-07 kst Exp $
+# $Id: 1aa81ac1.iisas.cadesc,v 1.8 2007-08-08 21:38:22-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1aa81ac1.iisas.cadesc,v $
 
 CA_NAME             IISAS (old)
@@ -13,15 +13,15 @@ CERTIFICATE_SHA1    8A:F6:49:72:72:37:47:EA:5F:4F:D6:F0:CF:79:2F:F9:31:E3:07:E4
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/1aa81ac1.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/1aa81ac1.signing_policy
 CRL_URL             ?
-DISABLE             yes
 CERT_BEGINS         Tue 2002-08-13 13:03:23 UTC
 CERT_EXPIRES        Sun 2007-08-12 13:03:23 UTC
+DISABLE             yes
 
-# The certificate doesn't expire until 2007-09-12, but it appears to have
-# been superseded by the SlovakGrid Certification Authority, hash e13e0fcf
+# The CA has been superseded by the SlovakGrid Certification Authority;
+# see e13e0fcf.slovakgrid.cadesc.
 
 # There was a CRL at <http://ups.savba.sk/ca/iisas-crl.pem>, pointed to by
 # <http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/1aa81ac1.crl_url>,
 # but it apparently no longer exists.
 
-# MD5 and SHA1 fingerprints from 1aa81ac1.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from 1aa81ac1.0 downloaded Tue 2005-03-29
