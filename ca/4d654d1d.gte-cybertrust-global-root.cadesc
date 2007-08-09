@@ -1,4 +1,4 @@
-# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.4 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.5 2007-08-09 02:37:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4d654d1d.gte-cybertrust-global-root.cadesc,v $
 
 CA_NAME             GTE CyberTrust Global Root
@@ -13,19 +13,31 @@ CERTIFICATE_SHA1    97:81:79:50:D8:1C:96:70:CC:34:D8:09:CF:79:44:31:36:7E:F4:74
 CERTIFICATE_URL     ?
 SIGNING_POLICY_URL  ?
 CRL_URL             http://www.public-trust.com/cgi-bin/CRL/2018/cdp.crl
+CRL_FORM            DER
 CERT_BEGINS         Thu 1998-08-13 00:29:00 UTC
 CERT_EXPIRES        Mon 2018-08-13 23:59:00 UTC
 DISABLE             yes
 
 # I haven't found an online signing_policy file *or* an online copy of
 # the certificate.  A copy of the certificate is in included in the
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# tarball; the MD5 and SHA1 fingerprints are computed from that, and the
+# IGTF 1.16 distribution,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+# the MD5 and SHA1 fingerprints are computed from that, and the
 # SHA1 fingerprint has been verified against 4d654d1d.info.
 
-# The 4d654d1d.info file in the IGTF tarball includes the line
+# Note that the 4d654d1d.info file in the IGTF tarball includes the line
 # "status = worthless".
 
-# As of Tue 2007-03-13, I am unable to download the CRL.
-
 # This CA is marked as disabled.
+
+# The following is a copy of 4d654d1d.info, extracted from the IGTF
+# 1.16 release:
+## # GlobalSign SureServer EDU (TERENA SCS)
+## # @(#)$Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.5 2007-08-09 02:37:49-07 kst Exp $
+## #
+## alias = GTE-CyberTrust-Global-Root
+## status = worthless
+## crl_url = http://www.public-trust.com/cgi-bin/CRL/2018/cdp.crl
+## url = http://www.terena.org/activities/scs/
+## version = 1.16
+## sha1fp.0 = 97:81:79:50:D8:1C:96:70:CC:34:D8:09:CF:79:44:31:36:7E:F4:74
