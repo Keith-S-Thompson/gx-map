@@ -1,0 +1,24 @@
+# $Id: 722e5071.kisti-2007.cadesc,v 1.1 2007-08-08 18:14:33-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/722e5071.kisti-2007.cadesc,v $
+
+CA_NAME             KISTI Grid Certificate Authority 2007
+HOMEPAGE            http://ca.gridcenter.or.kr/
+CONTACT             ca@gridcenter.or.kr
+HASH                722e5071
+SIGNED_BY           self
+SUBJECT             /C=KR/O=KISTI/O=GRID/CN=KISTI Grid Certificate Authority
+MAY_SIGN            /C=KR/O=KISTI/O=GRID/*
+CERTIFICATE_MD5     C9:80:FE:C7:C8:49:DA:C4:73:3F:4C:00:43:C8:A5:CF
+CERTIFICATE_SHA1    EA:08:BA:6A:36:C9:F1:0A:B5:2F:BB:67:C7:A4:3D:C9:52:B7:CE:DB
+CERTIFICATE_URL     http://ca.gridcenter.or.kr/certs/certificates/722e5071.0
+SIGNING_POLICY_URL  http://ca.gridcenter.or.kr/certs/certificates/722e5071.signing_policy
+CRL_URL             http://ca.gridcenter.or.kr/CRL/722e5071.crl
+CERT_BEGINS         Thu 2007-07-12 05:04:40 UTC
+CERT_EXPIRES        Tue 2017-08-01 05:04:40 UTC
+
+# MD5 and SHA1 checksums from 722e5071.0, downloaded Wed 2007-08-08
+# Verified against information in IGTF 1.16 release,
+# https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz
+# and on the CA's home page.
+
+# This CA is marked "status = accredited:classic" in the IGTF 1.16 release.
