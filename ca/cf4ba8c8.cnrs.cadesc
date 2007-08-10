@@ -1,4 +1,4 @@
-# $Id: cf4ba8c8.cnrs.cadesc,v 1.11 2007-04-13 19:20:37-07 kst Exp $
+# $Id: cf4ba8c8.cnrs.cadesc,v 1.12 2007-08-09 17:24:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/cf4ba8c8.cnrs.cadesc,v $
 
 CA_NAME             CNRS CA
@@ -12,9 +12,19 @@ MAY_SIGN            /C=FR/O=CNRS/CN=CNRS
 CERTIFICATE_MD5     92:1E:3C:80:4A:95:65:6C:9E:A2:F2:1E:12:BF:EF:6D
 CERTIFICATE_SHA1    22:61:81:6A:9D:F6:86:6E:76:CE:8A:AC:6E:6F:52:3D:8B:09:32:D1
 CERTIFICATE_URL     http://crls.services.cnrs.fr/CNRS/getpem.crt
-SIGNING_POLICY_URL  http://hepgps.nbi.dk/datagrid_ca/certs/cf4ba8c8.signing_policy
+SIGNING_POLICY_URL  http://www.ngs.ac.uk/sites/manc/CAs/certs/cf4ba8c8.signing_policy
 CRL_URL             http://crls.services.cnrs.fr/CNRS/getpem.crl
 CERT_BEGINS         Fri 2001-04-27 05:44:36 UTC
 CERT_EXPIRES        Thu 2021-04-22 05:44:36 UTC
 
-# MD5 and SHA1 fingerprints from getpem.crt (cf4ba8c8.0) downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from getpem.crt (cf4ba8c8.0) downloaded
+# Tue 2005-03-29, re-verified Thu 2007-08-09
+
+# There does not appear to be a signing_policy file on the
+# cnrs.fr site.  The SIGNING_POLICY_URL points to a copy at
+# another site; it's consistent with an earlier version at
+# <http://hepgps.nbi.dk/datagrid_ca/certs/cf4ba8c8.signing_policy>.
+
+# Note that there are no wildcards in the signing policy; this CA
+# certificate may sign only itself and the CNRS-Projets CA certificate
+# (see 34a509c3.cnrs-projets.cadesc).
