@@ -1,4 +1,4 @@
-# $Id: 393f7863.aegis.cadesc,v 1.1 2007-05-31 18:51:53-07 kst Exp $
+# $Id: 393f7863.aegis.cadesc,v 1.2 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/393f7863.aegis.cadesc,v $
 
 CA_NAME             AEGIS
@@ -18,7 +18,21 @@ CERT_BEGINS         Tue 2007-04-17 08:03:19 UTC
 CERT_EXPIRES        Mon 2017-04-17 08:03:19 UTC
 
 # MD5 and SHA1 fingerprints from ca.pem (393f7863.0) downloaded Thu 2007-05-31
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# MAY_SIGN attribute derived from 393f7863.signing_policy in the
+# IGTF 1.16 release.
 
 # Fingerprints verified against <http://aegis-ca.rcub.bg.ac.yu/>
 
-# (IGTF information coming soon)
+# The following is a copy of 393f7863.info from the IGTF 1.16 release:
+## # @(#)$Id: 393f7863.aegis.cadesc,v 1.2 2007-08-12 22:08:02-07 kst Exp $
+## alias = AEGIS
+## url = http://aegis-ca.rcub.bg.ac.yu/
+## ca_url = http://aegis-ca.rcub.bg.ac.yu/repository/ca.pem
+## crl_url = http://aegis-ca.rcub.bg.ac.yu/repository/crl-v2.crl
+## email = aegis-ca@aegis-ca.rcub.bg.ac.yu
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 1B:60:CD:E5:50:72:B0:1E:96:42:86:42:CA:0C:D6:8E:F3:51:2B:DD
