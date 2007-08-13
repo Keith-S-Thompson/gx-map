@@ -1,4 +1,4 @@
-# $Id: 7b2d086c.swisssign-root.cadesc,v 1.6 2007-04-13 19:20:33-07 kst Exp $
+# $Id: 7b2d086c.swisssign-root.cadesc,v 1.7 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7b2d086c.swisssign-root.cadesc,v $
 
 CA_NAME             SwissSign Root
@@ -17,11 +17,23 @@ CRL_FORM            DER
 CERT_BEGINS         Sun 2000-11-26 23:27:41 UTC
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
 
-# MD5 and SHA1 fingerprints from 7b2d086c.0 downloaded Tue 2007-01-30
+# MD5 and SHA1 fingerprints from 7b2d086c.0 downloaded Tue 2007-01-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 7b2d086c.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against 7b2d086c.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against 7b2d086c.info.
+# theIGTF 1.16 release.
+
+# The following is a copy of 7b2d086c.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 7b2d086c.swisssign-root.cadesc,v 1.7 2007-08-12 22:08:03-07 kst Exp $
+## # Information for CA SwissSign-Root
+## #   obtained from 7b2d086c in SWITCH/
+## alias = SwissSign-Root
+## ca_url = http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=96D771CD392AD4FC88B18AAB537869EF8F477E16
+## crl_url = http://crl.swisssign.net/96D771CD392AD4FC88B18AAB537869EF8F477E16
+## email = pki@switch.ch
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 56:4B:6F:8C:56:38:DC:05:5B:BA:2B:A1:39:0F:7E:31:95:4A:55:50
