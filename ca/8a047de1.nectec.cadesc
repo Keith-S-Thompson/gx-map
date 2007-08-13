@@ -1,9 +1,9 @@
-# $Id: 8a047de1.nectec.cadesc,v 1.3 2007-04-13 19:20:33-07 kst Exp $
+# $Id: 8a047de1.nectec.cadesc,v 1.4 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8a047de1.nectec.cadesc,v $
 
 CA_NAME             NECTEC GOC CA, Thailand
 HOMEPAGE            http://gridca.hpcc.nectec.or.th/
-CONTACT             Sornthep Vannarat <sornthep@nectec.or.th>
+CONTACT             camanager@hpcc.nectec.or.th
 HASH                8a047de1
 SIGNED_BY           self
 SUBJECT             /C=TH/O=NECTEC/OU=GOC/CN=NECTEC GOC CA
@@ -16,7 +16,15 @@ CRL_URL             http://gridca.hpcc.nectec.or.th/pub/crl/8a047de1.r0
 CERT_BEGINS         Fri 2007-01-05 03:24:57 UTC
 CERT_EXPIRES        Mon 2017-01-02 03:24:57 UTC
 
-# Homepage and contact information from APGrid PMA,
-# <https://www.apgrid.org/CA/CertificateAuthorities.html>
+# MD5 and SHA1 fingerprints from 8a047de1.0 downloaded Tue 2007-02-06.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# MD5 and SHA1 fingerprints from 8a047de1.0 downloaded Tue 2007-02-06
+# The following is a copy of 8a047de1.info from the IGTF 1.16 release:
+## alias = NECTEC
+## crl_url = http://gridca.hpcc.nectec.or.th/pub/crl/cacrl.crl
+## email = camanager@hpcc.nectec.or.th
+## status = accredited:classic
+## url = http://gridca.hpcc.nectec.or.th/
+## version = 1.16
+## sha1fp.0 = 83:0F:E9:1A:5E:4D:DC:A3:63:B4:84:5A:A9:9E:D5:A2:81:07:57:20
