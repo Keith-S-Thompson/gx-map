@@ -1,4 +1,4 @@
-# $Id: 304cf809.switch-slcs.cadesc,v 1.3 2007-03-13 19:27:35-07 kst Exp $
+# $Id: 304cf809.switch-slcs.cadesc,v 1.4 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/304cf809.switch-slcs.cadesc,v $
 
 CA_NAME             SWITCHscls CA
@@ -19,10 +19,20 @@ CERT_EXPIRES        Thu 2012-02-09 16:00:00 UTC
 
 # MD5 and SHA1 fingerprints from SWITCHslcsCA.crt.pem (304cf809.0),
 # downloaded Fri 2007-03-09
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 304cf809.signing_policy, extracted from
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against 304cf809.0,
-# and the SHA1 fingerprint has been verified
-# against 304cf809.info, both in the IGTF tarball.
+# the IGTF 1.16 release.
+
+# The following is a copy of 304cf809.info from the IGTF 1.16 release:
+## # @(#)$Id: 304cf809.switch-slcs.cadesc,v 1.4 2007-08-12 22:08:02-07 kst Exp $
+## alias = SWITCHslcs
+## requires = SWITCHgrid-Root
+## url = http://www.switch.ch/pki/grid
+## ca_url = http://ca.grid.switch.ch/SWITCHslcsCA.crt
+## email = pki@switch.ch
+## status = accredited:slcs
+## version = 1.16
+## sha1fp.0 = B4:6E:BC:7F:7C:28:D2:2E:89:DC:E7:CA:00:B7:7D:DE:13:9F:B7:52
