@@ -1,4 +1,4 @@
-# $Id: dd4b34ea.germangrid.cadesc,v 1.12 2007-04-13 19:20:39-07 kst Exp $
+# $Id: dd4b34ea.germangrid.cadesc,v 1.13 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/dd4b34ea.germangrid.cadesc,v $
 
 CA_NAME             GermanGrid GridKa CA
@@ -19,6 +19,8 @@ CERT_EXPIRES        Tue 2014-06-10 13:45:54 UTC
 
 # MD5 and SHA1 fingerprints from dd4b34ea.0 downloaded Tue 2006-10-03
 # Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # This certificate supersedes an older certificate with the same subject
 # and hash, but different checksums.  The old certificate is available
@@ -29,3 +31,16 @@ CERT_EXPIRES        Tue 2014-06-10 13:45:54 UTC
 #     CERT_EXPIRES        Sun 2007-06-10 13:45:54 UTC
 # The signing_policy file was changed at some point; it no longer
 # indicates that certificates matching "/C=DE/O=FZK-Grid/*" may be signed.
+
+# The following is a copy of dd4b34ea.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: dd4b34ea.germangrid.cadesc,v 1.13 2007-08-12 22:08:06-07 kst Exp $
+## # Information for CA GermanGrid
+## #   obtained from dd4b34ea in GermanGrid/
+## alias = GermanGrid
+## url = http://grid.fzk.de/cgi-bin/welcome_ca.pl
+## crl_url = http://grid.fzk.de/ca/gridka-crl.pem
+## email = GridKa-CA@iwr.fzk.de
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = AF:A0:D1:16:FB:E6:E9:44:9B:22:01:8A:6E:0D:AC:23:A7:DC:CD:A7
