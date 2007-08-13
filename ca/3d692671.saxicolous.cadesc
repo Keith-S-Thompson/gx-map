@@ -1,4 +1,4 @@
-# $Id: 3d692671.saxicolous.cadesc,v 1.7 2007-04-13 19:20:30-07 kst Exp $
+# $Id: 3d692671.saxicolous.cadesc,v 1.8 2007-08-13 16:41:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3d692671.saxicolous.cadesc,v $
 
 CA_NAME             saxicolous.sdsc.edu Simple CA
@@ -13,9 +13,14 @@ CERTIFICATE_SHA1    AB:98:29:A0:5F:7D:2F:E0:1F:9B:66:56:FF:59:FD:CF:36:AF:20:BA
 CERTIFICATE_URL     http://cvs.rocksclusters.org/viewcvs/viewcvs.cgi/*checkout*/pragma/grid-security/certificates/3d692671.0
 SIGNING_POLICY_URL  http://cvs.rocksclusters.org/viewcvs/viewcvs.cgi/*checkout*/pragma/grid-security/certificates/3d692671.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Mon 2004-08-09 23:15:57 UTC
 CERT_EXPIRES        Sat 2009-08-08 23:15:57 UTC
+DISABLE             yes
 
-# There is no CRL.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from 3d692671.0 downloaded 2005-03-29
