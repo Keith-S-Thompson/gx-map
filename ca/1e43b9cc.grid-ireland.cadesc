@@ -1,4 +1,4 @@
-# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.14 2007-04-13 19:20:28-07 kst Exp $
+# $Id: 1e43b9cc.grid-ireland.cadesc,v 1.15 2007-08-12 22:08:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1e43b9cc.grid-ireland.cadesc,v $
 
 CA_NAME             Grid-Ireland Certification Authority
@@ -22,3 +22,22 @@ CERT_EXPIRES        Fri 2012-07-27 17:10:40 UTC
 # CERT_EXPIRES        Fri 2007-07-27 17:10:40 UTC
 
 # MD5 and SHA1 fingerprints from 1e43b9cc.0 downloaded Mon 2006-10-09
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
+
+# Note that the SIGNING_POLICY_URL points to a different web site;
+# it's consistent with the 1e43b9cc.signing_policy file in the IGTF
+# 1.16 release.
+
+# The following is a copy of 1e43b9cc.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 1e43b9cc.grid-ireland.cadesc,v 1.15 2007-08-12 22:08:01-07 kst Exp $
+## # Information for CA Grid-Ireland
+## #   obtained from 1e43b9cc in Grid-Ireland/
+## alias = Grid-Ireland
+## url = http://www.cs.tcd.ie/grid-ireland/gi-ca/
+## crl_url = http://www.cs.tcd.ie/Grid-Ireland/gi-ca/1e43b9cc.r0
+## email = grid-ireland-ca@cs.tcd.ie
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = EA:FE:4E:0C:59:9F:63:69:87:A1:4C:4D:4E:1F:A7:1A:6A:C6:CF:D3
