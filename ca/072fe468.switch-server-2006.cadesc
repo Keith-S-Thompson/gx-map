@@ -1,4 +1,4 @@
-# $Id: 072fe468.switch-server-2006.cadesc,v 1.7 2007-06-13 21:25:55-07 kst Exp $
+# $Id: 072fe468.switch-server-2006.cadesc,v 1.8 2007-08-12 22:07:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/072fe468.switch-server-2006.cadesc,v $
 
 CA_NAME             SWITCH Server 2006
@@ -9,6 +9,7 @@ SIGNED_BY           /CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Te
 SUBJECT             /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Server CA/emailAddress=switch.server.ca@switch.ch
 MAY_SIGN            /C=CH/O=ETH Swiss Federal Institute of Technology Zurich/*
 MAY_SIGN            /C=CH/O=ETH Zuerich/*
+MAY_SIGN            /C=CH/O=Ecole polytechnique federale de Lausanne (EPFL)/*
 MAY_SIGN            /C=CH/O=Fachhochschule Nordwestschweiz/*
 MAY_SIGN            /C=CH/O=Paul-Scherrer-Institut (PSI)/*
 MAY_SIGN            /C=CH/O=Universita della Svizzera Italiana/*
@@ -45,20 +46,16 @@ CERT_BEGINS         Thu 2006-02-09 12:41:00 UTC
 CERT_EXPIRES        Thu 2008-03-13 12:41:00 UTC
 
 # MD5 and SHA1 fingerprints from 072fe468.0, downloaded Fri 2007-01-26,
-# re-checked Wed 2007-06-13
+# re-checked Wed 2007-06-13, and verified against the IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 072fe468.signing_policy,
-# extracted from the IGTF 1.14 release, available at
-# <https://dist.eugridpma.info/distribution/igtf/1.14/accredited/igtf-policy-installation-bundle-1.14.tar.gz>.
+# extracted from the IGTF 1.16 release.
 
-# The MD5 and SHA1 fingerprints and other information have also been
-# verified against information in the IGTF 1.14 release.
-
-# The following is copied from 072fe468.info extracted from the IGTF
-# 1.14 release:
+# The following is a copy of 072fe468.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: 072fe468.switch-server-2006.cadesc,v 1.7 2007-06-13 21:25:55-07 kst Exp $
+## # @(#)$Id: 072fe468.switch-server-2006.cadesc,v 1.8 2007-08-12 22:07:59-07 kst Exp $
 ## # Information for CA SWITCH Server 2006
 ## #   
 ## alias = SWITCH-Server-2006
@@ -66,6 +63,6 @@ CERT_EXPIRES        Thu 2008-03-13 12:41:00 UTC
 ## crl_url = http://crl.swisssign.net/4F0D10EFD99737FDB1F901DA33558E2DCDD5CA59
 ## requires = SWITCH
 ## status = accredited:classic
-## version = 1.14
+## version = 1.16
 ## email = pki@switch.ch
 ## sha1fp.0 = 4C:FF:E4:C2:4B:90:AD:3F:D1:A5:EC:B7:EF:42:1B:38:80:60:95:4E
