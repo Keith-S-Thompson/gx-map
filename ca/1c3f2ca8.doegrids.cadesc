@@ -1,4 +1,4 @@
-# $Id: 1c3f2ca8.doegrids.cadesc,v 1.22 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 1c3f2ca8.doegrids.cadesc,v 1.23 2007-08-12 22:08:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1c3f2ca8.doegrids.cadesc,v $
 
 CA_NAME             DOEGrids CA
@@ -20,12 +20,8 @@ CERT_BEGINS         Thu 2002-12-05 08:00:00 UTC
 CERT_EXPIRES        Fri 2013-01-25 08:00:00 UTC
 
 # The MD5 and SHA1 fingerprints are from 1c3f2ca8.0, downloaded Tue 2007-01-30.
-
-# Due to a bug on the pki1.doegrids.org web server, the
-# "HEAD" command doesn't work for the CRL_URL.
-# See bug-0020 (now fixed) for details.
-# This problem is irrelevant for gx-map release 0.4.4 and later, and
-# 0.5.1 and later.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # The certificate file 1c3f2ca8.0 was updated Tue 2006-10-31
 # The MD5 and SHA1 fingerprints have changed, and the certificate's
@@ -45,3 +41,17 @@ CERT_EXPIRES        Fri 2013-01-25 08:00:00 UTC
 # MAY_SIGN            /O=doegrids.org/*
 # MAY_SIGN            /O=doesciencegrid.org/*
 # MAY_SIGN            /DC=org/DC=doesciencegrid/*
+
+# The following is a copy of 1c3f2ca8.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 1c3f2ca8.doegrids.cadesc,v 1.23 2007-08-12 22:08:01-07 kst Exp $
+## # Information for CA DOEGrids
+## #   obtained from 1c3f2ca8 in DOEGrids/
+## alias = DOEGrids
+## url = http://www.doegrids.org/
+## crl_url = http://pki1.doegrids.org/CRL/1c3f2ca8.r0
+## email = trouble@es.net
+## requires = ESnet
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 2D:7C:01:FE:A8:40:6A:D0:2E:80:F5:08:E4:D2:EB:A3:A8:84:F8:90
