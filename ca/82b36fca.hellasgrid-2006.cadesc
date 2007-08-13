@@ -1,4 +1,4 @@
-# $Id: 82b36fca.hellasgrid-2006.cadesc,v 1.5 2007-07-23 16:46:38-07 kst Exp $
+# $Id: 82b36fca.hellasgrid-2006.cadesc,v 1.6 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/82b36fca.hellasgrid-2006.cadesc,v $
 
 CA_NAME             HellasGrid CA 2006
@@ -16,12 +16,26 @@ CRL_URL             http://crl.grid.auth.gr/hellasgrid-ca-2006/crl-v2.pem
 CERT_BEGINS         Sat 2006-07-15 09:00:00 UTC
 CERT_EXPIRES        Fri 2016-07-15 09:00:00 UTC
 
-# MD5 and SHA1 fingerprints from 82b36fca.0, downloaded Tue 2007-01-30
+# MD5 and SHA1 fingerprints from 82b36fca.0, downloaded Tue 2007-01-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 82b36fca.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified
-# against 82b36fca.0 in that same tarball and information on
-# <http://www.grid.auth.gr/pki/hellasgrid-ca-2006/cacert/>, and the SHA1
-# fingerprint has been verified against 82b36fca.info in the tarball.
+# the IGTF 1.16 release.
+
+# The following is a copy of 82b36fca.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 82b36fca.hellasgrid-2006.cadesc,v 1.6 2007-08-12 22:08:04-07 kst Exp $
+## # Information for CA HellasGrid CA 2006
+## # /C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid CA 2006
+## # hash: 82b36fca
+## alias = HellasGrid-CA-2006
+## requires = HellasGrid-Root
+## url = http://www.grid.auth.gr/pki/hellasgrid-ca-2006/
+## crl_url = http://crl.grid.auth.gr/hellasgrid-ca-2006/82b36fca.pem 
+## email = contact@grid.auth.gr
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = D7:ED:2D:0A:E8:67:B7:F5:AD:77:1B:C9:BF:1D:6B:95:A1:56:5A:AB
+## 
