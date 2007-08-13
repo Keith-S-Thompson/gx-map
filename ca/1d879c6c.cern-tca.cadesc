@@ -1,4 +1,4 @@
-# $Id: 1d879c6c.cern-tca.cadesc,v 1.4 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 1d879c6c.cern-tca.cadesc,v 1.5 2007-08-12 22:08:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1d879c6c.cern-tca.cadesc,v $
 
 CA_NAME             CERN Trusted Certification Authority
@@ -19,11 +19,23 @@ CERT_BEGINS         Tue 2006-10-03 09:36:13 UTC
 CERT_EXPIRES        Mon 2016-10-03 09:46:13 UTC
 
 # MD5 and SHA1 fingerprints from DER-format certificate downloaded
-# Fri 2007-01-26
+# Fri 2007-01-26.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
-# attributes are derived from 1d879c6c.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The SHA1 and MD5 fingerprints have been verified against 1d879c6c.0
-# in the same tarball, and the SHA1 fingerprint has also been verified
-# against 1d879c6c.info.
+# attributes are derived from 1d879c6c.signing_policy in the IGTF 1.16 release.
+
+# The following is a copy of 1d879c6c.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 1d879c6c.cern-tca.cadesc,v 1.5 2007-08-12 22:08:01-07 kst Exp $
+## # CA CERN-TCA
+## #
+## alias = CERN-TCA
+## requires = CERN-Root
+## crl_url = http://ca.cern.ch/ca/CRL/CERN%20Trusted%20Certification%20Authority.crl
+## url = http://www.cern.ch/ca
+## email = cern-ca-managers@cern.ch
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 66:CF:70:13:27:68:F3:C2:07:F3:BE:5F:BF:D4:1C:BD:85:9D:10:65
