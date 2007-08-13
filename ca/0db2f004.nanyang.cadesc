@@ -1,4 +1,4 @@
-# $Id: 0db2f004.nanyang.cadesc,v 1.6 2007-06-13 21:25:55-07 kst Exp $
+# $Id: 0db2f004.nanyang.cadesc,v 1.7 2007-08-13 16:41:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0db2f004.nanyang.cadesc,v $
 
 CA_NAME             Nanyang CA
@@ -16,9 +16,12 @@ CRL_URL             ?
 # ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Wed 2005-05-18 08:50:19 UTC
 CERT_EXPIRES        Sat 2015-05-16 08:50:19 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, uncomment the
-# "ALLOW_MISSING_CRL" line above.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 checksums from 0db2f004.0, downloaded Wed 2007-06-13
 
