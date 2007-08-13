@@ -1,4 +1,4 @@
-# $Id: d0c2a341.armesfo.cadesc,v 1.17 2007-04-13 19:20:38-07 kst Exp $
+# $Id: d0c2a341.armesfo.cadesc,v 1.18 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0c2a341.armesfo.cadesc,v $
 
 CA_NAME             ArmeSFo CA
@@ -20,12 +20,24 @@ CERT_EXPIRES        Mon 2008-12-01 23:29:21 UTC
 
 # The certificate appears to have been updated again 2006-04-20.
 
+# The SIGNING_POLICY_URL points to a file at a different site; it's identical
+# to the d0c2a341.signing_policy file in the IGTF 1.16 release.
+
 # MD5 and SHA1 fingerprints from d0c2a341.0 downloaded Tue 2006-06-06
 # Re-verified Tue 2006-09-26
 # Checked against https://www.tacar.org/md5.html Tue 2006-09-26
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# The IGTF 1.12 distribution had an older version of this certificate;
-# it was corrected in the 1.13 distribution.
-
-# Fingerprints verified against 
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# The following is a copy of d0c2a341.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: d0c2a341.armesfo.cadesc,v 1.18 2007-08-12 22:08:05-07 kst Exp $
+## # Information for CA ArmeSFo
+## #   obtained from d0c2a341 in ArmeSFo/
+## alias = ArmeSFo
+## email = ahairape@mail.yerphi.am
+## crl_url = http://armesfoca-crl.fzk.de/crl.pem
+## url = http://www.escience.am/ca/
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 0C:18:CE:33:EE:02:39:D7:0E:B6:71:73:69:1E:23:13:BC:E5:10:E3
