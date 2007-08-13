@@ -1,4 +1,4 @@
-# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.4 2007-04-13 19:20:28-07 kst Exp $
+# $Id: 2418a3f3.bg-acad-ca.cadesc,v 1.5 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/2418a3f3.bg-acad-ca.cadesc,v $
 
 CA_NAME             BG ACAD CA
@@ -21,10 +21,20 @@ CERT_EXPIRES        Sat 2017-02-11 19:00:31 UTC
 
 # MD5 and SHA1 fingerprints from bg_acad_ca-cacert.pem (2418a3f3.0),
 # downloaded Fri 2007-03-09
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 2418a3f3.signing_policy, extracted from
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against 2418a3f3.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against 2418a3f3.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of 2418a3f3.info from the IGTF 1.16 release:
+## # @(#)$Id: 2418a3f3.bg-acad-ca.cadesc,v 1.5 2007-08-12 22:08:02-07 kst Exp $
+## alias = BG-ACAD-CA
+## url = http://www.ca.acad.bg/
+## ca_url = http://www.ca.acad.bg/ca_cert/bg_acad_ca-cacert.pem
+## crl_url = http://www.ca.acad.bg/crl/bg_acad_ca-crl.pem
+## email = operations@ca.acad.bg
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 7F:1B:4D:3F:50:1D:BC:30:2B:7A:2A:46:FF:B8:8E:92:5D:55:34:05
