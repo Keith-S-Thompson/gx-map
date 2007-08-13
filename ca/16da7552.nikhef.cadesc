@@ -1,4 +1,4 @@
-# $Id: 16da7552.nikhef.cadesc,v 1.13 2007-06-13 21:25:55-07 kst Exp $
+# $Id: 16da7552.nikhef.cadesc,v 1.14 2007-08-12 22:08:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/16da7552.nikhef.cadesc,v $
 
 CA_NAME             DutchGrid Medium-Security Certification Authority
@@ -23,14 +23,9 @@ CERT_EXPIRES        Tue 2021-02-09 00:00:00 UTC
 # Re-verified Tue 2006-09-26 and Wed 2007-06-13
 # Verified against <https://www.tacar.org/md5.html>, Tue 2006-09-26
 
-# The fingerprints and other information have also been
-# verified against the IGTF 1.14 release, available at
-# <https://dist.eugridpma.info/distribution/igtf/1.14/accredited/igtf-policy-installation-bundle-1.14.tar.gz>
-
-# The following is a copy of the 16da7552.info file
-# from the IGTF 1.14 release:
+# The following is a copy of 16da7552.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: 16da7552.nikhef.cadesc,v 1.13 2007-06-13 21:25:55-07 kst Exp $
+## # @(#)$Id: 16da7552.nikhef.cadesc,v 1.14 2007-08-12 22:08:01-07 kst Exp $
 ## # Information for CA NIKHEF
 ## #   
 ## alias = NIKHEF
@@ -39,5 +34,5 @@ CERT_EXPIRES        Tue 2021-02-09 00:00:00 UTC
 ## email = ca@dutchgrid.nl
 ## status = accredited:classic
 ## url = http://ca.dutchgrid.nl/medium/
-## version = 1.14
+## version = 1.16
 ## sha1fp.0 = E5:FA:C3:3B:44:8F:26:1B:3D:D1:DE:BA:5F:EC:ED:35:A9:3F:23:21
