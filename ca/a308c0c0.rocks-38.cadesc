@@ -1,4 +1,4 @@
-# $Id: a308c0c0.rocks-38.cadesc,v 1.8 2007-04-13 19:20:35-07 kst Exp $
+# $Id: a308c0c0.rocks-38.cadesc,v 1.9 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a308c0c0.rocks-38.cadesc,v $
 
 CA_NAME             rocks-38 Simple CA
@@ -13,10 +13,14 @@ CERTIFICATE_SHA1    34:3C:5A:87:D2:EA:53:3F:48:54:C4:71:BD:86:FD:CA:E1:52:55:04
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/a308c0c0.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/a308c0c0.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Fri 2004-09-03 03:19:38 UTC
 CERT_EXPIRES        Wed 2009-09-02 03:19:38 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from a308c0c0.0 downloaded Wed 2005-12-21
