@@ -1,4 +1,4 @@
-# $Id: 5e5501f3.rmki.cadesc,v 1.7 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 5e5501f3.rmki.cadesc,v 1.8 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e5501f3.rmki.cadesc,v $
 
 CA_NAME             KFKI RMKI CA
@@ -17,11 +17,24 @@ CERT_BEGINS         Fri 2004-10-29 12:46:29 UTC
 CERT_EXPIRES        Wed 2009-10-28 12:46:29 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (5e5501f3.0) downloaded
-# Tue 2007-01-30
+# Tue 2007-01-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 5e5501f3.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against 5e5501f3.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against 5e5501f3.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of 5e5501f3.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 5e5501f3.rmki.cadesc,v 1.8 2007-08-12 22:08:03-07 kst Exp $
+## # Information for CA RMKI
+## #   obtained from 5e5501f3 in RMKI/
+## alias = RMKI
+## ca_url = http://pki.kfki.hu/pki0/pub/cacert/cacert.pem
+## crl_url = http://pki.kfki.hu/pki0/pub/crl/cacrl.crl
+## email = kadlec@sunserv.kfki.hu
+## status = accredited:classic
+## url = http://pki.kfki.hu/
+## version = 1.16
+## sha1fp.0 = 75:5C:C0:6E:E4:E8:F0:EA:EE:44:AE:85:2F:DE:60:3E:BD:CE:84:40
