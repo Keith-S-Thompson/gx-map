@@ -1,4 +1,4 @@
-# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.5 2007-04-30 17:27:52-07 kst Exp $
+# $Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.6 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b95bbf2.ncsa-cacl.cadesc,v $
 
 CA_NAME             NCSA CACL CA
@@ -17,4 +17,18 @@ CRL_URL             http://ca.ncsa.uiuc.edu/9b95bbf2.r0
 CERT_BEGINS         Tue 2007-04-24 19:23:18 UTC
 CERT_EXPIRES        Sun 2012-04-22 19:23:18 UTC
 
-# MD5 and SHA1 fingerprints from 9b95bbf2.0 downloaded Mon 2007-04-30
+# MD5 and SHA1 fingerprints from 9b95bbf2.0 downloaded Mon 2007-04-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The following is a copy of 9b95bbf2.info from the IGTF 1.16 release:
+## # @<#>$Id: 9b95bbf2.ncsa-cacl.cadesc,v 1.6 2007-08-12 22:08:04-07 kst Exp $
+## #
+## alias = NCSA-mics
+## url = http://security.ncsa.uiuc.edu/CA/
+## ca_url =  http://ca.ncsa.uiuc.edu/9b95bbf2.0
+## crl_url = http://ca.ncsa.uiuc.edu/9b95bbf2.r0
+## email = jbarlow@ncsa.uiuc.edu
+## status =  accredited:mics
+## sha1fp.0 = D3:F1:43:DD:1F:D7:41:4A:19:79:E1:12:B2:11:06:87:B7:79:66:1A
+## version = 1.16
