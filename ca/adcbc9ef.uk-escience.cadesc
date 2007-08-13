@@ -1,4 +1,4 @@
-# $Id: adcbc9ef.uk-escience.cadesc,v 1.4 2007-03-12 17:52:40-07 kst Exp $
+# $Id: adcbc9ef.uk-escience.cadesc,v 1.5 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/adcbc9ef.uk-escience.cadesc,v $
 
 CA_NAME             UK e-Science CA
@@ -16,8 +16,23 @@ CRL_URL             http://ca.grid-support.ac.uk/pub/crl/escience-ca-crl.pem
 CERT_BEGINS         Fri 2006-07-14 16:32:55 UTC
 CERT_EXPIRES        Fri 2011-07-15 16:32:55 UTC
 
-# MD5 and SHA1 fingerprints from adcbc9ef.0, downloaded Fri 2006-08-04
+# MD5 and SHA1 fingerprints from adcbc9ef.0, downloaded Fri 2006-08-04.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # This certificate, along with its signer (hash 8175c1cd) supersede the
 # old UK e-Science CA certificate (hash 01621954), which has not yet
 # expired but will not issue any new certificates.
+
+# The following is a copy of adcbc9ef.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: adcbc9ef.uk-escience.cadesc,v 1.5 2007-08-12 22:08:04-07 kst Exp $
+## # Information for CA UKeScience eScience subordinate CA
+## #
+## alias = UKeScienceCA
+## url = http://www.grid-support.ac.uk/ca/
+## crl_url = http://ca.grid-support.ac.uk/pub/crl/escience-ca-crl.crl
+## email = support@grid-support.ac.uk
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 0A:E0:5B:0C:64:99:18:2B:4F:FB:15:33:6F:77:33:F9:8E:F2:6D:C7
