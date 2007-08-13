@@ -1,4 +1,4 @@
-# $Id: c4435d12.switch.cadesc,v 1.4 2007-03-12 17:52:41-07 kst Exp $
+# $Id: c4435d12.switch.cadesc,v 1.5 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c4435d12.switch.cadesc,v $
 
 CA_NAME             SWITCH
@@ -9,8 +9,8 @@ SIGNED_BY           /CN=SwissSign Silver CA/emailAddress=silver@swisssign.com/O=
 SUBJECT             /CN=SWITCH CA/emailAddress=switch.ca@switch.ch/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/C=CH
 MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Personal CA/emailAddress=switch.personal.ca@switch.ch
 MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Server CA/emailAddress=switch.server.ca@switch.ch
-MAY_SIGN            /CN=SWITCH Personal CA/emailAddress=switch.personal.ca@switch.ch/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/C=CH
-MAY_SIGN            /CN=SWITCH Server CA/emailAddress=switch.server.ca@switch.ch/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/C=CH
+MAY_SIGN            /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Personal CA
+MAY_SIGN            /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/CN=SWITCH Server CA
 CERTIFICATE_MD5     C9:0A:3A:50:1F:BC:64:7F:6B:6F:31:53:EA:D2:0C:FF
 CERTIFICATE_SHA1    05:F4:B5:27:41:42:CF:9D:7B:B6:EF:B5:B3:62:92:BF:8F:12:60:F1
 CERTIFICATE_URL     http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=25C907F5142CD02905EF95F54243D5EA908D7373
@@ -20,12 +20,24 @@ CRL_FORM            DER
 CERT_BEGINS         Fri 2004-02-06 11:40:39 UTC
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
 
-# MD5 and SHA1 fingerprints from c4435d12.0, downloaded Fri 2007-01-26
+# MD5 and SHA1 fingerprints from c4435d12.0, downloaded Fri 2007-01-26.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from c4435d12.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against c4435d12.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against c4435d12.info.
+# the IGTF 1.16 release.
 
+# The following is a copy of c4435d12.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: c4435d12.switch.cadesc,v 1.5 2007-08-12 22:08:05-07 kst Exp $
+## # Information for CA SWITCH
+## #   obtained from c4435d12 in SWITCH/
+## alias = SWITCH
+## ca_url = http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=25C907F5142CD02905EF95F54243D5EA908D7373
+## crl_url = http://crl.swisssign.net/25C907F5142CD02905EF95F54243D5EA908D7373
+## requires = SwissSign-Silver
+## status = accredited:classic
+## version = 1.16
+## email = pki@switch.ch
+## sha1fp.0 = 05:F4:B5:27:41:42:CF:9D:7B:B6:EF:B5:B3:62:92:BF:8F:12:60:F1
