@@ -1,4 +1,4 @@
-# $Id: 0a2bac92.brgrid.cadesc,v 1.4 2007-04-13 19:20:26-07 kst Exp $
+# $Id: 0a2bac92.brgrid.cadesc,v 1.5 2007-08-12 22:08:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/0a2bac92.brgrid.cadesc,v $
 
 CA_NAME             UFF Brazilian Grid Certification Authority
@@ -18,6 +18,23 @@ CERT_EXPIRES        Mon 2016-07-11 17:46:58 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (0a2bac92.0)
 # downloaded Fri 2006-07-14, re-verified Tue 2007-01-30
+# and verified against the IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # The 0a2bac92.signing_policy is from a different site, not from the
-# CA's own web site.
+# CA's own web site.  It's identical to the 0a2bac92.signing_policy
+# file in the IGTF 1.16 release.
+
+# The following is a copy of 0a2bac92.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 0a2bac92.brgrid.cadesc,v 1.5 2007-08-12 22:08:00-07 kst Exp $
+## # BrGrid UFF managed Brazilian classic CA
+## #
+## alias = BrGrid
+## url = http://brgridca.ic.uff.br/
+## ca_url = https://brgridca.ic.uff.br/certs/cacert.txt
+## crl_url = http://brgridca.ic.uff.br/crl/cacrl.pem
+## email = brgridca@ic.uff.br
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = EB:E5:93:4D:04:8F:A0:72:A3:01:71:CB:43:57:E6:CD:FC:59:DF:BD
