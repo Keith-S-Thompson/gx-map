@@ -1,4 +1,4 @@
-# $Id: afe55e66.cygrid.cadesc,v 1.9 2007-04-13 19:20:35-07 kst Exp $
+# $Id: afe55e66.cygrid.cadesc,v 1.10 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/afe55e66.cygrid.cadesc,v $
 
 CA_NAME             CyGrid CA
@@ -25,16 +25,26 @@ CERT_EXPIRES        Sat 2013-02-09 12:11:44 UTC
 # certificate has the same subject name and hash as the previous one,
 # but the fingerprints have changed.
 
-# Much of the information here has been verified against
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-
 # The MD5 and SHA1 fingerprints from afe55e66.0, downloaded Tue 2007-03-13.
-# They've also been verified against the afe55e66.0 file included
-# in the IGTF tarball mentioned above, and the SHA1 fingerprint has been
-# verified against 2418a3f3.info.  The MAY_SIGN attribute is from
-# the afe55e66.signing_policy file in the IGTF tarball.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # Access to the grid.ucy.ac.cy web site has been sporadic.  The checksums
 # on the web site are currently incorrect (they're from an older
 # version of the certificate); as of Fri 2007-03-09, Yiannis Ioannou
 # <ioannou@cs.ucy.ac.cy> tells me that the web site will be updated soon.
+# As of Sun 2007-08-12, the files on the web site are correct.
+
+# The following is a copy of afe55e66.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: afe55e66.cygrid.cadesc,v 1.10 2007-08-12 22:08:04-07 kst Exp $
+## # Information for CA CyGrid
+## #   obtained from afe55e66 in CyGrid/
+## alias = CyGrid
+## ca_url = http://grid.ucy.ac.cy/CyGridCA/afe55e66.0
+## crl_url = http://grid.ucy.ac.cy/CyGridCA/afe55e66.r0
+## email = kyriacos@ucy.ac.cy
+## status = accredited:classic
+## url = http://grid.ucy.ac.cy/CyGridCA/
+## version = 1.16
+## sha1fp.0 = 31:75:10:A5:62:1D:14:F0:A9:EC:68:14:F0:33:7E:49:FD:E4:37:95
