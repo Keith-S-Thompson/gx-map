@@ -1,4 +1,4 @@
-# $Id: 8c13c962.egee-ne-benelux-tutorial.cadesc,v 1.1 2007-08-08 18:40:08-07 kst Exp $
+# $Id: 8c13c962.egee-ne-benelux-tutorial.cadesc,v 1.2 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8c13c962.egee-ne-benelux-tutorial.cadesc,v $
 
 CA_NAME             Worthless EGEE Northern and Benelux Tutorial CA 1
@@ -19,21 +19,19 @@ CERT_EXPIRES        Mon 2011-08-01 16:05:46 UTC
 DISABLE             yes
 
 # MD5 and SHA1 checksums from cacert.pem (8c13c962.0), downloaded
-# Wed 2007-08-08
-
-# Verified against information in IGTF 1.16 release,
-# https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz
-# and on the CA's home page.
+# Wed 2007-08-08.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+# and against information on the CA's homepage.
 
 # Since this CA is marked as "status = worthless" in the IGTF 1.16
 # release, it's marked as disabled.  If you want to use it anyway,
 # comment out the "DISABLE yes" line above and move this file up one
 # level to the ca-config directory.
 
-# The following is a copy of 8c13c962.info, extracted from the IGTF
-# 1.16 release:
+# The following is a copy of 8c13c962.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: 8c13c962.egee-ne-benelux-tutorial.cadesc,v 1.1 2007-08-08 18:40:08-07 kst Exp $
+## # @(#)$Id: 8c13c962.egee-ne-benelux-tutorial.cadesc,v 1.2 2007-08-12 22:08:04-07 kst Exp $
 ## # Information for the Worthless EGEE Northern and Benelux Tutorial CA 1
 ## alias = egee-ne-benelux-tutorial
 ## crl_url = http://ca.dutchgrid.nl/egee-ne/cacrl.pem
