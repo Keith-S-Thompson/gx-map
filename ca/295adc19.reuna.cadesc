@@ -1,4 +1,4 @@
-# $Id: 295adc19.reuna.cadesc,v 1.4 2007-06-04 13:10:03-07 kst Exp $
+# $Id: 295adc19.reuna.cadesc,v 1.5 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/295adc19.reuna.cadesc,v $
 
 CA_NAME             REUNA CA
@@ -22,7 +22,22 @@ CERT_EXPIRES        Thu 2017-05-11 10:35:21 UTC
 # but the hash and subject did not.
 
 # Fingerprints from cacert.pem (295adc19.0) downloaded Thu 2007-05-17
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # There are references on the reuna.cl web site to another CA with
 # hash 4fd3443 and subject "/C=CL/O=UCHILE/OU=DIM/CN=ROOT", but
 # I've been unable to find the certificate.
+
+# The following is a copy of 295adc19.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 295adc19.reuna.cadesc,v 1.5 2007-08-12 22:08:02-07 kst Exp $
+## #
+## alias =	REUNA-ca
+## url = http://reuna-ca.reuna.cl/
+## ca_url = http://reuna-ca.reuna.cl/cacert/cacert.pem
+## crl_url = http://reuna-ca.reuna.cl/crl/crl.der
+## email = reuna-ca@reuna.cl
+## status = accredited:classic
+## sha1fp.0 = C5:CD:1E:E2:D2:82:A6:D7:00:CC:B0:CB:FF:B3:8C:64:1C:41:19:33
+## version = 1.16
