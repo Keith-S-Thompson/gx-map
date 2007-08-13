@@ -1,4 +1,4 @@
-# $Id: fa3af1d7.cern.cadesc,v 1.12 2007-04-13 19:20:40-07 kst Exp $
+# $Id: fa3af1d7.cern.cadesc,v 1.13 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fa3af1d7.cern.cadesc,v $
 
 CA_NAME             CERN CA
@@ -25,3 +25,18 @@ CERT_EXPIRES        Tue 2008-08-19 09:50:00 UTC
 # MD5 and SHA1 fingerprints from fa3af1d7.0 downloaded Tue 2005-03-29
 # Re-verified Tue 2006-09-26
 # Verified against https://www.tacar.org/md5.html Tue 2006-09-26
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The following is a copy of fa3af1d7.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: fa3af1d7.cern.cadesc,v 1.13 2007-08-12 22:08:06-07 kst Exp $
+## # Information for CA CERN
+## #   obtained from fa3af1d7 in CERN/
+## alias = CERN
+## crl_url = http://service-grid-ca.web.cern.ch/service-grid-ca/cgi-bin/getCRL
+## url = http://service-grid-ca.web.cern.ch/service-grid-ca/
+## email = service-grid-ca@cern.ch
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 7B:86:34:13:2C:4F:39:3E:27:4C:65:84:90:13:11:4D:0A:B7:E8:96
