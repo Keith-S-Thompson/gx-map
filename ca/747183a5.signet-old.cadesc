@@ -1,4 +1,4 @@
-# $Id: 747183a5.signet-old.cadesc,v 1.5 2007-04-13 19:20:32-07 kst Exp $
+# $Id: 747183a5.signet-old.cadesc,v 1.6 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/747183a5.signet-old.cadesc,v $
 
 CA_NAME             SiGNET CA (old?)
@@ -17,8 +17,8 @@ CERT_BEGINS         Mon 2004-10-18 17:10:31 UTC
 CERT_EXPIRES        Sat 2009-10-17 17:10:31 UTC
 DISABLE             yes
 
-# This CA is included in
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
+# This CA is included in the IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>,
 # but it appears to be obsolete.  The CRL is available at the specified URL, but the
 # cacert.pem file is not (it's an empty file), and there's no mention of this CA
 # on the web page.  The CA is marked as disabled until this is resolved.
@@ -26,9 +26,8 @@ DISABLE             yes
 # This CA appears to have been replaced by a newer one, available at
 # the same web page; see 3d5be7bc.signet.cadesc.
 
-# MD5 and SHA1 fingerprints from 747183a5.0, extracted from
-# igtf-policy-installation-bundle-1.11.tar.gz, downloaded 
-# Tue 2007-01-30
+# The MD5 and SHA1 fingerprints have been verified against IGTF 1.16
+# release.
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 747183a5.signing_policy, extracted from
@@ -36,3 +35,23 @@ DISABLE             yes
 # fingerprints have also been verified against 747183a5.0 in that
 # same tarball, and the SHA1 fingerprint has been verified against
 # 747183a5.info.
+
+# If you want to recognize this CA, you can:
+# 1. Manually install the 747183a5.0 file, extracted from the IGTF 1.16
+#    release, and
+# 2. Comment out the "DISABLE yes" line above and move this cadesc file
+#    up to the ca-config subdirectory.
+
+# The following is a copy of 747183a5.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 747183a5.signet-old.cadesc,v 1.6 2007-08-12 22:08:03-07 kst Exp $
+## # Information for CA SiGNET
+## #   obtained from 747183a5 in SiGNET/
+## alias = SiGNET
+## ca_url = http://signet-ca.ijs.si/pub/cacert/cacert.pem
+## crl_url = http://signet-ca.ijs.si/pub/crl/cacrl.crl
+## email = signet-ca@ijs.si
+## status = accredited:classic
+## url = http://signet-ca.ijs.si/
+## version = 1.16
+## sha1fp.0 = 8E:CC:79:71:3F:FD:9D:05:3C:D0:EE:D2:45:3A:43:B0:8E:82:13:17
