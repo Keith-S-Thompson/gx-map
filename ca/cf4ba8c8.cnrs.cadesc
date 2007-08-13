@@ -1,4 +1,4 @@
-# $Id: cf4ba8c8.cnrs.cadesc,v 1.12 2007-08-09 17:24:45-07 kst Exp $
+# $Id: cf4ba8c8.cnrs.cadesc,v 1.13 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/cf4ba8c8.cnrs.cadesc,v $
 
 CA_NAME             CNRS CA
@@ -22,9 +22,21 @@ CERT_EXPIRES        Thu 2021-04-22 05:44:36 UTC
 
 # There does not appear to be a signing_policy file on the
 # cnrs.fr site.  The SIGNING_POLICY_URL points to a copy at
-# another site; it's consistent with an earlier version at
-# <http://hepgps.nbi.dk/datagrid_ca/certs/cf4ba8c8.signing_policy>.
+# another site; it's identical to the cf4ba8c8.signing_policy
+# file in the IGTF 1.16 release.
 
 # Note that there are no wildcards in the signing policy; this CA
 # certificate may sign only itself and the CNRS-Projets CA certificate
 # (see 34a509c3.cnrs-projets.cadesc).
+
+# The following is a copy of cf4ba8c8.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: cf4ba8c8.cnrs.cadesc,v 1.13 2007-08-12 22:08:05-07 kst Exp $
+## # Information for CA CNRS
+## #   obtained from cf4ba8c8 in CNRS/
+## alias = CNRS
+## crl_url = http://crls.services.cnrs.fr/CNRS/getpem.crl
+## status = accredited:classic
+## version = 1.16
+## email = Sophie.Nicoud@urec.cnrs.fr
+## sha1fp.0 = 22:61:81:6A:9D:F6:86:6E:76:CE:8A:AC:6E:6F:52:3D:8B:09:32:D1
