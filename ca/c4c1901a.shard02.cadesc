@@ -1,4 +1,4 @@
-# $Id: c4c1901a.shard02.cadesc,v 1.8 2007-04-13 19:20:37-07 kst Exp $
+# $Id: c4c1901a.shard02.cadesc,v 1.9 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c4c1901a.shard02.cadesc,v $
 
 CA_NAME             shard02.sdsc.edu Simple CA
@@ -13,10 +13,14 @@ CERTIFICATE_SHA1    B7:0D:10:C7:80:D3:9C:C8:52:AF:21:71:25:AD:A3:EA:F4:B2:6B:39
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/c4c1901a.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/c4c1901a.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Sat 2003-05-31 00:23:28 UTC
 CERT_EXPIRES        Thu 2008-05-29 00:23:28 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from c4c1901a.0 downloaded Wed 2005-12-21
