@@ -1,4 +1,4 @@
-# $Id: 617ff41b.kek.cadesc,v 1.4 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 617ff41b.kek.cadesc,v 1.5 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/617ff41b.kek.cadesc,v $
 
 CA_NAME             KEK GRID CA
@@ -16,11 +16,15 @@ CRL_URL             http://gridca.kek.jp/repository/617ff41b.r0
 CERT_BEGINS         Fri 2005-11-25 06:20:01 UTC
 CERT_EXPIRES        Thu 2011-03-31 15:00:00 UTC
 
-# MD5 and SHA1 fingerprints from 617ff41b.0 downloaded Tue 2007-01-30
+# MD5 and SHA1 fingerprints from 617ff41b.0 downloaded Tue 2007-01-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# Information about this CA is also available in
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>.
-# The MD5 and SHA1 fingerprints have also been verified
-# against 617ff41b.0 in that same tarball, and the SHA1
-# fingerprint has been verified against 617ff41b.info and
-# <https://gridca.kek.jp/repository/617ff41b.finger_print>.
+# The following is a copy of 617ff41b.info from the IGTF 1.16 release:
+## alias = KEK
+## crl_url = http://gridca.kek.jp/repository/617ff41b.r0
+## email = Takashi.Sasaki@kek.jp
+## status = accredited:classic
+## url = https://gridca.kek.jp/
+## version = 1.16
+## sha1fp.0 = 2B:A3:DC:2A:E5:81:3B:54:05:3D:5E:12:1F:9D:42:AA:6E:CF:F5:C7
