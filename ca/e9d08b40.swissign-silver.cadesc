@@ -1,4 +1,4 @@
-# $Id: e9d08b40.swissign-silver.cadesc,v 1.4 2007-03-12 17:52:42-07 kst Exp $
+# $Id: e9d08b40.swissign-silver.cadesc,v 1.5 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e9d08b40.swissign-silver.cadesc,v $
 
 CA_NAME             SwissSign Silver CA
@@ -17,11 +17,24 @@ CRL_FORM            DER
 CERT_BEGINS         Wed 2004-01-28 19:20:20 UTC
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
 
-# MD5 and SHA1 fingerprints from e9d08b40.0, downloaded Fri 2007-01-26
+# MD5 and SHA1 fingerprints from e9d08b40.0, downloaded Fri 2007-01-26.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from e9d08b40.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against e9d08b40.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against e9d08b40.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of e9d08b40.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: e9d08b40.swissign-silver.cadesc,v 1.5 2007-08-12 22:08:06-07 kst Exp $
+## # Information for CA SwissSign-Silver
+## #   obtained from e9d08b40 in SWITCH/
+## alias = SwissSign-Silver
+## ca_url = http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=CDA1AC23BFD03B208A5481CDFBDB4126E34A705A
+## crl_url = http://crl.swisssign.net/CDA1AC23BFD03B208A5481CDFBDB4126E34A705A
+## requires = SwissSign-Bronze
+## status = accredited:classic
+## version = 1.16
+## email = pki@switch.ch
+## sha1fp.0 = F8:D0:F1:02:33:D4:1D:FD:DE:77:EB:D6:66:2F:6F:C0:85:F5:AC:47
