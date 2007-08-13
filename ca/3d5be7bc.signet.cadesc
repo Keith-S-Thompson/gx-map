@@ -1,4 +1,4 @@
-# $Id: 3d5be7bc.signet.cadesc,v 1.5 2007-04-13 19:20:30-07 kst Exp $
+# $Id: 3d5be7bc.signet.cadesc,v 1.6 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3d5be7bc.signet.cadesc,v $
 
 CA_NAME             SiGNET CA
@@ -17,14 +17,25 @@ CRL_FORM            DER
 CERT_BEGINS         Wed 2006-08-23 08:52:27 UTC
 CERT_EXPIRES        Tue 2011-08-23 08:52:27 UTC
 
-# The CRL is in DER format.
-
 # MD5 and SHA1 fingerprints from cacert.pem (3d5be7bc.0) downloaded
 # Fri 2007-01-26
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# I haven't found an online signing_policy file.  The MAY_SIGN
-# attributes are derived from 3d5be7bc.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The SHA1 and MD5 fingerprints have been verified against 3d5be7bc.0 in
-# the same tarball.  (There is no SHA1 fingerprint in the 3d5be7bc.info
-# file.)
+# I haven't found an online signing_policy file.  The MAY_SIGN attributes
+# are derived from 3d5be7bc.signing_policy in the IGTF 1.16 release.
+
+# The following is a copy of 3d5be7bc.info from the IGTF 1.16 release:
+## # Information for CA SiGNET
+## # Subject: C=SI, O=SiGNET, CN=SiGNET CA
+## #
+## # @(#)$Id: 3d5be7bc.signet.cadesc,v 1.6 2007-08-12 22:08:02-07 kst Exp $
+## #
+## alias = SiGNET-CA
+## ca_url = http://signet-ca.ijs.si/pub/cacert/signet02cacert.pem
+## crl_url = http://signet-ca.ijs.si/pub/crl/signet02cacrl.crl
+## email = signet-ca@ijs.si
+## status = accredited:classic
+## url = http://signet-ca.ijs.si/
+## version = 1.16
+## sha1fp.0 = BC:89:93:37:26:8E:3D:B5:8D:DF:72:D7:09:53:D4:9B:E7:D9:B2:90
