@@ -1,4 +1,4 @@
-# $Id: d0b701c0.switchgrid-root.cadesc,v 1.4 2007-04-13 19:20:38-07 kst Exp $
+# $Id: d0b701c0.switchgrid-root.cadesc,v 1.5 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d0b701c0.switchgrid-root.cadesc,v $
 
 CA_NAME             SWITCHgrid Root
@@ -18,11 +18,21 @@ CERT_BEGINS         Fri 2007-02-09 16:00:00 UTC
 CERT_EXPIRES        Tue 2027-02-09 16:00:00 UTC
 
 # MD5 and SHA1 fingerprints from SWITCHgridRootCA.crt.pem (d0b701c0.0),
-# downloaded Fri 2007-03-09
+# downloaded Fri 2007-03-09.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from d0b701c0.signing_policy, extracted from
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against d0b701c0.0
-# in the ITGF tarball, and the SHA1 fingerprint has been verified
-# against d0b701c0.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of d0b701c0.info from the IGTF 1.16 release:
+## # @(#)$Id: d0b701c0.switchgrid-root.cadesc,v 1.5 2007-08-12 22:08:05-07 kst Exp $
+## alias = SWITCHgrid-Root
+## url = http://www.switch.ch/pki/grid
+## ca_url = http://ca.grid.switch.ch/SWITCHgridRootCA.crt
+## crl_url = http://crl.grid.switch.ch/SWITCHgridRootCA.crl
+## email = pki@switch.ch
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = E5:F6:51:AA:FD:DC:7A:A8:89:48:AB:06:1C:F7:52:4E:2D:4A:79:DD
