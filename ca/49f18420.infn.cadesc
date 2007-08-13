@@ -1,4 +1,4 @@
-# $Id: 49f18420.infn.cadesc,v 1.14 2007-04-13 19:20:30-07 kst Exp $
+# $Id: 49f18420.infn.cadesc,v 1.15 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
 
 CA_NAME             INFN Certification Authority
@@ -17,7 +17,15 @@ CRL_URL             http://security.fi.infn.it/CA/crl.pem
 CERT_BEGINS         Wed 2002-09-18 16:06:29 UTC
 CERT_EXPIRES        Tue 2007-09-18 16:06:29 UTC
 
+# MD5 and SHA1 fingerprints from CAcert.pem (49f18420.0), downloaded Thu 2007-02-15
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
 # English web page at <http://security.fi.infn.it/CA/en/>.
+
+# The SIGNING_POLICY_URL points to a third-party site, but the
+# 49f18420.signing_policy file there is identical to the one in the
+# IGTF 1.16 release.
 
 # The home page provides links to download the certificate and CRL files,
 # but the interface doesn't allow the use of wget; the URLs given here
