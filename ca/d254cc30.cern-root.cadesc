@@ -1,4 +1,4 @@
-# $Id: d254cc30.cern-root.cadesc,v 1.5 2007-04-13 19:20:38-07 kst Exp $
+# $Id: d254cc30.cern-root.cadesc,v 1.6 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d254cc30.cern-root.cadesc,v $
 
 CA_NAME             CERT Root CA
@@ -20,10 +20,22 @@ CERT_EXPIRES        Sat 2026-10-03 09:00:49 UTC
 
 # MD5 and SHA1 fingerprints from DER-format certificate downloaded
 # Fri 2007-01-26
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from d254cc30.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The SHA1 and MD5 fingerprints have been verified against d254cc30.0
-# in the same tarball, and the SHA1 fingerprint has also been verified
-# against d254cc30.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of d254cc30.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: d254cc30.cern-root.cadesc,v 1.6 2007-08-12 22:08:05-07 kst Exp $
+## # CA CERN-Root
+## #
+## alias = CERN-Root
+## crl_url = http://ca.cern.ch/ca/CRL/CERN%20Root%20CA.crl
+## url = http://www.cern.ch/ca
+## email = cern-ca-managers@cern.ch
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = DA:D8:7F:63:95:90:A1:E4:D4:1D:B9:48:3D:F4:C3:5C:FC:6B:BF:A3
