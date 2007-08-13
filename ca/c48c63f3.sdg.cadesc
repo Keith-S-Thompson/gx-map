@@ -1,4 +1,4 @@
-# $Id: c48c63f3.sdg.cadesc,v 1.3 2007-06-13 21:25:55-07 kst Exp $
+# $Id: c48c63f3.sdg.cadesc,v 1.4 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c48c63f3.sdg.cadesc,v $
 
 CA_NAME             Scientific Data Grid CA
@@ -17,18 +17,15 @@ CERT_BEGINS         Mon 2006-02-27 05:36:05 UTC
 CERT_EXPIRES        Sat 2016-02-27 05:36:05 UTC
 
 # MD5 and SHA1 fingerprints from c48c63f3.0, downloaded Fri 2007-01-26,
-# re-verified Wed 2007-06-13
+# re-verified Wed 2007-06-13.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# Fingerprints and other information have also been verified against
-# information in the IGTF 1.14 release, available at
-# <https://dist.eugridpma.info/distribution/igtf/1.14/accredited/igtf-policy-installation-bundle-1.14.tar.gz>.
-
-# The following is a copy of c48c63f3.info, extracted from the IGTF
-# 1.14 release:
+# The following is a copy of c48c63f3.info from the IGTF 1.16 release:
 ## alias = SDG
 ## crl_url = http://ca.sdg.grid.cn/crl/cacrl.pem
 ## email = sdgca@cnic.cn
 ## status = accredited:classic
 ## url = http://ca.sdg.grid.cn/en/
-## version = 1.14
+## version = 1.16
 ## sha1fp.0 = 56:C2:85:51:67:78:6D:7D:F3:33:23:9E:89:12:21:5F:27:D5:33:47
