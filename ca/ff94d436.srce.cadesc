@@ -1,4 +1,4 @@
-# $Id: ff94d436.srce.cadesc,v 1.3 2007-04-13 19:20:40-07 kst Exp $
+# $Id: ff94d436.srce.cadesc,v 1.4 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/ff94d436.srce.cadesc,v $
 
 CA_NAME             SRCE CA
@@ -19,3 +19,15 @@ CERT_EXPIRES        Wed 2011-06-15 17:39:20 UTC
 
 # MD5 and SHA1 fingerprints from ff94d436.0 downloaded Tue 2006-10-03
 # Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The following is a copy of ff94d436.info from the IGTF 1.16 release:
+## alias = SRCE
+## url = http://ra.srce.hr
+## ca_url = http://ra.srce.hr/cacert.pem
+## crl_url = http://ra.srce.hr/cacrl.crl
+## email = srce-ca@srce.hr
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = A0:39:C3:FD:D6:A3:5F:C5:94:5C:5B:87:89:0D:4C:32:8F:11:C7:E0
