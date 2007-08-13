@@ -1,4 +1,4 @@
-# $Id: a692434d.taiwan-ascg.cadesc,v 1.12 2007-06-01 17:51:06-07 kst Exp $
+# $Id: a692434d.taiwan-ascg.cadesc,v 1.13 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a692434d.taiwan-ascg.cadesc,v $
 
 CA_NAME             Academia Sinica Grid Computing Certification Authority
@@ -18,7 +18,19 @@ CERT_BEGINS         Wed 2003-06-18 08:31:54 UTC
 CERT_EXPIRES        Mon 2008-06-16 08:31:54 UTC
 
 # MD5 and SHA1 fingerprints from ASGCCA.pem (a692434d.0) downloaded
-# Tue 2005-03-29
+# Tue 2005-03-29.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# Fri 2007-06-01: Re-verified against IGTF 1.14 release,
-# <https://dist.eugridpma.info/distribution/igtf/1.14/accredited/igtf-policy-installation-bundle-1.14.tar.gz>
+# The following is a copy of a692434d.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: a692434d.taiwan-ascg.cadesc,v 1.13 2007-08-12 22:08:04-07 kst Exp $
+## # Information for CA ASGCCA
+## #   obtained from a692434d in APGrid/
+## alias = ASGCCA
+## crl_url = http://ca.grid.sinica.edu.tw/CRL/ASGCCA-crl.pem
+## email = ca@lists.grid.sinica.edu.tw
+## status = accredited:classic
+## url = http://ca.grid.sinica.edu.tw/
+## version = 1.16
+## sha1fp.0 = 46:29:F6:21:28:79:18:4D:C0:F8:BE:9D:E1:45:9C:C6:CD:D3:B2:F9
