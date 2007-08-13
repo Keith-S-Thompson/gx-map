@@ -1,4 +1,4 @@
-# $Id: e36e7a72.swissign-bronze.cadesc,v 1.4 2007-03-12 17:52:42-07 kst Exp $
+# $Id: e36e7a72.swissign-bronze.cadesc,v 1.5 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e36e7a72.swissign-bronze.cadesc,v $
 
 CA_NAME             SwissSign Bronze CA
@@ -17,11 +17,24 @@ CRL_FORM            DER
 CERT_BEGINS         Wed 2004-01-28 15:08:35 UTC
 CERT_EXPIRES        Wed 2031-11-26 23:27:41 UTC
 
-# MD5 and SHA1 fingerprints from e36e7a72.0, downloaded Fri 2007-01-26
+# MD5 and SHA1 fingerprints from e36e7a72.0, downloaded Fri 2007-01-26.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from e36e7a72.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against e36e7a72.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against e36e7a72.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of e36e7a72.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: e36e7a72.swissign-bronze.cadesc,v 1.5 2007-08-12 22:08:06-07 kst Exp $
+## # Information for CA SwissSign-Bronze
+## #   obtained from e36e7a72 in SWITCH/
+## alias = SwissSign-Bronze
+## ca_url = http://swisssign.net/cgi-bin/authority/download?into=file&format=pem&ca=E2DE8E8AE3FF7141C7533C93DA8D6EB1D241484A
+## crl_url = http://crl.swisssign.net/E2DE8E8AE3FF7141C7533C93DA8D6EB1D241484A
+## requires = SwissSign-Root
+## status = accredited:classic
+## version = 1.16
+## email = pki@switch.ch
+## sha1fp.0 = D9:0F:51:04:EE:8F:94:6D:DA:CA:EE:5B:22:06:27:A2:CE:3E:19:0D
