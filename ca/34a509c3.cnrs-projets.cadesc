@@ -1,20 +1,43 @@
-# $Id: 34a509c3.cnrs-projets.cadesc,v 1.12 2007-03-12 17:52:37-07 kst Exp $
+# $Id: 34a509c3.cnrs-projets.cadesc,v 1.13 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/34a509c3.cnrs-projets.cadesc,v $
 
 CA_NAME             CNRS-Projets
 HOMEPAGE            ?
-CONTACT             ?
+CONTACT             Sophie.Nicoud@urec.cnrs.fr
 HASH                34a509c3
 SIGNED_BY           /C=FR/O=CNRS/CN=CNRS
 SUBJECT             /C=FR/O=CNRS/CN=CNRS-Projets
-MAY_SIGN            /C=FR/O=CNRS/CN=Datagrid-fr
+MAY_SIGN            /C=FR/O=CNRS/CN=GRID-FR
 MAY_SIGN            /C=FR/O=CNRS/CN=CNRS-Projets
 CERTIFICATE_MD5     E2:A7:B1:A2:66:3B:AC:2C:CB:2F:70:B5:52:DA:9F:93
 CERTIFICATE_SHA1    D2:C5:3C:9C:DB:34:5E:8E:A6:6E:56:A2:D3:4D:E1:58:82:CA:96:73
 CERTIFICATE_URL     http://crls.services.cnrs.fr/CNRS-Projets/getpem.crt
-SIGNING_POLICY_URL  http://www.nbi.dk/~waananen/datagrid_ca/certs/34a509c3.signing_policy
+SIGNING_POLICY_URL  ?
 CRL_URL             http://crls.services.cnrs.fr/CNRS-Projets/getpem.crl
 CERT_BEGINS         Fri 2001-04-27 05:48:26 UTC
 CERT_EXPIRES        Mon 2011-04-25 05:48:26 UTC
 
 # MD5 and SHA1 fingerprints from getpem.crt (34a509c3.0) downloaded 2005-03-29
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The MAY_SIGN attributes are derived from
+# 34a509c3.signing_policy in the IGTF 1.16 release.
+# An older version is available from a third-party site,
+# <http://www.nbi.dk/~waananen/datagrid_ca/certs/34a509c3.signing_policy>.
+# That signing_policy is inconsistent with the one in the IGTF release.
+# The www.nbi.dk file was last updated in 2001; I'm going to assume the
+# IGTF version is more accurate.
+
+# The following is a copy of 34a509c3.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 34a509c3.cnrs-projets.cadesc,v 1.13 2007-08-12 22:08:02-07 kst Exp $
+## # Information for CA CNRS-Projets
+## #   obtained from 34a509c3 in CNRS-Projets/
+## alias = CNRS-Projets
+## crl_url = http://crls.services.cnrs.fr/CNRS-Projets/getpem.crl
+## requires = CNRS
+## status = accredited:classic
+## version = 1.16
+## email = Sophie.Nicoud@urec.cnrs.fr
+## sha1fp.0 = D2:C5:3C:9C:DB:34:5E:8E:A6:6E:56:A2:D3:4D:E1:58:82:CA:96:73
