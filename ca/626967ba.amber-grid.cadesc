@@ -1,4 +1,4 @@
-# $Id: 626967ba.amber-grid.cadesc,v 1.9 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 626967ba.amber-grid.cadesc,v 1.10 2007-08-13 16:41:44-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/626967ba.amber-grid.cadesc,v $
 
 CA_NAME             amber.grid CA
@@ -13,10 +13,14 @@ CERTIFICATE_SHA1    E9:FE:EC:2D:1C:24:AF:4E:4E:FA:A7:88:F4:09:38:A5:14:AB:E0:07
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/626967ba.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/626967ba.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Wed 2004-08-18 09:05:27 UTC
 CERT_EXPIRES        Mon 2009-08-17 09:05:27 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from 626967ba.0 downloaded Wed 2005-12-21
