@@ -1,4 +1,4 @@
-# $Id: e7ad98af.baldridge.cadesc,v 1.8 2007-04-13 19:20:39-07 kst Exp $
+# $Id: e7ad98af.baldridge.cadesc,v 1.9 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e7ad98af.baldridge.cadesc,v $
 
 CA_NAME             Baldridge group CA
@@ -13,10 +13,14 @@ CERTIFICATE_SHA1    88:3A:50:F2:13:98:6E:F0:F8:B3:DB:AE:F1:BB:D2:F3:09:63:33:10
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/e7ad98af.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/e7ad98af.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Wed 2004-08-25 11:00:50 UTC
 CERT_EXPIRES        Mon 2009-08-24 11:00:50 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from e7ad98af.0 downloaded Wed 2005-12-21
