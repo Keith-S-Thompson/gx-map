@@ -1,4 +1,4 @@
-# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.5 2007-08-09 02:37:49-07 kst Exp $
+# $Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.6 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/4d654d1d.gte-cybertrust-global-root.cadesc,v $
 
 CA_NAME             GTE CyberTrust Global Root
@@ -21,19 +21,22 @@ DISABLE             yes
 # I haven't found an online signing_policy file *or* an online copy of
 # the certificate.  A copy of the certificate is in included in the
 # IGTF 1.16 distribution,
-# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
-# the MD5 and SHA1 fingerprints are computed from that, and the
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
+# The MD5 and SHA1 fingerprints are computed from that, and the
 # SHA1 fingerprint has been verified against 4d654d1d.info.
 
 # Note that the 4d654d1d.info file in the IGTF tarball includes the line
 # "status = worthless".
 
-# This CA is marked as disabled.
+# This CA is marked as disabled.  If you want to enable you can
+# comment out the "DISABLE yes" line above and move this file up to the
+# ca-config subdirectory.  You'll also need to manually install
+# the 4d654d1d.0 file; gx-ca-update will then take care of the
+# 4d654d1d.0 (CRL) and 4d654d1d..signing_policy files.
 
-# The following is a copy of 4d654d1d.info, extracted from the IGTF
-# 1.16 release:
+# The following is a copy of 4d654d1d.info from the IGTF 1.16 release:
 ## # GlobalSign SureServer EDU (TERENA SCS)
-## # @(#)$Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.5 2007-08-09 02:37:49-07 kst Exp $
+## # @(#)$Id: 4d654d1d.gte-cybertrust-global-root.cadesc,v 1.6 2007-08-12 22:08:03-07 kst Exp $
 ## #
 ## alias = GTE-CyberTrust-Global-Root
 ## status = worthless
