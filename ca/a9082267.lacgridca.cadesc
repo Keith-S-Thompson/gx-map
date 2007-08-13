@@ -1,4 +1,4 @@
-# $Id: a9082267.lacgridca.cadesc,v 1.1 2007-08-08 19:56:30-07 kst Exp $
+# $Id: a9082267.lacgridca.cadesc,v 1.2 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a9082267.lacgridca.cadesc,v $
 
 CA_NAME             UFF Latin American and Caribbean Catch-all Grid CA
@@ -17,16 +17,14 @@ CERT_BEGINS         Sat 2007-07-28 18:50:09 UTC
 CERT_EXPIRES        Fri 2017-07-28 18:50:09 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (a9082267.0), downloaded
-# Wed 2007-08-08
+# Wed 2007-08-08.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+# and against information on the CA's home page.
 
-# Verified against information in IGTF 1.16 release,
-# https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz
-# and on the CA's home page.
-
-# The following is a copy of a9082267.info, extracted from the IGTF
-# 1.16 release:
+# The following is a copy of a9082267.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: a9082267.lacgridca.cadesc,v 1.1 2007-08-08 19:56:30-07 kst Exp $
+## # @(#)$Id: a9082267.lacgridca.cadesc,v 1.2 2007-08-12 22:08:04-07 kst Exp $
 ## #
 ## alias = LACGridCA
 ## url = http://lacgridca.ic.uff.br/
