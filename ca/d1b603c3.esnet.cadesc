@@ -1,4 +1,4 @@
-# $Id: d1b603c3.esnet.cadesc,v 1.18 2007-04-13 19:20:38-07 kst Exp $
+# $Id: d1b603c3.esnet.cadesc,v 1.19 2007-08-12 22:08:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d1b603c3.esnet.cadesc,v $
 
 CA_NAME             ESnet Root CA
@@ -29,3 +29,18 @@ CERT_EXPIRES        Wed 2022-10-26 07:00:00 UTC
 # MD5 and SHA1 fingerprints from d1b603c3.0 downloaded Thu 2006-11-02
 # Verified against <http://www.es.net/CA/ESnet-Root-CA-1/fingerprint>,
 # Thu 2006-11-02
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The following is a copy of d1b603c3.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: d1b603c3.esnet.cadesc,v 1.19 2007-08-12 22:08:05-07 kst Exp $
+## # Information for CA ESnet
+## #   obtained from d1b603c3 in ESnet/
+## alias = ESnet
+## url = http://www.es.net/CA/ESnet-Root-CA-1
+## crl_url = http://es.net/CA/d1b603c3/CRL/d1b603c3.r0
+## email = trouble@es.net
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = F2:63:97:A8:B2:D5:1F:94:CC:0F:06:5A:FE:76:5D:F3:CF:28:81:A0
