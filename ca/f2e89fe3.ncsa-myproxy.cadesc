@@ -1,4 +1,4 @@
-# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.6 2007-04-30 17:27:52-07 kst Exp $
+# $Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.7 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f2e89fe3.ncsa-myproxy.cadesc,v $
 
 CA_NAME             NCSA MyProxy CA
@@ -17,4 +17,17 @@ ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Tue 2007-04-24 19:25:03 UTC
 CERT_EXPIRES        Sun 2012-04-22 19:25:03 UTC
 
-# MD5 and SHA1 fingerprints from f2e89fe3.0 downloaded Mon 2007-04-30
+# MD5 and SHA1 fingerprints from f2e89fe3.0 downloaded Mon 2007-04-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The following is a copy of f2e89fe3.info from the IGTF 1.16 release:
+## # @<#>$Id: f2e89fe3.ncsa-myproxy.cadesc,v 1.7 2007-08-12 22:08:06-07 kst Exp $
+## #
+## alias = NCSA-slcs
+## url = http://security.ncsa.uiuc.edu/CA/
+## ca_url =  http://ca.ncsa.uiuc.edu/f2e89fe3.0
+## email = jbarlow@ncsa.uiuc.edu
+## status =  accredited:slcs
+## sha1fp.0 = 59:99:70:9C:C8:23:C4:0D:7F:3F:C0:80:AB:52:EC:D1:62:F1:5F:3B
+## version = 1.16
