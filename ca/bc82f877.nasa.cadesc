@@ -1,4 +1,4 @@
-# $Id: bc82f877.nasa.cadesc,v 1.18 2007-04-13 19:20:36-07 kst Exp $
+# $Id: bc82f877.nasa.cadesc,v 1.19 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/bc82f877.nasa.cadesc,v $
 
 CA_NAME             NASA CA
@@ -13,13 +13,18 @@ CERTIFICATE_SHA1    C8:FA:5B:26:C9:07:D0:BD:0C:32:12:34:8E:8F:64:33:DD:86:EE:52
 CERTIFICATE_URL     http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.0
 SIGNING_POLICY_URL  http://www-d0.fnal.gov/computing/grid/sam_gsi_config/grid-security/certificates/bc82f877.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Tue 2002-12-10 08:00:00 UTC
 CERT_EXPIRES        Mon 2007-12-10 08:00:00 UTC
+DISABLE             yes
 
 
 # I've found copies of the certificate and signing_policy at the Fermilab
 # web site, but not on any NASA site.
-#
-# There does not appear to be a CRL.
+
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from bc82f877.0 downloaded 2005-03-29
