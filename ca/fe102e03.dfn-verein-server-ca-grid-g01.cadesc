@@ -1,4 +1,4 @@
-# $Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.1 2007-06-22 20:56:24-07 kst Exp $
+# $Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.2 2007-08-12 22:08:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v $
 
 CA_NAME             DFN-Verein Server CA Grid - G01
@@ -18,9 +18,25 @@ CERT_BEGINS         Thu 2005-07-07 14:56:32 UTC
 CERT_EXPIRES        Tue 2009-07-07 14:56:32 UTC
 
 # MD5 and SHA1 fingerprints from ca-server-cert.pem (fe102e03.0) downloaded
-# Thu 2006-11-30
+# Thu 2006-11-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I was unable to find a standalone fe102e03.signing_policy file.
 # the MAY_SIGN attributes are based on the fe102e03.signing_policy file
-# extracted from
-# <http://www.eugridpma.org/distribution/igtf/1.10/accredited/igtf-preinstalled-bundle-classic-1.10.tar.gz>
+# extracted from the IGTF 1.16 release.
+
+# The following is a copy of fe102e03.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.2 2007-08-12 22:08:06-07 kst Exp $
+## # Information for CA DFN-GridGermany-Server
+## #   obtained from fe102e03 in DFN/
+## alias = DFN-GridGermany-Server
+## ca_url = http://cdp1.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/certs/ca-server-cert.crt
+## crl_url = http://cdp1.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/crls/ca-server-crl.crl
+## email = dfnpca@dfn-cert.de
+## requires = DFN-GridGermany-Root
+## status = accredited:classic
+## url = http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/html/cacert.html
+## version = 1.16
+## sha1fp.0 = 20:36:73:B7:15:93:15:28:5A:54:70:71:A1:DC:D7:B1:39:42:C5:09
