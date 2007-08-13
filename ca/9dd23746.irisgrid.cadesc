@@ -1,4 +1,4 @@
-# $Id: 9dd23746.irisgrid.cadesc,v 1.3 2007-04-13 19:20:34-07 kst Exp $
+# $Id: 9dd23746.irisgrid.cadesc,v 1.4 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9dd23746.irisgrid.cadesc,v $
 
 CA_NAME             pkIRISGrid CA
@@ -16,10 +16,23 @@ CRL_URL             http://www.irisgrid.es/pki/crl/cacrl.pem
 CERT_BEGINS         Tue 2005-06-28 05:02:28 UTC
 CERT_EXPIRES        Fri 2015-06-26 05:02:28 UTC
 
+# MD5 and SHA1 fingerprints from 9dd23746.0 downloaded Tue 2006-10-03
+# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
 # English home page at <http://www.irisgrid.es/pki/index.en.html>.
 # The CONTACT link is a web form, not an e-mail address.
 
-# Note that the SIGNING_POLICY_URL is from a different site.
+# The SIGNING_POLICY_URL is from a different site; it's identical
+# to the 9dd23746.signing_policy file from the IGTF 1.16 release.
 
-# MD5 and SHA1 fingerprints from 9dd23746.0 downloaded Tue 2006-10-03
-# Verified against <https://www.tacar.org/md5.html>, Tue 2006-10-03
+# The following is a copy of 9dd23746.info from the IGTF 1.16 release:
+## alias = pkIRISGrid
+## ca_url = http://www.irisgrid.es/pki/cacert/9dd23746.0
+## crl_url = http://www.irisgrid.es/pki/crl/cacrl.pem
+## email = pkirisgrid-ca@rediris.es
+## status = accredited:classic
+## url = http://www.irisgrid.es/pki/
+## version = 1.16
+## sha1fp.0 = 6F:62:7B:52:E1:F6:4F:3F:1D:56:78:7F:1A:02:5E:E8:D2:A2:29:AD
