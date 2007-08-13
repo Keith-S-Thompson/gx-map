@@ -1,4 +1,4 @@
-# $Id: 9b59ecad.cesnet.cadesc,v 1.4 2007-04-13 19:20:34-07 kst Exp $
+# $Id: 9b59ecad.cesnet.cadesc,v 1.5 2007-08-12 22:08:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/9b59ecad.cesnet.cadesc,v $
 
 CA_NAME             CESNET CA
@@ -16,9 +16,24 @@ CRL_URL             http://www.cesnet.cz/pki/crl/9b59ecad.r0
 CERT_BEGINS         Fri 2005-06-17 14:50:17 UTC
 CERT_EXPIRES        Tue 2025-06-17 15:20:17 UTC
 
-# I can't guarantee the authenticity of the signing_policy, since I
-# wasn't able to find it on the CA's own site, but it seems reasonable.
-
 # MD5 and SHA1 fingerprints from 9b59ecad.0 downloaded Tue 2006-06-27
 # Re-verified Tue 2006-09-26
 # Checked against <https://www.tacar.org/md5.html> Tue 2006-09-26
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+
+# The SIGNING_POLICY_URL points to a third-party site, but it's consistent
+# with the 9b59ecad.signing_policy file in the IGTF 1.16 release.
+
+# The following is a copy of 9b59ecad.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 9b59ecad.cesnet.cadesc,v 1.5 2007-08-12 22:08:04-07 kst Exp $
+## # Information for CA CESNET
+## #   obtained from 9b59ecad in CESNET/
+## alias = CESNET
+## ca_url = http://www.cesnet.cz/pki/certs/cesnet-ca.cz.pem.crt
+## crl_url = http://www.cesnet.cz/pki/crl/cn=CESNET%20CA,dc=cesnet-ca,dc=cz.crl
+## email = ca@cesnet.cz
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = B6:D8:8D:9D:CD:72:DF:1B:D6:CB:2E:EF:8E:64:2F:73:21:24:23:95
