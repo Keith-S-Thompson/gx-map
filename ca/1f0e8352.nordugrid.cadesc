@@ -1,4 +1,4 @@
-# $Id: 1f0e8352.nordugrid.cadesc,v 1.18 2007-04-13 19:20:28-07 kst Exp $
+# $Id: 1f0e8352.nordugrid.cadesc,v 1.19 2007-08-12 22:08:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1f0e8352.nordugrid.cadesc,v $
 
 CA_NAME             NorduGrid Certification Authority
@@ -17,10 +17,22 @@ CERT_BEGINS         Fri 2007-03-09 13:07:43 UTC
 CERT_EXPIRES        Fri 2009-05-15 12:00:00 UTC
 
 # MD5 and SHA1 fingerprints from 1f0e8352.0 downloaded Wed 2007-03-14.
-
-# The fingerprints have also been checked against the information in
-# the latest IGTF distribution,
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
 # The certificate was updated Tue 2007-03-13; the previous version had the
 # same subject and hash, but different fingerprints and expiration date.
+
+# The following is a copy of 1f0e8352.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 1f0e8352.nordugrid.cadesc,v 1.19 2007-08-12 22:08:01-07 kst Exp $
+## # Information for CA NorduGrid
+## #   obtained from 1f0e8352 in NorduGrid/
+## alias = NorduGrid
+## ca_url = http://ca.nordugrid.org/cacrt.crt
+## url = http://ca.nordugrid.org/
+## email = ca@nordugrid.org
+## crl_url = http://ca.nordugrid.org/cacrl.crl
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = AB:BF:6E:46:01:F9:5B:36:22:B8:C2:76:C0:E3:30:3C:B4:6A:12:B5
