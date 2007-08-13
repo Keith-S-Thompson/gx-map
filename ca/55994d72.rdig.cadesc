@@ -1,4 +1,4 @@
-# $Id: 55994d72.rdig.cadesc,v 1.5 2007-04-13 19:20:31-07 kst Exp $
+# $Id: 55994d72.rdig.cadesc,v 1.6 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/55994d72.rdig.cadesc,v $
 
 CA_NAME             Russian Data Intensive Grid
@@ -18,11 +18,24 @@ CERT_BEGINS         Tue 2005-08-09 14:44:37 UTC
 CERT_EXPIRES        Fri 2015-08-07 14:44:37 UTC
 
 # MD5 and SHA1 fingerprints from cacrt.pem (55994d72.0) downloaded
-# Tue 2007-01-30
+# Tue 2007-01-30.
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN
 # attributes are derived from 55994d72.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The MD5 and SHA1 fingerprints have also been verified against 55994d72.0
-# in that same tarball, and the SHA1 fingerprint has been verified
-# against 55994d72.info.
+# the IGTF 1.16 release.
+
+# The following is a copy of 55994d72.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 55994d72.rdig.cadesc,v 1.6 2007-08-12 22:08:03-07 kst Exp $
+## # Information for CA RDIG
+## #   obtained from 55994d72 in Russia/
+## alias = RDIG
+## ca_url = http://ca.grid.kiae.ru/RDIG/cacrt.pem
+## crl_url = http://ice.grid.kiae.ru/ca/RDIG/cacrl.pem
+## email = rdig-ca-support@grid.kiae.ru
+## status = accredited:classic
+## url = http://ca.grid.kiae.ru/RDIG/
+## version = 1.16
+## sha1fp.0 = CB:00:03:30:76:2E:94:31:07:D4:D7:DE:EC:55:FB:A0:E2:8B:73:94
