@@ -1,4 +1,4 @@
-# $Id: fe3a68d6.unam-old.cadesc,v 1.3 2007-04-13 19:20:40-07 kst Exp $
+# $Id: fe3a68d6.unam-old.cadesc,v 1.4 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fe3a68d6.unam-old.cadesc,v $
 
 CA_NAME             UNAM (old)
@@ -13,10 +13,14 @@ CERTIFICATE_SHA1    76:16:42:96:A3:16:C3:37:E9:AC:0A:A5:BF:70:42:74:9A:F2:5B:F6
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/fe3a68d6.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/fe3a68d6.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Wed 2003-09-17 20:47:03 UTC
 CERT_EXPIRES        Mon 2008-09-15 20:47:03 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from fe3a68d6.0 downloaded Wed 2005-12-21
