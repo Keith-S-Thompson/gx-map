@@ -1,4 +1,4 @@
-# $Id: 13eab55e.datagrid-es.cadesc,v 1.8 2007-04-13 19:20:27-07 kst Exp $
+# $Id: 13eab55e.datagrid-es.cadesc,v 1.9 2007-08-12 22:08:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/13eab55e.datagrid-es.cadesc,v $
 
 CA_NAME             Datagrid-ES CA
@@ -19,4 +19,25 @@ CERT_EXPIRES        Sat 2007-10-20 16:04:52 UTC
 # Supersedes the expired certificate 90e2484f.0
 # (see 90e2484f.datagrid-es-old.cadesc).
 
-# MD5 and SHA1 fingerprints from 13eab55e.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from 13eab55e.0 downloaded Tue 2005-03-29
+# Re-verified Fri 2007-08-10.  Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
+
+# There doesn't appear to be a signing_policy file on the unican.es site;
+# the MAY_SIGN attribute is determined by the 90e2484f.signing_policy
+# file in the IGTF 11.6 release.
+
+# The following is a copy of 13eab55e.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 13eab55e.datagrid-es.cadesc,v 1.9 2007-08-12 22:08:01-07 kst Exp $
+## # Information for CA Spain
+## #   obtained from 13eab55e in Spain/
+## alias = Spain
+## ca_url = http://grid.ifca.unican.es/ca/datagrid-es/13eab55e.0
+## crl_url = http://grid.ifca.unican.es/ca/datagrid-es/13eab55e.r0
+## email = datagrid-es-ca@ifca.unican.es
+## status = accredited:classic
+## url = http://grid.ifca.unican.es/ca/datagrid-es/
+## version = 1.16
+## sha1fp.0 = E2:A5:AA:5C:F2:0F:FD:36:DB:F8:2A:D2:ED:99:6F:94:A6:75:02:41
+
