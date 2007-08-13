@@ -1,4 +1,4 @@
-# $Id: c1421828.ausgrid.cadesc,v 1.9 2007-04-13 19:20:37-07 kst Exp $
+# $Id: c1421828.ausgrid.cadesc,v 1.10 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/c1421828.ausgrid.cadesc,v $
 
 CA_NAME             AusGrid CA
@@ -13,12 +13,16 @@ CERTIFICATE_SHA1    86:C1:D6:65:82:5A:BA:CD:31:92:B8:DE:AC:F4:23:CF:56:54:15:89
 CERTIFICATE_URL     http://epp.ph.unimelb.edu.au/epp/grid/badgdemo/CAfiles/c1421828.0
 SIGNING_POLICY_URL  http://epp.ph.unimelb.edu.au/epp/grid/badgdemo/CAfiles/c1421828.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Wed 2003-10-29 12:08:04 UTC
 CERT_EXPIRES        Mon 2008-10-27 12:08:04 UTC
+DISABLE             yes
 
 # Contacts are listed on the web page.
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from c1421828.0 downloaded Mon 2005-12-26
