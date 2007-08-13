@@ -1,4 +1,4 @@
-# $Id: 28a58577.hellasgrid-root.cadesc,v 1.4 2007-07-23 16:46:38-07 kst Exp $
+# $Id: 28a58577.hellasgrid-root.cadesc,v 1.5 2007-08-12 22:08:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/28a58577.hellasgrid-root.cadesc,v $
 
 CA_NAME             HellasGrid Root CA 2006
@@ -18,10 +18,23 @@ CERT_EXPIRES        Wed 2026-07-15 07:00:00 UTC
 
 # MD5 and SHA1 fingerprints from cacert.pem (28a58577.0) downloaded
 # Fri 2007-01-26
+# Verified against IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
-# I haven't found an online signing_policy file.  The MAY_SIGN
-# attributes are derived from 28a58577.signing_policy, extracted from
-# <http://dist.eugridpma.info/distribution/igtf/current/accredited/igtf-policy-installation-bundle-1.11.tar.gz>
-# The SHA1 and MD5 fingerprints have been verified against 28a58577.0
-# in the same tarball, and the SHA1 fingerprint has also been verified
-# against 28a58577.info.
+# I haven't found an online signing_policy file.  The MAY_SIGN attributes
+# are derived from 28a58577.signing_policy, extracted from the IGTF
+# 1.16 release.
+
+# The following is a copy of 28a58577.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 28a58577.hellasgrid-root.cadesc,v 1.5 2007-08-12 22:08:02-07 kst Exp $
+## # Information for CA HellasGrid Root CA 2006
+## # /C=GR/O=HellasGrid/OU=Certification Authorities/CN=HellasGrid Root CA 2006
+## # hash: 28a58577
+## alias = HellasGrid-Root
+## url = http://www.grid.auth.gr/pki/hellasgrid-root-ca-2006/
+## crl_url = http://crl.grid.auth.gr/hellasgrid-root-ca-2006/28a58577.pem
+## email = contact@grid.auth.gr
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = 9F:35:7D:30:A0:9A:C1:8F:84:22:A4:C9:26:F5:B2:B9:E1:0F:2D:DE
