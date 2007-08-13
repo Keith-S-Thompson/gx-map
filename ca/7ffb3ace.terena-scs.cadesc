@@ -1,4 +1,4 @@
-# $Id: 7ffb3ace.terena-scs.cadesc,v 1.3 2007-03-13 19:27:35-07 kst Exp $
+# $Id: 7ffb3ace.terena-scs.cadesc,v 1.4 2007-08-12 22:08:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/7ffb3ace.terena-scs.cadesc,v $
 
 CA_NAME             TERENA SCS
@@ -19,13 +19,27 @@ CERT_BEGINS         Tue 2006-03-14 20:30:00 UTC
 CERT_EXPIRES        Thu 2013-03-14 23:59:00 UTC
 DISABLE             yes
 
-# I haven't found an online signing_policy file *or* an online copy of
-# the certificate.  A copy of the certificate is in included in the
-# <https://dist.eugridpma.info/distribution/igtf/1.13/accredited/igtf-policy-installation-bundle-1.13.tar.gz>
-# tarball; the MD5 and SHA1 fingerprints are computed from that, and the
-# SHA1 fingerprint has been verified against 4d654d1d.info.
+# I haven't found an online signing_policy file
+# *or* an online copy of the certificate.  A copy
+# of the certificate is in included in the IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
+# The MD5 and SHA1 fingerprints are computed from that, and the SHA1
+# fingerprint has been verified against 4d654d1d.info.
 
-# The 7ffb3ace.info file includes the line
+# Note that the 7ffb3ace.info file includes the line
 # "status = worthless".
 
-# This CA is marked as disabled.
+# This CA is marked as disabled.  If you want to recognize this CA,
+# you can comment out the "DISABLE yes" line above, and move this file
+# up to the ca-config subdirectory.
+
+# The following is a copy of 7ffb3ace.info from the IGTF 1.16 release:
+## # GlobalSign SureServer EDU (TERENA SCS)
+## # @(#)$Id: 7ffb3ace.terena-scs.cadesc,v 1.4 2007-08-12 22:08:03-07 kst Exp $
+## #
+## alias = TERENA-SCS
+## status = worthless
+## crl_url = http://crl.globalsign.net/educational.crl
+## url = http://www.terena.org/activities/scs/
+## version = 1.16
+## sha1fp.0 = 60:98:36:54:D7:EC:61:1D:76:C2:CD:55:57:CA:47:AD:39:30:C9:CA
