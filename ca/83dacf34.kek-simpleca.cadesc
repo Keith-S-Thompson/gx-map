@@ -1,4 +1,4 @@
-# $Id: 83dacf34.kek-simpleca.cadesc,v 1.8 2007-04-13 19:20:33-07 kst Exp $
+# $Id: 83dacf34.kek-simpleca.cadesc,v 1.9 2007-08-13 16:41:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/83dacf34.kek-simpleca.cadesc,v $
 
 CA_NAME             rcrd.jp.hep.net Simple CA
@@ -13,10 +13,14 @@ CERTIFICATE_SHA1    D5:33:C9:90:5F:5F:BD:D5:3F:4B:41:D8:85:AC:D0:12:D0:8F:C9:9E
 CERTIFICATE_URL     https://pragma-goc.rocksclusters.org/secure/certificates/83dacf34.0
 SIGNING_POLICY_URL  https://pragma-goc.rocksclusters.org/secure/certificates/83dacf34.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Tue 2003-07-15 06:33:33 UTC
 CERT_EXPIRES        Sun 2008-07-13 06:33:33 UTC
+DISABLE             yes
 
-# There is no CRL.  If this is acceptable, use the
-# "-UNSAFE -allow-missing-crl" options to gx-ca-update.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
 # MD5 and SHA1 fingerprints from 83dacf34.0 downloaded Wed 2005-12-21
