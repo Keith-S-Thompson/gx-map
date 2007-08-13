@@ -1,4 +1,4 @@
-# $Id: 12a1d8c2.grid-fr.cadesc,v 1.4 2007-03-15 18:28:57-07 kst Exp $
+# $Id: 12a1d8c2.grid-fr.cadesc,v 1.5 2007-08-12 22:08:00-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/12a1d8c2.grid-fr.cadesc,v $
 
 CA_NAME             GRID-FR CA
@@ -17,6 +17,24 @@ CERT_BEGINS         Thu 2005-02-10 09:21:31 UTC
 CERT_EXPIRES        Tue 2010-02-09 09:21:31 UTC
 
 # MD5 and SHA1 fingerprints from 12a1d8c2.0, downloaded Thu 2006-02-23,
-# re-verified Wed 2007-03-14
+# re-verified Wed 2007-03-14.
+# Verified against information in the IGTF 1.16 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
 
-# Note that the signing-policy file is from a different site.
+# Note that the signing-policy file is from a different site; it's identical
+# to the 12a1d8c2.signing_policy file in the IGTF 1.16 release.
+
+# The following is a copy of 12a1d8c2.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 12a1d8c2.grid-fr.cadesc,v 1.5 2007-08-12 22:08:00-07 kst Exp $
+## # Information for CA CNRS-Grid-FR
+## #   obtained from 12a1d8c2 in CNRS-Grid-FR/
+## alias = CNRS-Grid-FR
+## url = http://igc.services.cnrs.fr/GRID-FR/
+## email = Sophie.Nicoud@urec.cnrs.fr
+## crl_url = http://crls.services.cnrs.fr/GRID-FR/getpem.crl
+## requires = CNRS-Projets
+## status = accredited:classic
+## url = http://igc.services.cnrs.fr/GRID-FR/
+## version = 1.16
+## sha1fp.0 = 93:7E:8E:9E:9E:B4:37:18:44:A3:C4:16:20:4A:92:CD:F3:28:E6:80
