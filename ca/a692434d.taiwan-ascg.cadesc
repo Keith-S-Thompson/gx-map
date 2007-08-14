@@ -1,4 +1,4 @@
-# $Id: a692434d.taiwan-ascg.cadesc,v 1.13 2007-08-12 22:08:04-07 kst Exp $
+# $Id: a692434d.taiwan-ascg.cadesc,v 1.14 2007-08-13 19:41:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/a692434d.taiwan-ascg.cadesc,v $
 
 CA_NAME             Academia Sinica Grid Computing Certification Authority
@@ -8,7 +8,6 @@ HASH                a692434d
 SIGNED_BY           self
 SUBJECT             /C=TW/O=AS/CN=Academia Sinica Grid Computing Certification Authority
 MAY_SIGN            /C=TW/*
-MAY_SIGN            /C=CN/O=IHEP/OU=CC/*
 CERTIFICATE_MD5     7E:2D:59:1F:EB:1C:93:1A:12:E5:13:65:56:16:28:41
 CERTIFICATE_SHA1    46:29:F6:21:28:79:18:4D:C0:F8:BE:9D:E1:45:9C:C6:CD:D3:B2:F9
 CERTIFICATE_URL     http://ca.grid.sinica.edu.tw/ASGCCA.pem
@@ -24,7 +23,7 @@ CERT_EXPIRES        Mon 2008-06-16 08:31:54 UTC
 
 # The following is a copy of a692434d.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: a692434d.taiwan-ascg.cadesc,v 1.13 2007-08-12 22:08:04-07 kst Exp $
+## # @(#)$Id: a692434d.taiwan-ascg.cadesc,v 1.14 2007-08-13 19:41:13-07 kst Exp $
 ## # Information for CA ASGCCA
 ## #   obtained from a692434d in APGrid/
 ## alias = ASGCCA
