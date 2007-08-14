@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.2 2007-08-02 18:01:30-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.3 2007-08-13 21:10:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -66,9 +66,10 @@ sub Usage(@);
 sub Debug(@);
 sub Debugf(@);
 
-sub Submit_Request($@);
+sub Submit_DB_Request($@);
 
 sub Process_DB_Request($$);
+sub Process_All_DB_Requests();
 
 sub Get_Mappings_From_File($);
 sub Get_Mappings_From_DB($);
@@ -77,7 +78,7 @@ sub Flatten($);
 
 sub Request($$);        # add|remove, mapping
 
-sub Cleanup();
+sub Cleanup(@);
 
 my $Program_Name = File::Basename::basename $0;
 my $User_Opt = {};
@@ -102,6 +103,13 @@ if ($User_Opt->{version}) {
 
 GX::Set_Config;
 
+my $DB_Config_File   = "$Install_Dir/etc/gx-map/tgcdb.db-config";
+my $Data_Dir         = "$Install_Dir/gx-map-data";
+my $New_Requests_Dir = "$Data_Dir/new-db-requests";
+my $Old_Requests_Dir = "$Data_Dir/old-db-requests";
+my $Mappings_File    = "$Data_Dir/tgcdb-mappings";
+
+
 my @operations = ();
 foreach my $op (qw(add remove full-query)) {
     if (defined $User_Opt->{$op}) {
@@ -122,7 +130,10 @@ if (not defined $Operation and not $User_Opt->{process}) {
           "and/or specify \"-process\"\n";
 }
 
-my @dn_list = @{$User_Opt->{dn}};
+my @dn_list = ();
+if (defined $User_Opt->{dn}) {
+    push @dn_list, @{$User_Opt->{dn}};
+}
 if (defined $User_Opt->{'dn-list-file'}) {
     foreach my $file (@{$User_Opt->{'dn-list-file'}}) {
         push @dn_list, GX::Get_DNs_From_List_File $file;
@@ -153,32 +164,9 @@ if (defined $Operation) {
         push @request_args, $User_Opt->{username};
         push @request_args, @dn_list;
     }
-    Submit_Request $Operation, @request_args;
+    Submit_DB_Request $Operation, @request_args;
 
 }
-
-my $DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
-
-my $Data_Dir         = "$Install_Dir/gx-map-data";
-my $New_Requests_Dir = "$Data_Dir/new-db-requests";
-my $Old_Requests_Dir = "$Data_Dir/old-db-requests";
-my $Mappings_File    = "$Data_Dir/tgcdb-mappings";
-
-GX::Get_Lock $Program_Name;
-
-if (not -e $Mappings_File) {
-    #
-    # We don't have a saved copy of the TGCDB mappings
-    # Create it as an empty file and check it into RCS.
-    #
-    open my $FILE, '>', $Mappings_File or die "$Mappings_File: $!\n";
-    close $FILE;
-    GX::Use_Commands 'ci';
-    system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
-}
-
-my $Old_Mappings = Get_Mappings_From_File $Mappings_File;
-my $New_Mappings = Deep_Copy $Old_Mappings;
 
 #
 # Cache the result of Get_Mappings_From_DB()
@@ -187,139 +175,9 @@ my $New_Mappings = Deep_Copy $Old_Mappings;
 my $Mappings_From_DB = undef;
 my $DB_Info = undef;
 
-my @processed_files = ();
-
-#
-# Find any new db-request files.
-# Sorting puts them in chronological order.
-#
-opendir my $REQUESTS, $New_Requests_Dir or die "$New_Requests_Dir: $!\n";
-my @files = sort grep /\.db-request$/, readdir $REQUESTS;
-closedir $REQUESTS;
-if (not @files and not $User_Opt->{'full-query'}) {
-    Debug "Nothing to do\n";
-    Cleanup;
-    exit 0;
+if ($User_Opt->{process}) {
+    Process_All_DB_Requests;
 }
-
-if ($User_Opt->{'full-query'}) {
-    #
-    # Ignore any pending requests, but prepare to move all db-requests
-    # files from new-db-requests to new-db-requests.
-    #
-    if (not defined $Mappings_From_DB) {
-        ($Mappings_From_DB, $DB_Info)
-            = Get_Mappings_From_DB $DB_Config_File;
-    }
-    $New_Mappings = $Mappings_From_DB;
-    push @processed_files, @files;
-}
-else {
-    #
-    # Process any db-request files, applying changes to $New_Mappings.
-    #
-    foreach my $file (@files) {
-        $New_Mappings
-            = Process_DB_Request $New_Mappings, "$New_Requests_Dir/$file";
-        push @processed_files, $file;
-    }
-}
-
-my $Flat_Old_Mappings = Flatten $Old_Mappings;
-my $Flat_New_Mappings = Flatten $New_Mappings;
-
-my @removed_mappings = ();
-my @added_mappings = ();
-
-foreach my $mapping (keys %$Flat_Old_Mappings) {
-    if (not defined $Flat_New_Mappings->{$mapping}) {
-        push @removed_mappings, $mapping;
-    }
-}
-
-foreach my $mapping (keys %$Flat_New_Mappings) {
-    if (not defined $Flat_Old_Mappings->{$mapping}) {
-        push @added_mappings, $mapping;
-    }
-}
-
-@removed_mappings = sort @removed_mappings;
-@added_mappings   = sort @added_mappings;
-
-if (not @removed_mappings and not @added_mappings) {
-    Debug "No changes\n";
-    Cleanup;
-    exit 0;
-}
-
-#
-# First update the file with the new mappings, then submit the requests.
-# (If the file update fails, we don't want to submit the requests).
-#
-
-if (not $User_Opt->{dryrun}) {
-    my $Now = GX::Time_Image time; 
-    my $Hostname = GX::Get_Hostname;
-    #
-    # Split these string literals so CVS doesn't expand them.
-    #
-    my $Id_Keyword = '$Id' . ':$';
-    my $Source_Keyword = '$Source' . ':$';
-    my $version = $GX::VERSION;
-
-    my $temp_file = "$Mappings_File.tmp";
-
-    open my $FILE, '>', $temp_file or die "$temp_file: $!\n";
-    print $FILE <<"EOF" or die "Printing to $temp_file: $!\n";
-# $Id_Keyword
-# $Source_Keyword
-
-# Automatically generated by gx-db-check-requests (gx-map-tgcdb $version)
-# at $Now on $Hostname.
-# This is not a grid-mapfile.
-# DO NOT EDIT THIS FILE.
-
-EOF
-
-    foreach my $key (sort keys %$DB_Info) {
-        printf $FILE "# %-18s %s\n", $key, $DB_Info->{$key}
-            or die "Printing to $temp_file: $!\n";
-    }
-    print $FILE "\n" or die "Printing to $temp_file: $!\n";
-
-    foreach my $mapping (sort keys %$Flat_New_Mappings) {
-        print $FILE "$mapping\n" or die "Printing to $temp_file: $!\n";
-    }
-    close $FILE or die "Closing ${temp_file}: $!\n";
-    rename $temp_file, $Mappings_File or die "renaming $temp_file: $!\n";
-    GX::Use_Commands 'ci';
-    system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
-}
-
-my @requests = ();
-
-foreach my $mapping (@removed_mappings) {
-    # Request 'remove', $mapping;
-    my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-    GX_Request::GX_Request '-remove',
-                           '-local',
-                           '-username', $username,
-                           '-dn', $dn,
-                           '-source', 'TGCDB',
-                           '-quiet';
-}
-foreach my $mapping (@added_mappings) {
-    # Request 'add', $mapping;
-    my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-    GX_Request::GX_Request '-add',
-                           '-local',
-                           '-username', $username,
-                           '-dn', $dn,
-                           '-source', 'TGCDB',
-                           '-quiet';
-}
-
-Cleanup;
 
 ########################################################################
 
@@ -329,7 +187,7 @@ Cleanup;
 #      The operation, one of 'full-query', 'add', or 'remove'.
 #      The username (present only if operation is 'add' or 'remove').
 #      Zero or more DNs.
-sub Submit_Request($@) {
+sub Submit_DB_Request($@) {
     my ($operation, @args) = @_;
 
     my $request = {};
@@ -348,7 +206,7 @@ sub Submit_Request($@) {
 
     GX::Write_Records '-single', $tmp_filename, $request;
     rename $tmp_filename, $filename or die "Renaming $tmp_filename: $!\n";
-} # Request
+} # Submit_DB_Request
 
 # ----------------------------------------------------------------------
 
@@ -489,6 +347,161 @@ sub Process_DB_Request($$) {
     }
     return $result;
 } # Process_DB_Request
+
+# ----------------------------------------------------------------------
+
+sub Process_All_DB_Requests() {
+    GX::Get_Lock $Program_Name;
+
+    my @processed_files = ();
+
+    if (not -e $Mappings_File) {
+        #
+        # We don't have a saved copy of the TGCDB mappings
+        # Create it as an empty file and check it into RCS.
+        #
+        open my $FILE, '>', $Mappings_File or die "$Mappings_File: $!\n";
+        close $FILE;
+        GX::Use_Commands 'ci';
+        system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
+    }
+
+    my $Old_Mappings = Get_Mappings_From_File $Mappings_File;
+    my $New_Mappings = Deep_Copy $Old_Mappings;
+
+    #
+    # Find any new db-request files.
+    # Sorting puts them in chronological order.
+    #
+    opendir my $REQUESTS, $New_Requests_Dir or die "$New_Requests_Dir: $!\n";
+    my @files = sort grep /\.db-request$/, readdir $REQUESTS;
+    closedir $REQUESTS;
+    if (not @files and not $User_Opt->{'full-query'}) {
+        Debug "Nothing to do\n";
+        Cleanup @processed_files;
+        exit 0;
+    }
+
+    if ($User_Opt->{'full-query'}) {
+        #
+        # Ignore any pending requests, but prepare to move all db-requests
+        # files from new-db-requests to new-db-requests.
+        #
+        if (not defined $Mappings_From_DB) {
+            ($Mappings_From_DB, $DB_Info)
+                = Get_Mappings_From_DB $DB_Config_File;
+        }
+        $New_Mappings = $Mappings_From_DB;
+        push @processed_files, @files;
+    }
+    else {
+        #
+        # Process any db-request files, applying changes to $New_Mappings.
+        #
+        foreach my $file (@files) {
+            $New_Mappings
+                = Process_DB_Request $New_Mappings, "$New_Requests_Dir/$file";
+            push @processed_files, $file;
+        }
+    }
+
+    my $Flat_Old_Mappings = Flatten $Old_Mappings;
+    my $Flat_New_Mappings = Flatten $New_Mappings;
+
+    my @removed_mappings = ();
+    my @added_mappings = ();
+
+    foreach my $mapping (keys %$Flat_Old_Mappings) {
+        if (not defined $Flat_New_Mappings->{$mapping}) {
+            push @removed_mappings, $mapping;
+        }
+    }
+
+    foreach my $mapping (keys %$Flat_New_Mappings) {
+        if (not defined $Flat_Old_Mappings->{$mapping}) {
+            push @added_mappings, $mapping;
+        }
+    }
+
+    @removed_mappings = sort @removed_mappings;
+    @added_mappings   = sort @added_mappings;
+
+    if (not @removed_mappings and not @added_mappings) {
+        Debug "No changes\n";
+        Cleanup @processed_files;
+        exit 0;
+    }
+
+    #
+    # First update the file with the new mappings, then submit the requests.
+    # (If the file update fails, we don't want to submit the requests).
+    #
+
+    if (not $User_Opt->{dryrun}) {
+        my $Now = GX::Time_Image time; 
+        my $Hostname = GX::Get_Hostname;
+        #
+        # Split these string literals so CVS doesn't expand them.
+        #
+        my $Id_Keyword = '$Id' . ':$';
+        my $Source_Keyword = '$Source' . ':$';
+        my $version = $GX::VERSION;
+
+        my $temp_file = "$Mappings_File.tmp";
+
+        open my $FILE, '>', $temp_file or die "$temp_file: $!\n";
+        print $FILE <<"EOF" or die "Printing to $temp_file: $!\n";
+# $Id_Keyword
+# $Source_Keyword
+
+# Automatically generated by gx-db-check-requests (gx-map-tgcdb $version)
+# at $Now on $Hostname.
+# This is not a grid-mapfile.
+# DO NOT EDIT THIS FILE.
+
+EOF
+
+        foreach my $key (sort keys %$DB_Info) {
+            printf $FILE "# %-18s %s\n", $key, $DB_Info->{$key}
+                or die "Printing to $temp_file: $!\n";
+        }
+        print $FILE "\n" or die "Printing to $temp_file: $!\n";
+
+        foreach my $mapping (sort keys %$Flat_New_Mappings) {
+            print $FILE "$mapping\n" or die "Printing to $temp_file: $!\n";
+        }
+        close $FILE or die "Closing ${temp_file}: $!\n";
+        rename $temp_file, $Mappings_File or die "renaming $temp_file: $!\n";
+        GX::Use_Commands 'ci';
+        system "ci -l $Mappings_File </dev/null >/dev/null 2>/dev/null";
+    }
+
+    my @requests = ();
+
+    foreach my $mapping (@removed_mappings) {
+        # Request 'remove', $mapping;
+        my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
+        GX_Request::GX_Request '-remove',
+                               '-local',
+                               '-username', $username,
+                               '-dn', $dn,
+                               '-source', 'TGCDB',
+                               '-quiet';
+    }
+    foreach my $mapping (@added_mappings) {
+        # Request 'add', $mapping;
+        my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
+        GX_Request::GX_Request '-add',
+                               '-local',
+                               '-username', $username,
+                               '-dn', $dn,
+                               '-source', 'TGCDB',
+                               '-quiet';
+    }
+
+    Cleanup @processed_files;
+
+} # Process_All_DB_Requests
 
 # ----------------------------------------------------------------------
 
@@ -634,7 +647,8 @@ sub Flatten($) {
 
 # ----------------------------------------------------------------------
 
-sub Cleanup() {
+sub Cleanup(@) {
+    my(@processed_files) = @_;
     foreach my $file (@processed_files) {
         # rename "$New_Requests_Dir/$file", "$Old_Requests_Dir/$file";
         GX::Save_File $file, $New_Requests_Dir, $Old_Requests_Dir, undef;
