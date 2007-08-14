@@ -1,4 +1,4 @@
-# $Id: 3a0abe12.malaysia.cadesc,v 1.7 2007-04-13 19:20:29-07 kst Exp $
+# $Id: 3a0abe12.malaysia.cadesc,v 1.8 2007-08-13 19:40:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/3a0abe12.malaysia.cadesc,v $
 
 CA_NAME             Malaysia
@@ -21,7 +21,7 @@ DISABLE             yes
 
 # The 3a0abe12.signing_policy file indicates that the CA may sign
 # certificates matching "/O=Grid/O=Globus/*".  This is the same namespace
-# as the old Globus CA.  Overlapping namespaces are ill-advised.  This CA
-# is marked as disabled until this is resolved.
+# as the old Globus CA.  Since the CA certificate has expired, this is
+# not worth persuing.
 
 # MD5 and SHA1 fingerprints from 3a0abe12.0 downloaded 2005-03-29
