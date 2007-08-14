@@ -1,4 +1,4 @@
-# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.17 2007-08-12 22:08:06-07 kst Exp $
+# $Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.18 2007-08-13 19:42:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/e1fce4e9.fermilab-kerberos.cadesc,v $
 
 CA_NAME             Fermilab Kerberized CA
@@ -25,11 +25,19 @@ CERT_EXPIRES        Wed 2008-10-08 14:51:49 UTC
 # Verified against IGTF 1.16 release,
 # <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
 
-# This CA is marked "status = experimental" in the IGTF 1.16 release.
+# The e1fce4e9.signing_policy in the IGTF 1.16 release is missing
+# the entry that allows the certificate to sign itself (see the first
+# "MAY_SIGN" line above).  I'm not sure whether this is required, but
+# I've included it here -- i.e., the MAY_SIGN attributes are based
+# on the CA's own e1fce4e9.signing_policy file, not the one in the
+# IGTF 1.16 release.
+
+# Note that this CA is marked "status = experimental" in the IGTF 1.16
+# release.
 
 # The following is a copy of e1fce4e9.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.17 2007-08-12 22:08:06-07 kst Exp $
+## # @(#)$Id: e1fce4e9.fermilab-kerberos.cadesc,v 1.18 2007-08-13 19:42:21-07 kst Exp $
 ## # Information for CA FNAL_KCA
 ## #   obtained from e1fce4e9 in FNAL_KCA/
 ## alias = FNAL_KCA
