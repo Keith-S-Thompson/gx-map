@@ -1,16 +1,16 @@
-# $Id: d2a353a5.pkgrid.cadesc,v 1.13 2007-08-12 22:08:05-07 kst Exp $
+# $Id: d2a353a5.pkgrid.cadesc,v 1.14 2007-08-13 19:41:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/d2a353a5.pkgrid.cadesc,v $
 
 CA_NAME             PK-Grid-CA
 HOMEPAGE            http://www.ncp.edu.pk/pk-grid-ca/
-CONTACT             ?
+CONTACT             pkgrid-ca@ncp.edu.pk
 HASH                d2a353a5
 SIGNED_BY           self
 SUBJECT             /C=PK/O=NCP/CN=ncp.edu.pk
 MAY_SIGN            /C=PK/*
 CERTIFICATE_MD5     24:A0:A7:DD:46:1B:EB:AE:7F:33:CA:5F:FA:D7:37:F8
 CERTIFICATE_SHA1    68:0D:FA:77:62:83:D0:C6:70:3F:2A:C2:E7:20:44:ED:23:30:6F:F5
-CERTIFICATE_URL     http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/ncpcertpem.txt
+CERTIFICATE_URL     http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/ncpcert.crt
 SIGNING_POLICY_URL  http://www.ncp.edu.pk/pk-grid-ca/ncpCERTS/d2a353a5.signing_policy.txt
 CRL_URL             http://www.ncp.edu.pk/pk-grid-ca/CRL/ncp.crl
 CERT_BEGINS         Tue 2003-12-09 10:18:25 UTC
@@ -47,7 +47,7 @@ CERT_EXPIRES        Tue 2008-12-09 10:18:25 UTC
 
 # The following is a copy of d2a353a5.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: d2a353a5.pkgrid.cadesc,v 1.13 2007-08-12 22:08:05-07 kst Exp $
+## # @(#)$Id: d2a353a5.pkgrid.cadesc,v 1.14 2007-08-13 19:41:32-07 kst Exp $
 ## # Information for CA PK-Grid
 ## #   obtained from d2a353a5 in PK-Grid/
 ## alias = PK-Grid
