@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.3 2007-08-13 21:10:48-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.4 2007-08-14 18:18:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -695,6 +695,9 @@ Usage: $Program_Name [options]
                          command-line options.)
     -dryrun            : Don't perform updates.
     -debugging         : Enable debugging output.
+
+This combines the "gx-db-request" and "gx-db-check-requests" commands
+from earlier gx-map releases.
 EOF
     exit 1;
 } # Usage
