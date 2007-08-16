@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: install-gx-map.in,v 1.105 2007-08-02 18:06:45-07 kst Exp $
+# $Id: install-gx-map.in,v 1.106 2007-08-15 19:15:04-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/install-gx-map.in,v $
 
 ########################################################################
@@ -113,6 +113,7 @@ SBIN_FILES="gx-admins gx-ca-update gx-check-cadesc gx-check-index gx-check-reque
 OPTIONAL_SBIN_FILES="gx-db-dump gx-db-requests gx-propagate"
 RESTRICTED_SBIN_FILES="gx-ca-update gx-check-index gx-check-requests gx-cron-job gx-db-dump gx-db-requests gx-propagate gx-remove-locks"
 LIB_FILES="GX.pm GX_Request.pm"
+OPTIONAL_LIB_FILES="GX_TGCDB.pm"
 ETC_FILES="LICENSE README README.TeraGrid README.Upgrade Relnotes auto.txt gx-map.conf"
 
 echo "... Creating directories, starting with"
@@ -191,6 +192,11 @@ done
 echo "... Copying files to $LIB_DIR"
 for file in $LIB_FILES ; do
     try_quietly cp -f $file  $LIB_DIR/.
+done
+for file in $OPTIONAL_LIB_FILES ; do
+    if [ -f $file ] ; then
+        try_quietly cp -f $file $LIB_DIR/.
+    fi
 done
 echo "... Copying files to $ETC_DIR"
 for file in $ETC_FILES ; do
