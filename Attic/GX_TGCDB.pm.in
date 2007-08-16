@@ -1,0 +1,161 @@
+# $Id: GX_TGCDB.pm.in,v 1.1 2007-08-15 19:03:15-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Attic/GX_TGCDB.pm.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2007 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+# TGCDB interface provided by Michael Shapiro <mshapiro@ncsa.uiuc.edu>
+########################################################################
+
+use strict;
+use warnings;
+
+package TGCDB;
+
+use DBI;
+
+sub new {
+    my($self, %attr) = @_;
+    my($host, $port, $dbname, $user, $password);
+    my($raiseError) = 1;
+    my($printError) = 0;
+    local($_);
+    my($key, $value);
+
+    while (($key, $value) = each(%attr)) {
+        $host       = $value if $key eq "host";
+        $port       = $value if $key eq "port";
+        $dbname     = $value if $key eq "dbname";
+        $user       = $value if $key eq "user";
+        $password   = $value if $key eq "password";
+        $raiseError = $value if $key eq "raiseerror";
+        $printError = $value if $key eq "printerror";
+    }
+    die "host not defined"     if not defined $host;
+    die "dbname not defined"   if not defined $dbname;
+    die "user not defined"     if not defined $user;
+    die "password not defined" if not defined $password;
+
+    my($dsn) = "dbi:Pg:dbname=$dbname;host=$host";
+    $dsn .= ";port=$port" if (defined $port);
+    my($dbh) = DBI->connect($dsn, $user, $password,
+                              { AutoCommit => 1 ,
+                                RaiseError => $raiseError,
+                                PrintError => $printError });
+    my($h) = {dbh => $dbh, transLevel => 0};
+    return bless $h, $self;
+} # new
+
+# ----------------------------------------------------------------------
+
+sub gxmap_add_dn {
+    my($self, $resource_name, $user, $dn) = @_;
+    my($sql) = sprintf "select gxmap.add_dn(%s,%s,%s)",
+                       $self->quote($resource_name, $user, $dn);
+
+    $self->dbh->do ($sql);
+}# gxmap_add_dn
+
+# ----------------------------------------------------------------------
+
+sub gxmap_remove_dn {
+    my($self, $resource_name, $user, $dn) = @_;
+    my($sql) = sprintf "select gxmap.remove_dn(%s,%s,%s)",
+                       $self->quote($resource_name, $user, $dn);
+
+    $self->dbh->do ($sql);
+} # gxmap_remove_dn
+
+# ----------------------------------------------------------------------
+
+sub dbh {
+    return shift->{dbh};
+} # dbh
+
+# ----------------------------------------------------------------------
+
+sub quote {
+    my($dbh) = shift->{dbh};
+    return map {$dbh->quote($_)} @_;
+} # quote
+
+# ----------------------------------------------------------------------
+
+sub beginTransaction {
+    my($self) = shift;
+    $self->{dbh}->{AutoCommit} = 0 unless $self->{transLevel} > 0;
+    $self->{transLevel}++;
+} # beginTransaction
+
+# ----------------------------------------------------------------------
+
+sub commitTransaction {
+    my($self) = shift;
+    die "not in a transaction" unless $self->{transLevel} > 0;
+    $self->{transLevel}--;
+    if ($self->{transLevel} == 0) {
+        $self->{dbh}->commit;
+        $self->{dbh}->{AutoCommit} = 1;
+    }
+} # commitTransaction
+
+# ----------------------------------------------------------------------
+
+sub rollbackTransaction {
+    my($self) = shift;
+    die "not in a transaction" unless $self->{transLevel} > 0;
+    $self->{dbh}->rollback;
+    $self->{dbh}->{AutoCommit} = 1;
+    $self->{transLevel} = 0;
+} # rollbackTransaction
+
+# ----------------------------------------------------------------------
+
+sub DESTROY {
+    my($dbh) = shift->{dbh};
+    $dbh->disconnect if ($dbh);
+} # DESTROY
+
+# ----------------------------------------------------------------------
+
+1;
