@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-propagate.in.teragrid,v 1.44 2007-08-15 18:29:41-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.45 2007-08-15 19:08:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -72,6 +72,7 @@ BEGIN {
     unshift @INC, "$Install_Dir/lib";
 }
 use GX ();
+use GX_TGCDB ();
 
 my $DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
@@ -193,14 +194,14 @@ print SAVE_STDERR if 0;    # to make "perl -cwT" happy
 close STDERR;
 open STDERR, '>&LOG';
 
-Debug "new TGCDB\n";
+Debug "new GX_TGCDB\n";
 my $tg;
 if (not $User_Opt->{dryrun}) {
-    $tg = new TGCDB (host     => $DB_Config->{host},
-                     port     => $DB_Config->{port},
-                     dbname   => $DB_Config->{dbname},
-                     user     => $DB_Config->{user},
-                     password => $DB_Config->{password});
+    $tg = new GX_TGCDB (host     => $DB_Config->{host},
+                        port     => $DB_Config->{port},
+                        dbname   => $DB_Config->{dbname},
+                        user     => $DB_Config->{user},
+                        password => $DB_Config->{password});
 }
 
 Debug "\$tg->beginTransaction\n";
@@ -444,115 +445,3 @@ a cross-site user database.
 EOF
     exit 1;
 } # Usage
-
-########################################################################
-
-#
-# The TGCDB package is included here inline to minimize the number of
-# additional files that have to be installed to enable the functionality.
-#
-# This package was provided by Michael Shapiro <mshapiro@ncsa.uiuc.edu>.
-#
-{
-    package TGCDB;
-
-    use DBI;
-
-    sub new
-    {
-        my($self, %attr) = @_;
-        my($host, $port, $dbname, $user, $password);
-        my($raiseError) = 1;
-        my($printError) = 0;
-        local($_);
-        my($key, $value);
-
-        while (($key, $value) = each(%attr))
-        {
-            $host       = $value if $key eq "host";
-            $port       = $value if $key eq "port";
-            $dbname     = $value if $key eq "dbname";
-            $user       = $value if $key eq "user";
-            $password   = $value if $key eq "password";
-            $raiseError = $value if $key eq "raiseerror";
-            $printError = $value if $key eq "printerror";
-        }
-        die "host not defined"     if not defined $host;
-        die "dbname not defined"   if not defined $dbname;
-        die "user not defined"     if not defined $user;
-        die "password not defined" if not defined $password;
-
-        my($dsn) = "dbi:Pg:dbname=$dbname;host=$host";
-        $dsn .= ";port=$port" if (defined $port);
-        my($dbh) = DBI->connect($dsn, $user, $password,
-                                  {AutoCommit=>1,
-                                   RaiseError=>$raiseError,
-                                   PrintError=>$printError});
-        my($h) = {dbh=>$dbh, transLevel=>0};
-        bless $h, $self;
-    }
-
-    sub gxmap_add_dn
-    {
-        my($self, $resource_name, $user, $dn) = @_;
-        my($sql) = sprintf ("select gxmap.add_dn(%s,%s,%s)",
-                               $self->quote($resource_name, $user, $dn));
-
-        $self->dbh->do ($sql);
-    }
-
-    sub gxmap_remove_dn
-    {
-        my($self, $resource_name, $user, $dn) = @_;
-        my($sql) = sprintf ("select gxmap.remove_dn(%s,%s,%s)",
-                               $self->quote($resource_name, $user, $dn));
- 
-        $self->dbh->do ($sql);
-    }
-
-    sub dbh
-    {
-        shift->{dbh};
-    }
-
-    sub quote
-    {
-        my($dbh) = shift->{dbh};
-        map {$dbh->quote($_)} @_;
-    }
-
-    sub beginTransaction
-    {
-        my($self) = shift;
-        $self->{dbh}->{AutoCommit} = 0 unless ($self->{transLevel} > 0);
-        $self->{transLevel}++;
-    }
-
-    sub commitTransaction
-    {
-        my($self) = shift;
-        die "not in a transaction" unless ($self->{transLevel} > 0);
-        $self->{transLevel}--;
-        if ($self->{transLevel} == 0)
-        {
-            $self->{dbh}->commit;
-            $self->{dbh}->{AutoCommit} = 1;
-        }
-    }
-
-    sub rollbackTransaction
-    {
-        my($self) = shift;
-        die "not in a transaction" unless ($self->{transLevel} > 0);
-        $self->{dbh}->rollback;
-        $self->{dbh}->{AutoCommit} = 1;
-        $self->{transLevel} = 0;
-    }
-
-    sub DESTROY
-    {
-        my($dbh) = shift->{dbh};
-        $dbh->disconnect if ($dbh);
-    }
-
-} # end of package TGCDB
