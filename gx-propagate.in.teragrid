@@ -1,6 +1,6 @@
-#!%PERL% -wT
+#!%PERL% -T
 
-# $Id: gx-propagate.in.teragrid,v 1.43 2007-04-18 18:01:49-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.44 2007-08-15 18:29:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -50,6 +50,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
