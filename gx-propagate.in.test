@@ -1,6 +1,6 @@
-#!%PERL% -wT
+#!%PERL% -T
 
-# $Id: gx-propagate.in.test,v 1.15 2007-02-08 17:33:01-08 kst Exp $
+# $Id: gx-propagate.in.test,v 1.16 2007-08-15 18:29:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.test,v $
 
 ########################################################################
@@ -49,6 +49,7 @@
 ########################################################################
 
 use strict;
+use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
