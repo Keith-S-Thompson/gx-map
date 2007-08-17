@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.4 2007-08-14 18:18:35-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.5 2007-08-17 14:11:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -54,13 +54,13 @@ use warnings;
 
 use File::Basename ();
 use Getopt::Long ();
-use DBI;
 
 my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
 use GX_Request ();
+use GX_TGCDB ();
 
 sub Usage(@);
 sub Debug(@);
@@ -570,13 +570,21 @@ sub Get_Mappings_From_DB($) {
         and    dns.person_id = users.person_id
         and    dns.is_active
     };
-    my $dbh = DBI->connect("DBI:Pg:dbname=$DB_Config->{dbname};" .
-                           "host=$DB_Config->{host};" .
-                           "port=$DB_Config->{port}",
-                           $DB_Config->{user},
-                           $DB_Config->{password},
-                           { RaiseError => 1, PrintError => 1 });
-    if (not $dbh) {
+#   my $dbh = DBI->connect("DBI:Pg:dbname=$DB_Config->{dbname};" .
+#                          "host=$DB_Config->{host};" .
+#                          "port=$DB_Config->{port}",
+#                          $DB_Config->{user},
+#                          $DB_Config->{password},
+#                          { RaiseError => 1, PrintError => 1 });
+    my $tgcdb = new GX_TGCDB( host       => $DB_Config->{host},
+                              port       => $DB_Config->{port},
+                              dbname     => $DB_Config->{dbname},
+                              user       => $DB_Config->{user},
+                              password   => $DB_Config->{password},
+                              raiseerror => 1,
+                              printerror => 1 );
+
+    if (not $tgcdb) {
         #
         # Assume this is a transient error.  Remove the lock so we can
         # try again later without having to run gx-remove-locks.
@@ -586,7 +594,7 @@ sub Get_Mappings_From_DB($) {
     }
 
     my @datarow;
-    my $sth = $dbh->prepare($query);
+    my $sth = $tgcdb->dbh->prepare($query);
 
     $sth->execute();
 
@@ -598,7 +606,7 @@ sub Get_Mappings_From_DB($) {
         }
     }
 
-    $dbh->disconnect();
+    $tgcdb->dbh->disconnect();
     my $user_count = scalar keys %$result;
     Debug "Got mappings for $user_count user(s)\n";
     if ($user_count == 0) {
