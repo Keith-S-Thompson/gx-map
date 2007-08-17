@@ -1,4 +1,4 @@
-# $Id: GX_TGCDB.pm.in,v 1.2 2007-08-15 19:21:33-07 kst Exp $
+# $Id: GX_TGCDB.pm.in,v 1.3 2007-08-17 14:11:16-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/GX_TGCDB.pm.in,v $
 
 ########################################################################
@@ -55,7 +55,7 @@ package GX_TGCDB;
 use DBI;
 
 sub new {
-    my($self, %attr) = @_;
+    my($class, %attr) = @_;
     my($host, $port, $dbname, $user, $password);
     my($raiseError) = 1;
     my($printError) = 0;
@@ -83,7 +83,7 @@ sub new {
                                 RaiseError => $raiseError,
                                 PrintError => $printError });
     my($h) = {dbh => $dbh, transLevel => 0};
-    return bless $h, $self;
+    return bless $h, $class;
 } # new
 
 # ----------------------------------------------------------------------
