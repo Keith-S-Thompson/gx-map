@@ -1,4 +1,4 @@
-# $Id: 49f18420.infn.cadesc,v 1.15 2007-08-12 22:08:02-07 kst Exp $
+# $Id: 49f18420.infn.cadesc,v 1.16 2007-08-16 19:02:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/49f18420.infn.cadesc,v $
 
 CA_NAME             INFN Certification Authority
@@ -33,3 +33,16 @@ CERT_EXPIRES        Tue 2007-09-18 16:06:29 UTC
 # The CRL referenced from the DataGrid Certificate Authorities page,
 # <http://security.fi.infn.it/CA/crl.crl>, is in DER format, but
 # I've since found a PEM-format CRL (see above).
+
+# The following is a copy of 49f18420.info from the IGTF 1.16 release:
+## #
+## # @(#)$Id: 49f18420.infn.cadesc,v 1.16 2007-08-16 19:02:32-07 kst Exp $
+## # Information for CA INFN
+## #   obtained from 49f18420 in INFN/
+## alias = INFN
+## url = http://security.fi.infn.it/CA/
+## email = infn-ca@fi.infn.it
+## crl_url = http://security.fi.infn.it/CA/crl.crl
+## status = accredited:classic
+## version = 1.16
+## sha1fp.0 = AB:6D:CE:77:D3:5D:F0:A2:02:C8:87:4D:AE:AF:60:A8:D4:99:5C:D5
