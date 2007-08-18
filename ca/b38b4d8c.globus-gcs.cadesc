@@ -1,9 +1,9 @@
-# $Id: b38b4d8c.globus-gcs.cadesc,v 1.15 2007-08-12 22:08:05-07 kst Exp $
+# $Id: b38b4d8c.globus-gcs.cadesc,v 1.16 2007-08-17 18:48:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/b38b4d8c.globus-gcs.cadesc,v $
 
 CA_NAME             Globus Certificate Service
 HOMEPAGE            http://gcs.globus.org:8080/gcs/index.html
-CONTACT             discuss@globus.org
+CONTACT             gt-user@globus.org
 HASH                b38b4d8c
 SIGNED_BY           self
 SUBJECT             /C=US/O=Globus Alliance/CN=Globus Certificate Service
@@ -25,13 +25,13 @@ DISABLE             yes
 # this CA (at your own risk), you can comment out the "DISABLE yes"
 # line above and move this cadesc file up to the ca-config directory.
 
-# Questions may be posted to the discuss@globus.org mailing list.
+# Questions may be posted to the gt-user@globus.org mailing list.
 
 # There is no CRL.
 
 # The following is a copy of b38b4d8c.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: b38b4d8c.globus-gcs.cadesc,v 1.15 2007-08-12 22:08:05-07 kst Exp $
+## # @(#)$Id: b38b4d8c.globus-gcs.cadesc,v 1.16 2007-08-17 18:48:54-07 kst Exp $
 ## # Information for CA Globus-CA-service
 ## #   obtained from b38b4d8c in Globus-CA-service/
 ## alias = Globus-CA-service
