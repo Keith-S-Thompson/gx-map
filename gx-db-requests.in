@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.5 2007-08-17 14:11:57-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.6 2007-08-19 01:22:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -584,7 +584,7 @@ sub Get_Mappings_From_DB($) {
                               raiseerror => 1,
                               printerror => 1 );
 
-    if (not $tgcdb) {
+    if (not $tgcdb->{dbh}) {
         #
         # Assume this is a transient error.  Remove the lock so we can
         # try again later without having to run gx-remove-locks.
@@ -593,12 +593,11 @@ sub Get_Mappings_From_DB($) {
         die "Unable to connect to database\n";
     }
 
-    my @datarow;
-    my $sth = $tgcdb->dbh->prepare($query);
+    my $sth = $tgcdb->{dbh}->prepare($query);
 
     $sth->execute();
 
-    while (@datarow = $sth->fetchrow()) {
+    while (my @datarow = $sth->fetchrow()) {
         if ($datarow[1] ne '') {
             my $dn = GX::Normalize_DN $datarow[0];
             my $user = $datarow[1];
@@ -606,7 +605,7 @@ sub Get_Mappings_From_DB($) {
         }
     }
 
-    $tgcdb->dbh->disconnect();
+    $tgcdb->{dbh}->disconnect();
     my $user_count = scalar keys %$result;
     Debug "Got mappings for $user_count user(s)\n";
     if ($user_count == 0) {
