@@ -1,4 +1,4 @@
-# $Id: GX_TGCDB.pm.in,v 1.3 2007-08-17 14:11:16-07 kst Exp $
+# $Id: GX_TGCDB.pm.in,v 1.4 2007-08-21 01:05:12-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/GX_TGCDB.pm.in,v $
 
 ########################################################################
@@ -51,6 +51,22 @@ use strict;
 use warnings;
 
 package GX_TGCDB;
+
+# A GX_TGCDB, created by invoking "new GX_TGCDB ...", is a thin wrapper
+# around a database handle object created via DBI->connect.  The "new"
+# method is similar to DBI->connect, but the arguments are more regular
+# in that all attributes are specified via the %attr hash.
+# 
+# GX_TGCDB provides methods specific to gx-map / TGCDB interaction,
+# particularly gxmap_add_dn and gxmap_remove_dn.  Operations on the
+# underlying database handle object can be performed via $obj->{dbh},
+# e.g.: 
+#
+#     $tg = new GX_TGCDB(host => ..., port => ..., ...);
+#     my $query = "select ...";
+#     my $sth = $tg->dbh->prepare($query);
+#     $sth->execute();
+#     ...
 
 use DBI;
 
