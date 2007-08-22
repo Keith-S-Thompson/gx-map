@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.91 2007-08-19 01:23:22-07 kst Exp $
+# $Id: GX.pm.in,v 1.92 2007-08-22 15:44:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -168,7 +168,7 @@ sub Write_Records($$@);
 sub Read_Records(@);
 
 sub Write_Multifile($@);
-sub Read_Multifile($);
+sub Read_Multifile($$);
 
 sub Sort_By_Timestamp(@);
 
@@ -1771,13 +1771,24 @@ sub Read_Subfile($$) {
 
 #
 # Reads a "multifile".
-# Die if an error occurs.
+#
+# The first argument is the name of the multifile.
+#
+# The second argument is the name of a directory into which to store
+# the subfiles, typically created by GX::Make_Temp_Dir().
+#
+# Returns an array of hash references, each of which refers to
+#     { name     => <name of subfile, as extracted from multifile>,
+#       filename => <name of stored file }
+#     
+# If an error occurs (syntax error, duplicate subfile names, read error),
+# returns a single string containing an error message.
 # 
-sub Read_Multifile($) {
-    my($filename) = @_;
+sub Read_Multifile($$) {
+    my($multifile_name) = @_;
     my @result = ();
     my $in_multifile = 0;
-    open my $File, '<', $filename or die "${filename}: $!\n";
+    open my $File, '<', $multifile_name or die "$multifile_name: $!\n";
     while (<$File>) {
         if (not $in_multifile) {
             if (/^\s*$/) {
@@ -1787,12 +1798,12 @@ sub Read_Multifile($) {
                 $in_multifile = 1;
             }
             else {
-                die "Error at line $. of $filename\n";
+                die "Error at line $. of $multifile_name\n";
             }
         }
         else {
             while (1) {
-                my $subfile = GX::Read_Subfile $filename, $File;
+                my $subfile = GX::Read_Subfile $multifile_name, $File;
                 if ($subfile->{EOF}) {
                     close $File;
                     return @result;
@@ -1803,7 +1814,7 @@ sub Read_Multifile($) {
             }
         }
     }
-    die "Syntax error at line $. of $filename\n";
+    die "Syntax error at line $. of $multifile_name\n";
 } # Read_Multifile
 
 # ----------------------------------------------------------------------
