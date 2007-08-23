@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-request.in,v 1.85 2007-07-15 20:45:57-07 kst Exp $
+# $Id: gx-request.in,v 1.86 2007-08-22 17:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-request.in,v $
 
 ########################################################################
@@ -55,6 +55,6 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
-use GX_Request ();
+use GX::Request ();
 
-GX_Request::GX_Request @ARGV;
+GX::Request::GX_Request @ARGV;
