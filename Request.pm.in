@@ -1,0 +1,1253 @@
+# $Id: Request.pm.in,v 1.1 2007-08-22 17:12:06-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
+
+########################################################################
+# @Copyright@
+#
+# Copyright (c) 2007 The Regents of the University of California. All
+# rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are
+# met:
+#
+# 1. Redistributions of source code must retain the above copyright
+# notice, this list of conditions and the following disclaimer.
+#
+# 2. Redistributions in binary form must reproduce the above copyright
+# notice, this list of conditions and the following disclaimer in the
+# documentation and/or other materials provided with the distribution.
+#
+# 3. All advertising materials mentioning features or use of this
+# software must display the following acknowledgement: This product
+# includes software developed by the Advanced Cyberinfrastructure
+# Laboratory at the San Diego Supercomputer Center and its contributors.
+#
+# 4. Neither the name of the Center nor the names of its contributors
+# may be used to endorse or promote products derived from this software
+# without specific prior written permission.
+#
+# THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS''
+# AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO,
+# THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+# PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS
+# BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+# CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+# SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR
+# BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY,
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE
+# OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN
+# IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+# @Copyright@
+########################################################################
+
+########################################################################
+# Developed by Keith Thompson <kst@sdsc.edu>
+########################################################################
+
+# Installed in lib/GX subdirectory.
+
+use strict;
+use warnings;
+
+package GX::Request;
+
+BEGIN {
+    use vars qw( $Install_Dir $Data_Dir $Program_Name
+                 $Is_Admin $PW $User_Opt
+                 $proxy_file $user_cert_file $default_cert_file );
+
+    $Install_Dir = '%INSTALL_DIR%';
+}
+
+use lib "$Install_Dir/lib";
+use GX ();
+use File::Basename ();
+use Getopt::Long ();
+$Data_Dir = "$Install_Dir/gx-map-data";
+
+sub GX_Request(@);
+
+sub Usage(@);
+sub Long_Usage();
+sub Submit_Request($);
+sub Strip($);
+sub Get_Options_Interactively();
+sub Get_Options_From_Command_Line();
+sub Get_DN_From_Certificate($);
+sub Proxy_File_Name();
+sub User_Cert_File_Name();
+sub Gen_Request_File_Name($);
+sub DN_Is_Handled_Automatically($);
+sub Die_Quietly(@);
+sub Debug(@);
+sub Debugf(@);
+
+sub GX_Request(@) {
+    local(@ARGV) = @_;
+
+    $Program_Name = File::Basename::basename $0;
+    $proxy_file        = Proxy_File_Name;
+    $user_cert_file    = User_Cert_File_Name;
+    $default_cert_file =
+        defined $proxy_file     ? $proxy_file     :
+        defined $user_cert_file ? $user_cert_file :
+        undef;
+
+    #
+    # There are three variables dealing with command-line options.
+    #
+    # @Opts is an array that is passed to Getopt::Long::GetOptions;
+    # it defines what command-line options are recognized.
+    #
+    # $User_Opt is a hash reference; the hash is filled in by
+    # Getopt::Long::GetOptions, and contains information about any
+    # command-line arguments that were actually given.  The field names are
+    # simply the names of the command-line options.  Multi-word field names
+    # are punctuated with hyphens, matching the command-line syntax.
+    #
+    # $Options is also a hash reference; the hash contains the information
+    # necessary to perform the specified operation.  This can be set either
+    # from command-line options or interactively.
+    #
+    # Fields are:
+    #    operation (one of add, remove, remove-dn, remove-user)
+    #    username
+    #    dn
+    #    email (optional)
+    #    comment (optional)
+    # Plus the following flags:
+    #    interactive
+    #    quiet
+    #    force
+    #
+
+    $User_Opt = { };
+    my @Opts = ( $User_Opt,
+                 qw( help long-help version
+                     show-config
+                     interactive
+                     quick-add quick-remove
+                     add
+                     remove remove-dn remove-user
+                     quiet force no-admin
+                     dn=s certificate-file=s default-dn
+                     username=s
+                     email=s
+                     force-dn literal-dn no-email comment=s
+                     source=s
+                     slurp=s
+                     local!
+                     debugging ) );
+    Getopt::Long::GetOptions @Opts or Usage;
+    Usage if $User_Opt->{help};
+    Usage if @ARGV;
+    Long_Usage if $User_Opt->{'long-help'};
+
+    if ($User_Opt->{version}) {
+        print "$Program_Name (gx-map) $GX::VERSION\n";
+        exit 0;
+    }
+
+    GX::Set_Config;
+
+    if ($User_Opt->{'show-config'}) {
+        print "GX::Initial_Config (hard-wired):\n";
+        foreach my $key (sort keys %$GX::Initial_Config) {
+            printf "    %-24s => \"%s\"\n", $key, $GX::Initial_Config->{$key};
+        }
+
+        print "Config from gx-map.conf:\n";
+        foreach my $key (sort keys %$GX::Config) {
+            my $initial = '';
+            if ($GX::Config->{$key} ne $GX::Initial_Config->{$key}) {
+                $initial = 'M';
+            }
+            printf "%-4s%-24s => \"%s\"\n", $initial, $key, $GX::Config->{$key};
+        }
+        exit 0;
+    }
+
+    $GX::Debugging = 1 if $User_Opt->{debugging};
+
+    #
+    # The -quick-add option is mapped to -add -default-dn
+    # The -quick-remove option is mapped to -remove -default-dn
+    #
+    if (defined $User_Opt->{'quick-add'} or
+        defined $User_Opt->{'quick-remove'})
+    {
+        if (defined $User_Opt->{'quick-add'} and
+            defined $User_Opt->{'quick-remove'})
+        {
+            Usage "The -quick-add and -quick-remove options " .
+                  "cannot be used together\n";
+        }
+        my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add' : 'quick-remove';
+        my $conflict = 0;
+        foreach my $other_opt ( qw( interactive add remove remove-dn
+                                    remove-user default-dn
+                                    certificate-file ) )
+        {
+            if (defined $User_Opt->{$other_opt}) {
+                $conflict = 1;
+            }
+        }
+        if (defined $User_Opt->{dn}) {
+            $conflict = 1;
+        }
+        if ($conflict) {
+            Usage "The $opt option cannot be used with other options\n";
+        }
+        $User_Opt->{'default-dn'} = 1;
+        if ($opt eq 'quick-add') {
+            $User_Opt->{add} = 1;
+        }
+        else {
+            $User_Opt->{remove} = 1;
+        }
+    }
+
+    GX::Check_Data_Dir;
+
+    GX::Install_Die_Handler;
+    GX::Install_Warn_Handler;
+
+    #
+    # First, gather and verify some basic information about the user.
+    #
+    if ($< != $>) {
+        die "Real UID ($<) != effective UID ($>)\n";
+    }
+
+    #
+    # $PW is a reference to the password information (name, uid, etc)
+    # of the user running this command.
+    #
+    $PW = GX::Get_PW_UID $<;
+
+    if ($PW->{uid} != $<) {
+        die "Internal error, uid from passwd ($PW->{uid}) != real uid ($<)\n";
+    }
+
+    #
+    # $Is_Admin is true if the user running the command is an authorized
+    # gx-map administrator and has not specified the "-no-admin" command-line
+    # option.
+    #
+    $Is_Admin = (not $User_Opt->{'no-admin'} and
+                 GX::Is_Admin_Account $PW->{name});
+    my $Options  = {};
+
+    if (defined $User_Opt->{slurp}) {
+        if (not $Is_Admin) {
+            Usage "The -slurp option may only be used " .
+                  "by a gx-map administrator\n";
+        }
+        my @slurped_requests = GX::Read_Records '-multiple', $User_Opt->{slurp};
+        foreach my $request (@slurped_requests) {
+            Submit_Request $request;
+        }
+        exit;
+    }
+
+    if ($User_Opt->{interactive}) {
+        $Options = Get_Options_Interactively();
+    }
+    else {
+        $Options = Get_Options_From_Command_Line();
+    }
+
+    Debug "Options =>\n";
+    foreach my $key (sort keys %$Options) {
+        Debug "    $key => $Options->{$key}\n";;
+    }
+
+    my $Requests_Dir = "$Data_Dir/new-requests";
+
+    Die_Quietly "No directory $Requests_Dir\n" if not -d $Requests_Dir;
+
+    Die_Quietly "Directory $Requests_Dir is not writable\n"
+        if not -w $Requests_Dir;
+
+    if (( $Options->{operation} eq 'add' or
+          $Options->{operation} eq 'remove' or
+          $Options->{operation} eq 'remove-user' )
+        and not defined $Options->{username})
+    {
+        if ($Is_Admin) {
+            Usage "No username specified\n";
+        }
+        else {
+            $Options->{username} = $PW->{name};
+        }
+    }
+
+    if ( $Options->{operation} eq 'add' or
+         $Options->{operation} eq 'remove' or
+         $Options->{operation} eq 'remove-dn' )
+    {
+        if (not defined$Options->{dn}) {
+            Usage "No DN specified\n";
+        }
+    }
+
+    if ($Options->{operation} eq 'add' and
+        not defined $Options->{signature})
+    {
+        $Options->{signature} = 'none';
+    }
+
+    if (defined $Options->{dn}) {
+        my @errors = ();
+        my @args = ();
+        push @args, '-check-syntax' if not defined $Options->{'force-dn'};
+        push @args, $Options->{dn};
+        my $dn_error = GX::DN_Error @args;
+        if (defined $dn_error) {
+            push @errors, "Invalid DN \"$Options->{dn}\"\n";
+            push @errors, "$dn_error\n";
+        }
+        Usage @errors if @errors;
+    }
+
+    #
+    # Disallow non-printing characters that may corrupt the request file.
+    #
+    if (defined $Options->{email}) {
+        $Options->{email} =~ s/[^ -~]/?/g;
+    }
+    if (defined $Options->{comment}) {
+        $Options->{comment} =~ s/[^\t -~]/?/g;
+    }
+
+    Debug "Options =>\n";
+    foreach my $key (sort keys %$Options) {
+        Debug "    $key => $Options->{$key}\n";;
+    }
+
+    #
+    # The operation is either 'add', 'remove', 'remove-dn', or 'remove-user'
+    #
+
+    my $requested_pw;
+    if ($Options->{operation} ne 'remove-dn') {
+        if ($Options->{username} eq $PW->{name}) {
+            $requested_pw = $PW;
+        }
+        else {
+            #
+            # Note: For an ordinary user, I need to validate the passwd
+            # information.  If a gx-map administrator runs this command,
+            # it may be for an account that doesn't exist on this machine;
+            # it may not be possible to determine the uid.
+            #
+            $requested_pw = GX::Get_PW_Name $Options->{username};
+            if (defined $requested_pw and
+                $requested_pw->{name} ne $Options->{username})
+            {
+                die "Internal error, name from passwd ($requested_pw->{name}) != ",
+                    "specified name ($Options->{username})\n";
+            }
+        }
+    }
+
+    #
+    # Translate the DN to the proper form.
+    # Strip trailing components from a proxy DN.
+    # Translate to the newer GT3/GT4 form.
+    #
+    if (defined $Options->{dn} and not $Options->{'literal-dn'}) {
+        $Options->{dn} = GX::Normalize_DN $Options->{dn};
+    }
+
+    if (not $Options->{quiet}) {
+        $| = 1;
+        my $Mapping  = ( $Options->{force} ? 'Mapping'  : 'About to map' );
+        my $Removing = ( $Options->{force} ? 'Removing' : 'About to remove' );
+        if ($Options->{operation} eq 'add') {
+            print "$Mapping distinguished name\n",
+                  "    \"$Options->{dn}\"\n",
+                  "to user\n",
+                  "    $Options->{username}\n";
+        }
+        elsif ($Options->{operation} eq 'remove') {
+            print "$Removing mapping for distinguished name\n",
+                  "    \"$Options->{dn}\"\n",
+                  "to user\n",
+                  "    $Options->{username}\n";
+        }
+        elsif ($Options->{operation} eq 'remove-dn') {
+            print "$Removing all mappings for distinguished name\n",
+                  "    \"$Options->{dn}\"\n";
+        }
+        elsif ($Options->{operation} eq 'remove-user') {
+            print "$Removing all mappings for user $Options->{username}\n";
+        }
+    }
+    if (not $Options->{force}) {
+        #
+        # Warn if the DN is one that's handled automatically (i.e., matches
+        # a pattern in the etc/gx-map/auto.txt file).
+        #
+        if (defined $Options->{dn} and
+            DN_Is_Handled_Automatically $Options->{dn})
+        {
+            print ">>> NOTE: The distinguished name\n",
+                  "    \"$Options->{dn}\"\n",
+                  "should be handled automatically; this request ",
+                  "is probably unnecessary.\n";
+        }
+
+        PROMPT:
+        while (1) {
+            print "Proceed? [yn] ";
+            my $response = lc scalar <STDIN>;
+            chomp $response;
+            if ($response =~ /^y/) {
+                last PROMPT;
+            }
+            elsif ($response =~ /^n/) {
+                Die_Quietly "Request cancelled\n";
+            }
+            else {
+                print "Unrecognized input\n";
+            }
+        }
+    }
+
+    my $requested_uid = undef;
+    if (defined $requested_pw) {
+        $requested_uid = $requested_pw->{uid};
+    }
+
+    if ((defined $Options->{username} and $Options->{username} eq 'root')
+        or
+        (defined $requested_uid and $requested_uid == 0))
+    {
+        Die_Quietly "Mapping to root or uid 0 is not allowed\n";
+    }
+
+    my $request = {
+        operation         => $Options->{operation},
+        requested_by_uid  => $PW->{uid},
+        requested_by_name => $PW->{name},
+    };
+    if (defined $Options->{dn}) {
+        $request->{dn} = '"' . $Options->{dn} . '"';
+    }
+    if ($User_Opt->{'no-admin'} and not defined $request->{source}) {
+        $request->{source} = 'user';
+    }
+    elsif (defined $Options->{source}) {
+        $request->{source} = $Options->{source};
+    }
+    $request->{username}  = $Options->{username}  if defined $Options->{username};
+    $request->{user_uid}  = $requested_uid        if defined $requested_uid;
+    $request->{email}     = $Options->{email}     if defined $Options->{email};
+    $request->{comment}   = $Options->{comment}   if defined $Options->{comment};
+    $request->{signature} = $Options->{signature} if defined $Options->{signature};
+
+    if ($Options->{local}) {
+        $request->{scope} = 'local';
+    }
+
+    Submit_Request $request;
+
+    unless ($Options->{force} and $Options->{quiet}) {
+        print "Mapping request submitted.\n";
+        print "The grid-mapfile should be updated in a few minutes\n";
+    }
+}
+
+########################################################################
+
+sub Submit_Request($) {
+    my($request) = @_;
+
+    my $time_of_day       = GX::Get_Time_Of_Day;
+    my $timestamp         = GX::Long_Time_Image $time_of_day;
+    my $hostname          = GX::Get_Hostname;
+    my $PW                = GX::Get_PW_UID $<;
+    my $Data_Dir          = "$GX::Config->{INSTALL_DIR}/gx-map-data";
+    my $Requests_Dir      = "$Data_Dir/new-requests";
+
+    #
+    # timestamp and hostname are set here unconditionally.
+    #
+    $request->{timestamp} = $timestamp;
+    $request->{hostname}  = $hostname;
+
+    #
+    # Do some quick sanity checks.
+    # Apply default values for some fields.
+    #
+    #
+    my @ERRORS = ();
+    if (defined $request->{operation}) {
+        my $OP = $request->{operation};
+        my %expected = ( 'add'         => 'dn, username',
+                         'remove'      => 'dn, username',
+                         'remove-dn'   => 'dn',
+                         'remove-user' => 'username' );
+        my @seen = ();
+        push @seen, 'dn'       if defined $request->{dn};
+        push @seen, 'username' if defined $request->{username};
+        my $seen = join ', ', @seen;
+        $seen = "()" if $seen eq '';
+
+        if (defined $expected{$OP}) {
+            if ($expected{$OP} ne $seen) {
+                push @ERRORS, "Expected $expected{$OP}, got $seen\n";
+            }
+        }
+        else {
+            push @ERRORS, "Invalid operation $OP\n";
+        }
+    }
+    else {
+        push @ERRORS, "No operation specified\n";
+    }
+
+    if (@ERRORS) {
+        die "GX::Submit_Request:\n@ERRORS";
+    }
+
+    if (not defined $request->{requested_by_name}) {
+        $request->{requested_by_name} = $PW->{name};
+    }
+    if (not defined $request->{requested_by_uid}) {
+        $request->{requested_by_uid} = $PW->{uid};
+    }
+    if (not defined $request->{source}) {
+        if (GX::Is_Admin_Account $PW->{name}) {
+            $request->{source} = 'admin';
+        }
+        else {
+            $request->{source} = 'user';
+        }
+    }
+
+    if (defined $request->{username} and not defined $request->{user_uid}) {
+        my $user_PW = GX::Get_PW_Name $request->{username};
+        if (defined $user_PW->{uid}) {
+            $request->{user_uid} = $user_PW->{uid};
+        }
+    }
+
+    my $request_file = "$Requests_Dir/$time_of_day-$hostname-$PW->{name}";
+    if (defined $request->{username}) {
+        $request_file .= "_$request->{username}";
+    }
+    $request_file .= "-$$.request";
+
+    #
+    # If gx-check-requests sees a partial request file, it will reject
+    # it and move it to the bad-requests directory.  To avoid this,
+    # create a temporary request file with a name ending in ".tmp"
+    # (making it invisible to gx-check-requests).  After the temporary
+    # file is created and has the proper permissions, rename it to the
+    # correct name.
+    #
+    my $tmp_file = "$request_file.tmp";
+
+    GX::Write_Records '-single', $tmp_file, $request;
+
+    if (not -o $tmp_file) {
+        #
+        # I just created a file, but I don't own it.  Most likely I'm
+        # root, and the target NFS filesystem has root squashing enabled.
+        #
+        my $message = "Bad ownership for temporary file:\n$tmp_file\n";
+        if ($< == 0) {
+            $message .= "(likely NFS problem)\n";
+        }
+        die $message;
+    }
+    chmod 0444, $tmp_file or die "chmod $tmp_file: $!\n";
+    rename $tmp_file, $request_file or die "rename $tmp_file: $!\n";
+} # Submit_Request
+
+# ----------------------------------------------------------------------
+
+#
+# Given a certificate file name, invokes openssl to determine the subject
+# name and returns the resulting DN.
+# 
+# The output must be a single line starting with '/'.
+#
+# If an error occurs, return a brief description of the error.  This can
+# be distinguished from a valid DN by the absence of a leading '/'.
+# (Not pretty, but it works.)
+#
+sub Get_DN_From_Certificate($) {
+    my($file) = @_;
+    return "No file $file"     if not -e $file;
+    return "Cannot read $file" if not -r $file;
+
+    GX::Use_Commands 'openssl';
+
+    #
+    # We deliberately don't bother checking for errors.  If we get the
+    # expected output, we use it; if not, we don't bother to distinguish
+    # the reason we couldn't execute the command.
+    #
+    open my $Pipe, '-|', "openssl x509 -in '$file' -noout -subject 2>/dev/null";
+    my @output = <$Pipe>;
+    close $Pipe;
+
+    return "Missing or bad output from openssl for $file"
+        if scalar @output != 1;
+    my $line = $output[0];
+    chomp $line;
+    return "Unrecognized output from openssl for $file"
+        if $line !~ /^subject=/;
+    $line =~ s/^subject=\s*//;
+    return "Bad DN from openssl for $file" if $line !~ /^\//;
+    return $line;
+} # Get_DN_From_Certificate
+
+# ----------------------------------------------------------------------
+
+sub Proxy_File_Name() {
+    if (defined $ENV{X509_USER_PROXY} and -r $ENV{X509_USER_PROXY}) {
+        return $ENV{X509_USER_PROXY};
+    }
+    elsif (-r "/tmp/x509up_u$>") {
+        return "/tmp/x509up_u$>";
+    }
+    else {
+        return undef;
+    }
+} # Proxy_File_Name
+
+# ----------------------------------------------------------------------
+
+sub User_Cert_File_Name() {
+    if (defined $ENV{X509_USER_CERT} and -r $ENV{X509_USER_CERT}) {
+        return $ENV{X509_USER_CERT};
+    }
+    elsif (-r "$ENV{HOME}/.globus/usercert.pem") {
+        return "$ENV{HOME}/.globus/usercert.pem";
+    }
+    else {
+        return undef;
+    }
+} # User_Cert_File_Name
+
+# ----------------------------------------------------------------------
+
+#
+# For use with here documents (<<"EOF")
+#
+sub Strip($) {
+    my($s) = @_;
+
+    $s =~ s/^\s*> ?//gm;
+    return $s;
+} # Strip
+
+# ----------------------------------------------------------------------
+
+sub Debug(@) {
+    print @_ if $User_Opt->{debugging};
+} # Debug
+
+# ----------------------------------------------------------------------
+
+sub Debugf(@) {
+    printf @_ if $User_Opt->{debugging};
+} # Debugf
+
+# ----------------------------------------------------------------------
+
+sub Get_Options_Interactively() {
+    $| = 1;
+
+    my $Options = {};
+
+    my $response;
+
+    $Options->{interactive} = 1;
+
+    print Strip <<"EOF";
+    > The $Program_Name command lets you submit a request to modify the
+    > Globus grid-mapfile(s) on one or more machines.  Once the request
+    > is submitted, the updates should occur within a few minutes.
+    > 
+    > A grid-mapfile entry maps a DN (Distinguished Name) to a Unix
+    > user name.  For example, an entry like
+    >     "/O=Big University/OU=Small Department/CN=John Doe" jdoe
+    > allows a user holding a Globus certificate with the specified
+    > DN to run Globus jobs under the Unix account "jdoe".
+    > 
+    > $Program_Name can be run interactively or with command-line arguments.
+    > 
+    > In this interactive mode, you will be asked a series of questions.
+    > Enter your responses followed by <return>.
+    > 
+    > Single-letter menu responses are case-insensitive; other responses
+    > must be entered exactly.
+    > 
+    > If there is a default response indicated by the prompt, you can
+    > enter it by just typing <return>.
+EOF
+
+    #
+    # Get the operation
+    #
+    while (not defined $Options->{operation}) {
+        print Strip <<"EOF";
+        > 
+        > (a) Add a grid-mapfile entry
+        > (r) Remove a grid-mapfile entry
+        > (x) Exit
+EOF
+        print "What do you want to do? [arx] ";
+        chomp($response = lc scalar <STDIN>);
+        if ($response =~ /^a/) {
+            $Options->{operation} = 'add';
+        }
+        elsif ($response =~ /^r/) {
+            $Options->{operation} = 'remove';
+        }
+        elsif ($response =~ /^x/) {
+            exit 0;
+        }
+        else {
+            print ">>> Unrecognized response\n";
+        }
+    }
+
+    my $OP = $Options->{operation}; # just a convenient abbreviation
+
+    if ($Is_Admin) {
+        undef $response;
+        while (not defined $response) {
+            print "Source (default is none): ";
+            chomp($response = scalar <STDIN>);
+            $response =~ s/^\s*//;
+            $response =~ s/\s*$//;
+            if ($response =~ /^[A-Za-z0-9._-]*$/) {
+                #
+                # Leave "source" undefined if it's not specified
+                # (no default).  It will be set to "USER" by
+                # gx-check-requests.
+                #
+                $Options->{source} = $response if $response ne '';
+            }
+            else {
+                print ">>> Invalid value (use only [A-Za-z0-9._-])\n";
+                undef $response;
+            }
+        }
+    }
+
+    if ($OP eq 'remove') {
+        TRY:
+        while (1) {
+            print "\n";
+            if ($Is_Admin) {
+                print Strip <<"EOF";
+                > (d) Remove all mappings for a specified DN
+                > (u) Remove all mappings for a specified user name
+                > (m) Remove mapping for a specified DN and user name
+                > (x) Exit
+EOF
+                print "Remove? [dumx] ";
+            }
+            else {
+                print Strip <<"EOF";
+                > (u) Remove all mappings for your user name
+                > (m) Remove mapping for a specified DN and your user name
+                > (x) Exit
+EOF
+                print "Remove? [umx] ";
+            }
+            chomp($response = lc scalar <STDIN>);
+            if ($Is_Admin and $response =~ /^d/) {
+                $OP = $Options->{operation} = 'remove-dn';
+                last TRY;
+            }
+            elsif ($response =~ /^u/) {
+                $OP = $Options->{operation} = 'remove-user';
+                last TRY;
+            }
+            elsif ($response =~ /^m/) {
+                $OP = $Options->{operation} = 'remove';
+                last TRY;
+            }
+            elsif ($response =~ /^x/) {
+                exit 0;
+            }
+            else {
+                print ">>> Unrecognized response\n";
+            }
+        }
+    }
+
+    #
+    # If $OP is 'remove-dn', leave username undefined.
+    #
+    if ($OP ne 'remove-dn') {
+        if ($Is_Admin) {
+            my $what;
+            if    ($OP eq 'add')     { $what = 'map' }
+            elsif ($OP =~ /^remove/) { $what = 'unmap' }
+            else                     { die "Internal error" }
+
+            while (not defined $Options->{username}) {
+                print "What user name do you want to $what ",
+                      "(default is $PW->{name}) ? ";
+                chomp($response = scalar <STDIN>);
+                $response =~ s/^ *//;
+                $response =~ s/ *$//;
+                if ($response eq '') {
+                    $Options->{username} = $PW->{name};
+                }
+                else {
+                    if (GX::Is_Legal_Username $response) {
+                        $Options->{username} = $response;
+                    }
+                    else {
+                        print ">>> \"$response\" is not a legal user name\n";
+                    }
+                }
+            }
+        }
+        else {
+            $Options->{username} = $PW->{name};
+        }
+    }
+
+    #
+    # Get DN
+    #
+    if ($OP ne 'remove-user') {
+        my $choices = '';
+        $choices .= 'c' if defined $user_cert_file;
+        $choices .= 'p' if defined $proxy_file;
+        $choices .= 'fix';
+        my $dn = undef;
+        my $cert_file = undef;
+        while (not defined $dn) {
+
+            print Strip <<"EOF";
+            > 
+            > You can specify the DN in one of the following ways:
+EOF
+
+            print Strip <<"EOF" if defined $user_cert_file;
+            > (c) Certificate, extract from $user_cert_file
+EOF
+
+            print Strip <<"EOF" if defined $proxy_file;
+            > (p) Proxy, extract from your current proxy certificate,
+            >     $proxy_file
+EOF
+
+            print Strip <<"EOF";
+            > (f) File, extract from a specified certificate file
+EOF
+
+            print Strip <<"EOF";
+            > (i) Input the DN directly
+            > (x) Exit
+EOF
+
+            print "How do you want to specify the DN? [$choices] ";
+            chomp($response = lc scalar <STDIN>);
+
+            if (defined $user_cert_file and $response =~ /^c/) {
+                $cert_file = $user_cert_file;
+            }
+            elsif (defined $proxy_file and $response =~ /^p/) {
+                $cert_file = $proxy_file;
+            }
+            elsif ($response =~ /^f/) {
+                print "Enter certificate file name: ";
+                chomp($cert_file = scalar <STDIN>);
+            }
+            elsif ($response =~ /^i/) {
+                print "Enter distinguished name: ";
+                chomp($dn = scalar <STDIN>);
+                $dn =~ s/^"//;
+                $dn =~ s/"$//;
+                $dn = GX::Normalize_DN $dn;
+            }
+            elsif ($response =~ /^x/) {
+                exit 0;
+            }
+            else {
+                print ">>> Unrecognized input\n";
+            }
+
+            if (defined $cert_file) {
+                $dn = Get_DN_From_Certificate $cert_file;
+                if ($dn =~ /^\//) {
+                    $dn = GX::Normalize_DN $dn;
+                    print "DN is \"$dn\"\n";
+                }
+                else {
+                    #
+                    # Get_DN_From_Certificate returned an error message.
+                    #
+                    print "$dn\n";
+                    undef $dn;
+                    undef $cert_file;
+                }
+            }
+        }
+
+        $Options->{dn} = $dn;
+    }
+    if (not $Is_Admin and
+        defined $GX::Config->{REQUIRE_SIGNATURES} and
+        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
+    {
+        print ">>> Not yet implemented <<<\n";
+        print "Enter verification for \"$Options->{dn}\"\n";
+        my $response;
+        chomp($response = scalar <STDIN>);
+        $Options->{signature} = $response;
+    }
+
+    #
+    # Get e-mail address
+    #
+    print Strip <<"EOF";
+    > 
+    > You may provide your e-mail address if you wish.
+    > It will be recorded in the request log, and may be used
+    > to contact you if there is a problem with your certificate.
+EOF
+    print "E-mail address (<return> for none): ";
+    chomp($response = scalar <STDIN>);
+    $response =~ s/^\s*//;
+    $response =~ s/\s*$//;
+    if ($response ne '') {
+        $Options->{email} = $response;
+    }
+
+    #
+    # Get comment
+    #
+    print Strip <<"EOF";
+    > 
+    > You may provide an optional comment.
+    > If you do, it will be recorded in the request log.
+    > Press return if you don't wish to provide a comment.
+EOF
+    print "Comment: ";
+    chomp($response = scalar <STDIN>);
+    $response =~ s/^\s*//;
+    $response =~ s/\s*$//;
+    if ($response ne '') {
+        $Options->{comment} = $response;
+    }
+    print "\n";
+
+    return $Options;
+} # Get_Options_Interactively
+
+# ----------------------------------------------------------------------
+
+sub Get_Options_From_Command_Line() {
+    my $Options = {};
+
+    my @operations = ();
+    foreach my $op (qw(add remove remove-dn remove-user)) {
+        push @operations, $op if $User_Opt->{$op};
+    }
+
+    if (scalar @operations == 0) {
+        Usage "No operation specified\n";
+    }
+    elsif (scalar @operations == 1) {
+        $Options->{operation} = $operations[0];
+    }
+    else {
+        Usage "Specify only one of: -add, -remove, -remove-dn, -remove-user\n";
+    }
+
+    my $OP = $Options->{operation}; # just a convenient abbreviation
+
+    my $dn_count = (defined $User_Opt->{dn} ? 1 : 0) +
+                   (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
+                   (defined $User_Opt->{'default-dn'} ? 1 : 0);
+
+    if ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
+        Usage "Do not specify a user name with \"-$OP\"\n";
+    }
+    elsif ($OP eq 'remove-user' and $dn_count > 0) {
+        Usage "Do not specify a DN or certificate file with \"$OP\"\n";
+    }
+    elsif ($OP eq 'add' or $OP eq 'remove' or $OP eq 'remove-dn') {
+        if ($dn_count == 0) {
+            Usage "No DN specified\n";
+        }
+        elsif ($dn_count > 1) {
+            Usage "Multiple DNs may not be specified with \"-$OP\"\n";
+        }
+    }
+
+    $Options->{'force-dn'}   = 1 if $User_Opt->{'force-dn'};
+    $Options->{'literal-dn'} = 1 if $User_Opt->{'literal-dn'};
+    $Options->{quiet}        = 1 if $User_Opt->{quiet};
+    $Options->{force}        = 1 if $User_Opt->{quiet} or $User_Opt->{force};
+
+    if (defined $User_Opt->{source}) {
+        if ($Is_Admin) {
+            if ($User_Opt->{source} !~ /^[A-Za-z0-9._-]+$/) {
+                Usage "Invalid argument to \"-source\" option\n";
+            }
+            $Options->{source} = $User_Opt->{source};
+        }
+        else {
+            Usage "Only a gx-map administrator may specify a source\n"
+        }
+    }
+    #
+    # Leave "source" undefined if it's not specified (no default).
+    # It will be set to "user" or "admin" by gx-check-requests.
+    #
+
+    if ($OP eq 'remove-dn' and not $Is_Admin) {
+        Usage "Only a gx-map administrator may use the \"-remove-dn\" option\n";
+    }
+
+    if (defined $User_Opt->{username}) {
+        if (not $Is_Admin and $User_Opt->{username} ne $PW->{name}) {
+            Usage "You may not specify a user name other than your own\n";
+        }
+        elsif (not GX::Is_Legal_Username $User_Opt->{username}) {
+            Usage "\"$User_Opt->{username}\" is not a legal user name\n";
+        }
+        else {
+            $Options->{username} = $User_Opt->{username};
+        }
+    }
+    else {
+        if ($OP ne 'remove-dn') {
+            $Options->{username} = $PW->{name};
+        }
+    }
+
+    if ($OP ne 'remove-user') {
+        if (defined $User_Opt->{dn}) {
+            $Options->{dn} = $User_Opt->{dn};
+        }
+        else {
+            my $cert_file;
+            if (defined $User_Opt->{'default-dn'}) {
+                if (defined $default_cert_file) {
+                    $cert_file = $default_cert_file;
+                }
+                else {
+                    Usage "Cannot determine name of default certificate\n";
+                }
+            }
+            elsif (defined $User_Opt->{'certificate-file'}) {
+                $cert_file = $User_Opt->{'certificate-file'};
+            }
+            else {
+                if (defined $user_cert_file) {
+                    $cert_file = $user_cert_file;
+                }
+                else {
+                    Usage "Cannot determine name of user certificate\n";
+                }
+            }
+            my $dn = Get_DN_From_Certificate $cert_file;
+            if ($dn =~ /^\//) {
+                #
+                # Get_DN_From_Certificate returned a valid DN
+                #
+                $Options->{dn} = $dn;
+            }
+            else {
+                #
+                # Get_DN_From_Certificate returned an error message
+                #
+                Usage "$dn\n";
+            }
+        }
+    }
+
+    if (not $Is_Admin and
+        $OP eq 'add' and
+        defined $GX::Config->{REQUIRE_SIGNATURES} and
+        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
+    {
+        print ">>> Not yet implemented <<<\n";
+        print "Enter verification for \"$Options->{dn}\"\n";
+        my $response;
+        chomp($response = scalar <STDIN>);
+        $Options->{signature} = $response;
+    }
+
+    if (defined $User_Opt->{email}) {
+        $Options->{email} = $User_Opt->{email};
+    }
+
+    if (defined $User_Opt->{comment}) {
+        $Options->{comment} = $User_Opt->{comment};
+    }
+
+    if (defined $User_Opt->{local}) {
+        $Options->{local} = $User_Opt->{local};
+    }
+
+    return $Options;
+} # Get_Options_From_Command_Line
+
+# ----------------------------------------------------------------------
+
+#
+# Returns 1 if the given DN matches one of the patterns in
+# etc/gx-map/auto.txt.  Returns 0 if it doesn't, or if the
+# auto.txt file can't be read.
+#
+sub DN_Is_Handled_Automatically($) {
+    my($dn) = @_;
+    my $auto_file = "$Install_Dir/etc/gx-map/auto.txt";
+    open my $AUTO, '<', $auto_file or return 0;
+    while (<$AUTO>) {
+        s/#.*$//;
+        s/^\s+//;
+        s/\s+$//;
+        my $regexp = $_;
+        $regexp =~ s/\*/__ASTERISK__/g;
+        $regexp = quotemeta $regexp;
+        $regexp =~ s/__ASTERISK__/.*/g;
+        $regexp = qr/$regexp/;
+        if ($dn =~ /$regexp/) {
+            close $AUTO;
+            return 1;
+        }
+    }
+    close $AUTO;
+    return 0;
+} # DN_Is_Handled_Automatically
+
+# ----------------------------------------------------------------------
+
+#
+# Die without invoking handler.
+#
+sub Die_Quietly(@) {
+    #
+    # This should be
+    #     delete $SIG{__DIE__};
+    # but that doesn't work properly in some versions of Perl.
+    #
+    $SIG{__DIE__} = sub { die @_ };  
+    die @_;
+} # Die_Quietly
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options]
+Option names may be abbreviated.
+    -help            : Show this message and exit.
+    -version         : Show version information and exit.
+    -quick-add       : Add a mapping for your current certificate.
+                       Asks for verification before submitting request.
+    -quick-remove    : Remove the mapping for your current certificate.
+                       Asks for verification before submitting request.
+    -interactive     : Run interactively.
+                       In interactive mode, other options will be ignored.
+    -long-help       : Show long usage message, explaining all
+                       command-line options (recommended only for gx-map
+                       administrators and masochists).
+EOF
+    exit 1;
+} # Usage
+
+# ----------------------------------------------------------------------
+
+sub Long_Usage() {
+    my $pager = defined $ENV{PAGER} ? $ENV{PAGER} : 'more';
+    print <<"EOF";
+Usage: $Program_Name [options]
+Option names may be abbreviated.
+    -help                   : Show a brief usage message and exit.
+    -version                : Show version information and exit.
+    -show-config            : Show configuration information and exit.
+                              (This is temporary.)
+    -quick-add              : Add a mapping for your current certificate.
+                              Equivalent to -add -default-dn.
+    -quick-remove           : Remove the mapping for your current certificate.
+                              Equivalent to -remove -default-dn.
+    -interactive            : Run interactively.
+    -long-help              : Show long usage message, explaining all
+                              command-line options (recommended only
+                              for gx-map administrators and masochists).
+    -add                    : Add the specified mapping.
+    -remove                 : Remove the specified mapping.
+    -remove-dn              : Remove all mappings for the specified
+                              distinguished name.  For use only by gx-map
+                              administrators.
+    -remove-user            : Remove all mappings for the specified user.
+Note: Exactly one of -interactive, -quick-add, -quick-remove,
+      -add, -remove, -remove-dn, or -remove-user
+      (or -help, -usage, or -long-usage) must be specified.
+------------------------------------------------------------------------
+    -quiet                  : Work silently.
+                              Implies -force.
+    -force                  : Apply mapping without prompting.
+                              Default is to ask for confirmation before
+                              proceeding.
+    -no-admin               : Assume the user is not a gx-map administrator.
+                              Intended for testing only; has no effect if
+                              you're not already a gx-map administrator.
+    -dn "string"            : Distinguished name.
+    -default-dn             : Extract DN from proxy or user certificate.
+    -certificate-file file  : Name of file from which to extract DN.
+    -force-dn               : Normally, gx-request (minimally) checks
+                              the DN for proper syntax; this option
+                              overrides that check.
+    -literal-dn             : Normally, gx-request normalizes the DN,
+                              converting it to GT4 format and stripping
+                              any proxy information.  This option disables
+                              the conversion.  Not recommended for general
+                              use.  Not available in interactive mode.
+    -username name          : Unix user name to map.
+                              This option is for use by gx-map
+                              administrators only.
+    -email addr             : Your contact e-mail address (optional).
+                              This may be used to contact you if there's
+                              a problem with your certificate.
+    -no-email               : Ignored (provided for compatibility with 0.3).
+    -comment "string"       : Comment to be added to request log (optional)
+    -source string          : Specify the source of the mapping.
+                              Argument may consist only of letters, digits,
+                              underscore, period, and hyphen characters
+                              ([A-Za-z0-9_.-]).
+                              This option is for use by gx-map administrators
+                              only.
+    -slurp file             : Read multiple mapping requests from an input
+                              file.  Not available in interactive mode.
+                              This option is for use by gx-map administrators
+                              only.
+    -local                  : Set the "scope" attribute to "local",
+                              which inhibits propagation (gx-propagate
+                              will not be invoked).  This is used by
+                              gx-db-check-requests.  Not available in
+                              interactive mode.  This option is for use
+                              by gx-map administrators only.
+    -debugging              : Enable debugging output.
+Note: If this help message has scrolled off the top of your screen, try
+    $Program_Name -long-help | $pager
+EOF
+    exit 1;
+
+} # Long_Usage
+
+# ----------------------------------------------------------------------
+
+1;
