@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-ingest.in,v 1.35 2007-07-16 18:03:24-07 kst Exp $
+# $Id: gx-ingest.in,v 1.36 2007-08-22 17:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -58,7 +58,7 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
-use GX_Request ();
+use GX::Request ();
 
 sub Usage(@);
 
@@ -135,7 +135,7 @@ if ($User_Opt->{direct}) {
         if ($dn =~ /^"(.*)"$/) {
             $dn = $1;
         }
-        GX_Request::GX_Request
+        GX::Request::GX_Request
             '-quiet',
             "-$request->{operation}",
             '-username', $request->{username},
