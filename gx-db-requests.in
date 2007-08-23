@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.6 2007-08-19 01:22:56-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.7 2007-08-22 17:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -59,8 +59,8 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
-use GX_Request ();
-use GX_TGCDB ();
+use GX::Request ();
+use GX::TGCDB ();
 
 sub Usage(@);
 sub Debug(@);
@@ -481,22 +481,22 @@ EOF
     foreach my $mapping (@removed_mappings) {
         # Request 'remove', $mapping;
         my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-        GX_Request::GX_Request '-remove',
-                               '-local',
-                               '-username', $username,
-                               '-dn', $dn,
-                               '-source', 'TGCDB',
-                               '-quiet';
+        GX::Request::GX_Request '-remove',
+                                '-local',
+                                '-username', $username,
+                                '-dn', $dn,
+                                '-source', 'TGCDB',
+                                '-quiet';
     }
     foreach my $mapping (@added_mappings) {
         # Request 'add', $mapping;
         my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-        GX_Request::GX_Request '-add',
-                               '-local',
-                               '-username', $username,
-                               '-dn', $dn,
-                               '-source', 'TGCDB',
-                               '-quiet';
+        GX::Request::GX_Request '-add',
+                                '-local',
+                                '-username', $username,
+                                '-dn', $dn,
+                                '-source', 'TGCDB',
+                                '-quiet';
     }
 
     Cleanup @processed_files;
@@ -576,13 +576,13 @@ sub Get_Mappings_From_DB($) {
 #                          $DB_Config->{user},
 #                          $DB_Config->{password},
 #                          { RaiseError => 1, PrintError => 1 });
-    my $tgcdb = new GX_TGCDB( host       => $DB_Config->{host},
-                              port       => $DB_Config->{port},
-                              dbname     => $DB_Config->{dbname},
-                              user       => $DB_Config->{user},
-                              password   => $DB_Config->{password},
-                              raiseerror => 1,
-                              printerror => 1 );
+    my $tgcdb = new GX::TGCDB( host       => $DB_Config->{host},
+                               port       => $DB_Config->{port},
+                               dbname     => $DB_Config->{dbname},
+                               user       => $DB_Config->{user},
+                               password   => $DB_Config->{password},
+                               raiseerror => 1,
+                               printerror => 1 );
 
     if (not $tgcdb->{dbh}) {
         #
