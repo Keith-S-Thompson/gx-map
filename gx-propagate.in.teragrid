@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-propagate.in.teragrid,v 1.45 2007-08-15 19:08:12-07 kst Exp $
+# $Id: gx-propagate.in.teragrid,v 1.46 2007-08-22 17:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-propagate.in.teragrid,v $
 
 ########################################################################
@@ -72,7 +72,7 @@ BEGIN {
     unshift @INC, "$Install_Dir/lib";
 }
 use GX ();
-use GX_TGCDB ();
+use GX::TGCDB ();
 
 my $DB_Config_File = "$Install_Dir/etc/gx-map/tgcdb.db-config";
 
@@ -194,14 +194,14 @@ print SAVE_STDERR if 0;    # to make "perl -cwT" happy
 close STDERR;
 open STDERR, '>&LOG';
 
-Debug "new GX_TGCDB\n";
+Debug "new GX::TGCDB\n";
 my $tg;
 if (not $User_Opt->{dryrun}) {
-    $tg = new GX_TGCDB (host     => $DB_Config->{host},
-                        port     => $DB_Config->{port},
-                        dbname   => $DB_Config->{dbname},
-                        user     => $DB_Config->{user},
-                        password => $DB_Config->{password});
+    $tg = new GX::TGCDB (host     => $DB_Config->{host},
+                         port     => $DB_Config->{port},
+                         dbname   => $DB_Config->{dbname},
+                         user     => $DB_Config->{user},
+                         password => $DB_Config->{password});
 }
 
 Debug "\$tg->beginTransaction\n";
