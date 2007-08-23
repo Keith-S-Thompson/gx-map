@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.22 2007-07-16 17:35:36-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.23 2007-08-22 17:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -60,7 +60,7 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
-use GX_Request ();
+use GX::Request ();
 
 sub Usage(@);
 sub Debug(@);
@@ -238,22 +238,22 @@ my @requests = ();
 foreach my $mapping (@removed_mappings) {
     # Request 'remove', $mapping;
     my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-    GX_Request::GX_Request '-remove',
-                           '-local',
-                           '-username', $username,
-                           '-dn', $dn,
-                           '-source', 'TGCDB',
-                           '-quiet';
+    GX::Request::GX_Request '-remove',
+                            '-local',
+                            '-username', $username,
+                            '-dn', $dn,
+                            '-source', 'TGCDB',
+                            '-quiet';
 }
 foreach my $mapping (@added_mappings) {
     # Request 'add', $mapping;
     my($username, $dn) = ($mapping =~ /^(\S+) (.*)$/);
-    GX_Request::GX_Request '-add',
-                           '-local',
-                           '-username', $username,
-                           '-dn', $dn,
-                           '-source', 'TGCDB',
-                           '-quiet';
+    GX::Request::GX_Request '-add',
+                            '-local',
+                            '-username', $username,
+                            '-dn', $dn,
+                            '-source', 'TGCDB',
+                            '-quiet';
 }
 
 Cleanup;
