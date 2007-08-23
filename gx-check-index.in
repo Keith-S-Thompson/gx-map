@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-index.in,v 1.17 2007-07-17 17:31:42-07 kst Exp $
+# $Id: gx-check-index.in,v 1.18 2007-08-22 17:12:06-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -59,7 +59,7 @@ my $Install_Dir;
 BEGIN { $Install_Dir = '%INSTALL_DIR%'; }
 use lib "$Install_Dir/lib";
 use GX ();
-use GX_Request ();
+use GX::Request ();
 
 sub Usage(@);
 sub Debug(@);
@@ -382,7 +382,7 @@ sub Request($$$) {
     }
     else {
         # system @command;
-        GX_Request::GX_Request @args;
+        GX::Request::GX_Request @args;
     }
 } # Request
 
