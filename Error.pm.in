@@ -1,4 +1,4 @@
-# $Id: Error.pm.in,v 1.1 2007-08-22 18:00:25-07 kst Exp $
+# $Id: Error.pm.in,v 1.2 2007-08-24 19:00:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Error.pm.in,v $
 
 ########################################################################
@@ -49,19 +49,24 @@
 # Installed in lib/GX subdirectory.
 
 # This package provides a way for routines in gx-map to return an error
-# indication in a uniform way.  Usage;
+# indication in a uniform way.  Usage:
 #
 #     return new GX::Error "Error message";
+#
 #
 # The caller can check whether the called routine succeeded like this:
 #
 #     my $result = Some_Func(foo, bar);
 #     if (ref $result eq 'GX::Error') {
 #         # handle the error
+#         # $result->{message} is the error message, which should be
+#         # a one-line message with no trailing "\n".
+#         # $result->{traceback} is a multi-line "\n"-terminated string
+#         # containing a stack traceback.
 #     }
-#
-#
-# TODO: Consider adding traceback information to the GX::Error object.
+#     else {
+#         # We have a valid result from Some_Func()
+#     }
 #
 # At this writing, no functions actually use this mechanism, but that
 # will change over time.
@@ -73,13 +78,43 @@ package GX::Error;
 
 sub new($$) {
     my($class, $message) = @_;
-    return bless { message => $message }, $class;
+
+    my @traceback_list = ();
+    my $level = 0;
+    while (1) {
+        my @caller = caller $level;
+        last if not @caller;
+        push @traceback_list, { file    => $caller[1],
+                                line    => $caller[2],
+                                subname => $caller[3] };
+        $level++;
+    }
+    my $traceback = '';
+    for (my $i = 0; $i <= $#traceback_list; $i++) {
+        my $curr = $traceback_list[$i];
+        if ($i < $#traceback_list) {
+            my $next = $traceback_list[$i+1];
+            $traceback
+                .= "    $curr->{file}:$curr->{line} in $next->{subname}\n";
+        }
+        else {
+            $traceback .= "    $curr->{file}:$curr->{line}\n";
+        }
+    }
+
+    return bless { message => $message, traceback => $traceback }, $class;
 } # new
 
 # ----------------------------------------------------------------------
 
 sub Message($) {
     return shift->{message};
+} # Message
+
+# ----------------------------------------------------------------------
+
+sub Traceback($) {
+    return shift->{traceback};
 } # Message
 
 1;
