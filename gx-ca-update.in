@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.152 2007-08-14 18:15:07-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.153 2007-08-24 19:00:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -773,10 +773,10 @@ sub Update_And_Install_Certificate($) {
             my $cert_info = GX::Certificate_Info
                                 $cache_result->{filename},
                                 $ref->{CERTIFICATE_FORM};
-            if (not defined $cert_info) {
+            if (ref $cert_info eq 'GX::Error') {
                 Error $ref, 'no_cert_info',
                             GX::Get_mtime $cache_result->{filename},
-                            "Can't get certificate information";
+                            $cert_info->{message};
                 GX::Release_Cache_File $cache_result->{filename};
                 delete $ref->{_CACHED_CERT_FILE};
                 return;
