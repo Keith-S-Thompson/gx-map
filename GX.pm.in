@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.93 2007-08-22 17:12:25-07 kst Exp $
+# $Id: GX.pm.in,v 1.94 2007-08-24 19:00:58-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -94,7 +94,7 @@ use vars qw( $VERSION
 #
 # The layout of the following line is significant; see configure-gx-map.
 #
-$VERSION = '0.5.9.042';
+$VERSION = '0.5.9.043';
 
 undef $Lock_File_Name;
 
@@ -119,10 +119,14 @@ use File::Temp ();
 use Time::Local ();
 use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
 use POSIX ();
+
 eval 'use Time::HiRes ()';
 $Have_Time_HiRes_Module = ( $@ eq '' );
 eval 'require Net::Domain';
 $Have_Net_Domain_Module = ( $@ eq '' );
+
+use lib "%INSTALL_DIR%/lib";
+use GX::Error ();
 
 # ----------------------------------------------------------------------
 
@@ -593,11 +597,14 @@ sub OpenSSL_Version() {
 # The optional third argument, if set to 'nomd5', causes the md5sum
 # to be omitted (any other argument value is a fatal error).
 #
-# Returns undef if any of these fields cannot be determined.
+# Returns a GX::Error object reference if any of these fields cannot
+# be determined.
 #
 sub Certificate_Info($$;$) {
     my($cert_file, $cert_form, $third_arg) = @_;
-    return undef if not -r $cert_file;
+    if (not -r $cert_file) {
+        return new GX::Error "Can't read $cert_file";
+    }
     my $need_md5 = 1;
     if (defined $third_arg) {
         if ($third_arg eq 'nomd5') {
@@ -652,12 +659,14 @@ sub Certificate_Info($$;$) {
     }
 
     foreach my $key (qw(hash issuer subject
-                        sha1sum
+                        sha1sum md5sum
                         startdate enddate))
     {
-        return undef if not defined $result->{$key};
+        next if $key eq 'md5sum' and not $need_md5;
+        if (not defined $result->{$key}) {
+            return new GX::Error, "key $key is not defined";
+        }
     }
-    return undef if $need_md5 and not defined $result->{md5sum};
 
     return $result;
 } # Certificate_Info
