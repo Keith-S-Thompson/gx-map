@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.95 2007-08-24 19:01:14-07 kst Exp $
+# $Id: GX.pm.in,v 1.96 2007-08-27 17:26:23-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1739,13 +1739,21 @@ sub Write_Multifile($@) {
 
 #
 # Helper function for Read_Multifile
+# Arguments are:
+#     The name of the multifile (used only in error messages).
+#     An open file handle.
+#     The name of a temporary directory into which to write the file.
+# Returns either a hash reference with the following fields:
+#     { name     => <name of subfile, as extracted from multifile>,
+#       filename => <name of stored file in the temporary directory> }
+# or a GX::Error object.
 #
-sub Read_Subfile($$) {
-    my($filename, $File) = @_;
+sub Read_Subfile($$$) {
+    my($filename, $File_Handle, $Temp_Dir) = @_;
     my $in_subfile = 0;
     my $subfile_name = undef;
-    my $content = '';
-    while (<$File>) {
+    my $SUBFILE = undef;
+    while (<$File_Handle>) {
         if (not $in_subfile) {
             if (/^\s*$/) {
                 next;
@@ -1753,27 +1761,36 @@ sub Read_Subfile($$) {
             elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {
                 $subfile_name = $1;
                 $in_subfile = 1;
+                if (not open my $SUBFILE, '>', "$Temp_Dir/$subfile_name") {
+                    return new GX::Error
+                           "Failed to open subfile $subfile_name";
+                }
             }
             elsif (/^\s*}\s+END\s+multifile\s*$/) {
+                close $SUBFILE
+                    or return new GX::Error
+                              "Failed to close subfile $subfile_name";
                 return { EOF => 1 };
             }
             else {
-                die "Error at line $. of $filename\n";
+                return new GX::Error "Error at line $. of $filename";
             }
         }
         else {
             if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
                 if ($1 ne $subfile_name) {
-                    die "Name mismatch at line $. of $filename\n";
+                    return new GX::Error
+                           "Name mismatch at line $. of $filename";
                 }
-                return { name => $subfile_name, content => $content };
+                return { name     => $subfile_name,
+                         filename => "$Temp_Dir/$subfile_name" };
             }
             else {
-                $content .= $_;
+                print $SUBFILE $_;
             }
         }
     }
-    die "Incomplete subfile at EOF, line $. of $filename\n";
+    return new GX::Error "Incomplete subfile at EOF, line $. of $filename";
 } # Read_Subfile
 
 # ----------------------------------------------------------------------
@@ -1794,7 +1811,7 @@ sub Read_Subfile($$) {
 # returns a single string containing an error message.
 # 
 sub Read_Multifile($$) {
-    my($multifile_name) = @_;
+    my($multifile_name, $temp_dir) = @_;
     my @result = ();
     my $in_multifile = 0;
     open my $File, '<', $multifile_name or die "$multifile_name: $!\n";
@@ -1807,12 +1824,16 @@ sub Read_Multifile($$) {
                 $in_multifile = 1;
             }
             else {
-                die "Error at line $. of $multifile_name\n";
+                return new GX::Error "Error at line $. of $multifile_name";
             }
         }
         else {
             while (1) {
-                my $subfile = GX::Read_Subfile $multifile_name, $File;
+                my $subfile = GX::Read_Subfile
+                                  $multifile_name, $File, $temp_dir;
+                if (ref $subfile eq 'GX::Error') {
+                    return $subfile;
+                }
                 if ($subfile->{EOF}) {
                     close $File;
                     return @result;
@@ -1823,7 +1844,7 @@ sub Read_Multifile($$) {
             }
         }
     }
-    die "Syntax error at line $. of $multifile_name\n";
+    return new GX::Error "Syntax error at line $. of $multifile_name";
 } # Read_Multifile
 
 # ----------------------------------------------------------------------
