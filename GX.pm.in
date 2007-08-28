@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.97 2007-08-27 17:26:41-07 kst Exp $
+# $Id: GX.pm.in,v 1.98 2007-08-27 17:45:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1749,48 +1749,50 @@ sub Write_Multifile($@) {
 # or a GX::Error object.
 #
 sub Read_Subfile($$$) {
-    my($filename, $File_Handle, $Temp_Dir) = @_;
+    my($file_name, $File_Handle, $Temp_Dir) = @_;
     my $in_subfile = 0;
     my $subfile_name = undef;
-    my $SUBFILE = undef;
+    my $Subfile_Handle = undef;
     while (<$File_Handle>) {
-        if (not $in_subfile) {
+        if ($in_subfile) {
+            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
+                if ($1 ne $subfile_name) {
+                    return new GX::Error
+                           "Name mismatch at line $. of $file_name";
+                }
+                close $Subfile_Handle
+                    or return new GX::Error
+                              "Failed to close subfile $subfile_name";
+                return { name     => $subfile_name,
+                         filename => "$Temp_Dir/$subfile_name" };
+            }
+            else {
+                print $Subfile_Handle $_;
+            }
+        }
+        else {
             if (/^\s*$/) {
                 next;
             }
             elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {
                 $subfile_name = $1;
                 $in_subfile = 1;
-                if (not open my $SUBFILE, '>', "$Temp_Dir/$subfile_name") {
+                if (not open my $Subfile_Handle,
+                             '>', "$Temp_Dir/$subfile_name")
+                {
                     return new GX::Error
                            "Failed to open subfile $subfile_name";
                 }
             }
             elsif (/^\s*}\s+END\s+multifile\s*$/) {
-                close $SUBFILE
-                    or return new GX::Error
-                              "Failed to close subfile $subfile_name";
                 return { EOF => 1 };
             }
             else {
-                return new GX::Error "Error at line $. of $filename";
-            }
-        }
-        else {
-            if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
-                if ($1 ne $subfile_name) {
-                    return new GX::Error
-                           "Name mismatch at line $. of $filename";
-                }
-                return { name     => $subfile_name,
-                         filename => "$Temp_Dir/$subfile_name" };
-            }
-            else {
-                print $SUBFILE $_;
+                return new GX::Error "Error at line $. of $file_name";
             }
         }
     }
-    return new GX::Error "Incomplete subfile at EOF, line $. of $filename";
+    return new GX::Error "Incomplete subfile at EOF, line $. of $file_name";
 } # Read_Subfile
 
 # ----------------------------------------------------------------------
