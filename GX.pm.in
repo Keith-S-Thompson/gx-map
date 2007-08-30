@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.99 2007-08-27 17:59:58-07 kst Exp $
+# $Id: GX.pm.in,v 1.100 2007-08-29 21:09:05-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -522,7 +522,11 @@ sub Untaint(\$) {
 # sticky bit set.  If either of these checks fails, it's a fatal error.
 #
 sub Make_Temp_Dir() {
-    my $temp_dir = File::Temp::tempdir();
+    #
+    # Use a template so the temporary directory can be identified.
+    # Use TMPDIR => 1 so it's created under the default parent directory.
+    #
+    my $temp_dir = File::Temp::tempdir("gx-map-XXXXXXXXXX", TMPDIR => 1);
 
     my $stat = GX::Stat $temp_dir;
     die "Temp_Dir $temp_dir is not a directory\n"
