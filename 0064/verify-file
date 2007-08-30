@@ -1,0 +1,121 @@
+#!/usr/bin/perl
+
+# $Id: verify-file,v 1.1 2007-08-29 21:46:04-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
+
+use strict;
+use warnings;
+
+use File::Basename ();
+use Getopt::Long ();
+
+use lib '/usr/local/apps/gx-map-0.5.9.045/lib';
+use GX ();
+use GX::Error ();
+
+sub Run_Or_Die(@);
+sub Usage(@);
+
+$| = 1;
+
+my $Program_Name = File::Basename::basename $0;
+my $User_Opt = { 'certificates-directory' =>
+                     '/etc/grid-security/certificates' };
+my @Opts = ( $User_Opt,
+             qw( help!
+                 certificates-directory=s ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if scalar @ARGV != 1;
+
+# Just an abbreviation
+my $Certs_Dir = $User_Opt->{'certificates-directory'};
+
+my $input_file  = $ARGV[0];
+
+GX::Set_Config;
+
+GX::Use_Commands 'openssl';
+
+print "% openssl version\n";
+system qw(openssl version);
+
+my $temp_dir = GX::Make_Temp_Dir;
+
+opendir my $CERTS_DIR, $Certs_Dir or die "$Certs_Dir: $!\n";
+my @files_to_symlink = sort grep /\.r?0$/, readdir $CERTS_DIR;
+closedir $CERTS_DIR;
+
+foreach my $file (@files_to_symlink) {
+    symlink "$Certs_Dir/$file", "$temp_dir/$file"
+        or die "symlink $Certs_Dir/$file, $temp_dir/${file}: $!\n";
+}
+
+my @multi = GX::Read_Multifile $input_file, $temp_dir;
+
+print ">>> Got ", scalar @multi, " subfile(s):\n";
+foreach my $subfile (@multi) {
+    print "    $subfile->{filename}\n";
+}
+
+if (scalar @multi < 2) {
+    die "Need at least two subfiles in $input_file\n"
+}
+
+my $signed_file  = $multi[0]->{filename};
+my $signing_cert = $multi[1]->{filename};
+my $output_file;
+if ($signed_file =~ /^(.*)\.signed$/) {
+    $output_file = $1;
+}
+else {
+    $output_file = "$signed_file.recovered";
+}
+
+# print ">>> Signed file is $signed_file->{filename}\n";
+# system 'ls', '-l', $temp_dir;
+
+my @command = ( 'openssl',
+                'smime', '-verify', '-text',
+              # '-ignore_critical',
+                '-in', $signed_file,
+                '-out', $output_file,
+                '-CApath', $temp_dir,
+                '-certfile', $signing_cert );
+print "% @command\n";
+$ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
+Run_Or_Die @command;
+
+# GX::Delete_Temp_Dir $temp_dir;
+print "\$temp_dir = $temp_dir\n";
+
+########################################################################
+
+sub Run_Or_Die(@) {
+    my(@command) = @_;
+    my $status = system @command;
+    if ($status != 0) {
+        my $message = "@command failed";
+        if (($status & 0xff) == 0) {
+            my $exit_status = $status >> 8;
+            $message .= ", exit $exit_status";
+        }
+        else {
+            $message .= ", system() returned $status";
+        }
+        die "$message\n";
+    }
+} # Run_Or_Die
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options] filename
+    -help         Show this message and exit
+    -certificates-directory dir
+                  Certificates directory.
+                  Default is /etc/grid-security/certificates
+EOF
+exit 1;
+} # Usage
