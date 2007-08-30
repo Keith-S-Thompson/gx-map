@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.1 2007-08-29 21:46:04-07 kst Exp $
+# $Id: verify-file,v 1.2 2007-08-29 21:47:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -9,7 +9,7 @@ use warnings;
 use File::Basename ();
 use Getopt::Long ();
 
-use lib '/usr/local/apps/gx-map-0.5.9.045/lib';
+use lib '/usr/local/apps/gx-map-0.5.9.046/lib';
 use GX ();
 use GX::Error ();
 
