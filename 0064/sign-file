@@ -1,0 +1,244 @@
+#!/usr/bin/perl
+
+# $Id: sign-file,v 1.1 2007-08-29 21:46:04-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/0064/sign-file,v $
+
+use strict;
+use warnings;
+
+use File::Basename ();
+use Getopt::Long ();
+
+use lib '/usr/local/apps/gx-map-0.5.9.045/lib';
+use GX ();
+use GX::Error ();
+
+sub Run_Or_Die(@);
+sub Split_Certificate($$);
+sub Usage(@);
+
+$| = 1;
+
+my $Program_Name = File::Basename::basename $0;
+my $User_Opt = { };
+my @Opts = ( $User_Opt,
+             qw( help!
+                 certificate=s
+                 key=s
+                 proxy=s ) );
+Getopt::Long::GetOptions @Opts or Usage;
+Usage if scalar @ARGV != 1;
+
+my $Certificate = undef;
+my $Key = undef;
+
+if (defined $User_Opt->{proxy} and defined $User_Opt->{certificate}) {
+    Usage "Can't specify both -proxy and -certificate\n";
+}
+if (defined $User_Opt->{proxy} and defined $User_Opt->{key}) {
+    Usage "Can't specify both -proxy and -key\n";
+}
+if (not defined $User_Opt->{proxy} and
+    not defined $User_Opt->{certificate})
+{
+    Usage "Must specify either -proxy or -certificate\n";
+}
+
+if (defined $User_Opt->{proxy}) {
+    if ($User_Opt->{proxy} eq '-') {
+        if (defined $ENV{X509_USER_PROXY}) {
+            $Certificate = $Key = $ENV{X509_USER_PROXY};
+        }
+        else {
+            $Certificate = $Key = "/tmp/x509up_u$<";
+        }
+    }
+    else {
+        $Certificate = $Key = $User_Opt->{proxy};
+    }
+}
+
+elsif (defined $User_Opt->{certificate}) {
+    if ($User_Opt->{certificate} eq '-') {
+        if (defined $ENV{X509_USER_CERT}) {
+            $Certificate = $ENV{X509_USER_CERT};
+        }
+        else {
+            $Certificate = "$ENV{HOME}/.globus/usercert.pem";
+        }
+    }
+    else {
+        $Certificate = $User_Opt->{certificate};
+    }
+    if (defined $User_Opt->{key}) {
+        if ($User_Opt->{key} eq '-') {
+            if (defined $ENV{X509_USER_KEY}) {
+                $Key = $ENV{X509_USER_KEY};
+            }
+            else {
+                $Key = "$ENV{HOME}/.globus/userkey.pem";
+            }
+        }
+        else {
+            $Key = $User_Opt->{key};
+        }
+    }
+    else {
+        if ($Certificate =~ m</usercert\.pem$>) {
+            ($Key = $Certificate) =~ s</usercert\.pem$></userkey.pem>;
+        }
+        else {
+            Usage "No key specified\n";
+        }
+    }
+}
+
+print "\$Certificate = ", (defined $Certificate ? $Certificate : 'undef'), "\n";
+print "\$Key         = ", (defined $Key         ? $Key         : 'undef'), "\n";
+
+my $input_file  = $ARGV[0];
+my $signed_file = File::Basename::basename($input_file) . ".signed";
+my $multi_file  = File::Basename::basename($input_file) . ".multi";
+
+GX::Set_Config;
+
+GX::Use_Commands 'openssl';
+
+my $temp_dir = GX::Make_Temp_Dir;
+
+my @certificates = Split_Certificate $Certificate, $temp_dir;
+
+#
+# Now sign the file.
+#
+{
+    my @command = ( 'openssl', 'smime', '-sign', '-text',
+                    '-in',     $input_file,
+                    '-out',    $signed_file,
+                    '-signer', $Certificate,
+                    '-inkey',  $Key,
+                    '-nocerts' );
+    print "% @command\n";
+    Run_Or_Die @command;
+}
+
+GX::Write_Multifile $multi_file, $signed_file, @certificates;
+
+unlink $signed_file;
+GX::Delete_Temp_Dir $temp_dir;
+# print "\$temp_dir = $temp_dir\n";
+
+########################################################################
+
+sub Run_Or_Die(@) {
+    my(@command) = @_;
+    my $status = system @command;
+    if ($status != 0) {
+        my $message = "@command failed";
+        if (($status & 0xff) == 0) {
+            my $exit_status = $status >> 8;
+            $message .= ", exit $exit_status";
+        }
+        else {
+            $message .= ", system() returned $status";
+        }
+        die "$message\n";
+    }
+} # Run_Or_Die
+
+# ----------------------------------------------------------------------
+
+#
+# First argument is a certificate file name, possibly a proxy.
+# Second argument is the name of a temporary directory into which to
+# write the certificate(s) extracted from the file, presumably created
+# by GX::Make_Temp_Dir().
+# 
+# Returned value is either a list of the full path names of the copied
+# files, in the order they were seen  in the input file, or a reference
+# to a GX::Error object.  File names are of the form xxxxxxxx.0,
+# where xxxxxxxx is the 8-digit hexadecimal hash of the certificate.
+#
+sub Split_Certificate($$) {
+    my($certificate, $temp_dir) = @_;
+
+    my $next_index = 0;
+    my $curr_filename = undef;
+    my $OUT;
+    my @filenames = ();
+
+    open my $CERT, '<', $certificate
+        or return new GX::Error "${certificate}: $!";
+
+    while (<$CERT>) {
+        if (/^-----BEGIN CERTIFICATE-----\s*$/) {
+            if (defined $curr_filename) {
+                return new GX::Error
+                    "Error on line $.\n"
+            }
+            $curr_filename = sprintf "$temp_dir/cert.%03d", $next_index++;
+            open $OUT, '>', $curr_filename or die "$curr_filename: $!\n";
+        }
+
+        if (defined $curr_filename) {
+            print $OUT $_ or die "$curr_filename: $!\n";
+        }
+
+        if (/^-----END CERTIFICATE-----\s*$/) {
+            if (not defined $curr_filename) {
+                return new GX::Error "Error on line $.\n";
+            }
+            close $OUT or die "$curr_filename: $!\n";
+            push @filenames, $curr_filename;
+            $curr_filename = undef;
+        }
+    }
+
+    close $CERT or return new GX::Error "${certificate}: $!";
+
+    foreach my $filename (@filenames) {
+        my $cert_info = GX::Certificate_Info $filename, 'PEM', 'nomd5';
+        if (ref $cert_info eq 'GX::Error') {
+            return $cert_info;
+        }
+        if ($cert_info->{subject} eq $cert_info->{issuer}) {
+            return new GX::Error
+                   "Self-signed certificate \"$cert_info->{subject}\"";
+        }
+        my $new_filename = "$temp_dir/$cert_info->{hash}.0";
+        rename $filename, $new_filename or die "rename: $!\n";
+        $filename = $new_filename;
+    }
+    return @filenames;
+} # Split_Certificate
+
+# ----------------------------------------------------------------------
+
+sub Usage(@) {
+    print @_ if @_;
+    print <<"EOF";
+Usage: $Program_Name [options] filename
+    -help                   Show this message and exit
+    -proxy filename         Use the specified proxy (which acts as both
+                            a certificate and a key).  "-proxy -" uses
+                            the default proxy, which is the first of:
+                                \$X509_USER_PROXY
+                                /tmp/x509up_uUID
+                            that exists.
+    -certificate filename   Certificate file.  "-certificate -" uses
+                            the default certificate, which is the first of
+                                \$X509_USER_CERT
+                                \$HOME/.globus/usercert.pem
+                            that exists.
+    -key filename           Key file.  Use only with "-certificate".
+                            If the certificate name is "usercert.pem"
+                            and "-key" is not specified, the key is set
+                            to "userkey.pem" in the same directory.
+                            Use "-key -" to specify the default key,
+                            which is the first of
+                                \$X509_USER_KEY
+                                \$HOME/.globus/userkey.pem
+                            that exists.
+EOF
+exit 1;
+} # Usage
