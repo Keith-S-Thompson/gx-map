@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.14 2007-03-20 03:21:06-07 kst Exp $
+# $Id: bug-0064,v 1.15 2007-08-29 20:48:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -314,17 +314,18 @@ several critical extension fields, some of which are not recognized
 by OpenSSL, but it has no copy of the user certificate; instead,
 the proxy certificate itself is signed by the CA.
 
-The critical extension fields could present some problems.
-In releases of OpenSSL prior to 0.9.7, these fields are quietly
-ignored.  In release 0.9.8 and later, the presence of these fields
-prevents a signature from being verified by default, but this can be
-overridden by using "smime -verify -ignore_critical".  In the 0.9.7
-series (0.9.7 and 0.9.7a through 0.9.7l), the critical fields in a
-pre-RFC proxy prevent a signature from being verified, and there is
-no "-ignore_critical" option.  (There is such an option to "openssl
-verify", but that's used for verifying certificates, not signatures.)
-(The critical extension in an RFC proxy is recognized starting in
-OpenSSL 0.9.7g.)
+The critical extension fields could present some problems.  In releases
+of OpenSSL prior to 0.9.7, these fields are quietly ignored.
+In release 0.9.8 and later, the presence of these fields prevents a
+signature from being verified by default, but this can be overridden
+by using "smime -verify -ignore_critical".  (Correction: this is
+done by setting the environment variable $OPENSSL_ALLOW_PROXY_CERTS.)
+In the 0.9.7 series (0.9.7 and 0.9.7a through 0.9.7l), the critical
+fields in a pre-RFC proxy prevent a signature from being verified,
+and there is no "-ignore_critical" option.  (There is such an option
+to "openssl verify", but that's used for verifying certificates, not
+signatures.)  (The critical extension in an RFC proxy is recognized
+starting in OpenSSL 0.9.7g.)
 
 Proposal:
 
