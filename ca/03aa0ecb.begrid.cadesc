@@ -1,4 +1,4 @@
-# $Id: 03aa0ecb.begrid.cadesc,v 1.14 2007-08-12 22:07:59-07 kst Exp $
+# $Id: 03aa0ecb.begrid.cadesc,v 1.15 2007-08-30 18:25:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/03aa0ecb.begrid.cadesc,v $
 
 CA_NAME             BEGrid CA
@@ -11,9 +11,9 @@ MAY_SIGN            /C=BE/O=BELNET/OU=BEGrid/CN=BEGrid CA/emailAddress=gridca@be
 MAY_SIGN            /C=BE/O=BEGRID/*
 CERTIFICATE_MD5     E3:90:39:1B:3C:E9:89:57:86:54:3E:AF:0F:B8:40:69
 CERTIFICATE_SHA1    76:D6:39:F7:6C:12:45:9B:DE:8D:0C:6F:32:51:39:D2:18:C2:4C:0D
-CERTIFICATE_URL     https://gridra.belnet.be/pub/cacert/cacert.pem
+CERTIFICATE_URL     http://gridra.belnet.be/pub/cacert/cacert.pem
 SIGNING_POLICY_URL  ?
-CRL_URL             https://gridra.belnet.be/pub/crl/cacrl.pem
+CRL_URL             http://gridra.belnet.be/pub/crl/cacrl.pem
 CERT_BEGINS         Fri 2004-02-06 10:26:34 UTC
 CERT_EXPIRES        Wed 2009-07-29 10:26:34 UTC
 
@@ -27,7 +27,7 @@ CERT_EXPIRES        Wed 2009-07-29 10:26:34 UTC
 
 # The following is a copy of 03aa0ecb.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: 03aa0ecb.begrid.cadesc,v 1.14 2007-08-12 22:07:59-07 kst Exp $
+## # @(#)$Id: 03aa0ecb.begrid.cadesc,v 1.15 2007-08-30 18:25:41-07 kst Exp $
 ## # Information for CA BEGrid
 ## #   obtained from 03aa0ecb in BEGrid/
 ## alias = BEGrid
