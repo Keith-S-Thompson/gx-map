@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.5 2007-08-31 18:20:32-07 kst Exp $
+# $Id: verify-file,v 1.6 2007-08-31 18:40:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -25,6 +25,8 @@ my @Opts = ( $User_Opt,
              qw( help!
                  certificates-directory=s
                  openssl=s
+                 ignore_critical!
+                 openssl_allow_proxy_certs!
                  verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
@@ -121,6 +123,10 @@ Usage: $Program_Name [options] filename
                         Certificates directory.
                         Default is /etc/grid-security/certificates
     -openssl command    Full path to openssl command; default is
+                        determined by gx-map's default PATH.
+    -ignore_critical    Pass "-ignore_critical" option to "openssl smime"
+    -openssl_allow_proxy_certs
+                        Set environement variable \$OPENSSL_ALLOW_PROXY_CERTS
     -verbose            Print a few more messages.
 EOF
 exit 1;
