@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.15 2007-08-29 20:48:38-07 kst Exp $
+# $Id: bug-0064,v 1.16 2007-08-31 21:04:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -288,6 +288,14 @@ Wed 2007-02-07
         for a certificate signed by an unaccepted CA that's signed
         by an accepted root CA certificate, but it's probably not
         worth the effort.  K.I.S.S.
+
+    Fri 2007-08-31
+        No, we can't reject self-signed or CA certificates; we just
+        need to ignore them.  A proxy issued by the NCSA MyProxy
+        CA (hash f2e89fe3) includes a copy of the CA certificate.
+        Furthermore, the proxy is a "limited legacy globus proxy",
+        and I'm having trouble verifying file signed by such a proxy;
+        I get "unable to get local issuer certificate".
 
 Another possibility is to simplify things (at least for now) by
 accepting only user certificates, not proxies, and allowing only a
