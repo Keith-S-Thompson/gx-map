@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.4 2007-08-31 17:14:36-07 kst Exp $
+# $Id: verify-file,v 1.5 2007-08-31 18:20:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -19,11 +19,12 @@ sub Usage(@);
 $| = 1;
 
 my $Program_Name = File::Basename::basename $0;
-my $User_Opt = { 'certificates-directory' =>
-                     '/etc/grid-security/certificates' };
+my $User_Opt = { 'certificates-directory' => '/etc/grid-security/certificates',
+                  openssl => 'openssl' };
 my @Opts = ( $User_Opt,
              qw( help!
                  certificates-directory=s
+                 openssl=s
                  verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
@@ -39,7 +40,7 @@ GX::Use_Commands 'openssl';
 
 if ($User_Opt->{verbose}) {
     print "% openssl version\n";
-    system qw(openssl version);
+    system $User_Opt->{openssl}, 'version';
 }
 
 my $temp_dir = GX::Make_Temp_Dir;
@@ -77,9 +78,9 @@ else {
 # print ">>> Signed file is $signed_file->{filename}\n";
 # system 'ls', '-l', $temp_dir;
 
-my @command = ( 'openssl',
+my @command = ( $User_Opt->{openssl},
                 'smime', '-verify', '-text',
-              # '-ignore_critical',
+                '-ignore_critical',
                 '-in', $signed_file,
                 '-out', $output_file,
                 '-CApath', $temp_dir,
@@ -115,11 +116,12 @@ sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
 Usage: $Program_Name [options] filename
-    -help         Show this message and exit
+    -help               Show this message and exit
     -certificates-directory dir
-                  Certificates directory.
-                  Default is /etc/grid-security/certificates
-    -verbose      Print a few more messages.
+                        Certificates directory.
+                        Default is /etc/grid-security/certificates
+    -openssl command    Full path to openssl command; default is
+    -verbose            Print a few more messages.
 EOF
 exit 1;
 } # Usage
