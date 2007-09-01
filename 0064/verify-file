@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.6 2007-08-31 18:40:32-07 kst Exp $
+# $Id: verify-file,v 1.7 2007-08-31 18:45:50-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -82,15 +82,18 @@ else {
 
 my @command = ( $User_Opt->{openssl},
                 'smime', '-verify', '-text',
-                '-ignore_critical',
                 '-in', $signed_file,
                 '-out', $output_file,
                 '-CApath', $temp_dir,
                 '-certfile', $signing_cert );
+if ($User_Opt->{ignore_critical}) {
+    push @command, '-ignore_critical';
+}
 print "% @command\n" if $User_Opt->{verbose};
-$ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
+if ($User_Opt->{openssl_allow_proxy_certs}) {
+    $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
+}
 Run_Or_Die @command;
-
 GX::Delete_Temp_Dir $temp_dir;
 # print "\$temp_dir = $temp_dir\n";
 
