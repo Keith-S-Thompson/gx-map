@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.3 2007-08-30 17:14:57-07 kst Exp $
+# $Id: verify-file,v 1.4 2007-08-31 17:14:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -23,7 +23,8 @@ my $User_Opt = { 'certificates-directory' =>
                      '/etc/grid-security/certificates' };
 my @Opts = ( $User_Opt,
              qw( help!
-                 certificates-directory=s ) );
+                 certificates-directory=s
+                 verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
 
@@ -36,8 +37,10 @@ GX::Set_Config;
 
 GX::Use_Commands 'openssl';
 
-print "% openssl version\n";
-system qw(openssl version);
+if ($User_Opt->{verbose}) {
+    print "% openssl version\n";
+    system qw(openssl version);
+}
 
 my $temp_dir = GX::Make_Temp_Dir;
 
@@ -81,7 +84,7 @@ my @command = ( 'openssl',
                 '-out', $output_file,
                 '-CApath', $temp_dir,
                 '-certfile', $signing_cert );
-print "% @command\n";
+print "% @command\n" if $User_Opt->{verbose};
 $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
 Run_Or_Die @command;
 
@@ -116,6 +119,7 @@ Usage: $Program_Name [options] filename
     -certificates-directory dir
                   Certificates directory.
                   Default is /etc/grid-security/certificates
+    -verbose      Print a few more messages.
 EOF
 exit 1;
 } # Usage
