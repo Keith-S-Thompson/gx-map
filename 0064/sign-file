@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: sign-file,v 1.4 2007-08-31 17:14:36-07 kst Exp $
+# $Id: sign-file,v 1.5 2007-08-31 18:20:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/sign-file,v $
 
 use strict;
@@ -20,12 +20,13 @@ sub Usage(@);
 $| = 1;
 
 my $Program_Name = File::Basename::basename $0;
-my $User_Opt = { };
+my $User_Opt = { openssl => 'openssl' };
 my @Opts = ( $User_Opt,
              qw( help!
                  certificate=s
                  key=s
                  proxy=s
+                 openssl=s
                  verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
@@ -115,7 +116,7 @@ my @certificates = Split_Certificate $Certificate, $temp_dir;
 # Now sign the file.
 #
 {
-    my @command = ( 'openssl', 'smime', '-sign', '-text',
+    my @command = ( $User_Opt->{openssl}, 'smime', '-sign', '-text',
                     '-in',     $input_file,
                     '-out',    $signed_file,
                     '-signer', $Certificate,
@@ -242,6 +243,8 @@ Usage: $Program_Name [options] filename
                                 \$X509_USER_KEY
                                 \$HOME/.globus/userkey.pem
                             that exists.
+    -openssl command        Full path to openssl command; default is
+                            determined by gx-map's default PATH.
     -verbose                Print a few more messages.
 EOF
 exit 1;
