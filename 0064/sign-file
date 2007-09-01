@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: sign-file,v 1.3 2007-08-30 17:14:57-07 kst Exp $
+# $Id: sign-file,v 1.4 2007-08-31 17:14:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/sign-file,v $
 
 use strict;
@@ -25,7 +25,8 @@ my @Opts = ( $User_Opt,
              qw( help!
                  certificate=s
                  key=s
-                 proxy=s ) );
+                 proxy=s
+                 verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
 
@@ -93,8 +94,10 @@ elsif (defined $User_Opt->{certificate}) {
     }
 }
 
-print "Certificate = ", (defined $Certificate ? $Certificate : 'undef'), "\n";
-print "Key         = ", (defined $Key         ? $Key         : 'undef'), "\n";
+if ($User_Opt->{verbose}) {
+    print "Certificate = ", (defined $Certificate ? $Certificate : 'undef'), "\n";
+    print "Key         = ", (defined $Key         ? $Key         : 'undef'), "\n";
+}
 
 my $input_file  = $ARGV[0];
 my $signed_file = File::Basename::basename($input_file) . ".signed";
@@ -118,7 +121,7 @@ my @certificates = Split_Certificate $Certificate, $temp_dir;
                     '-signer', $Certificate,
                     '-inkey',  $Key,
                     '-nocerts' );
-    print "% @command\n";
+    print "% @command\n" if $User_Opt->{verbose};
     Run_Or_Die @command;
 }
 
@@ -239,6 +242,7 @@ Usage: $Program_Name [options] filename
                                 \$X509_USER_KEY
                                 \$HOME/.globus/userkey.pem
                             that exists.
+    -verbose                Print a few more messages.
 EOF
 exit 1;
 } # Usage
