@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.101 2007-08-29 21:47:12-07 kst Exp $
+# $Id: GX.pm.in,v 1.102 2007-09-06 16:38:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1812,7 +1812,7 @@ sub Read_Subfile($$$) {
 #       filename => <name of stored file }
 #     
 # If an error occurs (syntax error, duplicate subfile names, read error),
-# returns a single string containing an error message.
+# returns a reference to a GX::Error object.
 # 
 sub Read_Multifile($$) {
     my($multifile_name, $temp_dir) = @_;
