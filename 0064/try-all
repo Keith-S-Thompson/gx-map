@@ -1,0 +1,98 @@
+#!/bin/sh
+
+# $Id: try-all,v 1.1 2007-09-05 19:35:55-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/0064/try-all,v $
+
+table=0
+ignore_critical=0
+openssl_allow_proxy_certs=0
+smart=0
+
+Usage="Usage: $0 [-table] [-ignore_critical] [-openssl_allow_proxy_certs] [-smart]"
+for arg in $@ ; do
+    case "$arg" in
+        -h|-help)
+            echo $Usage
+            exit 1
+            ;;
+        -table)
+            table=1
+            ;;
+        -ignore_critical)
+            ignore_critical=1
+            ;;
+        -openssl_allow_proxy_certs)
+            openssl_allow_proxy_certs=1
+            ;;
+        -smart)
+            smart=1
+            ;;
+        *)
+            echo $Usage
+            exit 1
+            ;;
+    esac
+done
+
+if [ $smart = 1 -a $ignore_critical = 1 ] ; then
+    echo "Can't use -smart and -ignore_critical together\n" 1>&2
+    exit 1;
+fi
+if [ $smart = 1 -a $openssl_allow_proxy_certs = 1 ] ; then
+    echo "Can't use -smart and -openssl_allow_proxy_certs together\n" 1>&2
+    exit 1;
+fi
+
+proxies="proxy.old.pem proxy.default.pem proxy.rfc.pem"
+
+if [ $table = 1 ] ; then
+    printf "%-8s %-18s %-18s %-18s\n" OpenSSL $proxies
+    printf "%-8s %-18s %-18s %-18s\n" ======== ================== ================== ==================
+fi
+
+SAVED_PATH=$PATH
+for openssl in /usr/local/apps/openssl-0.9.{5,6,7,8}{,?}/bin/openssl ; do
+    if [ $table = 1 ] ; then
+        # echo -n "`$openssl version | awk '{print $2}'`"
+        printf "%-8s" "`$openssl version | awk '{print $2}'`"
+    else
+        echo ==== "`$openssl version`" ====
+        echo ''
+    fi
+    for proxy in $proxies ; do
+
+        sign_command="./sign-file -proxy $proxy -openssl $openssl /etc/motd"
+        verify_command="./verify-file -openssl $openssl motd.multi"
+        if [ "$ignore_critical" = 1 ] ; then
+            verify_command="$verify_command -ignore_critical"
+        fi
+        if [ "$openssl_allow_proxy_certs" = 1 ] ; then
+            verify_command="$verify_command -openssl_allow_proxy_certs"
+        fi
+        if [ "$smart" = 1 ] ; then
+            verify_command="$verify_command -smart"
+        fi
+
+        # echo ">>> \$sign_command = $sign_command"
+        # echo ">>> \$verify_command = $verify_command"
+
+        if [ $table = 1 ] ; then
+            $sign_command
+            output=`$verify_command 2>&1 | tr A-Z a-z`
+            if [ "$output" = "verification successful" ] ; then
+                # echo -n " ok"
+                printf " %-18s" "ok"
+            else
+                # echo -n " BAD"
+                printf " %-18s" "BAD"
+            fi
+        else
+            echo ---- $proxy ----
+            rm -f motd.multi
+            $sign_command
+            $verify_command
+            echo ''
+        fi
+    done
+    if [ $table = 1 ] ; then echo '' ; fi
+done
