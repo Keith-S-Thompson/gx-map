@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.7 2007-08-31 18:45:50-07 kst Exp $
+# $Id: verify-file,v 1.8 2007-09-05 19:35:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -14,6 +14,7 @@ use GX ();
 use GX::Error ();
 
 sub Run_Or_Die(@);
+sub OpenSSL_Version($);
 sub Usage(@);
 
 $| = 1;
@@ -27,9 +28,19 @@ my @Opts = ( $User_Opt,
                  openssl=s
                  ignore_critical!
                  openssl_allow_proxy_certs!
+                 smart!
+                 keep!
                  verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
+
+if (defined $User_Opt->{smart} and
+    ( defined $User_Opt->{ignore_critical} or
+      defined $User_Opt->{openssl_allow_proxy_certs} ))
+{
+    Usage "Can't use \"-smart\" with either \"-ignore_critical\"\n",
+          "or \"-openssl_allow_proxy_certs\"\n";
+}
 
 # Just an abbreviation
 my $Certs_Dir = $User_Opt->{'certificates-directory'};
@@ -41,8 +52,18 @@ GX::Set_Config;
 GX::Use_Commands 'openssl';
 
 if ($User_Opt->{verbose}) {
-    print "% openssl version\n";
+    print "% $User_Opt->{openssl} version\n";
     system $User_Opt->{openssl}, 'version';
+}
+my $version = OpenSSL_Version $User_Opt->{openssl};
+if ($User_Opt->{smart}) {
+    if (not defined $version) {
+        die "Can't determine OpenSSL version\n";
+    }
+    $User_Opt->{openssl_allow_proxy_certs} = 1;
+    if ($version >= 0x00908000) {
+        $User_Opt->{ignore_critical} = 1;
+    }
 }
 
 my $temp_dir = GX::Make_Temp_Dir;
@@ -94,8 +115,13 @@ if ($User_Opt->{openssl_allow_proxy_certs}) {
     $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
 }
 Run_Or_Die @command;
-GX::Delete_Temp_Dir $temp_dir;
-# print "\$temp_dir = $temp_dir\n";
+
+if ($User_Opt->{keep}) {
+    print "\$temp_dir = $temp_dir\n";
+}
+else {
+    GX::Delete_Temp_Dir $temp_dir;
+}
 
 ########################################################################
 
@@ -117,6 +143,38 @@ sub Run_Or_Die(@) {
 
 # ----------------------------------------------------------------------
 
+#
+# Invokes "openssl version" and computes a numeric version number.
+# The result is similar to the value of the OPENSSL_VERSION_NUMBER macro
+# defined in "openssl/opensslv.h", but the patch and status fields are
+# ignored (since we don't currently make use of that information).
+#
+sub OpenSSL_Version($) {
+    my ($openssl) = @_;
+    my($command) = @_;
+    my $version_string;
+    GX::Use_Commands 'openssl';
+    open my $Pipe, '-|', $openssl, 'version';
+    while (<$Pipe>) {
+        if (/^OpenSSL\s+(\S+)/) {
+            $version_string = $1;
+        }
+    }
+    close $Pipe;
+    if (defined $version_string and
+        $version_string =~ /^(\d+)\.(\d+)\.(\d+)/)
+    {
+        my($major, $minor, $fix) = ($1, $2, $3);
+        foreach my $v ($major, $minor, $fix) {
+            return undef if $v < 0 or $v > 99;
+        }
+        return ($major<<28) + ($minor<<20) + ($fix<<12);
+    }
+    return undef;
+} # OpenSSL_Version
+
+# ----------------------------------------------------------------------
+
 sub Usage(@) {
     print @_ if @_;
     print <<"EOF";
@@ -130,6 +188,9 @@ Usage: $Program_Name [options] filename
     -ignore_critical    Pass "-ignore_critical" option to "openssl smime"
     -openssl_allow_proxy_certs
                         Set environement variable \$OPENSSL_ALLOW_PROXY_CERTS
+    -smart              Set "--ignore_critical" and "-openssl_allow_proxy_certs"
+                        based on OpenSSL version.
+    -keep               Keep temporary directory.
     -verbose            Print a few more messages.
 EOF
 exit 1;
