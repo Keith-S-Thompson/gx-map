@@ -1,4 +1,4 @@
-# $Id: 1e12d831.apac.cadesc,v 1.5 2007-08-13 19:39:48-07 kst Exp $
+# $Id: 1e12d831.apac.cadesc,v 1.6 2007-09-05 17:53:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/1e12d831.apac.cadesc,v $
 
 CA_NAME             APACGrid, Monash University
@@ -11,9 +11,9 @@ MAY_SIGN            /C=AU/O=APACGrid/*
 MAY_SIGN            /C=NZ/O=BeSTGRID/*
 CERTIFICATE_MD5     E2:D4:20:97:32:55:1D:60:C9:07:16:60:50:FA:C7:56
 CERTIFICATE_SHA1    49:E8:64:80:7D:C4:6C:E8:5C:29:BA:F4:A1:4A:A0:5B:90:DA:FE:A0
-CERTIFICATE_URL     https://ca.apac.edu.au/pub/cacert/cacert.pem
-SIGNING_POLICY_URL  https://ca.apac.edu.au/pub/signing_policy/1e12d831.signing_policy
-CRL_URL             https://ca.apac.edu.au/pub/crl/cacrl.pem
+CERTIFICATE_URL     http://ca.apac.edu.au/pub/cacert/cacert.pem
+SIGNING_POLICY_URL  http://ca.apac.edu.au/pub/signing_policy/1e12d831.signing_policy
+CRL_URL             http://ca.apac.edu.au/pub/crl/cacrl.pem
 CERT_BEGINS         Mon 2006-01-09 02:53:28 UTC
 CERT_EXPIRES        Thu 2016-01-07 02:53:28 UTC
 
@@ -21,13 +21,6 @@ CERT_EXPIRES        Thu 2016-01-07 02:53:28 UTC
 # Thu 2006-11-30
 # Verified against IGTF 1.16 release, 
 # <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>.
-
-# The 1e12d831.signing_policy file on the CA's web site is dated
-# 2006-04-11; the copy in the IGTF 1.16 release is dated 2007-04-24.
-# The IGTF version includes "/C=NZ/O=BeSTGRID/*"; the older version on
-# the CA's own web site does not.  I'm going to assume that the IGTF
-# version is correct, but I'll contact both the IGTF folks and the CA
-# manager to clarify this.
 
 # The following is a copy of 1e12d831.info from the IGTF 1.16 release:
 ## alias = APAC
