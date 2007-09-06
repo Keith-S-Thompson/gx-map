@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: sign-file,v 1.5 2007-08-31 18:20:32-07 kst Exp $
+# $Id: sign-file,v 1.6 2007-09-05 19:36:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/sign-file,v $
 
 use strict;
@@ -200,14 +200,16 @@ sub Split_Certificate($$) {
 
     close $CERT or return new GX::Error "${certificate}: $!";
 
+    FILENAME:
     foreach my $filename (@filenames) {
         my $cert_info = GX::Certificate_Info $filename, 'PEM', 'nomd5';
         if (ref $cert_info eq 'GX::Error') {
             return $cert_info;
         }
         if ($cert_info->{subject} eq $cert_info->{issuer}) {
-            return new GX::Error
-                   "Self-signed certificate \"$cert_info->{subject}\"";
+             # return new GX::Error
+             #        "Self-signed certificate \"$cert_info->{subject}\"";
+             next FILENAME;
         }
         my $new_filename = "$temp_dir/$cert_info->{hash}.0";
         rename $filename, $new_filename or die "rename: $!\n";
