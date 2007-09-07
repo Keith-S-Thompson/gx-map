@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.105 2007-09-06 19:04:48-07 kst Exp $
+# $Id: GX.pm.in,v 1.106 2007-09-06 19:37:15-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -3447,7 +3447,7 @@ sub Register_Handler_Function($) {
 sub Is_Error($) {
     my($arg) = @_;
     return ref $arg eq 'GX::Error';
-# } Is_Error
+} # Is_Error
 
 # ----------------------------------------------------------------------
 
