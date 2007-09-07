@@ -1,4 +1,4 @@
-# $Id: Error.pm.in,v 1.3 2007-09-06 19:03:03-07 kst Exp $
+# $Id: Error.pm.in,v 1.4 2007-09-07 15:50:39-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Error.pm.in,v $
 
 ########################################################################
@@ -76,6 +76,13 @@ use warnings;
 
 package GX::Error;
 
+sub new($$);
+sub Message($);
+sub Traceback($);
+sub Is_Error($);
+
+########################################################################
+
 sub new($$) {
     my($class, $message) = @_;
 
@@ -116,5 +123,17 @@ sub Message($) {
 sub Traceback($) {
     return shift->{traceback};
 } # Message
+
+# ----------------------------------------------------------------------
+
+#
+# Returns true if the argument is a GX::Error object, false otherwise.
+#
+sub Is_Error($) {
+    my($arg) = @_;
+    return ref $arg eq __PACKAGE__;
+} # Is_Error
+
+# ----------------------------------------------------------------------
 
 1;
