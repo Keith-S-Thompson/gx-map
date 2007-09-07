@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.106 2007-09-06 19:37:15-07 kst Exp $
+# $Id: GX.pm.in,v 1.107 2007-09-07 15:50:38-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -209,8 +209,6 @@ sub Install_Die_Handler();
 sub Install_Warn_Handler();
 sub Uninstall_Handlers();
 sub Register_Handler_Function($);
-
-sub Is_Error($);
 
 #
 # This function is TeraGrid-specific.
@@ -3438,16 +3436,6 @@ sub Uninstall_Handlers() {
 sub Register_Handler_Function($) {
     $GX::Registered_Handler_Function = $_[0];
 } # Register_Handler_Function
-
-# ----------------------------------------------------------------------
-
-#
-# Returns true if the argument is a GX::Error object, false otherwise.
-#
-sub Is_Error($) {
-    my($arg) = @_;
-    return ref $arg eq 'GX::Error';
-} # Is_Error
 
 # ----------------------------------------------------------------------
 
