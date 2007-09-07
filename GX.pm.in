@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.102 2007-09-06 16:38:07-07 kst Exp $
+# $Id: GX.pm.in,v 1.103 2007-09-06 17:59:57-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -2503,7 +2503,7 @@ sub Cache_File(@) {
                    '--output', $info_file;
     if (open my $Info, '<', $info_file) {
         while (<$Info>) {
-            if (/^Last-Modified: (.*)$/) {
+            if (/^last-modified: (.*)$/i) {
                 $server_mtime = GX::Time_Value $1;
             }
         }
