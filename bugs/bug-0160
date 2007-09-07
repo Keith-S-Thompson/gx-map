@@ -1,0 +1,24 @@
+# $Id: bug-0160,v 1.1 2007-09-06 18:02:48-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0160,v $
+
+gx-map bug 0160
+Date: Thu 2007-09-06
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Consider using CoralCDN
+
+Consider using the Coral Content Distribution Network to download
+files.  This would be done in the GX::Cache_File routine.
+
+For any http URL (it doesn't work for https or ftp URLs),
+if the download fails, try falling back to CoralCDN
+<http://www.coralcdn.org/>.
+
+Appending ".nyud.net" to the hostname portion of the URL goes through
+the Coral CDN.
+
+It might even be worthwhile (as an option) to try CoralCDN first.
+Doing so would tend to keep the CoralCDN caches up to date with the
+necessary files.
