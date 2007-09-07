@@ -1,4 +1,4 @@
-# $Id: Error.pm.in,v 1.2 2007-08-24 19:00:38-07 kst Exp $
+# $Id: Error.pm.in,v 1.3 2007-09-06 19:03:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Error.pm.in,v $
 
 ########################################################################
@@ -53,11 +53,11 @@
 #
 #     return new GX::Error "Error message";
 #
-#
-# The caller can check whether the called routine succeeded like this:
+# The GX::Is_Error function can be used to determine whether something
+# is an error reference.  For example:
 #
 #     my $result = Some_Func(foo, bar);
-#     if (ref $result eq 'GX::Error') {
+#     if (GX::Is_Error $result) {
 #         # handle the error
 #         # $result->{message} is the error message, which should be
 #         # a one-line message with no trailing "\n".
