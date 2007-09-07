@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.104 2007-09-06 19:03:21-07 kst Exp $
+# $Id: GX.pm.in,v 1.105 2007-09-06 19:04:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -94,7 +94,7 @@ use vars qw( $VERSION
 #
 # The layout of the following line is significant; see configure-gx-map.
 #
-$VERSION = '0.5.9.046';
+$VERSION = '0.5.9.047';
 
 undef $Lock_File_Name;
 
