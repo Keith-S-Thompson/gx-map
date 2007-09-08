@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: verify-file,v 1.8 2007-09-05 19:35:36-07 kst Exp $
+# $Id: verify-file,v 1.9 2007-09-07 18:40:08-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/verify-file,v $
 
 use strict;
@@ -9,12 +9,13 @@ use warnings;
 use File::Basename ();
 use Getopt::Long ();
 
-use lib '/usr/local/apps/gx-map-0.5.9.046/lib';
+use lib '/usr/local/apps/gx-map-NEW/lib';
 use GX ();
 use GX::Error ();
 
-sub Run_Or_Die(@);
+sub Execute(@);
 sub OpenSSL_Version($);
+sub Verify_File($$);
 sub Usage(@);
 
 $| = 1;
@@ -42,13 +43,9 @@ if (defined $User_Opt->{smart} and
           "or \"-openssl_allow_proxy_certs\"\n";
 }
 
-# Just an abbreviation
-my $Certs_Dir = $User_Opt->{'certificates-directory'};
-
 my $input_file  = $ARGV[0];
 
 GX::Set_Config;
-
 GX::Use_Commands 'openssl';
 
 if ($User_Opt->{verbose}) {
@@ -66,69 +63,61 @@ if ($User_Opt->{smart}) {
     }
 }
 
-my $temp_dir = GX::Make_Temp_Dir;
+my $result = Verify_File $input_file, $User_Opt->{'certificates-directory'};
 
-opendir my $CERTS_DIR, $Certs_Dir or die "$Certs_Dir: $!\n";
-my @files_to_symlink = sort grep /\.r?0$/, readdir $CERTS_DIR;
-closedir $CERTS_DIR;
+die $result->Message, "\n" if GX::Error::Is_Error $result;
 
-foreach my $file (@files_to_symlink) {
-    symlink "$Certs_Dir/$file", "$temp_dir/$file"
-        or die "symlink $Certs_Dir/$file, $temp_dir/${file}: $!\n";
-}
-
-my @multi = GX::Read_Multifile $input_file, $temp_dir;
-
-# print ">>> Got ", scalar @multi, " subfile(s):\n";
-# foreach my $subfile (@multi) {
-#     print "    $subfile->{filename}\n";
-# }
-
-if (scalar @multi < 2) {
-    die "Need at least two subfiles in $input_file\n"
-}
-
-my $signed_file  = $multi[0]->{filename};
-my $signing_cert = $multi[1]->{filename};
-my $output_file;
-if ($signed_file =~ /^(.*)\.signed$/) {
-    $output_file = $1;
-}
-else {
-    $output_file = "$signed_file.recovered";
-}
-
-# print ">>> Signed file is $signed_file->{filename}\n";
-# system 'ls', '-l', $temp_dir;
-
-my @command = ( $User_Opt->{openssl},
-                'smime', '-verify', '-text',
-                '-in', $signed_file,
-                '-out', $output_file,
-                '-CApath', $temp_dir,
-                '-certfile', $signing_cert );
-if ($User_Opt->{ignore_critical}) {
-    push @command, '-ignore_critical';
-}
-print "% @command\n" if $User_Opt->{verbose};
-if ($User_Opt->{openssl_allow_proxy_certs}) {
-    $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
-}
-Run_Or_Die @command;
-
-if ($User_Opt->{keep}) {
-    print "\$temp_dir = $temp_dir\n";
-}
-else {
-    GX::Delete_Temp_Dir $temp_dir;
+foreach my $key (sort keys %$result) {
+    printf "%-8s => %s\n", $key, $result->{$key};
 }
 
 ########################################################################
 
-sub Run_Or_Die(@) {
+#
+# If the first argument is '-quiet', stdout and stderr are temporarily
+# redirected to /dev/null.
+# Execute the specified command.
+# If successful, return 0.
+# If the return status is non-zero, return a GX::Error object.
+#
+sub Execute(@) {
     my(@command) = @_;
+
+    my $quiet = 0;
+    if ($command[0] eq '-quiet') {
+        $quiet = 1;
+        shift @command;
+    }
+
+    if ($quiet) {
+        # Temporarily redirect STDOUT and STDERR to /dev/null
+        open SAVE_STDOUT, '>&STDOUT';
+        print SAVE_STDOUT if 0; # suppress warning
+        close STDOUT;
+        open STDOUT, '>', '/dev/null';
+
+        open SAVE_STDERR, '>&STDERR';
+        print SAVE_STDERR if 0; # suppress warning
+        close STDERR;
+        open STDERR, '>', '/dev/null';
+    }
+
     my $status = system @command;
-    if ($status != 0) {
+
+    if ($quiet) {
+        # Direct STDOUT and STDERR back to where they were.
+        close STDOUT;
+        open STDOUT, '>&SAVE_STDOUT';
+
+        close STDERR;
+        open STDERR, '>&SAVE_STDERR';
+    }
+
+
+    if ($status == 0) {
+        return 0;
+    }
+    else {
         my $message = "@command failed";
         if (($status & 0xff) == 0) {
             my $exit_status = $status >> 8;
@@ -137,9 +126,9 @@ sub Run_Or_Die(@) {
         else {
             $message .= ", system() returned $status";
         }
-        die "$message\n";
+        return new GX::Error $message;
     }
-} # Run_Or_Die
+} # Execute
 
 # ----------------------------------------------------------------------
 
@@ -148,6 +137,9 @@ sub Run_Or_Die(@) {
 # The result is similar to the value of the OPENSSL_VERSION_NUMBER macro
 # defined in "openssl/opensslv.h", but the patch and status fields are
 # ignored (since we don't currently make use of that information).
+#
+# Copied from GX::OpenSSL_Version function, except that it takes the
+# openssl executable as an argument.
 #
 sub OpenSSL_Version($) {
     my ($openssl) = @_;
@@ -172,6 +164,89 @@ sub OpenSSL_Version($) {
     }
     return undef;
 } # OpenSSL_Version
+
+# ----------------------------------------------------------------------
+
+#
+# Arguments are:
+#     Name of file to verify
+#     Certificates directory
+# Verified file is written to <file>.verified or <file>.unverified
+# Result is a hash reference with the following fields:
+#     filename (string, name of output file)
+#     verified (boolean)
+#     subject  (string, the subject name of the signing certificate)
+#     
+sub Verify_File($$) {
+    my($input_file, $certs_dir) = @_;
+    my $result = {};
+    my $temp_dir = GX::Make_Temp_Dir;
+
+    opendir my $CERTS_DIR, $certs_dir or die "$certs_dir: $!\n";
+    my @files_to_symlink = sort grep /\.r?0$/, readdir $CERTS_DIR;
+    closedir $CERTS_DIR;
+
+    foreach my $file (@files_to_symlink) {
+        symlink "$certs_dir/$file", "$temp_dir/$file"
+            or die "symlink $certs_dir/$file, $temp_dir/${file}: $!\n";
+    }
+
+    my @multi = GX::Read_Multifile $input_file, $temp_dir;
+    if (scalar @multi < 2) {
+        return new GX::Error "Need at least two subfiles in $input_file";
+    }
+    my $signed_file   = $multi[0]->{filename};
+    my $signing_cert  = $multi[1]->{filename};
+    my $basename      = File::Basename::basename $signed_file;
+    my $output_file   = "$basename.unverified";
+    my $verified_file = "$basename.verified";
+
+    my @command = ( $User_Opt->{openssl},
+                    'smime', '-verify', '-text',
+                    '-in', $signed_file,
+                    '-out', $output_file,
+                    '-CApath', $temp_dir,
+                    '-certfile', $signing_cert );
+    if ($User_Opt->{ignore_critical}) {
+        push @command, '-ignore_critical';
+    }
+    print "% @command\n" if $User_Opt->{verbose};
+    if ($User_Opt->{openssl_allow_proxy_certs}) {
+        $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
+    }
+    my $openssl_result = Execute '-quiet', @command;
+    if (GX::Error::Is_Error $openssl_result) {
+        $result->{verified} = 0;
+        $result->{filename} = $output_file;
+    }
+    else {
+        my $ok = 1;
+        if (rename $output_file, $verified_file) {
+            $result->{filename} = $verified_file;
+        }
+        else {
+            $ok = 0;
+            $result->{filename} = $output_file;
+        }
+        my $cert_info = GX::Certificate_Info $signing_cert, 'PEM', 'nomd5';
+        if (defined $cert_info->{subject}) {
+            $result->{subject} = GX::Normalize_DN $cert_info->{subject};
+        }
+        else {
+            $ok = 0;
+        }
+        $result->{verified} = $ok;
+    }
+
+    if ($User_Opt->{keep}) {
+        print "\$temp_dir = $temp_dir\n";
+    }
+    else {
+        GX::Delete_Temp_Dir $temp_dir;
+    }
+
+    return $result;
+} # Verify_File
 
 # ----------------------------------------------------------------------
 
