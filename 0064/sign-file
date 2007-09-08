@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: sign-file,v 1.6 2007-09-05 19:36:34-07 kst Exp $
+# $Id: sign-file,v 1.7 2007-09-07 18:39:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/0064/sign-file,v $
 
 use strict;
@@ -9,12 +9,13 @@ use warnings;
 use File::Basename ();
 use Getopt::Long ();
 
-use lib '/usr/local/apps/gx-map-0.5.9.046/lib';
+use lib '/usr/local/apps/gx-map-NEW/lib';
 use GX ();
 use GX::Error ();
 
-sub Run_Or_Die(@);
+sub Execute(@);
 sub Split_Certificate($$);
+sub Sign_File($$$);
 sub Usage(@);
 
 $| = 1;
@@ -27,6 +28,7 @@ my @Opts = ( $User_Opt,
                  key=s
                  proxy=s
                  openssl=s
+                 nodetach!
                  verbose! ) );
 Getopt::Long::GetOptions @Opts or Usage;
 Usage if scalar @ARGV != 1;
@@ -101,43 +103,33 @@ if ($User_Opt->{verbose}) {
 }
 
 my $input_file  = $ARGV[0];
-my $signed_file = File::Basename::basename($input_file) . ".signed";
-my $multi_file  = File::Basename::basename($input_file) . ".multi";
 
 GX::Set_Config;
-
 GX::Use_Commands 'openssl';
 
-my $temp_dir = GX::Make_Temp_Dir;
+my $result = Sign_File $input_file, $Certificate, $Key;
 
-my @certificates = Split_Certificate $Certificate, $temp_dir;
-
-#
-# Now sign the file.
-#
-{
-    my @command = ( $User_Opt->{openssl}, 'smime', '-sign', '-text',
-                    '-in',     $input_file,
-                    '-out',    $signed_file,
-                    '-signer', $Certificate,
-                    '-inkey',  $Key,
-                    '-nocerts' );
-    print "% @command\n" if $User_Opt->{verbose};
-    Run_Or_Die @command;
+if (GX::Error::Is_Error $result) {
+    die $result->Message . "\n";
 }
-
-GX::Write_Multifile $multi_file, $signed_file, @certificates;
-
-unlink $signed_file;
-GX::Delete_Temp_Dir $temp_dir;
-# print "\$temp_dir = $temp_dir\n";
+else {
+    print "$result\n";
+}
 
 ########################################################################
 
-sub Run_Or_Die(@) {
+#
+# Execute the specified command.
+# If successful, return 0.
+# If the return status is non-zero, return a GX::Error object.
+#
+sub Execute(@) {
     my(@command) = @_;
     my $status = system @command;
-    if ($status != 0) {
+    if ($status == 0) {
+        return 0;
+    }
+    else {
         my $message = "@command failed";
         if (($status & 0xff) == 0) {
             my $exit_status = $status >> 8;
@@ -146,9 +138,9 @@ sub Run_Or_Die(@) {
         else {
             $message .= ", system() returned $status";
         }
-        die "$message\n";
+        return new GX::Error $message;
     }
-} # Run_Or_Die
+} # Execute
 
 # ----------------------------------------------------------------------
 
@@ -203,12 +195,10 @@ sub Split_Certificate($$) {
     FILENAME:
     foreach my $filename (@filenames) {
         my $cert_info = GX::Certificate_Info $filename, 'PEM', 'nomd5';
-        if (ref $cert_info eq 'GX::Error') {
+        if (GX::Error::Is_Error $cert_info) {
             return $cert_info;
         }
         if ($cert_info->{subject} eq $cert_info->{issuer}) {
-             # return new GX::Error
-             #        "Self-signed certificate \"$cert_info->{subject}\"";
              next FILENAME;
         }
         my $new_filename = "$temp_dir/$cert_info->{hash}.0";
@@ -217,6 +207,41 @@ sub Split_Certificate($$) {
     }
     return @filenames;
 } # Split_Certificate
+
+# ----------------------------------------------------------------------
+
+#
+# Arguments are:
+#     File to be signed
+#     Certificate file
+#     Key file
+# Creates a multifile in <filename>.multi in the current directory.
+# Returned value is either the name of the multifile or a GX::Error object.
+#     
+sub Sign_File($$$) {
+    my($file, $certificate, $key) = @_;
+    my $temp_dir = GX::Make_Temp_Dir;
+    my $basename = File::Basename::basename($input_file);
+    my $signed_file = "$basename.signed";
+    my $multi_file  = "$basename.multi";
+
+    my @certificates = Split_Certificate $certificate, $temp_dir;
+
+    my @command = ( $User_Opt->{openssl}, 'smime', '-sign', '-text',
+                    '-in',     $input_file,
+                    '-out',    $signed_file,
+                    '-signer', $certificate,
+                    '-inkey',  $key,
+                    '-nocerts' );
+    push @command, '-nodetach' if $User_Opt->{nodetach};
+    print "% @command\n" if $User_Opt->{verbose};
+    my $result = Execute @command;
+    return $result if GX::Error::Is_Error $result;
+
+    GX::Write_Multifile $multi_file, $signed_file, @certificates;
+    unlink $signed_file;
+    return $multi_file;
+} # Sign_File
 
 # ----------------------------------------------------------------------
 
@@ -247,6 +272,7 @@ Usage: $Program_Name [options] filename
                             that exists.
     -openssl command        Full path to openssl command; default is
                             determined by gx-map's default PATH.
+    -nodetach               Pass "-nodetach" option to "openssl smime -sign".
     -verbose                Print a few more messages.
 EOF
 exit 1;
