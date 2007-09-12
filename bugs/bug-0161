@@ -1,0 +1,51 @@
+# $Id: bug-0161,v 1.1 2007-09-11 18:03:17-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0161,v $
+
+gx-map bug 0161
+Date: Tue 2007-09-11
+Severity: Medium
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Consider using key/value pairs in function argument lists
+
+This is a suggestion for an internal-only change.
+
+Currently, most functions just take a sequence of positional arguments.
+For functions that take several arguments, this can be confusing
+and error-prone.
+
+For functions taking more than one or two arguments, where the order
+is not obvious, consider using named argument association, by treating
+the argument list as a hash.
+
+For example, GX::Save_File takes four arguments: filename, source_dir,
+target_dir, timestamp, and is declared:
+
+    sub Save_File($$$$) {
+        my($filename, $source_dir, $target_dir, $timestamp) = @_;
+        ...
+    } # Save_File
+
+Instead, declare it like this:
+
+    sub Save_File(@) {
+        my(%arg) = @_;
+        my(%param) = ( filename   => undef,
+                       source_dir => undef,
+                       target_dir => undef,
+                       timestamp  => undef );
+        foreach my $key (keys %arg) {
+            if (exists $param{$key}) {
+                $param{$key} = $arg{$key};
+            }
+            else {
+                die "Save_File: Unrecognized argument name \"$key\"\n";
+            }
+        }
+        # And check for missing arguments.
+        ...
+    } # Save_File
+
+This is more verbose for the function itself (think about ways to
+manage that), but it makes calls more readable and less error-prone.
