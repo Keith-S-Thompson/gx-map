@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-check-requests.in,v 1.23 2007-08-22 17:12:06-07 kst Exp $
+# $Id: gx-db-check-requests.in,v 1.24 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-check-requests.in,v $
 
 ########################################################################
@@ -272,7 +272,8 @@ sub Process_DB_Request($$) {
     my($mappings, $db_request_file) = @_;
     Debug "Process_DB_Request \"$db_request_file\"\n";
     my $result = $mappings;
-    my $info = GX::Read_Records '-single', $db_request_file;
+    my $info = GX::Read_Records format => 'single',
+                                filename => $db_request_file;
 
     my $request  = undef;
     my $username = undef;
