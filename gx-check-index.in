@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-index.in,v 1.18 2007-08-22 17:12:06-07 kst Exp $
+# $Id: gx-check-index.in,v 1.19 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-index.in,v $
 
 ########################################################################
@@ -214,10 +214,10 @@ if (@missing_serials or @changed_DNs) {
     print $ERROR $message;
     close $ERROR;
 
-    GX::Send_Email $Program_Name,
-                   $GX::Config{ADMIN_EMAIL},
-                   "$User_Opt->{ca} problem",
-                   $message;
+    GX::Send_Email program_name => $Program_Name,
+                   recipient    => $GX::Config{ADMIN_EMAIL},
+                   subject      => "$User_Opt->{ca} problem",
+                   body         => $message;
 
     File::Copy::copy $Saved_File, "$New_File.bad";
     # GX::Release_Lock $Program_Name;
