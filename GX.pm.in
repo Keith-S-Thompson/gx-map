@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.111 2007-09-18 20:26:46-07 kst Exp $
+# $Id: GX.pm.in,v 1.112 2007-09-18 20:33:45-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1768,7 +1768,7 @@ sub Read_Records(%) {
             }
             elsif ($context eq 'record') {
                 die "Comment not allowed within record " .
-                    "at line $. of $filename\n";
+                    "at line $. of $args->{specified_filename}\n";
             }
             push @{$ref->{lines}}, $_ if $args->{keep_comments};
         }
@@ -1799,7 +1799,8 @@ sub Read_Records(%) {
             elsif (/^(\w+)\s*(.*)$/) {
                 my($key, $value) = ($1, $2);
                 if (not $args->{allow_empty} and $value eq '') {
-                    my $message = "Missing value at line $. of $filename\n";
+                    my $message = "Missing value at line $. " .
+                                  "of $args->{specified_filename}\n";
                     if ($multiple) {
                         $syntax_error = $message;
                     }
@@ -1819,7 +1820,8 @@ sub Read_Records(%) {
                 }
             }
             else {
-                my $message = "Syntax error at line $. of $filename\n";
+                my $message = "Syntax error at line $. " .
+                              "of $args->{specified_filename}\n";
                 if ($multiple) {
                     $syntax_error = $message;
                 }
@@ -1836,7 +1838,7 @@ sub Read_Records(%) {
                 }
                 else {
                     die "Syntax error (expected '{' or EOF) " . # '}'
-                        "at line $. of $filename\n";
+                        "at line $. of $args->{specified_filename}\n";
                 }
             }
         }
