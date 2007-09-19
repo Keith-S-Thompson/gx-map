@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-ingest.in,v 1.36 2007-08-22 17:12:06-07 kst Exp $
+# $Id: gx-ingest.in,v 1.37 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ingest.in,v $
 
 ########################################################################
@@ -154,7 +154,9 @@ else {
 # of each line.
 
 EOF
-    GX::Write_Records '-multiple', '-', @requests;
+    GX::Write_Records format   => 'multiple',
+                      filename => '-',
+                      records  => \@requests;
 }
 
 ########################################################################
