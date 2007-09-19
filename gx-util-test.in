@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-util-test.in,v 1.15 2007-05-25 18:59:58-07 kst Exp $
+# $Id: gx-util-test.in,v 1.16 2007-09-19 16:09:07-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-util-test.in,v $
 
 ########################################################################
@@ -87,6 +87,8 @@ if ($User_Opt->{version}) {
 
 GX::Install_Die_Handler;
 GX::Install_Warn_Handler;
+
+GX::Set_Config;
 
 Usage if not @ARGV;
 
