@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-requests.in,v 1.7 2007-08-22 17:12:06-07 kst Exp $
+# $Id: gx-db-requests.in,v 1.8 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-db-requests.in,v $
 
 ########################################################################
@@ -204,7 +204,9 @@ sub Submit_DB_Request($@) {
     my $filename     = "$New_Requests_Dir/$timestamp.db-request";
     my $tmp_filename = "$filename.tmp";
 
-    GX::Write_Records '-single', $tmp_filename, $request;
+    GX::Write_Records format    => 'single',
+                      filename => $tmp_filename,
+                      records  => [ $request ];
     rename $tmp_filename, $filename or die "Renaming $tmp_filename: $!\n";
 } # Submit_DB_Request
 
@@ -222,7 +224,8 @@ sub Process_DB_Request($$) {
     my($mappings, $db_request_file) = @_;
     Debug "Process_DB_Request \"$db_request_file\"\n";
     my $result = $mappings;
-    my $info = GX::Read_Records '-single', $db_request_file;
+    my $info = GX::Read_Records format   => 'single',
+                                filename => $db_request_file;
 
     my $request  = undef;
     my $username = undef;
