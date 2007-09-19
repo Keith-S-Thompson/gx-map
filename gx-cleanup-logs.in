@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-cleanup-logs.in,v 1.29 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-cleanup-logs.in,v 1.30 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cleanup-logs.in,v $
 
 ########################################################################
@@ -97,7 +97,9 @@ my @input_logs = ( @ARGV ? @ARGV : '-' );
 my @requests;
 foreach my $log (@input_logs) {
     push @requests,
-         GX::Read_Records '-multiple', '-keep-comments', $log;
+         GX::Read_Records format        => 'multiple',
+                          keep_comments => 1,
+                          filename      => $log;
 }
 
 if ($User_Opt->{debugging}) {
@@ -284,7 +286,9 @@ if ($User_Opt->{delete}) {
     @requests = grep { not exists $_->{__DELETED__} } @requests;
 }
 
-GX::Write_Records '-multiple', '-', @requests;
+GX::Write_Records format   => 'multiple',
+                  filename => '-',
+                  records  => \@requests;
 
 ########################################################################
 
