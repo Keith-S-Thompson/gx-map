@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-convert-log.in,v 1.37 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-convert-log.in,v 1.38 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-convert-log.in,v $
 
 ########################################################################
@@ -88,7 +88,9 @@ my $Input_Log = $ARGV[0];
 
 Usage "Can't read file $Input_Log\n" if not -r $Input_Log;
 
-my @refs = GX::Read_Records '-multiple', '-keep-comments', $Input_Log;
+my @refs = GX::Read_Records format        => 'multiple',
+                            keep_comments => 1,
+                            filename      => $Input_Log;
 if (not @refs) {
     die "No records in logfile $Input_Log\n";
 }
@@ -187,7 +189,9 @@ foreach my $ref (@refs) {
     }
 }
 
-GX::Write_Records '-multiple', '-', @refs;
+GX::Write_Records format   => 'multiple',
+                  filename => '-',
+                  records  => \@refs;
 
 print "# $Program_Name (gx-map $GX::VERSION) done.\n\n";
 
