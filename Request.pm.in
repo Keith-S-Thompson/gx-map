@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.1 2007-08-22 17:12:06-07 kst Exp $
+# $Id: Request.pm.in,v 1.2 2007-09-18 19:49:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -55,8 +55,10 @@ package GX::Request;
 
 BEGIN {
     use vars qw( $Install_Dir $Data_Dir $Program_Name
-                 $Is_Admin $PW $User_Opt
-                 $proxy_file $user_cert_file $default_cert_file );
+                 $Is_Admin $Signature_Required $PW $User_Opt
+                 $proxy_file $user_cert_file $user_key_file
+                 $default_cert_file $default_key_file
+                 $Temp_Dir );
 
     $Install_Dir = '%INSTALL_DIR%';
 }
@@ -64,6 +66,7 @@ BEGIN {
 use lib "$Install_Dir/lib";
 use GX ();
 use File::Basename ();
+use File::Copy ();
 use Getopt::Long ();
 $Data_Dir = "$Install_Dir/gx-map-data";
 
@@ -71,13 +74,14 @@ sub GX_Request(@);
 
 sub Usage(@);
 sub Long_Usage();
-sub Submit_Request($);
+sub Submit_Request($$);
 sub Strip($);
 sub Get_Options_Interactively();
 sub Get_Options_From_Command_Line();
 sub Get_DN_From_Certificate($);
 sub Proxy_File_Name();
 sub User_Cert_File_Name();
+sub User_Key_File_Name();
 sub Gen_Request_File_Name($);
 sub DN_Is_Handled_Automatically($);
 sub Die_Quietly(@);
@@ -90,9 +94,14 @@ sub GX_Request(@) {
     $Program_Name = File::Basename::basename $0;
     $proxy_file        = Proxy_File_Name;
     $user_cert_file    = User_Cert_File_Name;
+    $user_key_file     = User_Key_File_Name;
     $default_cert_file =
         defined $proxy_file     ? $proxy_file     :
         defined $user_cert_file ? $user_cert_file :
+        undef;
+    $default_key_file =
+        defined $proxy_file    ? $proxy_file    :
+        defined $user_key_file ? $user_key_file :
         undef;
 
     #
@@ -112,11 +121,13 @@ sub GX_Request(@) {
     # from command-line options or interactively.
     #
     # Fields are:
-    #    operation (one of add, remove, remove-dn, remove-user)
-    #    username
-    #    dn
-    #    email (optional)
-    #    comment (optional)
+    #    operation   (one of add, remove, remove-dn, remove-user)
+    #    username    (omitted for remove-dn)
+    #    dn          (omitted for remove-user)
+    #    certificate (only if signatures are required, omitted for remove-user)
+    #    key         (only if signatures are required, omitted for remove-user)
+    #    email       (optional)
+    #    comment     (optional)
     # Plus the following flags:
     #    interactive
     #    quiet
@@ -238,6 +249,17 @@ sub GX_Request(@) {
     #
     $Is_Admin = (not $User_Opt->{'no-admin'} and
                  GX::Is_Admin_Account $PW->{name});
+    #
+    # A signature is required if the user is not an admin, gx-map has
+    # been configured to require signatures, and the request is an "add"
+    # request.  A non-admin user may remove mappings for his own account
+    # without verifying that he owns the corresponding certificate.
+    # This setting for $Signature_Required doesn't reflect whether this
+    # is an add request, since we don't know that yet.
+    #
+    $Signature_Required = ( not $Is_Admin and
+                            defined $GX::Config->{REQUIRE_SIGNATURES} and
+                            $GX::Config->{REQUIRE_SIGNATURES} eq 'yes' );
     my $Options  = {};
 
     if (defined $User_Opt->{slurp}) {
@@ -245,9 +267,11 @@ sub GX_Request(@) {
             Usage "The -slurp option may only be used " .
                   "by a gx-map administrator\n";
         }
-        my @slurped_requests = GX::Read_Records '-multiple', $User_Opt->{slurp};
+        my @slurped_requests = GX::Read_Records
+                                   format   => 'multiple',
+                                   filename => $User_Opt->{slurp};
         foreach my $request (@slurped_requests) {
-            Submit_Request $request;
+            Submit_Request $Options, $request;
         }
         exit;
     }
@@ -453,7 +477,7 @@ sub GX_Request(@) {
         $request->{scope} = 'local';
     }
 
-    Submit_Request $request;
+    Submit_Request $Options, $request;
 
     unless ($Options->{force} and $Options->{quiet}) {
         print "Mapping request submitted.\n";
@@ -463,8 +487,8 @@ sub GX_Request(@) {
 
 ########################################################################
 
-sub Submit_Request($) {
-    my($request) = @_;
+sub Submit_Request($$) {
+    my($Options, $request) = @_;
 
     my $time_of_day       = GX::Get_Time_Of_Day;
     my $timestamp         = GX::Long_Time_Image $time_of_day;
@@ -536,11 +560,22 @@ sub Submit_Request($) {
         }
     }
 
-    my $request_file = "$Requests_Dir/$time_of_day-$hostname-$PW->{name}";
+    my $request_file = "$time_of_day-$hostname-$PW->{name}";
     if (defined $request->{username}) {
         $request_file .= "_$request->{username}";
     }
     $request_file .= "-$$.request";
+
+    my $temp_file;
+    my $target_file;
+
+    $request_file = "$Requests_Dir/$request_file";
+    $temp_file = "$request_file.tmp";
+    $target_file = $request_file;
+    if ($Signature_Required) {
+        $Temp_Dir = GX::Make_Temp_Dir;
+        $request_file = "$Temp_Dir/$request_file";
+    }
 
     #
     # If gx-check-requests sees a partial request file, it will reject
@@ -552,7 +587,9 @@ sub Submit_Request($) {
     #
     my $tmp_file = "$request_file.tmp";
 
-    GX::Write_Records '-single', $tmp_file, $request;
+    GX::Write_Records format   => 'single',
+                      filename => $tmp_file,
+                      records  => [ $request ];
 
     if (not -o $tmp_file) {
         #
@@ -567,45 +604,42 @@ sub Submit_Request($) {
     }
     chmod 0444, $tmp_file or die "chmod $tmp_file: $!\n";
     rename $tmp_file, $request_file or die "rename $tmp_file: $!\n";
+
+    if ($Signature_Required) {
+        my $sign_result = GX::Sign_File $request_file,
+                                        $Options->{certificate},
+                                        $Options->{key},
+                                        "$request_file.multi";
+        if (GX::Error::Is_Error $sign_result) {
+            die "Signing failed: ", $sign_result->Message, "\n";
+        }
+        File::Copy::copy "$request_file.multi",
+                         "$Requests_Dir/$request_file.multi.tmp"
+            or die "Failed to copy file to $Requests_Dir: $!\n";
+        rename "$Requests_Dir/$request_file.multi.tmp",
+               "$Requests_Dir/$request_file.multi"
+            or die "Failed to rename request file: $!\n";
+    }
 } # Submit_Request
 
 # ----------------------------------------------------------------------
 
 #
-# Given a certificate file name, invokes openssl to determine the subject
-# name and returns the resulting DN.
-# 
-# The output must be a single line starting with '/'.
+# Given a certificate file name, returns the normalized DN (subject name)
+# of the certificate.
 #
-# If an error occurs, return a brief description of the error.  This can
-# be distinguished from a valid DN by the absence of a leading '/'.
-# (Not pretty, but it works.)
+# If an error occurs, returns a GX::Error object.
 #
 sub Get_DN_From_Certificate($) {
     my($file) = @_;
-    return "No file $file"     if not -e $file;
-    return "Cannot read $file" if not -r $file;
 
-    GX::Use_Commands 'openssl';
-
-    #
-    # We deliberately don't bother checking for errors.  If we get the
-    # expected output, we use it; if not, we don't bother to distinguish
-    # the reason we couldn't execute the command.
-    #
-    open my $Pipe, '-|', "openssl x509 -in '$file' -noout -subject 2>/dev/null";
-    my @output = <$Pipe>;
-    close $Pipe;
-
-    return "Missing or bad output from openssl for $file"
-        if scalar @output != 1;
-    my $line = $output[0];
-    chomp $line;
-    return "Unrecognized output from openssl for $file"
-        if $line !~ /^subject=/;
-    $line =~ s/^subject=\s*//;
-    return "Bad DN from openssl for $file" if $line !~ /^\//;
-    return $line;
+    my $Info = GX::Certificate_Info $file, 'PEM', 'nomd5';
+    if (GX::Error::Is_Error $Info) {
+        return $Info;
+    }
+    else {
+        return GX::Normalize_DN $Info->{subject};
+    }
 } # Get_DN_From_Certificate
 
 # ----------------------------------------------------------------------
@@ -635,6 +669,20 @@ sub User_Cert_File_Name() {
         return undef;
     }
 } # User_Cert_File_Name
+
+# ----------------------------------------------------------------------
+
+sub User_Key_File_Name() {
+    if (defined $ENV{X509_USER_KEY} and -r $ENV{X509_USER_KEY}) {
+        return $ENV{X509_USER_KEY};
+    }
+    elsif (-r "$ENV{HOME}/.globus/userkey.pem") {
+        return "$ENV{HOME}/.globus/userkey.pem";
+    }
+    else {
+        return undef;
+    }
+} # User_Key_File_Name
 
 # ----------------------------------------------------------------------
 
@@ -822,61 +870,72 @@ EOF
     }
 
     #
-    # Get DN
+    # Get DN or certificate and key
     #
     if ($OP ne 'remove-user') {
+        my $need_sig = ($OP eq 'add' and $Signature_Required);
         my $choices = '';
         $choices .= 'c' if defined $user_cert_file;
         $choices .= 'p' if defined $proxy_file;
-        $choices .= 'fix';
+        $choices .= 'f';
+        $choices .= 'i' if not $need_sig;
+        $choices .= 'x';
+        my %allowed = map { $_ => 1 } split //, $choices;
         my $dn = undef;
         my $cert_file = undef;
+        my $key_file  = undef;
         while (not defined $dn) {
+            print "\nYou can specify the DN in one of the following ways:\n";
 
-            print Strip <<"EOF";
-            > 
-            > You can specify the DN in one of the following ways:
-EOF
+            if ($allowed{c}) {
+                print "(c) Certificate, extract from $user_cert_file\n";
+            }
 
-            print Strip <<"EOF" if defined $user_cert_file;
-            > (c) Certificate, extract from $user_cert_file
-EOF
+            if ($allowed{p}) {
+                print "(p) Proxy, extract from your current " .
+                      "proxy certificate,\n";
+                print "    $proxy_file\n";
+            }
 
-            print Strip <<"EOF" if defined $proxy_file;
-            > (p) Proxy, extract from your current proxy certificate,
-            >     $proxy_file
-EOF
+            if ($allowed{f}) {
+                print "(f) File, extract from a specified certificate file\n";
+            }
 
-            print Strip <<"EOF";
-            > (f) File, extract from a specified certificate file
-EOF
+            if ($allowed{i}) {
+                print "(i) Input the DN directly\n";
+            }
 
-            print Strip <<"EOF";
-            > (i) Input the DN directly
-            > (x) Exit
-EOF
+            if ($allowed{x}) {
+                print "(x) Exit\n";
+            }
 
             print "How do you want to specify the DN? [$choices] ";
             chomp($response = lc scalar <STDIN>);
 
-            if (defined $user_cert_file and $response =~ /^c/) {
+            if ($allowed{c} and $response =~ /^c/) {
                 $cert_file = $user_cert_file;
+                $key_file  = $user_key_file;
             }
-            elsif (defined $proxy_file and $response =~ /^p/) {
+            elsif ($allowed{p} and $response =~ /^p/) {
                 $cert_file = $proxy_file;
+                $key_file  = $proxy_file;
             }
-            elsif ($response =~ /^f/) {
+            elsif ($allowed{f} and $response =~ /^f/) {
                 print "Enter certificate file name: ";
                 chomp($cert_file = scalar <STDIN>);
+                if ($need_sig) {
+                    print "Enter key file name: ";
+                    chomp($key_file = scalar <STDIN>);
+                }
             }
-            elsif ($response =~ /^i/) {
+            elsif ($allowed{i} and $response =~ /^i/) {
                 print "Enter distinguished name: ";
                 chomp($dn = scalar <STDIN>);
                 $dn =~ s/^"//;
                 $dn =~ s/"$//;
                 $dn = GX::Normalize_DN $dn;
             }
-            elsif ($response =~ /^x/) {
+            elsif ($allowed{x} and $response =~ /^x/) {
                 exit 0;
             }
             else {
@@ -885,15 +944,8 @@ EOF
 
             if (defined $cert_file) {
                 $dn = Get_DN_From_Certificate $cert_file;
-                if ($dn =~ /^\//) {
-                    $dn = GX::Normalize_DN $dn;
-                    print "DN is \"$dn\"\n";
-                }
-                else {
-                    #
-                    # Get_DN_From_Certificate returned an error message.
-                    #
-                    print "$dn\n";
+                if (GX::Error::Is_Error $dn) {
+                    print $dn->Message, "\n";
                     undef $dn;
                     undef $cert_file;
                 }
@@ -901,16 +953,8 @@ EOF
         }
 
         $Options->{dn} = $dn;
-    }
-    if (not $Is_Admin and
-        defined $GX::Config->{REQUIRE_SIGNATURES} and
-        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
-    {
-        print ">>> Not yet implemented <<<\n";
-        print "Enter verification for \"$Options->{dn}\"\n";
-        my $response;
-        chomp($response = scalar <STDIN>);
-        $Options->{signature} = $response;
+        $Options->{certificate} = $cert_file if defined $cert_file;
+        $Options->{key}         = $key_file  if defined $key_file;
     }
 
     #
@@ -973,8 +1017,16 @@ sub Get_Options_From_Command_Line() {
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
 
+    my $need_sig = ($OP eq 'add' and $Signature_Required);
+
+    if ($need_sig and defined $User_Opt->{dn}) {
+        Usage "Only an administrator may add a specified DN directly.\n" .
+              "A certificate or proxy file is required for verification.\n";
+    }
+
     my $dn_count = (defined $User_Opt->{dn} ? 1 : 0) +
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
+                   (defined $User_Opt->{'proxy-file'} ? 1 : 0) +
                    (defined $User_Opt->{'default-dn'} ? 1 : 0);
 
     if ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
@@ -988,7 +1040,7 @@ sub Get_Options_From_Command_Line() {
             Usage "No DN specified\n";
         }
         elsif ($dn_count > 1) {
-            Usage "Multiple DNs may not be specified with \"-$OP\"\n";
+            Usage "Multiple DNs may not be specified\n";
         }
     }
 
@@ -1039,7 +1091,8 @@ sub Get_Options_From_Command_Line() {
             $Options->{dn} = $User_Opt->{dn};
         }
         else {
-            my $cert_file;
+            my $cert_file = undef;
+            my $key_file  = undef;
             if (defined $User_Opt->{'default-dn'}) {
                 if (defined $default_cert_file) {
                     $cert_file = $default_cert_file;
@@ -1059,19 +1112,34 @@ sub Get_Options_From_Command_Line() {
                     Usage "Cannot determine name of user certificate\n";
                 }
             }
+            if ($need_sig) {
+                if (defined $User_Opt->{'default-dn'}) {
+                    if (defined $default_key_file) {
+                        $key_file = $default_key_file;
+                    }
+                    else {
+                        Usage "Cannot determine name of default key file\n";
+                    }
+                }
+                elsif (defined $User_Opt->{'key-file'}) {
+                    $cert_file = $User_Opt->{'key-file'};
+                }
+                else {
+                    if (defined $user_key_file) {
+                        $cert_file = $user_key_file;
+                    }
+                    else {
+                        Usage "Cannot determine name of user key file\n";
+                    }
+                }
+            }
             my $dn = Get_DN_From_Certificate $cert_file;
-            if ($dn =~ /^\//) {
-                #
-                # Get_DN_From_Certificate returned a valid DN
-                #
-                $Options->{dn} = $dn;
+            if (GX::Error::Is_Error $dn) {
+                Usage $dn->Message, "\n";
             }
-            else {
-                #
-                # Get_DN_From_Certificate returned an error message
-                #
-                Usage "$dn\n";
-            }
+            $Options->{dn} = $dn;
+            $Options->{certificate} = $cert_file if defined $cert_file;
+            $Options->{key} = $key_file if defined $key_file;
         }
     }
 
@@ -1207,7 +1275,12 @@ Note: Exactly one of -interactive, -quick-add, -quick-remove,
                               you're not already a gx-map administrator.
     -dn "string"            : Distinguished name.
     -default-dn             : Extract DN from proxy or user certificate.
-    -certificate-file file  : Name of file from which to extract DN.
+    -certificate-file file  : Name of certificate file from which to
+                              extract the DN.
+    -key-file file          : Name of key file corresponding to the
+                              certificate file.
+    -proxy-file file        : Name of proxy file from which to extract DN.
+                              Acts as both certificate and key.
     -force-dn               : Normally, gx-request (minimally) checks
                               the DN for proper syntax; this option
                               overrides that check.
@@ -1247,6 +1320,14 @@ EOF
     exit 1;
 
 } # Long_Usage
+
+# ----------------------------------------------------------------------
+
+END {
+    if (defined $Temp_Dir and -d $Temp_Dir) {
+        GX::DeleteETemp_Dir $Temp_Dir;
+    }
+} # END
 
 # ----------------------------------------------------------------------
 
