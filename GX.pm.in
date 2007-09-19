@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.110 2007-09-18 20:24:08-07 kst Exp $
+# $Id: GX.pm.in,v 1.111 2007-09-18 20:26:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -1693,42 +1693,6 @@ sub Read_Records(%) {
     }
     my $multiple = ($args->{format} eq 'multiple' ? 1 : 0);
 
-    my $file_arg;
-    my $filename = 'input file';
-    my $keep_comments = 0;
-    my $end_of_line_comments = 0;
-    my $allow_empty = 0;
-    for (my $i = 0; $i <= $#_; $i ++) {
-        if ($_[$i] eq '-single') {
-            $multiple = 0;
-        }
-        elsif ($_[$i] eq '-multiple') {
-            $multiple = 1;
-        }
-        elsif ($_[$i] eq '-keep-comments') {
-            $keep_comments = 1;
-        }
-        elsif ($_[$i] eq '-end-of-line-comments') {
-            $end_of_line_comments = 1;
-        }
-        elsif ($_[$i] eq '-allow-empty') {
-            $allow_empty = 1;
-        }
-        elsif ($_[$i] =~ /^-filename=(.*)$/) {
-            $filename = $1;
-        }
-        elsif ($_[$i] =~ /^-./) {
-            die "GX::Read_Records: Unrecognized option \"$_[$i]\"\n";
-        }
-        else {
-            if ($i == $#_) {
-                $file_arg = $_[$i];
-            }
-            else {
-                die "GX::Read_Records: Usage error\n";
-            }
-        }
-    }
     if ($args->{keep_comments} and not $multiple) {
         die "GX::Read_Records: Usage error, keep_comments vs. format=>single\n";
     }
