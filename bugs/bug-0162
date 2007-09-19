@@ -1,0 +1,30 @@
+# $Id: bug-0162,v 1.1 2007-09-18 20:07:39-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0162,v $
+
+gx-map bug 0162
+Date: Tue 2007-09-18
+Severity: Low
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Possible race condition in GX::Cache_File
+
+GX::Cache_File returns (or attempts to return) the name of a uniquely
+named hard link to the cache file, to avoid problems if another
+process clobbers the cache file while you're using it.
+
+The problem: Cache_File first checks whether the primary cache file
+exists, and *then* creates the hard link.  If the primary cache file
+vanishes between the existence check and the attempt to create the
+hard link, bad things could happen (a failing call to Make_Hard_Link
+dies with an error message).
+
+This may not be a problem in practice, because the primary cache file
+is not likely to be deleted, and an update should just mean that the
+hard link will refer to the new version of the file.
+
+Nevertheless, to be *sure* that there's no race condition, we should
+go ahead and attempt to create a hard link without first checking
+whether the file exists; the result of the 'link' operation will
+tell us whether the file exists.  This will require modifying the
+Make_Hard_Link routine.
