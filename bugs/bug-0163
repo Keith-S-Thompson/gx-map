@@ -1,0 +1,45 @@
+# $Id: bug-0163,v 1.1 2007-09-18 20:15:34-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0163,v $
+
+gx-map bug 0163
+Date: Tue 2007-09-18
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.3.3
+Status: Open
+Title: Confusing function calls
+
+Many functions within gx-map take multiple arguments.  Currently,
+most calls use purely positional arguments, which is error-prone
+and difficult to read.  Some functions, such as Read_Records, use an
+ad-hoc mechanism that accepts arguments like '-single', '-multiple',
+or 'filename=...'.
+
+Implement a mechanism for named parameter associations, so that a
+call to Read_Records might look like:
+
+    GX::Read_Records format        => 'multiple',
+                     keep_comments => 1,
+                     filename      => $log;
+
+Arguments (actually argument pairs) may be given in any order.
+A missing required argument or an unrecognized argument name is a
+fatal error.
+
+The routine to handle this is GX::Get_Args, introduced in GX.pm.in
+revision 1.109.  I'm gradually converting existing routines to
+use this mechanism.  So far:
+    Write_Records
+    Read_Records
+    Sign_File
+    Verify_File
+    Send_Email
+
+Any routine that takes two or more arguments, or that takes optional
+arguments, or for which the meanings of the arguments are not obvious
+when reading a call, should use this mechanism.  Since the existing
+mechanism works, this can be done gradually.
+
+(I had briefly considerd using Getopt::Long, with @ARGV being localized
+and set to @_, but imposing that overhead on each function call is
+likely to be excessive.)
