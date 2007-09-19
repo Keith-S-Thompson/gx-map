@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.108 2007-09-07 15:57:24-07 kst Exp $
+# $Id: GX.pm.in,v 1.109 2007-09-18 20:17:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -132,6 +132,8 @@ use GX::Error ();
 
 sub Set_Config(;$$);
 
+sub Get_Args(\@%);
+
 sub Check_Data_Dir();
 
 # sub Is_Tainted($);
@@ -156,6 +158,8 @@ sub Require_Owner($);
 sub Is_Admin_Account($);
 
 sub Use_Commands(@);
+sub System_Result_String($);
+sub Execute(@);
 
 sub Increment_Timestamp($);
 sub Get_Time_Of_Day();
@@ -168,11 +172,15 @@ sub Save_File($$$$);
 
 sub Get_DNs_From_List_File($);
 
-sub Write_Records($$@);
-sub Read_Records(@);
+sub Write_Records(%);
+sub Read_Records(%);
 
 sub Write_Multifile($@);
 sub Read_Multifile($$);
+
+sub Split_Certificate($$);
+sub Sign_File(%);
+sub Verify_File(%);
 
 sub Sort_By_Timestamp(@);
 
@@ -198,7 +206,7 @@ sub GT4_Subject($);
 sub DN_List($@);
 sub Normalize_DN($);
 
-sub Send_Email($$$$);
+sub Send_Email(%);
 
 sub Get_CA_Ref($);
 
@@ -299,10 +307,10 @@ sub Set_Config(;$$) {
                 GX_PROPAGATE
                 EXTRAS );
     $GX::Config = GX::Read_Records
-                      '-single',
-                      '-end-of-line-comments',
-                      '-allow-empty',
-                      $config_file;
+                      format               => 'single',
+                      end_of_line_comments => 1,
+                      allow_empty          => 1,
+                      filename             => $config_file;
 
     my @missing = ();
     my @extra = ();
@@ -467,6 +475,74 @@ sub Set_Config(;$$) {
         die "Error(s) in $config_file:\n", @errors;
     }
 } # Set_Config
+
+# ----------------------------------------------------------------------
+
+#
+# Arguments to Get_Args() are:
+#     The actual value of @_ in the caller (the "\@" prototype converts
+#         this to an array reference; the array is then treated as a
+#         hash);
+#     and
+#     A hash defining what arguments are expected (passed as a flattened list).
+# In the hash, keys are parameter names; each value is either undef
+# or the default value for the argument.
+#
+# If no actual value is passed for an argument with no default value,
+# or if an unrecognized argument name is used, the function dies
+# with an error message.
+#
+# Note that an argument cannot have a default value of undef, since
+# undef indicates that there is no default value.
+# 
+# Sample usage:
+#     sub Foo(%) {
+#          my($args) = Get_Args @_, 'arg1' => undef,
+#                                   'arg2' => "default_value";
+#          print "arg1 = \"$args->{arg1}\"\n";
+#          print "arg2 = \"$args->{arg2}\"\n";
+#     }
+# 
+sub Get_Args(\@%) {
+    my($actual, %expected) = @_;
+    if (scalar @$actual % 2 != 0) {
+        die "Odd number of arguments";
+    }
+    my %actual = @$actual;  # slurp the list into a hash
+    my %result = %expected; # initialize names and defaults
+    my @unrecognized = ();
+    my @missing = ();
+    foreach my $key (sort keys %actual) {
+        if (exists $expected{$key}) {
+            $result{$key} = $actual{$key};
+        }
+        else {
+            push @unrecognized, $key;
+        }
+    }
+    foreach my $key (sort keys %expected) {
+        if (not defined $result{$key}) {
+            push @missing, $key;
+        }
+    }
+    if (@unrecognized or @missing) {
+        my @messages = ();
+        if (@unrecognized) {
+            my $s = (scalar @unrecognized == 1 ? '' : 's');
+            push @messages, "Unrecognized argument${s}: " .
+                            join(', ', @unrecognized);
+        }
+        if (@missing) {
+            my $s = (scalar @missing == 1 ? '' : 's');
+            push @messages, "Missing argument${s}: " .
+                            join(', ', @missing);
+        }
+        die join('; ', @messages);
+    }
+    else {
+        return \%result;
+    }
+} # Get_Args
 
 # ----------------------------------------------------------------------
 
@@ -1027,6 +1103,102 @@ sub Use_Commands(@) {
 # ----------------------------------------------------------------------
 
 #
+# Given a numeric value returned by system(),
+# return a string explaining it.
+#
+sub System_Result_String($) {
+    my($status) = @_;
+    my $hi_8 = ($status & 0xff00) >> 8;
+    my $lo_8 =  $status & 0x00ff;
+    my $exit_status = undef;
+    my $signal = undef;
+    my $stopped  = 0;
+
+    my $WSTOPFLG = 0x007f;
+    my $WCOREFLG = 0x0080;
+
+    if ($lo_8 == $WSTOPFLG) {
+        #
+        # Stopped by signal
+        #
+        return "stopped, signal $hi_8";
+    }
+    elsif ($lo_8 == 0) {
+        #
+        # Normal exit() (possibly with non-zero status)
+        #
+        return "exit $hi_8";
+    }
+    elsif ($hi_8 == 0) {
+        #
+        # Killed by signal
+        #
+        my $signal = $lo_8;
+        my $core = 0;
+        if ($signal & $WCOREFLG) {
+            $signal &= ~$WCOREFLG;
+            $core = 1;
+        }
+        my $message = "signal $signal";
+        $message .= " (core dumped)" if $core;
+        return $message;
+    }
+} # System_Result_String
+
+# ----------------------------------------------------------------------
+
+#
+# If the first argument is '-quiet', stdout and stderr are temporarily
+# redirected to /dev/null.
+# Execute the specified command.
+# If successful, return 0.
+# If the return status is non-zero, return a GX::Error object.
+#
+sub Execute(@) {
+    my(@command) = @_;
+
+    my $quiet = 0; 
+    if ($command[0] eq '-quiet') {
+        $quiet = 1;
+        shift @command;
+    }   
+
+    if ($quiet) {
+        # Temporarily redirect STDOUT and STDERR to /dev/null
+        open SAVE_STDOUT, '>&STDOUT';
+        print SAVE_STDOUT if 0; # suppress warning
+        close STDOUT;
+        open STDOUT, '>', '/dev/null';
+
+        open SAVE_STDERR, '>&STDERR';
+        print SAVE_STDERR if 0; # suppress warning
+        close STDERR;
+        open STDERR, '>', '/dev/null';
+    }
+
+    my $status = system @command; 
+
+    if ($quiet) {
+        # Direct STDOUT and STDERR back to where they were.
+        close STDOUT;
+        open STDOUT, '>&SAVE_STDOUT';
+
+        close STDERR;
+        open STDERR, '>&SAVE_STDERR';
+    }
+
+    if ($status == 0) {
+        return 0;
+    }
+    else {
+        return new GX::Error("@command failed, " .
+                             System_Result_String $status);
+    }
+} # Execute
+
+# ----------------------------------------------------------------------
+
+#
 # Returns the current raw time with exactly 10 digits before the decimal
 # point and 6 digits after.  Uses Time::HiRes::gettimeofday if possible;
 # otherwise falls back to an external gettimeofday command.
@@ -1308,51 +1480,52 @@ sub Get_DNs_From_List_File($) {
 # ----------------------------------------------------------------------
 
 #
-# The first argument must be either '-single' or '-multiple', specifying
-# the output format.
+# Arguments are passed by name:
+#     format    => 'single' or 'multiple'
+#     filename  => <name of output file to be created>.
+#     records   => <reference to the array of records to be written>.
 #
-# The second argument is the name of a file to which the records are
-# to be written.  The file is created if it doesn't already exist;
+# The 'filename' argument is the name of a file to which the records
+# are to be written.  The file is created if it doesn't already exist;
 # the records are then appended to the file.
 #
-# The remaining arguments are the records to be written.  Each record
-# is either a reference to a hash, where the keys are field names,
-# or a reference to an array, which is treated as a list of strings
-# constituting a comment block.
+# The 'records' argument is a reference to an array of the records to
+# be written.  Each record is either a reference to a hash, where the
+# keys are field names, or a reference to an array, which is treated as
+# a list of strings constituting a comment block.
 #
-# If the first argument is '-single', there must be exactly one record
+# If the format is set to 'single', there must be exactly one record
 # (not a comment).  Each field is written as a single line consisting
 # of the field name, followed by spaces, followed by the value.
 #
-# If the first argument is '-multiple', there can be zero or more records.
-# The fields are written in the same manner as for '-single', but each
+# If the format is set to 'multiple', there can be zero or more records.
+# The fields are written in the same manner as for 'single', but each
 # record is preceded and followed by lines containing a left and right
-# curly brace ('{', '}'), respectively.  For a comment block, each line
-# is written, with a "# " prefix added if it's not already there; the
-# comment block is surrounded by empty lines.
+# curly brace ('{', '}'), respectively, and each line is prefixed with
+# a tab character.  For a comment block, each line is written, with a
+# "# " prefix added if it's not already there; the comment block is
+# surrounded by empty lines.
 #
 # Extra spaces and blank lines may be added for legibility.
 #
-sub Write_Records($$@) {
-    my($format, $filename, @refs) = @_;
-    my $multiple;
-    if ($format eq '-single') {
-        die "GX::Write_Records: expected a single record\n"
-            if scalar @refs != 1;
-        $multiple = 0;
+sub Write_Records(%) {
+    my($args) = GX::Get_Args @_, format   => undef,
+                                 filename => undef,
+                                 records  => undef;
+    if ($args->{format} ne 'single' and
+        $args->{format} ne 'multiple')
+    {
+        die "GX::Write_Records: bad format: \"$args->{format}\"\n";
     }
-    elsif ($format eq '-multiple') {
-        return if not @refs;
-        $multiple = 1;
-    }
-    else {
-        die "GX::Write_Records: bad first argument\n";
+    my $multiple = ( $args->{format} eq 'multiple' ? 1 : 0 );
+    if (not $multiple and scalar @{$args->{records}} != 1) {
+        die "GX::Write_Records: expected a single record\n";
     }
 
     my $output = '';
 
     REF:
-    foreach my $ref (@refs) {
+    foreach my $ref (@{$args->{records}}) {
         if (defined $ref->{operation} and $ref->{operation} eq 'comment') {
             foreach my $line (@{$ref->{lines}}) {
                 if ($line !~ /^#/) {
@@ -1397,14 +1570,14 @@ sub Write_Records($$@) {
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
     my $File = undef;
-    if ($filename eq '-') {
+    if ($args->{filename} eq '-') {
         open $File, '>-' or die "stdout: $!\n";
     }
     else {
-        open $File, '>>', $filename or die "${filename}: $!\n";
+        open $File, '>>', $args->{filename} or die "$args->{filename}: $!\n";
     }
-    print $File $output or die "printing to ${filename}: $!\n";
-    close $File or die "closing ${filename}: $!\n";
+    print $File $output or die "printing to $args->{filename}: $!\n";
+    close $File or die "closing $args->{filename}: $!\n";
 } # Write_Records
 
 # ----------------------------------------------------------------------
@@ -1438,84 +1611,90 @@ sub Increment_Timestamp($) {
 # ----------------------------------------------------------------------
 
 #
-# The first zero or more arguments are option names starting with a
-# '-' character.  Recognized options, which may not be abbreviated, are:
+# Arguments are passed by name:
+#     format               => 'single' | 'multiple'
+#     keep_comments        => 0 | 1 (default is 0)
+#     end_of_line_comments => 0 | 1 (default is 0)
+#     allow_empty          => 0 | 1 (default is 0)
+#     specified_filename   => <a file name>
+#     filename             => <input file specification>
 #
-#   '-single'
-#           Read a single record without '{' and '}' delimiters.
+# keep_comments:
+#     If this is set to 1, a contiguous sequence of comment lines is
+#     stored as a record with three fields:
+#         'operation':
+#             Set to 'comment'.
+#         'timestamp':
+#             An artificial timestamp set to the timestamp of
+#             the previous record plus 1 microsecond (or 0 for a
+#             header comment).
+#         'lines':
+#             a reference to an array of lines.
+#     The 'timestamp' field makes it possible to sort an array of records
+#     by timestamp even if some of them are comment blocks.
 #
-#   '-multiple'
-#           Read zero or more records delimited by '{' and '}'.
-#           This is the default.
+#     This may not be specified with format => 'single'.
 #
-#   '-keep-comments'
-#           Treat comment blocks as pseudo-records.  A contiguous
-#           sequence of comment lines is stored as a record with
-#           three fields:
-#               'operation':
-#                   Set to 'comment'.
-#               'timestamp':
-#                   An artificial timestamp set to the timestamp of
-#                   the previous record plus 1 microsecond (or 0 for a
-#                   header comment).
-#               'lines':
-#                   a reference to an array of lines.
+# end_of_line_comments:
+#     Allow end-of-line comments anywhere in the input, even within a
+#     record.  This option causes everything following any '#' character
+#     to be quietly ignored.  It is therefore incompatible with the
+#     '-keep-comments' option.
 #
-#           The 'timestamp' field makes it possible to sort an array
-#           of records by timestamp even if some of them are comment
-#           blocks.
+#     This option should be used with caution, since it doesn't allow
+#     for '#' characters in DNs (which are rare but permitted).  It is
+#     intended to be used to parse configuration files, usually with
+#     '-single'.
 #
-#           The '-keep-comments' option may not be specified with
-#           '-single'.
+# allow_empty:
+#     Allow the value of a field to be empty.  By default, a key name
+#     with no value is a syntax error.
 #
-#           Comments are ignored by default.
+# specified_filename:
+#     Specify a file name, to be used only error messages.  This is useful
+#     when the 'filename' argument is an opened file handle rather than
+#     a file name.  Ignored if the file argument is a file name rather
+#     than a file handle.
 #
-#   '-end-of-line-comments'
-#           Allow end-of-line comments anywhere in the input, even within
-#           a record.  This option causes everything following any '#'
-#           character to be quietly ignored.  It is therefore incompatible
-#           with the '-keep-comments' option.
+# filename:
+#     This is either the name of the file from which to read the record or
+#     records, or an opened  filehandle.  '-' denotes stdin; otherwise,
+#     the file name may not start with a '-' character.
 #
-#           This option should be used with caution, since it doesn't
-#           allow for '#' characters in DNs (which are rare but
-#           permitted).  It is intended to be used to parse configuration
-#           files, usually with '-single'.
-#
-#   '-allow-empty'
-#           Allow the value of a field to be empty.  By default, a key
-#           name with no value is a syntax error.
-#
-#   '-filename=...'
-#           Specify a file name, to be used only error messages.  This is
-#           useful when the last argument is an opened file handle rather
-#           than a file name.  Ignored if the file argument is a file
-#           name rather than a file handle.
-#
-# The last argument is either the name of the file from which to read
-# the record or records, or an opened  filehandle.  '-' denotes stdin;
-# otherwise, the file name may not start with a '-' character.
-#
-# Leading and trailing whitespace are ignored.
+# Leading and trailing whitespace in the input file are ignored.
 #
 # Comments start with a '#' character, and are either ignored or stored
-# as comment records, depending on whether '-keep-comments' is specified.
-# If the '-end-of-line-comments' option is not given, a comment must be
+# as comment records, depending on whether 'keep_comments' is specified.
+# If the 'end_of_line_comments' option is not given, a comment must be
 # on a line by itself; end-of-line comments are not supported on lines
 # containing other data (so '#' characters can be used in field values).
 # Comments are not allowed within records (i.e., between a '{' line and a
-# '}' line) unless the '-end-of-line-comments' option is given.
+# '}' line) unless the 'end_of_line_comments' option is given.
 #
 # An empty line terminates a comment block but is otherwise ignored.
 # 
-# For '-single', the record read from the file is returned as a hash
-# reference.
-# For '-multiple', the records read from the file are returned as a list
-# of hash references.
+# For format => 'single', the record read from the file is returned as
+# a hash reference.
+# For format => 'multiple', the records read from the file are returned
+# as a list of hash references.
 #
-sub Read_Records(@) {
+sub Read_Records(%) {
+    my($args) = GX::Get_Args @_, format               => undef,
+                                 keep_comments        => 0,
+                                 end_of_line_comments => 0,
+                                 allow_empty          => 0,
+                                 specified_filename   => 'input file',
+                                 filename             => undef;
+
+    if ($args->{format} ne 'single' and
+        $args->{format} ne 'multiple')
+    {
+        die "GX::Read_Records: bad format: \"$args->{format}\"\n";
+    }
+    my $multiple = ($args->{format} eq 'multiple' ? 1 : 0);
+
     my $file_arg;
     my $filename = 'input file';
-    my $multiple = 1;
     my $keep_comments = 0;
     my $end_of_line_comments = 0;
     my $allow_empty = 0;
@@ -1550,11 +1729,12 @@ sub Read_Records(@) {
             }
         }
     }
-    if ($keep_comments and not $multiple) {
-        die "GX::Read_Records: Usage error, -keep-comments vs. -single\n";
+    if ($args->{keep_comments} and not $multiple) {
+        die "GX::Read_Records: Usage error, keep_comments vs. format=>single\n";
     }
-    if ($keep_comments and $end_of_line_comments) {
-        die "GX::Read_Records: Usage error, -keep-comments vs. -end-of-line-comments\n";
+    if ($args->{keep_comments} and $args->{end_of_line_comments}) {
+        die "GX::Read_Records: Usage error, " .
+            "keep-comments vs. end-of-line-comments\n";
     }
 
     #
@@ -1571,19 +1751,19 @@ sub Read_Records(@) {
     # "-" doesn't refer to stdin/stdout for the 3-argument form of open().
     #
     my $FILE = undef;
-    if (ref $file_arg ne '') {
+    if (ref $args->{filename} ne '') {
         #
-        # $file_arg is a reference; assume it's an opened file handle.
+        # $args->{filename} is a reference; assume it's an opened file handle.
         #
-        $FILE = $file_arg;
+        $FILE = $args->{filename};
     }
-    elsif ($filename eq '-') {
+    elsif ($args->{filename} eq '-') {
         open $FILE, '<-' or die "stdin: $!\n";
-        $filename = 'stdin';
+        $args->{specified_filename} = 'stdin';
     }
     else {
-        open $FILE, '<', $file_arg or die "${file_arg}: $!\n";
-        $filename = $file_arg;
+        open $FILE, '<', $args->{filename} or die "$args->{filename}: $!\n";
+        $args->{specified_filename} = $args->{filename};
     }
     my @result = ();
     my $ref = ( $multiple ? undef : {} );
@@ -1597,7 +1777,7 @@ sub Read_Records(@) {
     LINE:
     while (<$FILE>) {
         chomp;
-        if ($end_of_line_comments) {
+        if ($args->{end_of_line_comments}) {
             s/#.*$//;
         }
 
@@ -1608,7 +1788,7 @@ sub Read_Records(@) {
             if (not $multiple) {
                 next LINE;
             }
-            elsif ($keep_comments and $context eq 'none') {
+            elsif ($args->{keep_comments} and $context eq 'none') {
                 $context = 'comment';
                 $ref = { operation => 'comment', lines => [] };
                 if (@result) {
@@ -1626,10 +1806,10 @@ sub Read_Records(@) {
                 die "Comment not allowed within record " .
                     "at line $. of $filename\n";
             }
-            push @{$ref->{lines}}, $_ if $keep_comments
+            push @{$ref->{lines}}, $_ if $args->{keep_comments};
         }
         elsif ($_ eq '') {
-            if ($keep_comments and $context eq 'comment') {
+            if ($args->{keep_comments} and $context eq 'comment') {
                 $context = 'none';
                 push @result, $ref;
                 undef $ref;
@@ -1654,7 +1834,7 @@ sub Read_Records(@) {
             }
             elsif (/^(\w+)\s*(.*)$/) {
                 my($key, $value) = ($1, $2);
-                if (not $allow_empty and $value eq '') {
+                if (not $args->{allow_empty} and $value eq '') {
                     my $message = "Missing value at line $. of $filename\n";
                     if ($multiple) {
                         $syntax_error = $message;
@@ -1698,7 +1878,7 @@ sub Read_Records(@) {
         }
     }
     close $FILE;
-    if ($keep_comments and $context eq 'comment') {
+    if ($args->{keep_comments} and $context eq 'comment') {
         push @result, $ref;
         $context = 'none';
     }
@@ -1752,13 +1932,16 @@ sub Write_Multifile($@) {
 #       filename => <name of stored file in the temporary directory> }
 # or a GX::Error object.
 #
+# Note: '{' and '}' characters in comments are for the convenience of
+# the vi '%' command.
+#
 sub Read_Subfile($$$) {
     my($file_name, $File_Handle, $Temp_Dir) = @_;
     my $in_subfile = 0;
     my $subfile_name = undef;
     my $Subfile_Handle = undef;
     while (<$File_Handle>) {
-        if ($in_subfile) {
+        if ($in_subfile) {                  # {
             if (/^\s*}\s*END\s+subfile\s+"([^"\/ ]+)"\s*$/) {
                 if ($1 ne $subfile_name) {
                     return new GX::Error
@@ -1778,14 +1961,14 @@ sub Read_Subfile($$$) {
             if (/^\s*$/) {
                 next;
             }
-            elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {
+            elsif (/^\s*BEGIN\s+subfile\s+"([^"\/ ]+)"\s+{\s*$/) {  # }
                 $subfile_name = $1;
                 $in_subfile = 1;
                 if (not open $Subfile_Handle, '>', "$Temp_Dir/$subfile_name") {
                     return new GX::Error
                            "Failed to open subfile $subfile_name";
                 }
-            }
+            } # {
             elsif (/^\s*}\s+END\s+multifile\s*$/) {
                 return { EOF => 1 };
             }
@@ -1850,6 +2033,198 @@ sub Read_Multifile($$) {
     }
     return new GX::Error "Syntax error at line $. of $multifile_name";
 } # Read_Multifile
+
+# ----------------------------------------------------------------------
+
+#
+# First argument is a certificate file name, possibly a proxy.
+# Second argument is the name of a temporary directory into which to
+# write the certificate(s) extracted from the file, presumably created
+# by GX::Make_Temp_Dir().
+#
+# Returned value is either a list of the full path names of the copied
+# files, in the order they were seen  in the input file, or a reference
+# to a GX::Error object.  File names are of the form xxxxxxxx.0,
+# where xxxxxxxx is the 8-digit hexadecimal hash of the certificate.
+#
+sub Split_Certificate($$) {
+    my($certificate, $temp_dir) = @_;
+
+    my $next_index = 0;
+    my $curr_filename = undef;
+    my $OUT;
+    my @filenames = ();
+
+    open my $CERT, '<', $certificate
+        or return new GX::Error "${certificate}: $!";
+
+    while (<$CERT>) {
+        if (/^-----BEGIN CERTIFICATE-----\s*$/) {
+            if (defined $curr_filename) {
+                return new GX::Error
+                    "Error on line $.\n"
+            }
+            $curr_filename = sprintf "$temp_dir/cert.%03d", $next_index++;
+            open $OUT, '>', $curr_filename or die "$curr_filename: $!\n";
+        }
+
+        if (defined $curr_filename) {
+            print $OUT $_ or die "$curr_filename: $!\n";
+        }
+
+        if (/^-----END CERTIFICATE-----\s*$/) {
+            if (not defined $curr_filename) {
+                return new GX::Error "Error on line $.\n";
+            }
+            close $OUT or die "$curr_filename: $!\n";
+            push @filenames, $curr_filename;
+            $curr_filename = undef;
+        }
+    }
+
+    close $CERT or return new GX::Error "${certificate}: $!";
+
+    FILENAME:
+    foreach my $filename (@filenames) {
+        my $cert_info = GX::Certificate_Info $filename, 'PEM', 'nomd5';
+        if (GX::Error::Is_Error $cert_info) {
+            return $cert_info;
+        }
+        if ($cert_info->{subject} eq $cert_info->{issuer}) {
+             next FILENAME;
+        }
+        my $new_filename = "$temp_dir/$cert_info->{hash}.0";
+        rename $filename, $new_filename or die "rename: $!\n";
+        $filename = $new_filename;
+    }
+    return @filenames;
+} # Split_Certificate
+
+# ----------------------------------------------------------------------
+
+#
+# Arguments are passed by name:
+#     input_file   File to be signed
+#     certificate  Certificate file
+#     key          Key file
+#     output_file  To be created
+# Returned value is either the name of the output file (the 'output'
+# argument) or a GX::Error object.  The output file will be a multifile
+# (see Read_Multifile, Write_Multifile).
+#
+sub Sign_File(%) {
+    # my($input_file, $certificate, $key, $output_file) = @_;
+    my $args = GX::Get_Args @_, input_file  => undef,
+                                certificate => undef,
+                                key         => undef,
+                                output_file => undef;
+    my $temp_dir = GX::Make_Temp_Dir;
+    my $basename = File::Basename::basename($args->{input_file});
+    my $signed_file = "$basename.signed";
+    my $multi_file  = "$basename.multi";
+
+    my @certificates = GX::Split_Certificate $args->{certificate}, $temp_dir;
+
+    my @command = ( qw(openssl smime -sign -text),
+                    '-in',     $args->{input_file},
+                    '-out',    $signed_file,
+                    '-signer', $args->{certificate},
+                    '-inkey',  $args->{key},
+                    '-nocerts' );
+    # print "% @command\n" if $User_Opt->{verbose};
+    my $openssl_status = Execute @command;
+    if (GX::Error::Is_Error $openssl_status) {
+        unlink $signed_file; # may or may not exist
+        return $openssl_status;
+    }
+    else {
+        GX::Write_Multifile $args->{output_file}, $signed_file, @certificates;
+        unlink $signed_file;
+        return $args->{output_file};
+    }
+} # Sign_File
+
+# ----------------------------------------------------------------------
+
+#
+# Arguments are passed by name:
+#     input_file   Name of file to verify
+#     certs_dir    Certificates directory.
+#
+# Verified file is written to <file>.verified or <file>.unverified
+# Result is a hash reference with the following fields:
+#     filename (string, name of output file)
+#     verified (boolean)
+#     subject  (string, the subject name of the signing certificate)
+# TODO: ...
+#     
+sub Verify_File(%) {
+    my $args = GX::Get_Args @_, input_file  => undef,
+                                certs_dir   => undef;
+    my $result = {};
+    my $temp_dir = GX::Make_Temp_Dir;
+
+    opendir my $CERTS_DIR, $args->{certs_dir} or die "$args->{certs_dir}: $!\n";
+    my @files_to_symlink = sort grep /\.r?0$/, readdir $CERTS_DIR;
+    closedir $CERTS_DIR;
+
+    foreach my $file (@files_to_symlink) {
+        symlink "$args->{certs_dir}/$file", "$temp_dir/$file"
+            or die "symlink $args->{certs_dir}/$file, $temp_dir/${file}: $!\n";
+    }
+
+    my @multi = GX::Read_Multifile $args->{input_file}, $temp_dir;
+    if (scalar @multi < 2) {
+        return new GX::Error
+                   "Need at least two subfiles in $args->{input_file}";
+    }
+    my $signed_file   = $multi[0]->{filename};
+    my $signing_cert  = $multi[1]->{filename};
+    my $basename      = File::Basename::basename $signed_file;
+    my $output_file   = "$basename.unverified";
+    my $verified_file = "$basename.verified";
+
+    my @command = ( qw(openssl smime -verify -text),
+                    '-in', $signed_file,
+                    '-out', $output_file,
+                    '-CApath', $temp_dir,
+                    '-certfile', $signing_cert );
+    #
+    # The opensl command supports the "-ignore-critical" option
+    # starting at version 0.9.8.
+    #
+    if (OpenSSL_Version >= 0x00908000) {
+        push @command, '-ignore_critical';
+    }
+    $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
+    my $openssl_result = Execute '-quiet', @command;
+    if (GX::Error::Is_Error $openssl_result) {
+        $result->{verified} = 0;
+        $result->{filename} = $output_file;
+    }
+    else {
+        my $ok = 1;
+        if (rename $output_file, $verified_file) {
+            $result->{filename} = $verified_file;
+        }
+        else {
+            $ok = 0;
+            $result->{filename} = $output_file;
+        }
+        my $cert_info = GX::Certificate_Info $signing_cert, 'PEM', 'nomd5';
+        if (defined $cert_info->{subject}) {
+            $result->{subject} = GX::Normalize_DN $cert_info->{subject};
+        }
+        else {
+            $ok = 0;
+        }
+        $result->{verified} = $ok;
+    }
+
+    GX::Delete_Temp_Dir $temp_dir;
+
+    return $result;
+} # Verify_File
 
 # ----------------------------------------------------------------------
 
@@ -1994,7 +2369,9 @@ sub Gen_Mappings(@) {
             $kind = $arg;
         }
         elsif ($kind eq '-log') {
-            push @requests, GX::Read_Records '-multiple', $arg;
+            push @requests, GX::Read_Records
+                                format   => 'multiple',
+                                filename => $arg;
         }
         elsif ($kind eq '-gridmap-before') {
             push @requests, GX::Slurp_File -before, $arg;
@@ -3117,17 +3494,24 @@ sub DN_List($@) {
 
 # ----------------------------------------------------------------------
 
+# Arguments are passed by name:
+#     program_name => <name of invoking program>
+#     recipient    => <e-mail address>
+#     subject      => <subject string>
+#     body         => <body of message, a single string>
 #
 # (Attempt to) send an e-mail message.
-# Arguments are program_name, recipient, subject, body.
 # Use the "mailx" command if it exists; otherwise use "mail".
 # Failures are quietly ignored.
 # In addition, all messages are logged to mail.log in the data directory.
 #
-sub Send_Email($$$$) {
-    my($program_name, $recipient, $subject, $body) = @_;
+sub Send_Email(%) {
+    my($args) = GX::Get_Args @_, program_name => undef,
+                                 recipient    => undef,
+                                 subject      => undef,
+                                 body         => undef;
     my $data_dir = "$GX::Config->{INSTALL_DIR}/gx-map-data";
-    my $mail_log = "$data_dir/$program_name-mail.log";
+    my $mail_log = "$data_dir/$args->{program_name}-mail.log";
 
     GX::Untaint $mail_log;
 
@@ -3137,10 +3521,10 @@ sub Send_Email($$$$) {
     print $log <<"EOF";
 $current_time
 Sending e-mail message from $hostname
-Recipient: $recipient
-Subject: $subject
+Recipient: $args->{recipient}
+Subject: $args->{subject}
 
-$body
+$args->{body}
 [end of message]
 
 EOF
@@ -3149,10 +3533,13 @@ EOF
     foreach my $mail_program (qw(mailx mail)) {
         eval { GX::Use_Commands $mail_program };
         next if $@;
-        my $command = "$mail_program -s '$subject' $recipient";
-        GX::Untaint $command;
-        open my $Pipe, '|-', $command;
-        print $Pipe $body;
+        GX::Untaint $args->{subject};
+        GX::Untaint $args->{recipient};
+        my @command = ( $mail_program,
+                        '-s', $args->{subject},
+                        $args->{recipient} );
+        open my $Pipe, '|-', @command;
+        print $Pipe $args->{body};
         close $Pipe;
         last;
     }
@@ -3174,7 +3561,9 @@ EOF
 #
 sub Get_CA_Ref($) {
     my($filename) = @_;
-    my $ref = GX::Read_Records '-single', $filename;
+    my $ref = GX::Read_Records
+                  format   => 'single',
+                  filename => $filename;
     my @errors = ();
 
     $ref->{_FILENAME} = $filename;
@@ -3459,7 +3848,9 @@ sub Get_TGCDB_Config($) {
             "Mode must be 400 (r--------) or 600 (rw-------)\n";
     }
 
-    my $db_config = GX::Read_Records '-single', $config_file;
+    my $db_config = GX::Read_Records
+                        format   => 'single',
+                        filename => $config_file;
     my @keys = sort keys %$db_config;
     my @required_keys = qw(host port dbname resource_name user password);
     my %required_key = map { $_ => 1 } @required_keys;
