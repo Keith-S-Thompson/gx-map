@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-db-request.in,v 1.11 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-db-request.in,v 1.12 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Attic/gx-db-request.in,v $
 
 ########################################################################
@@ -172,7 +172,9 @@ sub Request($@) {
     my $filename     = "$Requests_Dir/$timestamp.db-request";
     my $tmp_filename = "$filename.tmp";
 
-    GX::Write_Records '-single', $tmp_filename, $request;
+    GX::Write_Records format   => 'single',
+                      filename => $tmp_filename,
+                      records  => [ $request ];
     rename $tmp_filename, $filename or die "Renaming $tmp_filename: $!\n";
 } # Request
 
