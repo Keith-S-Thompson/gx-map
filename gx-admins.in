@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-admins.in,v 1.15 2007-05-27 20:33:49-07 kst Exp $
+# $Id: gx-admins.in,v 1.16 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-admins.in,v $
 
 ########################################################################
@@ -81,7 +81,8 @@ Usage "No file $ARGV[0]\n"       if not -e $ARGV[0];
 Usage "$ARGV[0] is not a file\n" if not -f $ARGV[0];
 Usage "Can't read $ARGV[0]\n"    if not -r $ARGV[0];
 
-my @requests = GX::Read_Records '-multiple', $ARGV[0];
+my @requests = GX::Read_Records format   => 'multiple',
+                                filename => $ARGV[0];
 print "Got ", scalar @requests, " records\n";
 
 my %admin_count = ();
