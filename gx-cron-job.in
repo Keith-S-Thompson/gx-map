@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-cron-job.in,v 1.22 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-cron-job.in,v 1.23 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-cron-job.in,v $
 
 ########################################################################
@@ -134,7 +134,8 @@ sub Get_Jobs($) {
     my @errors = ();
 
     Debug "Reading config file $config_file\n";
-    @result = GX::Read_Records '-multiple', $config_file;
+    @result = GX::Read_Records format   => 'multiple',
+                               filename => $config_file;
     Debug "Got ", scalar @Jobs, " job(s)\n";
 
     for (my $i = 0; $i <= $#result; $i ++) {
