@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.113 2007-06-30 15:26:47-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.114 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -339,7 +339,10 @@ if (-x $propagate) {
         $body .= "\n$Program_Name (gx-map $GX::VERSION) " .
                  "on $Hostname\n";
 
-        GX::Send_Email $Program_Name, $recipient, $subject, $body;
+        GX::Send_Email program_name => $Program_Name,
+                       recipient    => $recipient,
+                       subject      => $subject,
+                       body         => $body;
     }
 }
 
@@ -419,7 +422,10 @@ if (@bad_request_files) {
 
     $body .= "\n$Program_Name (gx-map $GX::VERSION) on $Hostname\n";
 
-    GX::Send_Email $Program_Name, $recipient, $subject, $body;
+    GX::Send_Email program_name => $Program_Name,
+                   recipient    => $recipient,
+                   subject      => $subject,
+                   body         => $body;
 }
 
 GX::Release_Lock $Program_Name;
@@ -500,7 +506,9 @@ sub Get_Request_Info($) {
 
     eval {
         $result = GX::Read_Records
-                      '-single', "-filename=$request_file", $FILEHANDLE;
+                      format             => 'single',
+                      filename           => $FILEHANDLE,
+                      specified_filename => $request_file";
     };
     close $FILEHANDLE;
     if ($@) {
@@ -807,7 +815,9 @@ sub Append_To_Log($@) {
         chmod $writable, $log_file or die "chmod $log_file: $!\n";
     }
 
-    GX::Write_Records '-multiple', $log_file, @requests;
+    GX::Write_Records format   => 'multiple',
+                      filename => $log_file,
+                      records  => \@requests;
 
     chmod $readonly, $log_file or die "chmod $log_file: $!\n";
 
