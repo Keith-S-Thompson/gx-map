@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.114 2007-09-18 20:23:54-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.115 2007-09-18 20:35:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -508,7 +508,7 @@ sub Get_Request_Info($) {
         $result = GX::Read_Records
                       format             => 'single',
                       filename           => $FILEHANDLE,
-                      specified_filename => $request_file";
+                      specified_filename => $request_file;
     };
     close $FILEHANDLE;
     if ($@) {
