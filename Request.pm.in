@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.2 2007-09-18 19:49:14-07 kst Exp $
+# $Id: Request.pm.in,v 1.3 2007-09-19 16:50:25-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -1325,7 +1325,7 @@ EOF
 
 END {
     if (defined $Temp_Dir and -d $Temp_Dir) {
-        GX::DeleteETemp_Dir $Temp_Dir;
+        GX::Delete_Temp_Dir $Temp_Dir;
     }
 } # END
 
