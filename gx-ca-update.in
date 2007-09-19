@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-ca-update.in,v 1.155 2007-09-07 15:58:12-07 kst Exp $
+# $Id: gx-ca-update.in,v 1.156 2007-09-18 20:23:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-ca-update.in,v $
 
 ########################################################################
@@ -291,7 +291,9 @@ if (scalar @ca_list == 0 or scalar @mismatches > 0) {
 
 Debug "Got ", scalar @ca_list, " ca record(s):\n";
 if ($User_Opt->{debugging}) {
-    GX::Write_Records '-multiple', '-', @ca_list;
+    GX::Write_Records format   => 'multiple',
+                      filename => '-',
+                      records  => \@ca_list;
 }
 
 GX::Use_Commands 'openssl';
@@ -931,7 +933,9 @@ sub Update_And_Install_CRL($) {
     #     if (defined $old_crl_info) {
     #         Debug "old_crl_info:\n";
     #         my @arr = ( $old_crl_info );
-    #         GX::Write_Records '-multiple', '-', @arr;
+    #         GX::Write_Records format   => 'multiple',
+    #                           filename => '-',
+    #                           records  => \@arr;
     #     }
     #     else {
     #         Debug "old_crl_info = undef\n";
@@ -1015,7 +1019,9 @@ sub Update_And_Install_CRL($) {
     #     if (defined $new_crl_info) {
     #         Debug "new_crl_info:\n";
     #         my @arr = ( $new_crl_info );
-    #         GX::Write_Records '-multiple', '-', @arr;
+    #         GX::Write_Records format   => 'multiple',
+    #                           filename => '-',
+    #                           records  => \@arr;
     #     }
     #     else {
     #         Debug "new_crl_info = undef\n";
@@ -1535,10 +1541,10 @@ sub Notify() {
         $mail_message_body
             .= "\n$Program_Name (gx-map $GX::VERSION) on " .
                "$Hostname\n";
-        GX::Send_Email $Program_Name,
-                       $GX::Config->{ADMIN_EMAIL},
-                       $subject,
-                       $mail_message_body;
+        GX::Send_Email program_name => $Program_Name,
+                       recipient    => $GX::Config->{ADMIN_EMAIL},
+                       subject      => $subject,
+                       body         => $mail_message_body;
     }
 } # Notify
 
