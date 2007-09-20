@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.3 2007-09-19 16:50:25-07 kst Exp $
+# $Id: Request.pm.in,v 1.4 2007-09-19 19:28:13-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -467,11 +467,12 @@ sub GX_Request(@) {
     elsif (defined $Options->{source}) {
         $request->{source} = $Options->{source};
     }
-    $request->{username}  = $Options->{username}  if defined $Options->{username};
-    $request->{user_uid}  = $requested_uid        if defined $requested_uid;
-    $request->{email}     = $Options->{email}     if defined $Options->{email};
-    $request->{comment}   = $Options->{comment}   if defined $Options->{comment};
-    $request->{signature} = $Options->{signature} if defined $Options->{signature};
+    $request->{username} = $Options->{username} if defined $Options->{username};
+    $request->{user_uid} = $requested_uid       if defined $requested_uid;
+    $request->{email}    = $Options->{email}    if defined $Options->{email};
+    $request->{comment}  = $Options->{comment}  if defined $Options->{comment};
+    $request->{signature} = $Options->{signature}
+        if defined $Options->{signature};
 
     if ($Options->{local}) {
         $request->{scope} = 'local';
@@ -560,21 +561,16 @@ sub Submit_Request($$) {
         }
     }
 
-    my $request_file = "$time_of_day-$hostname-$PW->{name}";
+    my $request_file_basename = "$time_of_day-$hostname-$PW->{name}";
     if (defined $request->{username}) {
-        $request_file .= "_$request->{username}";
+        $request_file_basename .= "_$request->{username}";
     }
-    $request_file .= "-$$.request";
+    $request_file_basename .= "-$$.request";
 
-    my $temp_file;
-    my $target_file;
-
-    $request_file = "$Requests_Dir/$request_file";
-    $temp_file = "$request_file.tmp";
-    $target_file = $request_file;
+    my $request_file = "$Requests_Dir/$request_file_basename";
     if ($Signature_Required) {
         $Temp_Dir = GX::Make_Temp_Dir;
-        $request_file = "$Temp_Dir/$request_file";
+        $request_file = "$Temp_Dir/$request_file_basename";
     }
 
     #
@@ -585,39 +581,42 @@ sub Submit_Request($$) {
     # file is created and has the proper permissions, rename it to the
     # correct name.
     #
-    my $tmp_file = "$request_file.tmp";
+    my $temp_file = "$request_file.tmp";
 
     GX::Write_Records format   => 'single',
-                      filename => $tmp_file,
+                      filename => $temp_file,
                       records  => [ $request ];
 
-    if (not -o $tmp_file) {
+    if (not -o $temp_file) {
         #
         # I just created a file, but I don't own it.  Most likely I'm
         # root, and the target NFS filesystem has root squashing enabled.
         #
-        my $message = "Bad ownership for temporary file:\n$tmp_file\n";
+        my $message = "Bad ownership for temporary file:\n$temp_file\n";
         if ($< == 0) {
             $message .= "(likely NFS problem)\n";
         }
         die $message;
     }
-    chmod 0444, $tmp_file or die "chmod $tmp_file: $!\n";
-    rename $tmp_file, $request_file or die "rename $tmp_file: $!\n";
+    chmod 0444, $temp_file or die "chmod $temp_file: $!\n";
+    rename $temp_file, $request_file or die "rename $temp_file: $!\n";
 
     if ($Signature_Required) {
-        my $sign_result = GX::Sign_File $request_file,
-                                        $Options->{certificate},
-                                        $Options->{key},
-                                        "$request_file.multi";
+        my $multifile = "$request_file.multi";
+        my $multifile_basename = "$request_file_basename.multi";
+        my $sign_result = GX::Sign_File
+                              input_file  => $request_file,
+                              certificate => $Options->{certificate},
+                              key         => $Options->{key},
+                              output_file => $multifile;
         if (GX::Error::Is_Error $sign_result) {
             die "Signing failed: ", $sign_result->Message, "\n";
         }
-        File::Copy::copy "$request_file.multi",
-                         "$Requests_Dir/$request_file.multi.tmp"
+        File::Copy::copy $multifile,
+                         "$Requests_Dir/$multifile_basename.tmp"
             or die "Failed to copy file to $Requests_Dir: $!\n";
-        rename "$Requests_Dir/$request_file.multi.tmp",
-               "$Requests_Dir/$request_file.multi"
+        rename "$Requests_Dir/$multifile_basename.tmp",
+               "$Requests_Dir/$multifile_basename"
             or die "Failed to rename request file: $!\n";
     }
 } # Submit_Request
