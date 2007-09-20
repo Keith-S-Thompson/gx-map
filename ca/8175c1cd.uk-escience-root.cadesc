@@ -1,4 +1,4 @@
-# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.7 2007-08-12 22:08:03-07 kst Exp $
+# $Id: 8175c1cd.uk-escience-root.cadesc,v 1.8 2007-09-19 18:06:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/8175c1cd.uk-escience-root.cadesc,v $
 
 CA_NAME             UK e-Science Root CA
@@ -23,9 +23,16 @@ CERT_EXPIRES        Tue 2026-07-14 16:30:27 UTC
 # This certificate, along with one that it signs (hash adcbc9ef)
 # supersede the old UK e-Science CA certificate (hash 01621954).
 
+# On Mon 2007-09-17, it was announced on the tagpma-general mailing list
+# that this CA may have been compromised (backups of the keys kept on
+# USB drives in a safe are missing).  The plan is to re-key the root
+# CA and re-sign any subordinate CAs.  Note that this CA certificate is
+# self-signed and may only sign a single other certificate, namely the CA
+# certificate for the UK e-Science CA (see adcbc9ef.uk-escience.cadesc).
+
 # The following is a copy of 8175c1cd.info from the IGTF 1.16 release:
 ## #
-## # @(#)$Id: 8175c1cd.uk-escience-root.cadesc,v 1.7 2007-08-12 22:08:03-07 kst Exp $
+## # @(#)$Id: 8175c1cd.uk-escience-root.cadesc,v 1.8 2007-09-19 18:06:31-07 kst Exp $
 ## # Information for CA UKeScience ROOT CA
 ## #
 ## alias = UKeScienceRoot
