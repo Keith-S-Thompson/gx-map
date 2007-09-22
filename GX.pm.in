@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.112 2007-09-18 20:33:45-07 kst Exp $
+# $Id: GX.pm.in,v 1.113 2007-09-21 19:22:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -168,7 +168,7 @@ sub Time_Image($);
 sub Long_Time_Image($);
 sub Time_Value($);
 
-sub Save_File($$$$);
+sub Save_File(%);
 
 sub Get_DNs_From_List_File($);
 
@@ -1407,42 +1407,51 @@ sub Time_Value($) {
 # used for request files (moved to good-requests or bad-requests) or
 # db-request files (moved to old-db-requests).
 #
-# Arguments are file name (without directory), source directory, target
-# directory, and the file's timestamp; the timestamp may be undef.
+# Arguments are passed by name:
+#     filename   => <base name of file to save>
+#     source_dir => <source directory>
+#     target_dir => <target directory>
+#     timestamp  => <optional timestamp>
 # 
 # The file is moved to subdirectory with a name of the form
 # "$target_dir/YYYY/MM/DD", which is created if necessary.  The date
 # is computed from the timestamp, and represents the date in UTC.
 # If a timestamp is not provided, the mtime of the file is used.  If a
 # timestamp cannot be determined for some reason, attempt to move the
-# file directly to the target subdirectory (this should never happen).
+# file directly to the target directory (this should never happen).
 #
-sub Save_File($$$$) {
-    my($filename, $source_dir, $target_dir, $timestamp) = @_;
+sub Save_File(%) {
+    my $args = GX::Get_Args @_, filename   => undef,
+                                source_dir => undef,
+                                target_dir => undef,
+                                timestamp  => -1;
 
-    if (not defined $timestamp) {
-        $timestamp = GX::Get_mtime "$source_dir/$filename";
+
+    if ($args->{timestamp} == -1) {
+        $args->{timestamp}
+            = GX::Get_mtime "$args->{source_dir}/$args->{filename}";
     }
 
     my($YYYY, $MM, $DD);
-    my $target_subdir = $target_dir;
-    if (defined $timestamp) {
+    my $target_subdir = $args->{target_dir};
+    if (defined $args->{timestamp}) {
         my($sec, $min, $hour, $mday, $mon, $year, $wday, $yday, $isdst)
-            = gmtime $timestamp;
+            = gmtime $args->{timestamp};
         $YYYY = $year + 1900;
         $MM   = sprintf '%02d', $mon + 1;
         $DD   = sprintf '%02d', $mday;
-        $target_subdir = $target_dir;
+        $target_subdir = $args->{target_dir};
         TRY:
         foreach my $elem ($YYYY, $MM, $DD) {
             $target_subdir .= "/$elem";
             if (not -d $target_subdir and not mkdir $target_subdir) {
-                $target_subdir = $target_dir;
+                $target_subdir = $args->{target_dir};
                 last TRY;
             }
         }
     }
-    return rename "$source_dir/$filename", "$target_subdir/$filename";
+    return rename "$args->{source_dir}/$args->{filename}",
+                  "$target_subdir/$args->{filename}";
 } # Save_File
 
 # ----------------------------------------------------------------------
