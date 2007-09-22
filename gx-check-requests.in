@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.115 2007-09-18 20:35:32-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.116 2007-09-21 19:22:35-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -372,11 +372,17 @@ if (defined $User_Opt->{copy}) {
 #
 my @rename_errors = ();
 foreach my $file (@good_request_files) {
-    GX::Save_File $file, $new_request_dir, $good_request_dir, $timestamp{$file}
+    GX::Save_File filename   => $file,
+                  source_dir => $new_request_dir,
+                  target_dir => $good_request_dir,
+                  timestamp  => $timestamp{$file}
         or push @rename_errors, "${file}: $!\n";
 }
 foreach my $file (@bad_request_files) {
-    GX::Save_File $file, $new_request_dir, $bad_request_dir, $timestamp{$file}
+    GX::Save_File filename   => $file,
+                  source_dir => $new_request_dir,
+                  target_dir => $bad_request_dir,
+                  timestamp  => $timestamp{$file}
         or push @rename_errors, "${file}: $!\n";
 }
 
