@@ -1,0 +1,44 @@
+# $Id: bug-0164,v 1.1 2007-09-21 18:29:06-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/bugs/bug-0164,v $
+
+gx-map bug 0164
+Date: Fri 2007-09-21
+Severity: Med
+Reported by: Keith Thompson <kst@sdsc.edu>
+Version: 0.5.9.049
+Status: Open
+Title: Reorganize gx-request again
+
+I recently pulled most of the code out of gx-request.in and
+into Request.pm.in, which on installation becomes the GX::Request
+package.  The purpose of this was to increase performance.  Prior to
+this, some tools could invoke the gx-request command repeatedly,
+imposing the overhead of loading the Perl interpreter and loading
+and compiling multiple Perl modules on each invocation.  An initial
+runof gx-db-check-requests, slurping mappings from the TGCDB into
+the local requests.log, could take hours.
+
+The gx-request command, apart from a few declarations, now consists
+entirely of a single call:
+
+    GX::Request::GX_Request @ARGV;
+
+Doing it this way allowed for minimal code changes.
+
+But a lot of what GX::Request::GX_Request does (parsing command-line
+arguments and/or getting user input interactively, checking
+for inconsistent arguments, etc.) is specific to the gx-request
+command, and really isn't necessary when it's being invoked from
+an administrative command such as gx-db-requests, gx-check-index,
+or gx-ingest.
+
+Proposal: Move most of the code that's now in Request.pm back into
+gx-request.in.  Keep the existing Submit_Request function as the
+programmatic interface.  Consider moving Submit_Request into GX.pm.in,
+and getting rid of the GX::Request module.  Probably a bit more
+information will have to be passed to Submit_Request (it currently
+refers to some stuff that's global to the GX::Request module).
+
+The programs other than gx-request that submit requests will have to
+be modified to invoke Submit_Request rather than (in effect) building
+command-line arguments, but the result should be cleaner.
