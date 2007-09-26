@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.4 2007-09-19 19:28:13-07 kst Exp $
+# $Id: Request.pm.in,v 1.5 2007-09-25 18:37:18-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -1142,17 +1142,17 @@ sub Get_Options_From_Command_Line() {
         }
     }
 
-    if (not $Is_Admin and
-        $OP eq 'add' and
-        defined $GX::Config->{REQUIRE_SIGNATURES} and
-        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
-    {
-        print ">>> Not yet implemented <<<\n";
-        print "Enter verification for \"$Options->{dn}\"\n";
-        my $response;
-        chomp($response = scalar <STDIN>);
-        $Options->{signature} = $response;
-    }
+#   if (not $Is_Admin and
+#       $OP eq 'add' and
+#       defined $GX::Config->{REQUIRE_SIGNATURES} and
+#       $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
+#   {
+#       print ">>> Not yet implemented <<<\n";
+#       print "Enter verification for \"$Options->{dn}\"\n";
+#       my $response;
+#       chomp($response = scalar <STDIN>);
+#       $Options->{signature} = $response;
+#   }
 
     if (defined $User_Opt->{email}) {
         $Options->{email} = $User_Opt->{email};
