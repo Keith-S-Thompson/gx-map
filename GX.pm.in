@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.114 2007-09-21 19:22:58-07 kst Exp $
+# $Id: GX.pm.in,v 1.115 2007-09-25 18:13:27-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -89,12 +89,18 @@ use vars qw( $VERSION
              $Initial_Config
              $Config
              $Registered_Handler_Function
-             $Lock_File_Name );
+             $Lock_File_Name
+             $INVALID );
 
 #
 # The layout of the following line is significant; see configure-gx-map.
 #
 $VERSION = '0.5.9.050';
+
+#
+# $GX::INVALID is used by GX::Get_Args to flag missing arguments.
+#
+$INVALID = \'INVALID';
 
 undef $Lock_File_Name;
 
@@ -492,17 +498,30 @@ sub Set_Config(;$$) {
 # or if an unrecognized argument name is used, the function dies
 # with an error message.
 #
-# Note that an argument cannot have a default value of undef, since
-# undef indicates that there is no default value.
+# The unique value of $GX::INVALID is used to flag missing arguments.
+# This allows a parameter to have an explicit or default value of undef.
+# (A subroutine that uses Get_Args will never see $GX::INVALID as a
+# parameter value.)
 # 
 # Sample usage:
 #     sub Foo(%) {
-#          my($args) = Get_Args @_, 'arg1' => undef,
+#          my($args) = Get_Args @_, 'arg1' => $GX::INVALID,
 #                                   'arg2' => "default_value";
+#                                   'arg3' => undef;
 #          print "arg1 = \"$args->{arg1}\"\n";
 #          print "arg2 = \"$args->{arg2}\"\n";
+#          print "arg3 = ",
+#                (defined $args->{arg3} ? "\"$args->{arg3}\"" : 'undef'),
+#                "\n";
 #     }
-# 
+#
+#     The arg1 parameter is mandatory; Get_Args will die with an error
+#     message if it's not provided.
+#     The arg2 parameter is optional; if it's not provided, it quietly
+#     defaults to "default_value".
+#     The arg3 parameter is optional; if it's not provided, it quietly
+#     defaults to undef.
+#
 sub Get_Args(\@%) {
     my($actual, %expected) = @_;
     if (scalar @$actual % 2 != 0) {
@@ -521,7 +540,7 @@ sub Get_Args(\@%) {
         }
     }
     foreach my $key (sort keys %expected) {
-        if (not defined $result{$key}) {
+        if (defined $result{$key} and $result{$key} eq $GX::INVALID) {
             push @missing, $key;
         }
     }
@@ -1421,13 +1440,13 @@ sub Time_Value($) {
 # file directly to the target directory (this should never happen).
 #
 sub Save_File(%) {
-    my $args = GX::Get_Args @_, filename   => undef,
-                                source_dir => undef,
-                                target_dir => undef,
-                                timestamp  => -1;
+    my $args = GX::Get_Args @_, filename   => $GX::INVALID,
+                                source_dir => $GX::INVALID,
+                                target_dir => $GX::INVALID,
+                                timestamp  => undef;
 
 
-    if ($args->{timestamp} == -1) {
+    if (not defined $args->{timestamp}) {
         $args->{timestamp}
             = GX::Get_mtime "$args->{source_dir}/$args->{filename}";
     }
@@ -1518,9 +1537,9 @@ sub Get_DNs_From_List_File($) {
 # Extra spaces and blank lines may be added for legibility.
 #
 sub Write_Records(%) {
-    my($args) = GX::Get_Args @_, format   => undef,
-                                 filename => undef,
-                                 records  => undef;
+    my($args) = GX::Get_Args @_, format   => $GX::INVALID,
+                                 filename => $GX::INVALID,
+                                 records  => $GX::INVALID;
     if ($args->{format} ne 'single' and
         $args->{format} ne 'multiple')
     {
@@ -1688,12 +1707,12 @@ sub Increment_Timestamp($) {
 # as a list of hash references.
 #
 sub Read_Records(%) {
-    my($args) = GX::Get_Args @_, format               => undef,
+    my($args) = GX::Get_Args @_, format               => $GX::INVALID,
                                  keep_comments        => 0,
                                  end_of_line_comments => 0,
                                  allow_empty          => 0,
                                  specified_filename   => 'input file',
-                                 filename             => undef;
+                                 filename             => $GX::INVALID;
 
     if ($args->{format} ne 'single' and
         $args->{format} ne 'multiple')
@@ -2089,10 +2108,10 @@ sub Split_Certificate($$) {
 #
 sub Sign_File(%) {
     # my($input_file, $certificate, $key, $output_file) = @_;
-    my $args = GX::Get_Args @_, input_file  => undef,
-                                certificate => undef,
-                                key         => undef,
-                                output_file => undef;
+    my $args = GX::Get_Args @_, input_file  => $GX::INVALID,
+                                certificate => $GX::INVALID,
+                                key         => $GX::INVALID,
+                                output_file => $GX::INVALID;
     my $temp_dir = GX::Make_Temp_Dir;
     my $basename = File::Basename::basename($args->{input_file});
     my $signed_file = "$basename.signed";
@@ -2134,8 +2153,8 @@ sub Sign_File(%) {
 # TODO: ...
 #     
 sub Verify_File(%) {
-    my $args = GX::Get_Args @_, input_file  => undef,
-                                certs_dir   => undef;
+    my $args = GX::Get_Args @_, input_file  => $GX::INVALID,
+                                certs_dir   => $GX::INVALID;
     my $result = {};
     my $temp_dir = GX::Make_Temp_Dir;
 
@@ -3481,10 +3500,10 @@ sub DN_List($@) {
 # In addition, all messages are logged to mail.log in the data directory.
 #
 sub Send_Email(%) {
-    my($args) = GX::Get_Args @_, program_name => undef,
-                                 recipient    => undef,
-                                 subject      => undef,
-                                 body         => undef;
+    my($args) = GX::Get_Args @_, program_name => $GX::INVALID,
+                                 recipient    => $GX::INVALID,
+                                 subject      => $GX::INVALID,
+                                 body         => $GX::INVALID;
     my $data_dir = "$GX::Config->{INSTALL_DIR}/gx-map-data";
     my $mail_log = "$data_dir/$args->{program_name}-mail.log";
 
