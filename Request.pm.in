@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.5 2007-09-25 18:37:18-07 kst Exp $
+# $Id: Request.pm.in,v 1.6 2007-09-25 18:52:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -1121,11 +1121,11 @@ sub Get_Options_From_Command_Line() {
                     }
                 }
                 elsif (defined $User_Opt->{'key-file'}) {
-                    $cert_file = $User_Opt->{'key-file'};
+                    $key_file = $User_Opt->{'key-file'};
                 }
                 else {
                     if (defined $user_key_file) {
-                        $cert_file = $user_key_file;
+                        $key_file = $user_key_file;
                     }
                     else {
                         Usage "Cannot determine name of user key file\n";
@@ -1309,7 +1309,7 @@ Note: Exactly one of -interactive, -quick-add, -quick-remove,
     -local                  : Set the "scope" attribute to "local",
                               which inhibits propagation (gx-propagate
                               will not be invoked).  This is used by
-                              gx-db-check-requests.  Not available in
+                              gx-db-requests.  Not available in
                               interactive mode.  This option is for use
                               by gx-map administrators only.
     -debugging              : Enable debugging output.
