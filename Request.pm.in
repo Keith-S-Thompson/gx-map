@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.6 2007-09-25 18:52:31-07 kst Exp $
+# $Id: Request.pm.in,v 1.7 2007-09-26 17:21:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -630,9 +630,11 @@ sub Submit_Request($$) {
 # If an error occurs, returns a GX::Error object.
 #
 sub Get_DN_From_Certificate($) {
-    my($file) = @_;
+    my($filename) = @_;
 
-    my $Info = GX::Certificate_Info $file, 'PEM', 'nomd5';
+    my $Info = GX::Certificate_Info
+                   filename => $filename,
+                   need_md5 => 0;
     if (GX::Error::Is_Error $Info) {
         return $Info;
     }
