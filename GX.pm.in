@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.117 2007-09-25 18:52:51-07 kst Exp $
+# $Id: GX.pm.in,v 1.118 2007-09-26 17:21:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -150,7 +150,7 @@ sub Make_Temp_Dir();
 sub Delete_Temp_Dir($);
 
 sub OpenSSL_Version();
-sub Certificate_Info($$;$);
+sub Certificate_Info(%);
 
 sub Stat($;$);
 sub Get_mtime($);
@@ -685,39 +685,38 @@ sub OpenSSL_Version() {
 #     hash
 #     issuer
 #     subject
-#     md5sum
+#     md5sum    (optional)
 #     sha1sum
 #     startdate (raw timestamp)
 #     enddate   (raw timestamp)
 #
-# The second argument specifies the form of the certificate, either 'PEM',
-# 'DER', or 'NET'.
+# Arguments are passed by name:
+#     filename   => <name of certificate file>
+#     form       => PEM|DER|NET (default is PEM)
+#     need_md5   => 0|1         (default is 1)
 #
-# The optional third argument, if set to 'nomd5', causes the md5sum
-# to be omitted (any other argument value is a fatal error).
+# Determining both the sha1 and md5 checksums requires invoking
+# the openssl command twice.  If you don't need the md5 checksum,
+# use the "need_md5 => 0" option.
 #
 # Returns a GX::Error object reference if any of these fields cannot
 # be determined.
 #
-sub Certificate_Info($$;$) {
-    my($cert_file, $cert_form, $third_arg) = @_;
-    if (not -r $cert_file) {
-        return new GX::Error "Can't read $cert_file";
+sub Certificate_Info(%) {
+    my $args = GX::Get_Args @_, filename => $GX::INVALID,
+                                form     => 'PEM',
+                                need_md5 => 1;
+    # my($cert_file, $cert_form, $third_arg) = @_;
+    if (not -r $args->{filename}) {
+        return new GX::Error "Can't read $args->{filename}";
     }
-    my $need_md5 = 1;
-    if (defined $third_arg) {
-        if ($third_arg eq 'nomd5') {
-            $need_md5 = 0;
-        }
-        else {
-            die "Bad 3rd argument to GX::Certificate_Info() $third_arg\n";
-        }
-    }
+    # my $need_md5 = 1;
     GX::Use_Commands 'openssl';
     my $result = {};
     open my $Pipe1, '-|',
-         "openssl x509 -in '$cert_file' -inform $cert_form -noout -hash " .
-         "-issuer -subject -sha1 -fingerprint -startdate -enddate 2>/dev/null";
+         "openssl x509 -in '$args->{filename}' -inform $args->{form} " .
+         "-noout -hash -issuer -subject -sha1 -fingerprint " .
+         "-startdate -enddate 2>/dev/null";
     while (<$Pipe1>) {
         chomp;
         if (/^[\da-f]{8}$/) {
@@ -745,9 +744,9 @@ sub Certificate_Info($$;$) {
     # openssl won't display both md5 and sha1 fingerprints in a single
     # command (unless it reads commands from stdin).
     #
-    if ($need_md5) {
+    if ($args->{need_md5}) {
         open my $Pipe2, '-|',
-             "openssl x509 -in '$cert_file' -inform $cert_form " .
+             "openssl x509 -in '$args->{filename}' -inform $args->{form} " .
              "-noout -md5 -fingerprint 2>/dev/null";
         while (<$Pipe2>) {
             if (/^md5.*=\s*(.*)$/i) {
@@ -761,7 +760,7 @@ sub Certificate_Info($$;$) {
                         sha1sum md5sum
                         startdate enddate))
     {
-        next if $key eq 'md5sum' and not $need_md5;
+        next if $key eq 'md5sum' and not $args->{need_md5};
         if (not defined $result->{$key}) {
             return new GX::Error "key $key is not defined";
         }
@@ -2080,7 +2079,8 @@ sub Split_Certificate($$) {
 
     FILENAME:
     foreach my $filename (@filenames) {
-        my $cert_info = GX::Certificate_Info $filename, 'PEM', 'nomd5';
+        my $cert_info = GX::Certificate_Info 'filename' => $filename,
+                                             'need_md5' => 0;
         if (GX::Error::Is_Error $cert_info) {
             return $cert_info;
         }
@@ -2205,7 +2205,8 @@ sub Verify_File(%) {
             $ok = 0;
             $result->{filename} = $output_file;
         }
-        my $cert_info = GX::Certificate_Info $signing_cert, 'PEM', 'nomd5';
+        my $cert_info = GX::Certificate_Info filename => $signing_cert,
+                                             need_md5 => 0;
         if (defined $cert_info->{subject}) {
             $result->{subject} = GX::Normalize_DN $cert_info->{subject};
         }
