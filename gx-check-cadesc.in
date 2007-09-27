@@ -1,6 +1,6 @@
 #!%PERL%
 
-# $Id: gx-check-cadesc.in,v 1.4 2007-05-27 20:33:50-07 kst Exp $
+# $Id: gx-check-cadesc.in,v 1.5 2007-09-26 17:21:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-cadesc.in,v $
 
 ########################################################################
@@ -155,8 +155,8 @@ foreach my $arg (@ARGV) {
         next ARG;
     }
     my $cert = GX::Certificate_Info
-                   $cached_cert->{filename},
-                   $desc->{CERTIFICATE_FORM};
+                   filename => $cached_cert->{filename},
+                   form     => $desc->{CERTIFICATE_FORM};
 
     if ($User_Opt->{debugging}) {
         print "Info from $cached_cert->{filename}:\n";
