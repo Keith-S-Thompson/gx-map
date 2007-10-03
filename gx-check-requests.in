@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.116 2007-09-21 19:22:35-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.117 2007-10-02 20:53:49-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -62,6 +62,7 @@ use lib "$Install_Dir/lib";
 use GX ();
 
 sub Usage(@);
+sub Process_Signed_Request($);
 sub Get_Request_Info($);
 sub Append_To_Log($@);
 sub Check_Admin_Accounts();
@@ -150,9 +151,17 @@ my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
 my %is_valid_operation = map { $_ => 1 } @valid_operations;
 
-opendir my $Dir, $new_request_dir or die "$new_request_dir: $!\n";
-my @files = sort readdir $Dir;
-closedir $Dir;
+
+#
+# TODO:
+# First, read the directory and call Process_Signed_Request
+# for each *.request.multi file.
+# Second, re-read the directory and process each *.request file.
+#
+
+opendir my $DIR, $new_request_dir or die "$new_request_dir: $!\n";
+my @files = sort readdir $DIR;
+closedir $DIR;
 
 foreach my $file (@files) {
     GX::Untaint $file;
@@ -437,6 +446,93 @@ if (@bad_request_files) {
 GX::Release_Lock $Program_Name;
 
 ########################################################################
+
+#
+# Given the name of a signed request file (name must match
+# *.request.multi), check the signature and generate an ordinary request
+# file (*.request) with some additional attributes.  Returns 1 if it
+# was able to generate a request file, or a GX::Error object otherwise.
+#
+sub Process_Signed_Request($) {
+    my ($signed_request_file) = @_;
+    my $request_file;
+    if ($signed_request_file =~ /^(.*\.request)\.multi$/) {
+        $request_file = $1;
+    }
+    else {
+        return new GX::Error "Bad file name: $signed_request_file";
+    }
+
+    my $temp_dir = GX::Make_Temp_Dir();
+    GX::Use_Commands 'openssl';
+
+    #
+    # Just a convenient abbreviation.
+    #
+    my $Certs_Dir = $GX::Config->{CERTIFICATES_DIR};
+
+    opendir my $CERTS_DIR, $Certs_Dir or die "$Certs_Dir: $!\n";
+    my @files_to_symlink = sort grep /\.r?0$/, readdir $CERTS_DIR;
+    closedir $CERTS_DIR;
+
+    foreach my $file (@files_to_symlink) {
+        if (not symlink "$Certs_Dir/$file", "$temp_dir/$file") {
+            GX::Delete_Temp_Dir $temp_dir;
+            return new GX::Error
+                   "symlink $Certs_Dir/$file, $temp_dir/${file}: $!";
+        }
+    }
+
+    my @subfiles = GX::Read_Multifile $signed_request_file, $temp_dir;
+    if (scalar @subfiles == 1 and GX::Error::Is_Error $subfiles[0]) {
+        if (not GX::Save_File
+                    filename   => $signed_request_file,
+                    source_dir => $temp_dir,
+                    target_dir => $bad_request_dir,
+                    timestamp  => GX::Get_mtime $signed_request_file)
+        {
+            push @rename_errors, "${signed_request_file}: $!\n";
+        }
+        GX::Delete_Temp_Dir $temp_dir;
+        return new GX::Error $subfiles[0]->Message;
+    }
+    if (scalar @subfiles < 2) {
+        GX::Delete_Temp_Dir $temp_dir;
+        return new GX::Error $subfiles[0]->Message;
+    }
+
+    #
+    # The name of the multifile must match "*.request.multi" (checked above).
+    # The name of the first subfile must match "*.request.signed".
+    # The multifile and subfile names must match up to the ".request".
+    #
+    my $signed_file = $subfiles[0]->{filename};
+    if ($signed_file ne "$request_file.signed") {
+        GX::Delete_Temp_Dir $temp_dir;
+        return new GX::Error("Bad subfile name: \"$signed_file\", " .
+                             "should be \"$request_file.signed\"");
+    }
+
+    my $result = GX::Verify_File input_file => $signed_file,
+                                 certs_dir  => $temp_dir;
+    if (defined $result->{filename}) {
+        my $ref = GX::Read_Records format   => 'single',
+                                   filename => $result->{filename};
+        $ref->{Verified} = $result->{verified} ? 'yes' : 'no';
+        if (defined $result->{subject}) {
+            $ref->{Signer_Subject} = $result->{subject};
+        }
+        GX::Write_Records format   => 'single',
+                          filename => $request_file,
+                          records  => [ $ref ];
+        return 1;
+    }
+    else {
+        return new GX::Error "Unable to verify $signed_file";
+    }
+} # Process_Signed_Request
+
+# ----------------------------------------------------------------------
 
 #
 # Given the name of a request file, returns a reference to the information
