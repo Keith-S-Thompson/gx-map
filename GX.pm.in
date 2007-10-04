@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.119 2007-09-26 17:21:34-07 kst Exp $
+# $Id: GX.pm.in,v 1.120 2007-10-03 19:09:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -95,7 +95,7 @@ use vars qw( $VERSION
 #
 # The layout of the following line is significant; see configure-gx-map.
 #
-$VERSION = '0.5.9.052';
+$VERSION = '0.5.9.053';
 
 #
 # $GX::INVALID is used by GX::Get_Args to flag missing arguments.
