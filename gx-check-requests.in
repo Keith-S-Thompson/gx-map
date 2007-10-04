@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.117 2007-10-02 20:53:49-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.118 2007-10-03 19:09:19-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -167,6 +167,21 @@ foreach my $file (@files) {
     GX::Untaint $file;
 }
 
+#
+# Process signed request files.
+# For each signed request, delete the signed request from the list of
+# files and add the new generated request file.
+#
+my %is_file = map { $_ => 1 } @files;
+foreach my $file (grep /\.request\.multi$/, @files) {
+    my $result = Process_Signed_Request $file;
+    if (not GX::Error::Is_Error $result) {
+        delete $is_file{$file};
+        $is_file{$result} = 1;
+    }
+}
+@files = sort keys %is_file;
+
 my @good_requests = ();
 my @good_request_files = ();
 my @bad_requests = ();
@@ -174,9 +189,7 @@ my @bad_request_files = ();
 my %timestamp = ();
 
 foreach my $file (@files) {
-    next if $file eq '.' or
-            $file eq '..' or
-            $file eq '.update';
+    next if $file eq '.' or $file eq '..';
     if ($file =~ /\.request\.tmp$/) {
         #
         # gx-request creates a temporary *.request.tmp file and
@@ -450,8 +463,10 @@ GX::Release_Lock $Program_Name;
 #
 # Given the name of a signed request file (name must match
 # *.request.multi), check the signature and generate an ordinary request
-# file (*.request) with some additional attributes.  Returns 1 if it
-# was able to generate a request file, or a GX::Error object otherwise.
+# file (*.request) with some additional attributes.  Returns the name
+# of the generated request file or a GX::Error object otherwise.
+# Note that a request file may be generated even if the signature
+# is invalid.
 #
 sub Process_Signed_Request($) {
     my ($signed_request_file) = @_;
@@ -525,7 +540,7 @@ sub Process_Signed_Request($) {
         GX::Write_Records format   => 'single',
                           filename => $request_file,
                           records  => [ $ref ];
-        return 1;
+        return $request_file;
     }
     else {
         return new GX::Error "Unable to verify $signed_file";
