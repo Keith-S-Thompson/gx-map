@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.120 2007-10-03 19:09:33-07 kst Exp $
+# $Id: GX.pm.in,v 1.121 2007-10-04 17:33:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -2150,7 +2150,6 @@ sub Sign_File(%) {
 #     filename (string, name of output file)
 #     verified (boolean)
 #     subject  (string, the subject name of the signing certificate)
-# TODO: ...
 #     
 sub Verify_File(%) {
     my $args = GX::Get_Args @_, input_file  => $GX::INVALID,
@@ -2163,6 +2162,7 @@ sub Verify_File(%) {
     closedir $CERTS_DIR;
 
     foreach my $file (@files_to_symlink) {
+        GX::Untaint $file;
         symlink "$args->{certs_dir}/$file", "$temp_dir/$file"
             or die "symlink $args->{certs_dir}/$file, $temp_dir/${file}: $!\n";
     }
