@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.118 2007-10-03 19:09:19-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.119 2007-10-04 17:34:48-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -123,20 +123,20 @@ GX::Untaint $Data_Dir;
 if ($Data_Dir !~ /^\//) {
     die "Data directory $Data_Dir is not an absolute pathname\n";
 }
-my $requests_log     = "$Data_Dir/requests.log";
-my $errors_log       = "$Data_Dir/errors.log";
-my $new_request_dir  = "$Data_Dir/new-requests";
-my $good_request_dir = "$Data_Dir/good-requests";
-my $bad_request_dir  = "$Data_Dir/bad-requests";
+my $requests_log      = "$Data_Dir/requests.log";
+my $errors_log        = "$Data_Dir/errors.log";
+my $new_requests_dir  = "$Data_Dir/new-requests";
+my $good_requests_dir = "$Data_Dir/good-requests";
+my $bad_requests_dir  = "$Data_Dir/bad-requests";
 
-my $dir_error = GX::Dir_Error $new_request_dir;
+my $dir_error = GX::Dir_Error $new_requests_dir;
 die "$dir_error\n" if defined $dir_error;
-die "No directory $new_request_dir\n" if not -d $new_request_dir;
-if (not -d $good_request_dir) {
-    mkdir $good_request_dir, 0700 or die "mkdir $good_request_dir: $!\n";
+die "No directory $new_requests_dir\n" if not -d $new_requests_dir;
+if (not -d $good_requests_dir) {
+    mkdir $good_requests_dir, 0700 or die "mkdir $good_requests_dir: $!\n";
 }
-if (not -d $bad_request_dir) {
-    mkdir $bad_request_dir, 0700 or die "mkdir $bad_request_dir: $!\n";
+if (not -d $bad_requests_dir) {
+    mkdir $bad_requests_dir, 0700 or die "mkdir $bad_requests_dir: $!\n";
 }
 
 GX::Get_Lock $Program_Name;
@@ -151,15 +151,7 @@ my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
 my %is_valid_operation = map { $_ => 1 } @valid_operations;
 
-
-#
-# TODO:
-# First, read the directory and call Process_Signed_Request
-# for each *.request.multi file.
-# Second, re-read the directory and process each *.request file.
-#
-
-opendir my $DIR, $new_request_dir or die "$new_request_dir: $!\n";
+opendir my $DIR, $new_requests_dir or die "$new_requests_dir: $!\n";
 my @files = sort readdir $DIR;
 closedir $DIR;
 
@@ -174,7 +166,7 @@ foreach my $file (@files) {
 #
 my %is_file = map { $_ => 1 } @files;
 foreach my $file (grep /\.request\.multi$/, @files) {
-    my $result = Process_Signed_Request $file;
+    my $result = Process_Signed_Request "$new_requests_dir/$file";
     if (not GX::Error::Is_Error $result) {
         delete $is_file{$file};
         $is_file{$result} = 1;
@@ -209,7 +201,7 @@ foreach my $file (@files) {
         next if $mtime > $Now - 60 and
                 $mtime < $Now + 60;
     }
-    my $request = Get_Request_Info "$new_request_dir/$file";
+    my $request = Get_Request_Info "$new_requests_dir/$file";
     if (defined $request->{timestamp} and
         $request->{timestamp} =~ /^\d+/)
     {
@@ -395,15 +387,15 @@ if (defined $User_Opt->{copy}) {
 my @rename_errors = ();
 foreach my $file (@good_request_files) {
     GX::Save_File filename   => $file,
-                  source_dir => $new_request_dir,
-                  target_dir => $good_request_dir,
+                  source_dir => $new_requests_dir,
+                  target_dir => $good_requests_dir,
                   timestamp  => $timestamp{$file}
         or push @rename_errors, "${file}: $!\n";
 }
 foreach my $file (@bad_request_files) {
     GX::Save_File filename   => $file,
-                  source_dir => $new_request_dir,
-                  target_dir => $bad_request_dir,
+                  source_dir => $new_requests_dir,
+                  target_dir => $bad_requests_dir,
                   timestamp  => $timestamp{$file}
         or push @rename_errors, "${file}: $!\n";
 }
@@ -429,7 +421,7 @@ if (@bad_request_files) {
         $body .= "$count bad request files:\n";
     }
     foreach my $file (@bad_request_files) {
-        $body .= "$bad_request_dir/$file\n";
+        $body .= "$bad_requests_dir/$file\n";
     }
     $body .= "\n";
 
@@ -491,6 +483,7 @@ sub Process_Signed_Request($) {
     closedir $CERTS_DIR;
 
     foreach my $file (@files_to_symlink) {
+        GX::Untaint $file;
         if (not symlink "$Certs_Dir/$file", "$temp_dir/$file") {
             GX::Delete_Temp_Dir $temp_dir;
             return new GX::Error
@@ -503,7 +496,7 @@ sub Process_Signed_Request($) {
         if (not GX::Save_File
                     filename   => $signed_request_file,
                     source_dir => $temp_dir,
-                    target_dir => $bad_request_dir,
+                    target_dir => $bad_requests_dir,
                     timestamp  => GX::Get_mtime $signed_request_file)
         {
             push @rename_errors, "${signed_request_file}: $!\n";
@@ -521,13 +514,15 @@ sub Process_Signed_Request($) {
     # The name of the first subfile must match "*.request.signed".
     # The multifile and subfile names must match up to the ".request".
     #
-    my $signed_file = $subfiles[0]->{filename};
-    if ($signed_file ne "$request_file.signed") {
+    my $signed_file_basename = $subfiles[0]->{name};
+    my $request_file_basename = File::Basename::basename $request_file;
+    if ($signed_file_basename ne "$request_file_basename.signed") {
         GX::Delete_Temp_Dir $temp_dir;
-        return new GX::Error("Bad subfile name: \"$signed_file\", " .
-                             "should be \"$request_file.signed\"");
+        return new GX::Error("Bad subfile name: \"$signed_file_basename\", " .
+                             "should be \"$request_file_basename.signed\"");
     }
 
+    my $signed_file = $subfiles[0]->{filename};
     my $result = GX::Verify_File input_file => $signed_file,
                                  certs_dir  => $temp_dir;
     if (defined $result->{filename}) {
