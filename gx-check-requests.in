@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.119 2007-10-04 17:34:48-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.120 2007-10-04 17:47:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -155,6 +155,8 @@ opendir my $DIR, $new_requests_dir or die "$new_requests_dir: $!\n";
 my @files = sort readdir $DIR;
 closedir $DIR;
 
+Debug "\@files = ( @files )\n";
+
 foreach my $file (@files) {
     GX::Untaint $file;
 }
@@ -168,11 +170,16 @@ my %is_file = map { $_ => 1 } @files;
 foreach my $file (grep /\.request\.multi$/, @files) {
     my $result = Process_Signed_Request "$new_requests_dir/$file";
     if (not GX::Error::Is_Error $result) {
+        Debug "After successful Process_Signed_Request\n";
+        Debug "    Removing $file\n";
+        Debug "    Adding $result\n";
         delete $is_file{$file};
         $is_file{$result} = 1;
     }
 }
 @files = sort keys %is_file;
+
+Debug "\@files = ( @files )\n";
 
 my @good_requests = ();
 my @good_request_files = ();
@@ -462,11 +469,13 @@ GX::Release_Lock $Program_Name;
 #
 sub Process_Signed_Request($) {
     my ($signed_request_file) = @_;
+    Debug "Entering Process_Signed_Request(\"$signed_request_file\")\n";
     my $request_file;
     if ($signed_request_file =~ /^(.*\.request)\.multi$/) {
         $request_file = $1;
     }
     else {
+        Debug "Process_Signed_Request returning bad file name\n";
         return new GX::Error "Bad file name: $signed_request_file";
     }
 
@@ -486,6 +495,7 @@ sub Process_Signed_Request($) {
         GX::Untaint $file;
         if (not symlink "$Certs_Dir/$file", "$temp_dir/$file") {
             GX::Delete_Temp_Dir $temp_dir;
+            Debug "Process_Signed_Request returning symlink error\n";
             return new GX::Error
                    "symlink $Certs_Dir/$file, $temp_dir/${file}: $!";
         }
@@ -502,10 +512,12 @@ sub Process_Signed_Request($) {
             push @rename_errors, "${signed_request_file}: $!\n";
         }
         GX::Delete_Temp_Dir $temp_dir;
+        Debug "Process_Signed_Request returning Read_Multifile error\n";
         return new GX::Error $subfiles[0]->Message;
     }
     if (scalar @subfiles < 2) {
         GX::Delete_Temp_Dir $temp_dir;
+        Debug "Process_Signed_Request returning multifile error\n";
         return new GX::Error $subfiles[0]->Message;
     }
 
@@ -518,6 +530,7 @@ sub Process_Signed_Request($) {
     my $request_file_basename = File::Basename::basename $request_file;
     if ($signed_file_basename ne "$request_file_basename.signed") {
         GX::Delete_Temp_Dir $temp_dir;
+        Debug "Process_Signed_Request returning bad subfile name\n";
         return new GX::Error("Bad subfile name: \"$signed_file_basename\", " .
                              "should be \"$request_file_basename.signed\"");
     }
@@ -535,9 +548,11 @@ sub Process_Signed_Request($) {
         GX::Write_Records format   => 'single',
                           filename => $request_file,
                           records  => [ $ref ];
+        Debug "Process_Signed_Request returning \"$request_file\"\n";
         return $request_file;
     }
     else {
+        Debug "Process_Signed_Request returning verification failure\n";
         return new GX::Error "Unable to verify $signed_file";
     }
 } # Process_Signed_Request
