@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.122 2007-10-04 17:35:06-07 kst Exp $
+# $Id: GX.pm.in,v 1.123 2007-10-05 19:22:54-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -2142,22 +2142,30 @@ sub Sign_File(%) {
 
 #
 # Arguments are passed by name:
-#     input_file   Name of file to verify
+#     input_file   Name of file to verify (should be a multifile).
 #     certs_dir    Certificates directory.
+#     output_file  Name of output file.
 #
-# Verified file is written to <file>.verified or <file>.unverified
-# Result is a hash reference with the following fields:
-#     filename (string, name of output file)
+# Result is either a hash reference with the following fields:
 #     verified (boolean)
 #     subject  (string, the subject name of the signing certificate)
+#     filename (same as output_file argument, set only if it exists)
+#     message  (optional error message)
+# or a GX::Error object.  Note: A verification failure is not considered
+# an error; the output file is still created, but should not be trusted.
+#
+# May die() on some serious unexpected errors, such as a failure to
+# create a symlink in the temporary directory.
 #     
 sub Verify_File(%) {
     my $args = GX::Get_Args @_, input_file  => $GX::INVALID,
-                                certs_dir   => $GX::INVALID;
+                                certs_dir   => $GX::INVALID,
+                                output_file => $GX::INVALID;
     my $result = {};
     my $temp_dir = GX::Make_Temp_Dir;
 
-    opendir my $CERTS_DIR, $args->{certs_dir} or die "$args->{certs_dir}: $!\n";
+    opendir my $CERTS_DIR, $args->{certs_dir}
+        or die "$args->{certs_dir}: $!\n";
     my @files_to_symlink = sort grep /\.r?0$/, readdir $CERTS_DIR;
     closedir $CERTS_DIR;
 
@@ -2169,55 +2177,77 @@ sub Verify_File(%) {
 
     my @multi = GX::Read_Multifile $args->{input_file}, $temp_dir;
     if (scalar @multi < 2) {
+        GX::Delete_Temp_Dir $temp_dir;
         return new GX::Error
                    "Need at least two subfiles in $args->{input_file}";
     }
     my $signed_file   = $multi[0]->{filename};
     my $signing_cert  = $multi[1]->{filename};
-    my $basename      = File::Basename::basename $signed_file;
-    my $output_file   = "$basename.unverified";
-    my $verified_file = "$basename.verified";
 
     my @command = ( qw(openssl smime -verify -text),
-                    '-in', $signed_file,
-                    '-out', $output_file,
-                    '-CApath', $temp_dir,
+                    '-in',       $signed_file,
+                    '-out',      $args->{output_file},
+                    '-CApath',   $temp_dir,
                     '-certfile', $signing_cert );
     #
-    # The opensl command supports the "-ignore-critical" option
+    # The "openssl smime" command supports the "-ignore_critical" option
     # starting at version 0.9.8.
     #
     if (OpenSSL_Version >= 0x00908000) {
         push @command, '-ignore_critical';
     }
     $ENV{OPENSSL_ALLOW_PROXY_CERTS} = 1;
+    #
+    # In newer versions of openssl, setting $OPENSSL_ALLOW_PROXY_CERTS
+    # tells it to accept proxy certificates.  Older versions don't
+    # recognize the environment variable, but quietly accept proxy
+    # certificates anyway.
+    #
+    # Passing the "-ignore-critical" option (if and only if it's
+    # supported) and setting $OPENSSL_ALLOW_PROXY_CERTS allows proxies
+    # to be supported in the maximum number of versions of OpenSSL, but
+    # there are still some potential problems.  For best results, use the
+    # newest possible version of OpenSSL (newer than the one currently
+    # provided with Globus).  In some cases, it may be necessary to use
+    # an old-style proxy.
+    #
     my $openssl_result = Execute '-quiet', @command;
+    if (-e $args->{output_file}) {
+        $result->{filename} = $args->{output_file};
+    }
     if (GX::Error::Is_Error $openssl_result) {
+        #
+        # Verification failed.
+        #
         $result->{verified} = 0;
-        $result->{filename} = $output_file;
+        $result->{message} = $openssl_result->Message;
+    }
+    elsif (not defined $result->{filename}) {
+        #
+        # Verification appeared to succeed, but the output file
+        # isn't there.  (This shouldn't happen.)
+        #
+        $result->{verified} = 0;
+        $result->{message} = "Missing output file $args->{output_file}";
     }
     else {
-        my $ok = 1;
-        if (rename $output_file, $verified_file) {
-            $result->{filename} = $verified_file;
-        }
-        else {
-            $ok = 0;
-            $result->{filename} = $output_file;
-        }
+        #
+        # Look good.
+        #
         my $cert_info = GX::Certificate_Info filename => $signing_cert,
                                              need_md5 => 0;
         if (defined $cert_info->{subject}) {
             $result->{subject} = GX::Normalize_DN $cert_info->{subject};
+            $result->{verified} = 1;
         }
         else {
-            $ok = 0;
+            $result->{verified} = 0;
+            $result->{message}
+                = "Can't determine signing certificate subject name";
         }
-        $result->{verified} = $ok;
     }
 
     GX::Delete_Temp_Dir $temp_dir;
-
     return $result;
 } # Verify_File
 
