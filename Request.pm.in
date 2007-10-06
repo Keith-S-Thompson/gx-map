@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.7 2007-09-26 17:21:19-07 kst Exp $
+# $Id: Request.pm.in,v 1.8 2007-10-05 20:28:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -317,12 +317,6 @@ sub GX_Request(@) {
         }
     }
 
-    if ($Options->{operation} eq 'add' and
-        not defined $Options->{signature})
-    {
-        $Options->{signature} = 'none';
-    }
-
     if (defined $Options->{dn}) {
         my @errors = ();
         my @args = ();
@@ -471,8 +465,6 @@ sub GX_Request(@) {
     $request->{user_uid} = $requested_uid       if defined $requested_uid;
     $request->{email}    = $Options->{email}    if defined $Options->{email};
     $request->{comment}  = $Options->{comment}  if defined $Options->{comment};
-    $request->{signature} = $Options->{signature}
-        if defined $Options->{signature};
 
     if ($Options->{local}) {
         $request->{scope} = 'local';
