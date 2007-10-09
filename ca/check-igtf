@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: check-igtf,v 1.13 2007-08-06 16:11:18-07 kst Exp $
+# $Id: check-igtf,v 1.14 2007-10-09 15:56:36-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/check-igtf,v $
 
 #
@@ -28,7 +28,7 @@ my %hash_requested = ();
 my $all_requested = 0;
 
 my $ca_dir = "$ENV{HOME}/cvs-kst/tools/gx-map/ca";
-my $default_igtf_subdir = '1.16';
+my $default_igtf_subdir = '1.17';
 my $igtf_subdir = $default_igtf_subdir;
 
 foreach my $arg (@ARGV) {
@@ -48,6 +48,7 @@ foreach my $arg (@ARGV) {
 
 my $igtf_version = $igtf_subdir;
 $igtf_version =~ s/-pre$//;
+$igtf_version =~ s/-1$//;
 my $igtf_dir = "$ca_dir/.igtf-$igtf_subdir/igtf-policy-installation-bundle-$igtf_version/src";
 
 if (not -d $igtf_dir) {
