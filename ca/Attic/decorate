@@ -1,12 +1,13 @@
 #!/usr/bin/perl
 
-# $Id: decorate,v 1.2 2007-10-09 16:49:59-07 kst Exp $
+# $Id: decorate,v 1.3 2007-10-09 16:54:56-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/decorate,v $
 
 use strict;
 use warnings;
 
 my $igtf_version = '1.17';
+my $igtf_src_dir = ".igtf-$igtf_version/igtf-policy-installation-bundle-$igtf_version/src";
 
 my $hash = undef;
 my $status = undef;
@@ -18,18 +19,22 @@ while (<>) {
     if (/^HASH\s+([\da-f]{8})\b/) {
         $hash = $1;
     }
-    if (/^## status\s+=\s+(\w+)/) {
-        $status = $1;
-    }
+#   if (/^## status\s+=\s+(\w+)/) {
+#       $status = $1;
+#   }
 }
 
 print $PIPE '=' x 72, "\n";
-# print "hash = $hash\n";
-# print "status = $status\n";
-
 my $command = "cert-info -ca $hash";
-if (defined $status) {
-    $command .= " .igtf-$igtf_version/igtf-policy-installation-bundle-$igtf_version/src/$status/$hash.0";
+
+if (opendir my $DIR, $igtf_src_dir) {
+    my @subdirs = sort grep { $_ ne '.' and $_ ne '..' } readdir $DIR;
+    foreach my $subdir (@subdirs) {
+        if (-e "$igtf_src_dir/$subdir/$hash.0") {
+            $command .= " $igtf_src_dir/$subdir/$hash.0";
+        }
+    }
+    closedir $DIR;
 }
 
 print $PIPE `$command`;
