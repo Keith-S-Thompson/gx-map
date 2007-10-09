@@ -1,10 +1,12 @@
 #!/usr/bin/perl
 
-# $Id: decorate,v 1.1 2007-10-09 15:56:01-07 kst Exp $
+# $Id: decorate,v 1.2 2007-10-09 16:49:59-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/decorate,v $
 
 use strict;
 use warnings;
+
+my $igtf_version = '1.17';
 
 my $hash = undef;
 my $status = undef;
@@ -25,6 +27,11 @@ print $PIPE '=' x 72, "\n";
 # print "hash = $hash\n";
 # print "status = $status\n";
 
-print $PIPE `cert-info -ca $hash .igtf-1.16/igtf-policy-installation-bundle-1.16/src/$status/$hash.0`;
+my $command = "cert-info -ca $hash";
+if (defined $status) {
+    $command .= " .igtf-$igtf_version/igtf-policy-installation-bundle-$igtf_version/src/$status/$hash.0";
+}
+
+print $PIPE `$command`;
 
 close $PIPE;
