@@ -1,8 +1,8 @@
-# $Id: 47183fda.kisti-root.cadesc,v 1.13 2007-04-13 19:20:30-07 kst Exp $
+# $Id: 47183fda.kisti-root.cadesc,v 1.14 2007-10-09 18:33:14-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
 
 CA_NAME             KISTI Grid Root CA
-HOMEPAGE            https://ca.gridcenter.or.kr/
+HOMEPAGE            http://ca.gridcenter.or.kr/
 CONTACT             jhkwak@kisti.re.kr
 HASH                47183fda
 SIGNED_BY           self
@@ -10,10 +10,11 @@ SUBJECT             /C=KR/O=KISTI/CN=KISTI GRID ROOT CA
 MAY_SIGN            /C=KR/O=KISTI/*
 CERTIFICATE_MD5     9C:E7:72:DF:AE:D8:73:4E:2B:60:D1:CF:27:5A:2A:A5
 CERTIFICATE_SHA1    70:F3:BB:F0:1D:B8:50:7E:3A:6F:D8:DD:13:85:60:D4:EA:52:50:FD
-CERTIFICATE_URL     https://ca.gridcenter.or.kr/certificates/47183fda.0
-SIGNING_POLICY_URL  https://ca.gridcenter.or.kr/certificates/47183fda.signing_policy
-CRL_URL             https://ca.gridcenter.or.kr/CRL/47183fda.crl
+CERTIFICATE_URL     http://ca.gridcenter.or.kr/certs/certificates/47183fda.0
+SIGNING_POLICY_URL  http://ca.gridcenter.or.kr/certs/certificates/47183fda.signing_policy
+CRL_URL             http://ca.gridcenter.or.kr/CRL/47183fda.crl
 CERT_BEGINS         Tue 2004-06-01 02:25:41 UTC
 CERT_EXPIRES        Sun 2009-05-31 02:25:41 UTC
 
-# MD5 and SHA1 fingerprints from 47183fda.0 downloaded 2005-03-29
+# MD5 and SHA1 fingerprints from 47183fda.0 downloaded Tue 2005-03-29
+# re-verified Tue 2007-10-09
