@@ -1,9 +1,9 @@
-# $Id: f93666d2.kisti-ca2.cadesc,v 1.9 2007-04-13 19:20:40-07 kst Exp $
+# $Id: f93666d2.kisti-ca2.cadesc,v 1.10 2007-10-09 19:05:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f93666d2.kisti-ca2.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA2
-HOMEPAGE            ?
-CONTACT             ?
+HOMEPAGE            http://ca.gridcenter.or.kr/
+CONTACT             ca@gridcenter.or.kr
 HASH                f93666d2
 SIGNED_BY           self
 SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA2
@@ -11,21 +11,22 @@ MAY_SIGN            /C=KR/O=Globus/*
 # MAY_SIGN            /O=Grid/O=Globus/*
 CERTIFICATE_MD5     7E:1E:BC:FA:AB:9B:57:64:1C:32:99:C9:AC:86:09:0A
 CERTIFICATE_SHA1    E1:48:8B:10:83:2C:61:DA:B6:D8:89:9D:88:BF:85:57:09:15:ED:2B
-CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/f93666d2.0
-SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/f93666d2.signing_policy
+CERTIFICATE_URL     http://ca.gridcenter.or.kr/certs/certificates/f93666d2.0
+SIGNING_POLICY_URL  http://ca.gridcenter.or.kr/certs/certificates/f93666d2.signing_policy
 CRL_URL             ?
+# ALLOW_MISSING_CRL   yes
 CERT_BEGINS         Mon 2003-03-17 00:39:41 UTC
 CERT_EXPIRES        Thu 2013-03-14 00:39:41 UTC
 DISABLE             yes
 
-# There appears to be no CRL.
+# There is no CRL.  If you want to recognize this CA anyway, then:
+#     Uncomment the "ALLOW_MISSING_CRL" line above.
+#     Comment out the "DISABLE" line above.
+#     Move this cadesc file up one level to the "ca-config" directory.
 
-# The f93666d2.signing_policy says the CA may also sign certificates
+# The f93666d2.signing_policy file says the CA may also sign certificates
 # matching "/O=Grid/O=Globus/*", which overlaps the namespace for the
 # old Globus CA.  I have not included that here.
 
-# MD5 and SHA1 fingerprints from f93666d2.0 downloaded Tue 2005-03-29
-
-# As of Tue 2007-01-30, I am unable to connect to
-# <http://gridca.gridcenter.or.kr/>.  I don't know the current status
-# of this CA.  I am marking it as disabled until this is resolved.
+# MD5 and SHA1 fingerprints from f93666d2.0 downloaded Tue 2005-03-29,
+# re-verified Tue 2007-10-09
