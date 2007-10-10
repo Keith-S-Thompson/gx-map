@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: decorate,v 1.4 2007-10-09 20:38:46-07 kst Exp $
+# $Id: decorate,v 1.5 2007-10-10 03:32:21-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/decorate,v $
 
 use strict;
@@ -10,7 +10,8 @@ my $igtf_version = '1.17';
 my $igtf_src_dir = ".igtf-$igtf_version/igtf-policy-installation-bundle-$igtf_version/src";
 
 my $hash = undef;
-my $status = undef;
+my $certificate_url = undef;
+my $crl_url = undef;
 
 open my $PIPE, '|-', 'checksums';
 
@@ -19,9 +20,12 @@ while (<>) {
     if (/^HASH\s+([\da-f]{8})\b/) {
         $hash = $1;
     }
-#   if (/^## status\s+=\s+(\w+)/) {
-#       $status = $1;
-#   }
+    elsif (/^CERTIFICATE_URL\s+(.*)\s*$/) {
+        $certificate_url = $1;
+    }
+    elsif (/^CRL_URL\s+(.*)\s*$/) {
+        $crl_url = $1;
+    }
 }
 
 print $PIPE '=' x 72, "\n";
@@ -32,7 +36,9 @@ if (not defined $hash) {
     exit;
 }
 
-my $command = "cert-info -ca $hash";
+my $command = "cert-info";
+$command .= " $certificate_url" if defined $certificate_url;
+$command .= " $crl_url" if defined $crl_url;
 
 my $igtf_info_file = undef;
 
