@@ -1,9 +1,9 @@
-# $Id: 82da68f0.kisti-old.cadesc,v 1.1 2007-08-08 18:16:06-07 kst Exp $
+# $Id: 82da68f0.kisti-old.cadesc,v 1.2 2007-10-09 19:05:02-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/82da68f0.kisti-old.cadesc,v $
 
 CA_NAME             KISTI Supercomputing Center CA (expired)
-HOMEPAGE            ?
-CONTACT             ?
+HOMEPAGE            http://ca.gridcenter.or.kr/
+CONTACT             ca@gridcenter.or.kr
 HASH                82da68f0
 SIGNED_BY           self
 SUBJECT             /C=KR/O=Globus/CN=KISTI Supercomputing Center CA
@@ -11,16 +11,17 @@ MAY_SIGN            /C=KR/O=Globus/*
 # MAY_SIGN            /O=Grid/O=Globus/*
 CERTIFICATE_MD5     A8:08:3D:C8:7F:E2:8C:F0:6E:80:B2:89:48:62:DA:E1
 CERTIFICATE_SHA1    44:D6:2C:8E:6D:50:72:EC:58:7F:60:3B:A1:74:03:A2:F3:1A:80:A4
-CERTIFICATE_URL     http://gridca.gridcenter.or.kr/certificates/82da68f0.0
-SIGNING_POLICY_URL  http://gridca.gridcenter.or.kr/certificates/82da68f0.signing_policy
+CERTIFICATE_URL     http://ca.gridcenter.or.kr/certs/certificates/82da68f0.0
+SIGNING_POLICY_URL  http://ca.gridcenter.or.kr/certs/certificates/82da68f0.signing_policy
 CRL_URL             ?
 CERT_BEGINS         Wed 2002-03-27 11:52:16 UTC
 CERT_EXPIRES        Thu 2003-03-27 11:52:16 UTC
 DISABLE             yes
 
 # The certificate expired 2003-03-27
-# It appears to have been superseded by the KISTI Grid Root CA (hash 47183fda)
-# There appears to be no CRL.
+# It has been superseded by the KISTI Grid Root CA (hash 47183fda)
+# and the KISTI GRID CA v2.0 (hash 722e5071).
+# There is no CRL.
 # The 82da68f0.signing_policy says the CA may sign certificates matching
 # "/O=Grid/O=Globus/*", which overlaps the namespace for the old Globus CA;
 # I have not included that here.
