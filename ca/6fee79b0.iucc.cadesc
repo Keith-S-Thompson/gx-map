@@ -1,4 +1,4 @@
-# $Id: 6fee79b0.iucc.cadesc,v 1.12 2007-08-12 22:08:03-07 kst Exp $
+# $Id: 6fee79b0.iucc.cadesc,v 1.13 2007-10-09 20:38:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/6fee79b0.iucc.cadesc,v $
 
 CA_NAME             IUCC CA
@@ -7,7 +7,7 @@ CONTACT             ca@mail.iucc.ac.il
 HASH                6fee79b0
 SIGNED_BY           self
 SUBJECT             /C=IL/O=IUCC/CN=IUCC/emailAddress=ca@mail.iucc.ac.il
-MAY_SIGN            /O=IUCC/C=IL/*
+MAY_SIGN            /C=IL/O=IUCC/*
 CERTIFICATE_MD5     F7:37:49:67:18:C5:BD:C4:00:1F:FF:9E:7E:10:AA:3B
 CERTIFICATE_SHA1    0E:91:CA:65:47:26:1F:40:88:E2:8C:AA:83:44:0A:D3:57:43:D6:38
 CERTIFICATE_URL     http://certificate.iucc.ac.il/ca/cacert.pem
@@ -16,24 +16,26 @@ CRL_URL             http://certificate.iucc.ac.il/ca/cacrl.pem
 CERT_BEGINS         Wed 2004-06-23 07:05:41 UTC
 CERT_EXPIRES        Mon 2009-06-22 07:05:41 UTC
 
-# Warning: The distributed 6fee79b0.signing_policy file specifies 
+# Warning: The distributed 6fee79b0.signing_policy file specifies
 # "UICC" rather than "globus" on the pos_rights and cond_subjects
-# lines.
+# lines, and the subject name "/O=IUCC/CN=IUCC/C=IL" differs from the
+# certificate's subject name.  The MAY_SIGN attribute here is derived
+# from the 6fee79b0.signing_policy file in the IGTF 1.17 distribution.
 
 # MD5 and SHA1 fingerprints from cacert.pem (6fee79b0.0) downloaded 2005-03-29
-# Verified against IGTF 1.16 release,
-# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+# Verified against IGTF 1.17 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.17/accredited/igtf-policy-installation-bundle-1.17.tar.gz>
 
-# The following is a copy of 6fee79b0.info from the IGTF 1.16 release:
+# The following is a copy of 6fee79b0.info from the IGTF 1.17 release:
 ## #
-## # @(#)$Id: 6fee79b0.iucc.cadesc,v 1.12 2007-08-12 22:08:03-07 kst Exp $
+## # @(#)$Id: 6fee79b0.iucc.cadesc,v 1.13 2007-10-09 20:38:46-07 kst Exp $
 ## # Information for CA IUCC
 ## #   obtained from 6fee79b0 in IUCC/
 ## alias = IUCC
 ## url = http://certificate.iucc.ac.il/
-## email = halina@post.tau.ac.il
+## email = erez.etzion@cern.ch
 ## ca_url = http://certificate.iucc.ac.il/ca/cacert.pem
 ## crl_url = http://certificate.iucc.ac.il/ca/cacrl.pem
 ## status = accredited:classic
-## version = 1.16
+## version = 1.17
 ## sha1fp.0 = 0E:91:CA:65:47:26:1F:40:88:E2:8C:AA:83:44:0A:D3:57:43:D6:38
