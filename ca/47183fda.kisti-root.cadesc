@@ -1,9 +1,9 @@
-# $Id: 47183fda.kisti-root.cadesc,v 1.14 2007-10-09 18:33:14-07 kst Exp $
+# $Id: 47183fda.kisti-root.cadesc,v 1.15 2007-10-09 19:05:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47183fda.kisti-root.cadesc,v $
 
 CA_NAME             KISTI Grid Root CA
 HOMEPAGE            http://ca.gridcenter.or.kr/
-CONTACT             jhkwak@kisti.re.kr
+CONTACT             ca@gridcenter.or.kr
 HASH                47183fda
 SIGNED_BY           self
 SUBJECT             /C=KR/O=KISTI/CN=KISTI GRID ROOT CA
