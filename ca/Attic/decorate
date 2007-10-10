@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: decorate,v 1.3 2007-10-09 16:54:56-07 kst Exp $
+# $Id: decorate,v 1.4 2007-10-09 20:38:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/decorate,v $
 
 use strict;
@@ -25,7 +25,16 @@ while (<>) {
 }
 
 print $PIPE '=' x 72, "\n";
+
+if (not defined $hash) {
+    print $PIPE ">>> No hash found\n";
+    close $PIPE;
+    exit;
+}
+
 my $command = "cert-info -ca $hash";
+
+my $igtf_info_file = undef;
 
 if (opendir my $DIR, $igtf_src_dir) {
     my @subdirs = sort grep { $_ ne '.' and $_ ne '..' } readdir $DIR;
@@ -33,10 +42,22 @@ if (opendir my $DIR, $igtf_src_dir) {
         if (-e "$igtf_src_dir/$subdir/$hash.0") {
             $command .= " $igtf_src_dir/$subdir/$hash.0";
         }
+        if (-e "$igtf_src_dir/$subdir/$hash.info") {
+            $igtf_info_file = "$igtf_src_dir/$subdir/$hash.info";
+        }
     }
     closedir $DIR;
 }
 
 print $PIPE `$command`;
+
+if (defined $igtf_info_file) {
+    print $PIPE "# The following is a copy of $hash.info from the IGTF $igtf_version release:\n";
+    open my $INFO, '<', $igtf_info_file;
+    while (<$INFO>) {
+        print $PIPE "## $_";
+    }
+    close $INFO;
+}
 
 close $PIPE;
