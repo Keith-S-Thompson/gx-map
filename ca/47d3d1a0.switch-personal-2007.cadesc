@@ -1,4 +1,4 @@
-# $Id: 47d3d1a0.switch-personal-2007.cadesc,v 1.3 2007-08-12 22:08:02-07 kst Exp $
+# $Id: 47d3d1a0.switch-personal-2007.cadesc,v 1.4 2007-10-09 20:38:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/47d3d1a0.switch-personal-2007.cadesc,v $
 
 CA_NAME             SWITCH Personal 2007
@@ -11,6 +11,7 @@ MAY_SIGN            /C=CH/O=ETH Swiss Federal Institute of Technology Zurich/*
 MAY_SIGN            /C=CH/O=ETH Zuerich/*
 MAY_SIGN            /C=CH/O=Ecole polytechnique federale de Lausanne (EPFL)/*
 MAY_SIGN            /C=CH/O=Fachhochschule Nordwestschweiz/*
+MAY_SIGN            /C=CH/O=Haute Ecole Specialisee de Suisse occidentale (HES-SO)/*
 MAY_SIGN            /C=CH/O=Paul-Scherrer-Institut (PSI)/*
 MAY_SIGN            /C=CH/O=Universita della Svizzera Italiana/*
 MAY_SIGN            /C=CH/O=Universitaet Basel/*
@@ -25,10 +26,8 @@ MAY_SIGN            /C=CH/O=Universite de Neuchatel/*
 MAY_SIGN            /C=CH/O=Switch - Teleinformatikdienste fuer Lehre und Forschung/*
 MAY_SIGN            /C=CH/O=Berner Fachhochschule - Haute ecole specialisee bernoise/*
 MAY_SIGN            /C=CH/O=FHS St. Gallen Hochschule fuer Angewandte Wissenschaften/*
-MAY_SIGN            /C=CH/O=Fachhochschule Aargau Nordwestschweiz/*
-MAY_SIGN            /C=CH/O=Fachhochschule Solothurn Nordwestschweiz/*
 MAY_SIGN            /C=CH/O=Fachhochschule Zentralschweiz/*
-MAY_SIGN            /C=CH/O=Fachhochschule beider Basel/*
+MAY_SIGN            /C=CH/O=Hochschule Rapperswil/*
 MAY_SIGN            /C=CH/O=Paedagogische Hochschule Thurgau/*
 MAY_SIGN            /C=CH/O=Paedagogische Hochschule Zentralschweiz/*
 MAY_SIGN            /C=CH/O=SWITCH - Teleinformatikdienste fuer Lehre und Forschung/*
@@ -46,19 +45,18 @@ CERT_BEGINS         Fri 2007-02-02 13:10:56 UTC
 CERT_EXPIRES        Fri 2012-02-03 13:10:56 UTC
 
 # MD5 and SHA1 fingerprints from 47d3d1a0.0, downloaded Thu 2007-02-15
-# Verified against IGTF 1.16 release,
-# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+# Verified against IGTF 1.17 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.17/accredited/igtf-policy-installation-bundle-1.17.tar.gz>
 
 # I haven't found an online signing_policy file.  The MAY_SIGN attributes
-# are derived from 47d3d1a0.signing_policy in the IGTF 1.16 release.
+# are derived from 47d3d1a0.signing_policy in the IGTF 1.17 release.
 
-# The large number of MAY_SIGN attributes can make for a very large
-# 47d3d1a0.signing_policy file, possibly with lines too long for Globus
-# to handle properly.
+# Note that the generated signing_policy file may exceed the capacity of 
+# the Globus software; consider manually trimming entries you don't need.
 
-# The following is a copy of 47d3d1a0.info from the IGTF 1.16 release:
+# The following is a copy of 47d3d1a0.info from the IGTF 1.17 release:
 ## #
-## # @(#)$Id: 47d3d1a0.switch-personal-2007.cadesc,v 1.3 2007-08-12 22:08:02-07 kst Exp $
+## # @(#)$Id: 47d3d1a0.switch-personal-2007.cadesc,v 1.4 2007-10-09 20:38:46-07 kst Exp $
 ## # Information for CA SWITCH Personal 2007
 ## #   
 ## alias = SWITCH-Personal-2007
@@ -66,6 +64,6 @@ CERT_EXPIRES        Fri 2012-02-03 13:10:56 UTC
 ## crl_url = http://crl.swisssign.net/F4CA49AE6EC8BD86BA54D2A1BFB650EDFAFE3460
 ## requires = SWITCH
 ## status = accredited:classic
-## version = 1.16
+## version = 1.17
 ## email = pki@switch.ch
 ## sha1fp.0 = 70:18:35:8D:B6:AA:4F:97:63:F2:CF:9D:8E:FA:5C:1A:41:2F:3C:22
