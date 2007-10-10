@@ -1,4 +1,4 @@
-# $Id: f8b4299c.switch-server.cadesc,v 1.6 2007-03-15 19:20:46-07 kst Exp $
+# $Id: f8b4299c.switch-server.cadesc,v 1.7 2007-10-09 20:38:46-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/f8b4299c.switch-server.cadesc,v $
 
 CA_NAME             SWITCH Server CA
@@ -48,3 +48,6 @@ DISABLE             yes
 # The MD5 and SHA1 fingerprints have also been verified against f8b4299c.0
 # in that same tarball, and the SHA1 fingerprint has been verified
 # against f8b4299c.info.
+
+# Note that the generated signing_policy file may exceed the capacity of 
+# the Globus software; consider manually trimming entries you don't need.
