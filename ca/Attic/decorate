@@ -1,6 +1,6 @@
 #!/usr/bin/perl
 
-# $Id: decorate,v 1.5 2007-10-10 03:32:21-07 kst Exp $
+# $Id: decorate,v 1.6 2007-10-10 17:24:07-07 kst dead $
 # $Source: /home/kst/gx-map-redacted/ca/Attic/decorate,v $
 
 use strict;
