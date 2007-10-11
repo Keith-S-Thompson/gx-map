@@ -1,0 +1,69 @@
+#!/usr/bin/perl
+
+# $Id: annotate,v 1.1 2007-10-10 17:24:07-07 kst Exp $
+# $Source: /home/kst/gx-map-redacted/ca/annotate,v $
+
+use strict;
+use warnings;
+
+my $igtf_version = '1.17';
+my $igtf_src_dir = ".igtf-$igtf_version/igtf-policy-installation-bundle-$igtf_version/src";
+
+my $hash = undef;
+my $certificate_url = undef;
+my $crl_url = undef;
+
+open my $PIPE, '|-', 'checksums';
+
+while (<>) {
+    print $PIPE $_;
+    if (/^HASH\s+([\da-f]{8})\b/) {
+        $hash = $1;
+    }
+    elsif (/^CERTIFICATE_URL\s+(.*)\s*$/) {
+        $certificate_url = $1;
+    }
+    elsif (/^CRL_URL\s+(.*)\s*$/) {
+        $crl_url = $1;
+    }
+}
+
+print $PIPE '=' x 72, "\n";
+
+if (not defined $hash) {
+    print $PIPE ">>> No hash found\n";
+    close $PIPE;
+    exit;
+}
+
+my $command = "cert-info";
+$command .= " $certificate_url" if defined $certificate_url;
+$command .= " $crl_url" if defined $crl_url;
+
+my $igtf_info_file = undef;
+
+if (opendir my $DIR, $igtf_src_dir) {
+    my @subdirs = sort grep { $_ ne '.' and $_ ne '..' } readdir $DIR;
+    foreach my $subdir (@subdirs) {
+        if (-e "$igtf_src_dir/$subdir/$hash.0") {
+            $command .= " $igtf_src_dir/$subdir/$hash.0";
+        }
+        if (-e "$igtf_src_dir/$subdir/$hash.info") {
+            $igtf_info_file = "$igtf_src_dir/$subdir/$hash.info";
+        }
+    }
+    closedir $DIR;
+}
+
+print $PIPE `$command`;
+
+if (defined $igtf_info_file) {
+    print $PIPE "# The following is a copy of $hash.info from the IGTF $igtf_version release:\n";
+    open my $INFO, '<', $igtf_info_file;
+    while (<$INFO>) {
+        print $PIPE "## $_";
+    }
+    close $INFO;
+}
+
+close $PIPE;
