@@ -1,8 +1,8 @@
-# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.9 2007-07-23 16:46:38-07 kst Exp $
+# $Id: 5e24fe33.melbourne-epp-grid.cadesc,v 1.10 2007-10-10 18:21:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/5e24fe33.melbourne-epp-grid.cadesc,v $
 
 CA_NAME             Melbourne EPP Grid CA
-HOMEPAGE            https://epp-ca.ph.unimelb.edu.au/
+HOMEPAGE            http://epp-ca.ph.unimelb.edu.au/
 CONTACT             ra@epp-ca.ph.unimelb.edu.au
 HASH                5e24fe33
 SIGNED_BY           self
@@ -20,3 +20,6 @@ CERT_EXPIRES        Sun 2008-03-16 06:24:28 UTC
 # MD5 and SHA1 fingerprints from 5e24fe33.0 downloaded 2005-03-29
 
 # As of Fri 2007-07-20, I am unable to connect to the web site.
+# Checked again Wed 2007-10-10; still no connection.  A Google search for
+# "5e24fe33" gets 3 hits, none of the particularly useful.  I suspect
+# this CA is defunct.
