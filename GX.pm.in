@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.124 2007-10-05 19:25:26-07 kst Exp $
+# $Id: GX.pm.in,v 1.125 2007-10-10 20:06:52-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -739,6 +739,10 @@ sub Certificate_Info(%) {
         }
     }
     close $Pipe1;
+    if ($? != 0) {
+        return new GX::Error "openssl failed: " .
+                             GX::System_Result_String $?;
+    }
 
     #
     # openssl won't display both md5 and sha1 fingerprints in a single
@@ -754,16 +758,25 @@ sub Certificate_Info(%) {
             }
         }
         close $Pipe2;
+        if ($? != 0) {
+            return new GX::Error "openssl failed: " .
+                                 GX::System_Result_String $?;
+        }
     }
 
+    my @missing_keys = ();
     foreach my $key (qw(hash issuer subject
                         sha1sum md5sum
                         startdate enddate))
     {
         next if $key eq 'md5sum' and not $args->{need_md5};
         if (not defined $result->{$key}) {
-            return new GX::Error "key $key is not defined";
+            push @missing_keys, $key;
         }
+    }
+    if (@missing_keys) {
+        my $s = (scalar @missing_keys == 1 ? '' : 's');
+        return new GX::Error "Missing key$s: @missing_keys";
     }
 
     return $result;
