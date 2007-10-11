@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.121 2007-10-05 19:25:08-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.122 2007-10-11 16:15:34-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -75,6 +75,8 @@ my $Now = time;
 
 my $Hostname = GX::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/gx-map-data";
+my $Signature_Required = ( defined $GX::Config->{REQUIRE_SIGNATURES} and
+                           $GX::Config->{REQUIRE_SIGNATURES} eq 'yes' );
 
 my $User_Opt = { propagate => 1 };
 my @Opts = ( $User_Opt,
@@ -145,7 +147,8 @@ my @required_keys = qw( operation timestamp requested_by_name
                         requested_by_uid hostname );
 my @valid_keys = ( @required_keys,
                    qw( dn username email comment
-                       user_uid source signature scope ) );
+                       user_uid source scope
+                       Verified Signer_Subject Message ) );
 my @valid_operations = qw( add remove remove-dn remove-user );
 my %is_required_key    = map { $_ => 1 } @required_keys;
 my %is_valid_key       = map { $_ => 1 } @valid_keys;
@@ -174,6 +177,14 @@ foreach my $file (grep /\.request\.multi$/, @files) {
         Debug "After successful Process_Signed_Request\n";
         Debug "    Removing $file\n";
         Debug "    Adding $result_basename\n";
+        GX::Save_File filename   => $file,
+                      source_dir => $new_requests_dir,
+                      target_dir => $good_requests_dir;
+                    # timestamp  => $timestamp{$file};
+        #
+        # TODO: Warn about failures in Save_File.
+        # TODO: Consider setting timestamp.
+        # (see other calls, below).
         delete $is_file{$file};
         $is_file{$result_basename} = 1;
     }
@@ -188,15 +199,22 @@ my @bad_requests = ();
 my @bad_request_files = ();
 my %timestamp = ();
 
+#
+# Now process all ordinary requests, including any that were
+# generated above by Process_Signed_Request.
+#
 foreach my $file (@files) {
-    if ($file =~ /\.request\.tmp$/) {
+    if ($file =~ /\.request\.tmp$/ or
+        $file =~ /\.request\.multi\.tmp$/)
+    {
         #
-        # gx-request creates a temporary *.request.tmp file and
-        # immediately renames it to *.request once it's been written.
-        # Ignore any *.request.tmp file as long as its timestamp is within
-        # 60 seconds of the current time.  If the file is older or from
-        # the future, we'll treat it as an error (Get_Request_Info will
-        # see the invalid name).
+        # gx-request creates a temporary *.request.tmp or
+        # *.request.multi.tmp file and immediately renames it to *.request
+        # or *.request.multi once it's been written.  Ignore any such
+        # temporary file as long as its timestamp is within 60 seconds
+        # of the current time.  If the file is older or from the future,
+        # we'll treat it as an error (Get_Request_Info will see the
+        # invalid name).
         #
         my $mtime = GX::Get_mtime $file;
         #
