@@ -1,4 +1,4 @@
-# $Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.2 2007-08-12 22:08:06-07 kst Exp $
+# $Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.3 2007-10-10 18:00:55-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/ca/fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v $
 
 CA_NAME             DFN-Verein Server CA Grid - G01
@@ -11,24 +11,24 @@ MAY_SIGN            /C=DE/O=DFN-Verein/OU=DFN-PKI/CN=DFN-Verein Server CA Grid -
 MAY_SIGN            /C=DE/O=GridGermany/*
 CERTIFICATE_MD5     6F:74:91:7A:78:CE:93:E8:92:87:91:C0:5A:6E:25:82
 CERTIFICATE_SHA1    20:36:73:B7:15:93:15:28:5A:54:70:71:A1:DC:D7:B1:39:42:C5:09
-CERTIFICATE_URL     http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/certs/ca-server-cert.pem
+CERTIFICATE_URL     http://cdp1.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/certs/ca-server-cert.pem
 SIGNING_POLICY_URL  ?
-CRL_URL             http://cdp.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/crls/ca-server-crl.pem
+CRL_URL             http://cdp1.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/crls/ca-server-crl.pem
 CERT_BEGINS         Thu 2005-07-07 14:56:32 UTC
 CERT_EXPIRES        Tue 2009-07-07 14:56:32 UTC
 
 # MD5 and SHA1 fingerprints from ca-server-cert.pem (fe102e03.0) downloaded
 # Thu 2006-11-30.
-# Verified against IGTF 1.16 release,
-# <https://dist.eugridpma.info/distribution/igtf/1.16/accredited/igtf-policy-installation-bundle-1.16.tar.gz>
+# Verified against IGTF 1.17 release,
+# <https://dist.eugridpma.info/distribution/igtf/1.17/accredited/igtf-policy-installation-bundle-1.17.tar.gz>
 
 # I was unable to find a standalone fe102e03.signing_policy file.
-# the MAY_SIGN attributes are based on the fe102e03.signing_policy file
-# extracted from the IGTF 1.16 release.
+# The MAY_SIGN attributes are based on the fe102e03.signing_policy file
+# extracted from the IGTF 1.17 release.
 
-# The following is a copy of fe102e03.info from the IGTF 1.16 release:
+# The following is a copy of fe102e03.info from the IGTF 1.17 release:
 ## #
-## # @(#)$Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.2 2007-08-12 22:08:06-07 kst Exp $
+## # @(#)$Id: fe102e03.dfn-verein-server-ca-grid-g01.cadesc,v 1.3 2007-10-10 18:00:55-07 kst Exp $
 ## # Information for CA DFN-GridGermany-Server
 ## #   obtained from fe102e03 in DFN/
 ## alias = DFN-GridGermany-Server
@@ -38,5 +38,5 @@ CERT_EXPIRES        Tue 2009-07-07 14:56:32 UTC
 ## requires = DFN-GridGermany-Root
 ## status = accredited:classic
 ## url = http://www.pca.dfn.de/dfn-pki/certification/x509/grid/g1/ca-server/g1/data/html/cacert.html
-## version = 1.16
+## version = 1.17
 ## sha1fp.0 = 20:36:73:B7:15:93:15:28:5A:54:70:71:A1:DC:D7:B1:39:42:C5:09
