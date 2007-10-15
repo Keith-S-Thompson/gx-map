@@ -1,4 +1,4 @@
-# $Id: bug-0064,v 1.16 2007-08-31 21:04:39-07 kst Exp $
+# $Id: bug-0064,v 1.17 2007-10-14 21:23:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/bugs/bug-0064,v $
 
 gx-map bug 0064
@@ -350,3 +350,8 @@ Versions older than 0.9.5 will not work, since they don't support
 for the system; it just needs to be in the specified PATH for gx-map.
 If that's not possible, then users may have to run "grid-proxy-init
 -old" to generate an old-style proxy, or use their user certificates.
+
+Better idea:
+
+Don't make it optional.  Drop the REQUIRE_SIGNATURES configuration
+option.  The CERTIFICATES_DIR option is mandatory.
