@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.126 2007-10-10 20:07:10-07 kst Exp $
+# $Id: GX.pm.in,v 1.127 2007-10-17 19:13:03-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -115,7 +115,6 @@ $Initial_Config =
       GX_MAP_OWNER             => '%GX_MAP_OWNER%',
       ADDITIONAL_ADMINS        => '%ADDITIONAL_ADMINS%',
       ADMIN_EMAIL              => '%ADMIN_EMAIL%',
-      REQUIRE_SIGNATURES       => '%REQUIRE_SIGNATURES%',
       CERTIFICATES_DIR         => '%CERTIFICATES_DIR%',
       GX_PROPAGATE             => '%GX_PROPAGATE%',
       EXTRAS                   => '%EXTRAS%' };
@@ -308,7 +307,6 @@ sub Set_Config(;$$) {
                 GX_MAP_OWNER
                 ADDITIONAL_ADMINS
                 ADMIN_EMAIL
-                REQUIRE_SIGNATURES
                 CERTIFICATES_DIR
                 GX_PROPAGATE
                 EXTRAS );
@@ -448,15 +446,6 @@ sub Set_Config(;$$) {
         if ($GX::Config->{ADMIN_EMAIL} !~ /^[^@]+@[^@]+\.[^@]+$/) {
             push @errors, "Bad ADMIN_EMAIL $GX::Config->{ADMIN_EMAIL}\n";
         }
-    }
-
-    #
-    # Check REQUIRE_SIGNATURES
-    #
-    if ($GX::Config->{REQUIRE_SIGNATURES} ne 'yes' and
-        $GX::Config->{REQUIRE_SIGNATURES} ne 'no')
-    {
-        push @errors, "Bad value for REQUIRE_SIGNATURES, must be yes or no\n"
     }
 
     #
