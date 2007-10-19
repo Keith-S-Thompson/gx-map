@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.122 2007-10-11 16:15:34-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.123 2007-10-18 18:51:24-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -75,8 +75,6 @@ my $Now = time;
 
 my $Hostname = GX::Get_Hostname;
 my $Default_Data_Dir = "$Install_Dir/gx-map-data";
-my $Signature_Required = ( defined $GX::Config->{REQUIRE_SIGNATURES} and
-                           $GX::Config->{REQUIRE_SIGNATURES} eq 'yes' );
 
 my $User_Opt = { propagate => 1 };
 my @Opts = ( $User_Opt,
@@ -854,30 +852,6 @@ sub Get_Request_Info($) {
     }
 
     $result->{NAMESPACE} = $GX::Config->{NAMESPACE};
-
-    if ($result->{SOURCE} eq 'user' and
-        $result->{operation} eq 'add' and
-        defined $GX::Config->{REQUIRE_SIGNATURES} and
-        $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
-    {
-        #
-        # Check signature (preliminary)
-        #
-        if (defined $result->{signature}) {
-            if ($result->{signature} ne 'verified') {
-                push @{$result->{ERRORS}},
-                     "Signature is not verified";
-            }
-        }
-        else {
-            if (defined $GX::Config->{STRICT_SIGNATURES} and
-                $GX::Config->{STRICT_SIGNATURES} eq 'yes')
-            {
-                push @{$result->{ERRORS}},
-                     "missing signature, strict checking requested";
-            }
-        }
-    }
 
     if (defined $result->{scope} and
         $result->{scope} ne 'local' and
