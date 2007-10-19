@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# $Id: make-release,v 1.35 2007-07-15 20:47:21-07 kst Exp $
+# $Id: make-release,v 1.36 2007-10-18 18:48:01-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/make-release,v $
 
 try() {
@@ -79,7 +79,7 @@ other_files="INSTALL LICENSE Makefile README README.TeraGrid \
              README.Upgrade Relnotes auto.txt cleanup-gx-map \
              configure-gx-map gettimeofday.c gx-check-prereqs \
              gx-propagate.in.teragrid gx-propagate.in.test \
-             sample-gx-cron-job.conf sample.conf test-gx-map \
+             sample-gx-cron-job.conf test-gx-map \
              tgcdb.db-config get-version"
 
 try mkdir release/gx-map-$num
