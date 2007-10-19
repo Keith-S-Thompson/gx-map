@@ -1,6 +1,6 @@
 #!/usr/bin/perl -w
 
-# $Id: configure-gx-map,v 1.79 2007-08-15 19:12:13-07 kst Exp $
+# $Id: configure-gx-map,v 1.80 2007-10-18 18:40:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/configure-gx-map,v $
 
 # This script should be executed from the base source directory of the
@@ -124,7 +124,6 @@ my @Var_Names
           GX_MAP_OWNER
           ADDITIONAL_ADMINS
           ADMIN_EMAIL
-          REQUIRE_SIGNATURES
           CERTIFICATES_DIR
           GX_PROPAGATE
           EXTRAS );
@@ -185,12 +184,6 @@ foreach my $name (@Var_Names) {
         Debug "Setting \$Config->{$name} to \$User_Opt->{$option} " .
               "= \"$User_Opt->{$option}\"\n";
         $Config->{$name} = $User_Opt->{$option};
-        #
-        # Special case: REQUIRE_SIGNATURES must be 'yes' or 'no'.
-        #
-        if ($name eq 'REQUIRE_SIGNATURES') {
-            $Config->{$name} = $Config->{$name} ? 'yes' : 'no';
-        }
     }
 }
 Debug "Done checking command-line arguments\n";
@@ -350,21 +343,6 @@ else {
     push @errors,
          "No value specified for ADMIN_EMAIL (you can change it later)\n",
          "    Use \"-admin-email\" option\n";
-}
-
-#
-# REQUIRE_SIGNATURES defaults to 'yes'.
-# The value must be either 'yes' or 'no'.
-#
-if (defined $Config->{REQUIRE_SIGNATURES}) {
-    if ($Config->{REQUIRE_SIGNATURES} ne 'yes' and
-        $Config->{REQUIRE_SIGNATURES} ne 'no')
-    {
-        push @errors, "Bad value for REQUIRE_SIGNATURES, must be yes or no\n"
-    }
-}
-else {
-    $Config->{REQUIRE_SIGNATURES} = 'yes';
 }
 
 #
