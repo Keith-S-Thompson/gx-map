@@ -1,4 +1,4 @@
-# $Id: gx-map.conf.in,v 1.11 2007-07-10 20:15:16-07 kst Exp $
+# $Id: gx-map.conf.in,v 1.12 2007-10-18 18:46:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-map.conf.in,v $
 
 #
@@ -127,19 +127,7 @@ ADDITIONAL_ADMINS
 ADMIN_EMAIL
 
 #
-# If this is set to "yes", any non-admin "add" requests must be
-# cryptographically signed with the certificate whose DN appears in the
-# request.  A user must prove he/she owns a certificate before mapping it.
-# A signature is not required for a "remove" or "remove-user" request;
-# a "remove-dn" request requires administrative privileges.  The only
-# permitted values are "yes" and "no".
-#
-REQUIRE_SIGNATURES
-
-#
-# If REQUIRE_SIGNATURE is "yes", this specifies the directory containing
-# the CA certificates needed to check signatures; otherwise it is ignored
-# and may be left empty.
+# The directory containing the CA certificates needed to check signatures.
 # A reasonable default is "/etc/grid-security/certificates".
 #
 CERTIFICATES_DIR
