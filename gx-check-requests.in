@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.123 2007-10-18 18:51:24-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.124 2007-10-19 20:19:31-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -542,7 +542,8 @@ sub Process_Signed_Request($) {
 # from the file.  If any error occurs, the information will include an
 # "ERRORS" field, a reference to an array of error messages.
 #
-# We use an eval block to catch any errors via die().
+# We use an eval block to catch any errors propagated from Read_Records
+# via die().
 #
 sub Get_Request_Info($) {
     my($filename) = @_;
@@ -714,6 +715,7 @@ sub Get_Request_Info($) {
     {
         push @{$result->{ERRORS}}, 'Illegal username';
     }
+
     #
     # A DN (as stored in the log file) must start and end with a '"'
     # character; the string between the quotation marks must be valid.
@@ -758,6 +760,39 @@ sub Get_Request_Info($) {
         $result->{OWNER_NAME} = $OWNER_pw->{name};
     }
 
+    my $owner_is_admin
+        = ( defined $result->{OWNER_NAME} and
+            GX::Is_Admin_Account $result->{OWNER_NAME} );
+
+    my $need_signature = ($owner_is_admin and
+                          ($OP eq 'add' or $OP eq 'remove-dn'));
+    if ($need_signature) {
+        if (defined $result->{Verified}) {
+            if ($result->{Verified} eq 'yes') {
+                if ($result->{Signer_Subject} ne $result->{dn}) {
+                    push @{$result->{ERRORS}},
+                         "Signer DN doesn't match requested DN";
+                    return $result;
+                }
+            }
+            else {
+                push @{$result->{ERRORS}}, "Signature not verified";
+                return $result;
+            }
+        }
+        else {
+            push @{$result->{ERRORS}}, "Missing signature";
+            return $result;
+        }
+    }
+    else {
+        if (defined $result->{Verified}) {
+            push @{$result->{ERRORS}},
+                 "\"Verified\" field should not be set";
+            return $result;
+        }
+    }
+
     my $user_pw;
     my $requested_by_pw;
 
@@ -793,8 +828,12 @@ sub Get_Request_Info($) {
 
     #
     # Check that OWNER_UID matches requested_by_uid
+    # If a signature was required, the request should be owned by
+    # GX_MAP_OWNER, not by the original owner.
     #
-    if ($result->{OWNER_UID} ne $result->{requested_by_uid}) {
+    if (not $need_signature and
+        $result->{OWNER_UID} ne $result->{requested_by_uid})
+    {
         push @{$result->{ERRORS}},
              "OWNER_UID $result->{OWNER_UID} does not " .
              "match requested_by_uid $result->{requested_by_uid}";
@@ -811,10 +850,6 @@ sub Get_Request_Info($) {
             }
         }
     }
-
-    my $owner_is_admin =
-        ( defined $result->{OWNER_NAME} and
-          GX::Is_Admin_Account $result->{OWNER_NAME} );
 
     if (not $owner_is_admin) {
         if ($OP eq 'remove-dn') {
