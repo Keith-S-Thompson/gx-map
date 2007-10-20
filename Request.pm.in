@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.9 2007-10-19 19:29:51-07 kst Exp $
+# $Id: Request.pm.in,v 1.10 2007-10-19 20:39:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -55,7 +55,7 @@ package GX::Request;
 
 BEGIN {
     use vars qw( $Install_Dir $Data_Dir $Program_Name
-                 $Is_Admin $Signature_Required $PW $User_Opt
+                 $Is_Admin $PW $User_Opt
                  $proxy_file $user_cert_file $user_key_file
                  $default_cert_file $default_key_file
                  $Temp_Dir );
@@ -293,10 +293,6 @@ sub GX_Request(@) {
     foreach my $key (sort keys %$Options) {
         Debug "    $key => $Options->{$key}\n";;
     }
-
-    $Signature_Required = (not $Is_Admin and
-                           ($Options->{operation} eq 'add' or
-                            $Options->{operation} eq 'remove-dn'));
 
     my $Requests_Dir = "$Data_Dir/new-requests";
 
@@ -570,7 +566,7 @@ sub Submit_Request($$) {
     $request_file_basename .= "-$$.request";
 
     my $request_file = "$Requests_Dir/$request_file_basename";
-    if ($Signature_Required) {
+    if ($Options->{NEED_SIGNATURE} ) {
         $Temp_Dir = GX::Make_Temp_Dir;
         $request_file = "$Temp_Dir/$request_file_basename";
     }
@@ -603,7 +599,7 @@ sub Submit_Request($$) {
     chmod 0444, $temp_file or die "chmod $temp_file: $!\n";
     rename $temp_file, $request_file or die "rename $temp_file: $!\n";
 
-    if ($Signature_Required) {
+    if ($Options->{NEED_SIGNATURE}) {
         my $multifile = "$request_file.multi";
         my $multifile_basename = "$request_file_basename.multi";
         my $sign_result = GX::Sign_File
@@ -801,32 +797,33 @@ EOF
             print "\n";
             if ($Is_Admin) {
                 print Strip <<"EOF";
+                > (m) Remove mapping for a specified DN and user name
                 > (d) Remove all mappings for a specified DN
                 > (u) Remove all mappings for a specified user name
-                > (m) Remove mapping for a specified DN and user name
                 > (x) Exit
 EOF
-                print "Remove? [dumx] ";
+                print "Remove? [mdux] ";
             }
             else {
                 print Strip <<"EOF";
-                > (u) Remove all mappings for your user name
                 > (m) Remove mapping for a specified DN and your user name
+                > (d) Remove all mappings for a specified DN
+                > (u) Remove all mappings for your user name
                 > (x) Exit
 EOF
-                print "Remove? [umx] ";
+                print "Remove? [mdux] ";
             }
             chomp($response = lc scalar <STDIN>);
-            if ($Is_Admin and $response =~ /^d/) {
+            if ($response =~ /^m/) {
+                $OP = $Options->{operation} = 'remove';
+                last TRY;
+            }
+            elsif ($response =~ /^d/) {
                 $OP = $Options->{operation} = 'remove-dn';
                 last TRY;
             }
             elsif ($response =~ /^u/) {
                 $OP = $Options->{operation} = 'remove-user';
-                last TRY;
-            }
-            elsif ($response =~ /^m/) {
-                $OP = $Options->{operation} = 'remove';
                 last TRY;
             }
             elsif ($response =~ /^x/) {
@@ -849,21 +846,18 @@ EOF
             else                     { die "Internal error" }
 
             while (not defined $Options->{username}) {
-                print "What user name do you want to $what ",
-                      "(default is $PW->{name}) ? ";
+                print "What user name do you want to $what?  ";
                 chomp($response = scalar <STDIN>);
                 $response =~ s/^ *//;
                 $response =~ s/ *$//;
                 if ($response eq '') {
-                    $Options->{username} = $PW->{name};
+                    next;
+                }
+                elsif (GX::Is_Legal_Username $response) {
+                    $Options->{username} = $response;
                 }
                 else {
-                    if (GX::Is_Legal_Username $response) {
-                        $Options->{username} = $response;
-                    }
-                    else {
-                        print ">>> \"$response\" is not a legal user name\n";
-                    }
+                    print ">>> \"$response\" is not a legal user name\n";
                 }
             }
         }
@@ -876,12 +870,11 @@ EOF
     # Get DN or certificate and key
     #
     if ($OP ne 'remove-user') {
-        my $need_sig = ($OP eq 'add' and $Signature_Required);
         my $choices = '';
         $choices .= 'c' if defined $user_cert_file;
         $choices .= 'p' if defined $proxy_file;
         $choices .= 'f';
-        $choices .= 'i' if not $need_sig;
+        $choices .= 'i' if not $Options->{NEED_SIGNATURE};
         $choices .= 'x';
         my %allowed = map { $_ => 1 } split //, $choices;
         my $dn = undef;
@@ -926,7 +919,7 @@ EOF
             elsif ($allowed{f} and $response =~ /^f/) {
                 print "Enter certificate file name: ";
                 chomp($cert_file = scalar <STDIN>);
-                if ($need_sig) {
+                if ($Options->{NEED_SIGNATURE}) {
                     print "Enter key file name: ";
                     chomp($key_file = scalar <STDIN>);
                 }
