@@ -1,4 +1,4 @@
-# $Id: Request.pm.in,v 1.8 2007-10-05 20:28:14-07 kst Exp $
+# $Id: Request.pm.in,v 1.9 2007-10-19 19:29:51-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/Request.pm.in,v $
 
 ########################################################################
@@ -143,7 +143,7 @@ sub GX_Request(@) {
                      add
                      remove remove-dn remove-user
                      quiet force no-admin
-                     dn=s certificate-file=s default-dn
+                     dn=s certificate-file=s key-file=s proxy-file=s default-dn
                      username=s
                      email=s
                      force-dn literal-dn no-email comment=s
@@ -195,7 +195,8 @@ sub GX_Request(@) {
             Usage "The -quick-add and -quick-remove options " .
                   "cannot be used together\n";
         }
-        my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add' : 'quick-remove';
+        my $opt = defined $User_Opt->{'quick-add'} ? 'quick-add'
+                                                   : 'quick-remove';
         my $conflict = 0;
         foreach my $other_opt ( qw( interactive add remove remove-dn
                                     remove-user default-dn
@@ -218,6 +219,21 @@ sub GX_Request(@) {
         else {
             $User_Opt->{remove} = 1;
         }
+    }
+
+    #
+    # The -proxy-file <file> option is mapped to
+    # -certificate-file <file> -key-file <file>.
+    #
+    elsif (defined $User_Opt->{'proxy-file'}) {
+        if (defined $User_Opt->{'certificate-file'} or
+            defined $User_Opt->{'key-file'})
+        {
+            Usage "The -proxy-file option cannot be used with " .
+                  "-certificate-file or -key-file\n";
+        }
+        $User_Opt->{'certificate-file'} = $User_Opt->{'proxy-file'};
+        $User_Opt->{'key-file'}         = $User_Opt->{'proxy-file'};
     }
 
     GX::Check_Data_Dir;
@@ -249,17 +265,7 @@ sub GX_Request(@) {
     #
     $Is_Admin = (not $User_Opt->{'no-admin'} and
                  GX::Is_Admin_Account $PW->{name});
-    #
-    # A signature is required if the user is not an admin, gx-map has
-    # been configured to require signatures, and the request is an "add"
-    # request.  A non-admin user may remove mappings for his own account
-    # without verifying that he owns the corresponding certificate.
-    # This setting for $Signature_Required doesn't reflect whether this
-    # is an add request, since we don't know that yet.
-    #
-    $Signature_Required = ( not $Is_Admin and
-                            defined $GX::Config->{REQUIRE_SIGNATURES} and
-                            $GX::Config->{REQUIRE_SIGNATURES} eq 'yes' );
+
     my $Options  = {};
 
     if (defined $User_Opt->{slurp}) {
@@ -287,6 +293,10 @@ sub GX_Request(@) {
     foreach my $key (sort keys %$Options) {
         Debug "    $key => $Options->{$key}\n";;
     }
+
+    $Signature_Required = (not $Is_Admin and
+                           ($Options->{operation} eq 'add' or
+                            $Options->{operation} eq 'remove-dn'));
 
     my $Requests_Dir = "$Data_Dir/new-requests";
 
@@ -1010,16 +1020,20 @@ sub Get_Options_From_Command_Line() {
 
     my $OP = $Options->{operation}; # just a convenient abbreviation
 
-    my $need_sig = ($OP eq 'add' and $Signature_Required);
+    #
+    # $Options->{NEED_SIGNATURE} is a meta-option, not settable by the user.
+    # The upper-case name is intended to indicate this.
+    #
+    $Options->{NEED_SIGNATURE}
+        = (not $Is_Admin and ($OP eq 'add' or $OP eq 'remove-dn'));
 
-    if ($need_sig and defined $User_Opt->{dn}) {
+    if ($Options->{NEED_SIGNATURE} and defined $User_Opt->{dn}) {
         Usage "Only an administrator may add a specified DN directly.\n" .
               "A certificate or proxy file is required for verification.\n";
     }
 
     my $dn_count = (defined $User_Opt->{dn} ? 1 : 0) +
                    (defined $User_Opt->{'certificate-file'} ? 1 : 0) +
-                   (defined $User_Opt->{'proxy-file'} ? 1 : 0) +
                    (defined $User_Opt->{'default-dn'} ? 1 : 0);
 
     if ($OP eq 'remove-dn' and defined $User_Opt->{username}) {
@@ -1058,10 +1072,6 @@ sub Get_Options_From_Command_Line() {
     # It will be set to "user" or "admin" by gx-check-requests.
     #
 
-    if ($OP eq 'remove-dn' and not $Is_Admin) {
-        Usage "Only a gx-map administrator may use the \"-remove-dn\" option\n";
-    }
-
     if (defined $User_Opt->{username}) {
         if (not $Is_Admin and $User_Opt->{username} ne $PW->{name}) {
             Usage "You may not specify a user name other than your own\n";
@@ -1080,6 +1090,9 @@ sub Get_Options_From_Command_Line() {
     }
 
     if ($OP ne 'remove-user') {
+        #
+        # We need a DN.
+        #
         if (defined $User_Opt->{dn}) {
             $Options->{dn} = $User_Opt->{dn};
         }
@@ -1087,12 +1100,10 @@ sub Get_Options_From_Command_Line() {
             my $cert_file = undef;
             my $key_file  = undef;
             if (defined $User_Opt->{'default-dn'}) {
-                if (defined $default_cert_file) {
-                    $cert_file = $default_cert_file;
-                }
-                else {
+                if (not defined $default_cert_file) {
                     Usage "Cannot determine name of default certificate\n";
                 }
+                $cert_file = $default_cert_file;
             }
             elsif (defined $User_Opt->{'certificate-file'}) {
                 $cert_file = $User_Opt->{'certificate-file'};
@@ -1105,17 +1116,18 @@ sub Get_Options_From_Command_Line() {
                     Usage "Cannot determine name of user certificate\n";
                 }
             }
-            if ($need_sig) {
-                if (defined $User_Opt->{'default-dn'}) {
+            if ($Options->{NEED_SIGNATURE}) {
+                if (defined $User_Opt->{'key-file'}) {
+                    $key_file = $User_Opt->{'key-file'};
+                }
+                elsif (defined $User_Opt->{'default-dn'}) {
                     if (defined $default_key_file) {
                         $key_file = $default_key_file;
                     }
                     else {
-                        Usage "Cannot determine name of default key file\n";
+                        Usage "Cannot determine name of default key file, " .
+                              "specify \"-key\" or use a proxy\n";
                     }
-                }
-                elsif (defined $User_Opt->{'key-file'}) {
-                    $key_file = $User_Opt->{'key-file'};
                 }
                 else {
                     if (defined $user_key_file) {
@@ -1135,18 +1147,6 @@ sub Get_Options_From_Command_Line() {
             $Options->{key} = $key_file if defined $key_file;
         }
     }
-
-#   if (not $Is_Admin and
-#       $OP eq 'add' and
-#       defined $GX::Config->{REQUIRE_SIGNATURES} and
-#       $GX::Config->{REQUIRE_SIGNATURES} eq 'yes')
-#   {
-#       print ">>> Not yet implemented <<<\n";
-#       print "Enter verification for \"$Options->{dn}\"\n";
-#       my $response;
-#       chomp($response = scalar <STDIN>);
-#       $Options->{signature} = $response;
-#   }
 
     if (defined $User_Opt->{email}) {
         $Options->{email} = $User_Opt->{email};
