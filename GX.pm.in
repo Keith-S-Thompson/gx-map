@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.128 2007-10-17 19:13:16-07 kst Exp $
+# $Id: GX.pm.in,v 1.129 2007-10-19 19:49:41-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -2471,11 +2471,13 @@ sub Gen_Mappings(@) {
                 GX::Debug "Reject, mapping to UID 0\n";
                 next REQUEST;
             }
-            if ($request->{OWNER_NAME} ne $request->{username} and
-                $request->{SOURCE} eq 'user')
-            {
-                GX::Debug "Reject, user request for other than self\n";
-                next REQUEST;
+            if (not defined $requst->{Verified}) {
+                if ($request->{OWNER_NAME} ne $request->{username} and
+                    $request->{SOURCE} eq 'user')
+                {
+                    GX::Debug "Reject, user request for other than self\n";
+                    next REQUEST;
+                }
             }
         }
         else {
