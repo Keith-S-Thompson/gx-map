@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.124 2007-10-19 20:19:31-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.125 2007-10-30 08:34:37-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -562,52 +562,19 @@ sub Get_Request_Info($) {
                  ERRORS       => [ 'Bad file name' ] };
     }
 
-    #
-    # Open in non-blocking mode.  If an attacker can cause an ordinary
-    # open() to block, it could provide more time to take advantage of
-    # a race condition, or just implement a DoS attack.
-    #
-    sysopen $FILEHANDLE, $filename, O_RDONLY|O_NONBLOCK
-        or push @errors, "sysopen $filename: $!";
-    my $stat  = GX::Stat $FILEHANDLE;
-    my $lstat = GX::Stat '-l', $filename;
-    my $stat_dev_ino  = "$stat->{dev}/$stat->{ino}";
-    my $lstat_dev_ino = "$lstat->{dev}/$lstat->{ino}";
-
-    #
-    # Verify that all fields determined by stat and lstat match exactly.
-    # For now, look only at fields derived directly from the result
-    # returned by stat or lstat; others have names starting with '_'.
-    #
-    my @mismatches = ();
-    foreach my $key (sort keys %$stat) {
-        next if $key =~ /^_/;
-        if ($stat->{$key} ne $lstat->{$key}) {
-            push @mismatches, $key;
-        }
-    }
-    if (@mismatches) {
-        my $s = ( scalar @mismatches == 1 ? '' : 's' );
-        push @errors, "Mismatched stat field$s: @mismatches";
-    }
-
-    if ($stat->{_file_type} ne 'plain') {
-        push @errors, "Not a plain file (file type is $stat->{_file_type}";
-    }
-    if ($stat->{nlink} != 1) {
-        push @errors, "Bad link count: $stat->{nlink}";
-    }
-    if ($stat->{size} > 2048) {
-        push @errors, "Request file is too large: $stat->{size} bytes";
-    }
-    if (not $stat->{_readable}) {
-        push @errors, 'File is not readable';
-    }
-
-    if (@errors) {
-        return { REQUEST_FILE => $request_file,
+    $FILEHANDLE = GX::Open_Carefully $filename;
+    if (GX::Error::Is_Error $FILEHANDLE) {
+        return ( REQUEST_FILE => $request_file
                  PROCESSED    => $processed,
-                 ERRORS       => \@errors };
+                 ERRORS       => $FILEHANDLE->Message );
+
+    my $stat = GX::Stat $FILEHANDLE;
+
+    if ($stat->{size} > 2048) {
+        return ( REQUEST_FILE => $request_file
+                 PROCESSED    => $processed,
+                 ERRORS       => "Request file is too large: " .
+                                 "$stat->{size} bytes" );
     }
 
     eval {
@@ -852,12 +819,9 @@ sub Get_Request_Info($) {
     }
 
     if (not $owner_is_admin) {
-        if ($OP eq 'remove-dn') {
-            push @{$result->{ERRORS}},
-                 "remove-dn request by a non-admin";
-        }
-        elsif (defined $result->{OWNER_NAME} and
-               $result->{username} ne $result->{OWNER_NAME})
+        if (defined $result->{username} and
+            defined $result->{OWNER_NAME} and
+            $result->{username} ne $result->{OWNER_NAME})
         {
             push @{$result->{ERRORS}},
                  "request for another user by a non-admin";
