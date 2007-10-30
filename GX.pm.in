@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.131 2007-10-19 20:39:48-07 kst Exp $
+# $Id: GX.pm.in,v 1.132 2007-10-30 08:33:26-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -122,7 +122,7 @@ use File::Basename ();
 use File::Path ();
 use File::Temp ();
 use Time::Local ();
-use Fcntl qw(O_WRONLY O_EXCL O_CREAT);
+use Fcntl qw(O_RDONLY O_NONBLOCK);
 use POSIX ();
 
 eval 'use Time::HiRes ()';
@@ -151,6 +151,7 @@ sub Delete_Temp_Dir($);
 sub OpenSSL_Version();
 sub Certificate_Info(%);
 
+sub Open_Carefully($);
 sub Stat($;$);
 sub Get_mtime($);
 sub Is_Legal_Username($);
@@ -181,7 +182,7 @@ sub Write_Records(%);
 sub Read_Records(%);
 
 sub Write_Multifile($@);
-sub Read_Multifile($$);
+sub Read_Multifile(%);
 
 sub Split_Certificate($$);
 sub Sign_File(%);
@@ -770,6 +771,76 @@ sub Certificate_Info(%) {
 
     return $result;
 } # Certificate_Info
+
+# ----------------------------------------------------------------------
+
+#
+# Open a file, avoiding race conditions.
+# We require the file to be a plain file (not a symlink) without multiple
+# hard links.
+# Returns a filehandle or a GX::Error object.
+# Passing the resulting filehandle to to GX::Stat will give you
+# information on the file you actually opened.
+#
+sub Open_Carefully($) {
+    my($filename) = @_;
+    my $FILEHANDLE;
+    my $result;
+
+    my @errors = ();
+
+    #
+    # Open in non-blocking mode.  If an attacker can cause an ordinary
+    # open() to block, it could provide more time to take advantage of
+    # a race condition, or just implement a DoS attack.
+    #
+    if (not sysopen $FILEHANDLE, $filename, O_RDONLY|O_NONBLOCK) {
+        return new GX::Error "sysopen $filename: $!";
+    }
+
+    my $stat  = GX::Stat $FILEHANDLE;
+    if (not defined $stat) {
+        return new GX::Error "stat failed for $filename";
+    }
+    my $lstat = GX::Stat '-l', $filename;
+    if (not defined $lstat) {
+        return new GX::Error "lstat failed for $filename";
+    }
+
+    #
+    # Verify that all fields determined by stat and lstat match exactly.
+    # For now, look only at fields derived directly from the result
+    # returned by stat or lstat; others have names starting with '_'.
+    #
+    my @mismatches = ();
+    foreach my $key (sort keys %$stat) {
+        next if $key =~ /^_/;
+        if ($stat->{$key} ne $lstat->{$key}) {
+            push @mismatches, $key;
+        }
+    }
+    if (@mismatches) {
+        my $s = ( scalar @mismatches == 1 ? '' : 's' );
+        push @errors, "Mismatched stat field$s: @mismatches";
+    }
+
+    if ($stat->{_file_type} ne 'plain') {
+        push @errors, "Not a plain file (file type is $stat->{_file_type}";
+    }
+    if ($stat->{nlink} != 1) {
+        push @errors, "Bad link count: $stat->{nlink}";
+    }
+    if (not $stat->{_readable}) {
+        push @errors, 'File is not readable';
+    }
+
+    if (@errors) {
+        return new GX::Error join('; ', @errors);
+    }
+    else {
+        return $FILEHANDLE;
+    }
+} # Open_Carefully
 
 # ----------------------------------------------------------------------
 
@@ -1980,10 +2051,23 @@ sub Read_Subfile($$$) {
 #
 # Reads a "multifile".
 #
-# The first argument is the name of the multifile.
+# Arguments are passed by name:
+#     multifile_name     => filename | opened filehandle
+#     specified_filename => filename
+#     temp_dir           => directory name
 #
-# The second argument is the name of a directory into which to store
-# the subfiles, typically created by GX::Make_Temp_Dir().
+# multifile_name:
+#     Mandatory.  This is either the name of an input file, or
+#     an opened filehandle.
+#
+# specified_filename:
+#     A file name to be used in error messages.
+#     If multifile_name is a file name, this must be undefined.
+#     If it's a filehandle, it's mandatory..
+#
+# temp_dir:
+#     The name of a directory into which to store the subfiles, typically
+#     created by GX::Make_Temp_Dir().
 #
 # Returns an array of hash references, each of which refers to
 #     { name     => <name of subfile, as extracted from multifile>,
@@ -1992,12 +2076,34 @@ sub Read_Subfile($$$) {
 # If an error occurs (syntax error, duplicate subfile names, read error),
 # returns a reference to a GX::Error object.
 # 
-sub Read_Multifile($$) {
-    my($multifile_name, $temp_dir) = @_;
+sub Read_Multifile(%) {
+    my($args) = GX::Get_Args @_, multifile_name     => $GX::INVALID,
+                                 specified_filename => undef,
+                                 temp_dir           => $GX::INVALID;
+    my $FILE;
+    my $printable_filename;
+    if (ref $args->{multifile_name} eq '') {
+        # multifile_name is not a reference; assume it's a file name.
+        if (defined $args->{specified_filename}) {
+            die "Internal error in Read_Multifile: " .
+                "extraneous specified_filename\n";
+        }
+        $printable_filename = $args->{multifile_name};
+        open $FILE, '<', $args->{multifile_name}
+            or die "$printable_filename: $!\n";
+    }
+    else {
+        # multifile_name is a reference; assume it's a filehandle.
+        if (not defined $args->{specified_filename}) {
+            die "Internal error in Read_Multifile: " .
+                "extraneous specified_filename\n";
+        }
+        $printable_filename = $args->{specified_filename};
+        $FILE = $args->{multifile_name};
+    }
     my @result = ();
     my $in_multifile = 0;
-    open my $File, '<', $multifile_name or die "$multifile_name: $!\n";
-    while (<$File>) {
+    while (<$FILE>) {
         if (not $in_multifile) {
             if (/^\s*$/) {
                 next;
@@ -2006,18 +2112,18 @@ sub Read_Multifile($$) {
                 $in_multifile = 1;
             }
             else {
-                return new GX::Error "Error at line $. of $multifile_name";
+                return new GX::Error "Error at line $. of $printable_filename";
             }
         }
         else {
             while (1) {
                 my $subfile = GX::Read_Subfile
-                                  $multifile_name, $File, $temp_dir;
+                                  $printable_filename, $FILE, $args->{temp_dir};
                 if (ref $subfile eq 'GX::Error') {
                     return $subfile;
                 }
                 if ($subfile->{EOF}) {
-                    close $File;
+                    close $FILE;
                     return @result;
                 }
                 else {
@@ -2026,7 +2132,7 @@ sub Read_Multifile($$) {
             }
         }
     }
-    return new GX::Error "Syntax error at line $. of $multifile_name";
+    return new GX::Error "Syntax error at line $. of $printable_filename";
 } # Read_Multifile
 
 # ----------------------------------------------------------------------
