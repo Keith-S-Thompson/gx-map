@@ -1,4 +1,4 @@
-# $Id: GX.pm.in,v 1.132 2007-10-30 08:33:26-07 kst Exp $
+# $Id: GX.pm.in,v 1.133 2007-10-30 17:37:33-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/GX.pm.in,v $
 
 ########################################################################
@@ -795,7 +795,7 @@ sub Open_Carefully($) {
     # a race condition, or just implement a DoS attack.
     #
     if (not sysopen $FILEHANDLE, $filename, O_RDONLY|O_NONBLOCK) {
-        return new GX::Error "sysopen $filename: $!";
+        return new GX::Error "sysopen ${filename}: $!";
     }
 
     my $stat  = GX::Stat $FILEHANDLE;
@@ -2250,9 +2250,13 @@ sub Sign_File(%) {
 
 #
 # Arguments are passed by name:
-#     input_file   Name of file to verify (should be a multifile).
-#     certs_dir    Certificates directory.
-#     output_file  Name of output file.
+#     input_file          Name of file to verify (should be a multifile).
+#                         This can be either a file name or an opened
+#                         filehandle.
+#     specified_filename  A file name to be used in error messages if
+#                         input_file is a filehandle.
+#     certs_dir           Certificates directory.
+#     output_file         Name of output file.
 #
 # Result is either a hash reference with the following fields:
 #     verified (boolean)
@@ -2266,11 +2270,20 @@ sub Sign_File(%) {
 # create a symlink in the temporary directory.
 #     
 sub Verify_File(%) {
-    my $args = GX::Get_Args @_, input_file  => $GX::INVALID,
-                                certs_dir   => $GX::INVALID,
-                                output_file => $GX::INVALID;
+    my $args = GX::Get_Args @_, input_file         => $GX::INVALID,
+                                specified_filename => undef,
+                                certs_dir          => $GX::INVALID,
+                                output_file        => $GX::INVALID;
     my $result = {};
     my $temp_dir = GX::Make_Temp_Dir;
+
+    my $printable_filename;
+    if (ref $args->{input_file} eq '') {
+        $printable_filename = $args->{input_file};
+    }
+    else {
+        $printable_filename = $args->{specified_filename};
+    }
 
     opendir my $CERTS_DIR, $args->{certs_dir}
         or die "$args->{certs_dir}: $!\n";
@@ -2283,11 +2296,14 @@ sub Verify_File(%) {
             or die "symlink $args->{certs_dir}/$file, $temp_dir/${file}: $!\n";
     }
 
-    my @multi = GX::Read_Multifile $args->{input_file}, $temp_dir;
+    my @multi = GX::Read_Multifile
+                    multifile_name     => $args->{input_file},
+                    specified_filename => $args->{specified_filename},
+                    temp_dir           => $temp_dir;
     if (scalar @multi < 2) {
         GX::Delete_Temp_Dir $temp_dir;
         return new GX::Error
-                   "Need at least two subfiles in $args->{input_file}";
+                   "Need at least two subfiles in $printable_filename}";
     }
     my $signed_file   = $multi[0]->{filename};
     my $signing_cert  = $multi[1]->{filename};
