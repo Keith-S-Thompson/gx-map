@@ -1,6 +1,6 @@
 #!%PERL% -T
 
-# $Id: gx-check-requests.in,v 1.125 2007-10-30 08:34:37-07 kst Exp $
+# $Id: gx-check-requests.in,v 1.126 2007-10-30 19:47:32-07 kst Exp $
 # $Source: /home/kst/gx-map-redacted/gx-check-requests.in,v $
 
 ########################################################################
@@ -495,6 +495,13 @@ sub Process_Signed_Request($) {
         return new GX::Error "Bad file name: $signed_request_file";
     }
 
+    my $FILEHANDLE = GX::Open_Carefully $signed_request_file;
+    if (GX::Error::Is_Error $FILEHANDLE) {
+        return $FILEHANDLE;
+    }
+
+    my $stat = GX::Stat $FILEHANDLE;
+
     my $verify_result = GX::Verify_File
                             input_file  => $signed_request_file,
                             certs_dir   => $GX::Config->{CERTIFICATES_DIR},
@@ -518,6 +525,11 @@ sub Process_Signed_Request($) {
         $ref->{Verified} = ( $verify_result->{verified} ? 'yes' : 'no' );
         if (defined $verify_result->{subject}) {
             $ref->{Signer_Subject} = '"' . $verify_result->{subject} . '"'
+        }
+        $ref->{Original_Owner_UID} = $stat->{uid};
+        my $pw = GX::Get_PW_Name $stat->{uid};
+        if (defined $pw->{name}) {
+            $ref->{Original_Owner_Name} = $pw->{name};
         }
         if (defined $verify_result->{message}) {
             $ref->{Message} = $verify_result->{message};
@@ -564,14 +576,15 @@ sub Get_Request_Info($) {
 
     $FILEHANDLE = GX::Open_Carefully $filename;
     if (GX::Error::Is_Error $FILEHANDLE) {
-        return ( REQUEST_FILE => $request_file
+        return ( REQUEST_FILE => $request_file,
                  PROCESSED    => $processed,
                  ERRORS       => $FILEHANDLE->Message );
+    }
 
     my $stat = GX::Stat $FILEHANDLE;
 
     if ($stat->{size} > 2048) {
-        return ( REQUEST_FILE => $request_file
+        return ( REQUEST_FILE => $request_file,
                  PROCESSED    => $processed,
                  ERRORS       => "Request file is too large: " .
                                  "$stat->{size} bytes" );
